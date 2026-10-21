@@ -1,0 +1,117 @@
+/* Cascade layer: chrome. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer chrome {
+	/* The type scale and the text utilities every screen shares.
+
+   Element selectors (h1..h4, a, button) are deliberate: the app writes plain
+   headings and gets the scale without a class. */
+	/* The eight type roles, as the classes a surface writes.
+ *
+ * Every value comes from `tokens.css`. The letter-spacings below were `-2.4px`,
+ * `-0.8px`, `-0.22px` and `-0.18px` — all four are the same -0.03em..-0.01em
+ * ratio expressed in pixels at one size, so they broke the moment `clamp()`
+ * changed the size under them. They are `em` now and track with the type. */
+
+	/* Eyebrow — the mono-uppercase kicker above a title. Also `.label`: this was
+ * two classes, `.eyebrow` at 0.08em and `.mono`/`.label` at 0.055em, identical
+ * in every other respect. One role, one tracking. `.eyebrow` keeps its own rule
+ * only for the layout it adds. */
+	.mono,
+	.label,
+	.eyebrow {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		line-height: var(--type-label-lh);
+	}
+	.eyebrow {
+		color: var(--muted);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+
+	/* Display scale */
+	h1,
+	.h1 {
+		font-size: var(--type-display-size);
+		font-weight: var(--weight-medium);
+		line-height: var(--type-display-lh);
+		letter-spacing: var(--type-display-track);
+		margin: 0;
+	}
+	h2,
+	.h2 {
+		font-size: var(--type-title-size);
+		font-weight: var(--weight-medium);
+		line-height: var(--type-title-lh);
+		letter-spacing: var(--type-title-track);
+		margin: 0;
+	}
+	h3,
+	.h3 {
+		font-size: var(--type-section-size);
+		font-weight: var(--weight-medium);
+		line-height: var(--type-section-lh);
+		letter-spacing: var(--type-section-track);
+		margin: 0;
+	}
+	h4,
+	.h4 {
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-medium);
+		line-height: var(--type-subsection-lh);
+		letter-spacing: var(--type-subsection-track);
+		margin: 0;
+	}
+
+	/* Body and caption. `.caption` was 14px, a size this app uses 20 times against
+ * 12px's 91 — it was the odd one out rather than the role. It is the caption
+ * role now, which is the size the muted small text across the app already is. */
+	.body {
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+		font-weight: var(--weight-body);
+	}
+	.caption {
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--fg-dim);
+	}
+	/* The same caption, muted rather than dimmed. This is the role `.fc-audit-msg`
+ * and its siblings re-spell locally as `font-size: 12px; color: var(--muted)`. */
+	.caption-muted {
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--muted);
+	}
+
+	/* Code and data. Tabular by default: a number in a column that shifts as it
+ * updates is the reason this role is separate from `.mono`, which is a label. */
+	.data {
+		font-family: var(--font-body);
+		font-size: var(--type-data-size);
+		line-height: var(--type-data-lh);
+		font-variant-numeric: tabular-nums;
+	}
+
+	a {
+		color: inherit;
+	}
+	button {
+		font-family: inherit;
+	}
+
+	.tabular {
+		font-variant-numeric: tabular-nums;
+	}
+	.small {
+		font-size: var(--type-caption-size);
+	}
+	/* Secondary text. Replaces Tailwind's `text-muted`, which resolved to the same
+ * value through `--color-muted` — the duplicate declaration of `--muted`. */
+	.muted {
+		color: var(--muted);
+	}
+}

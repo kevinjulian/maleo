@@ -1,0 +1,99 @@
+{
+	"result_count": 240,
+	"page_count": 120,
+	"page_size": 2,
+	"page": 1,
+	"results": [
+		{
+			"id": "2c51e4eb-dbe7-468c-ba6c-d1c85a1b71ae",
+			"title": "Piano Melody",
+			"indexed_on": "2024-05-21T15:00:07.873258Z",
+			"foreign_landing_url": "https://freesound.org/people/benpm/sounds/186942",
+			"url": "https://cdn.freesound.org/previews/186/186942_2594536-hq.mp3",
+			"creator": "benpm",
+			"creator_url": "https://freesound.org/people/benpm",
+			"license": "by",
+			"license_version": "4.0",
+			"license_url": "https://creativecommons.org/licenses/by/4.0/",
+			"provider": "freesound",
+			"source": "freesound",
+			"category": null,
+			"genres": null,
+			"filesize": 227209,
+			"filetype": "mp3",
+			"tags": [
+				{
+					"name": "Melody",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "Piano",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "chord",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "chords",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "melody",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "music",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "musical",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "piano",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "piano-chords",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				},
+				{
+					"name": "piano-melody",
+					"accuracy": null,
+					"unstable__provider": "freesound"
+				}
+			],
+			"alt_files": [
+				{
+					"url": "https://freesound.org/apiv2/sounds/186942/download/",
+					"bit_rate": 0,
+					"filesize": 1798222,
+					"filetype": "wav",
+					"sample_rate": 44100
+				}
+			],
+			"attribution": "\"Piano Melody\" by benpm is licensed under CC BY 4.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/4.0/.",
+			"fields_matched": ["description", "title", "tags.name"],
+			"mature": false,
+			"audio_set": null,
+			"duration": 10193,
+			"bit_rate": 128000,
+			"sample_rate": null,
+			"thumbnail": null,
+			"detail_url": "https://api.openverse.org/v1/audio/2c51e4eb-dbe7-468c-ba6c-d1c85a1b71ae/",
+			"related_url": "https://api.openverse.org/v1/audio/2c51e4eb-dbe7-468c-ba6c-d1c85a1b71ae/related/",
+			"waveform": "https://api.openverse.org/v1/audio/2c51e4eb-dbe7-468c-ba6c-d1c85a1b71ae/waveform/",
+			"unstable__sensitivity": []
+		}
+	]
+}

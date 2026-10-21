@@ -1,0 +1,22 @@
+/* Cascade layer: chrome. Indeterminate Progress's sweep (progress.tsx); the
+ * theme bridge carries no keyframes. Reduced motion holds it still. */
+@layer chrome {
+	.ui-progress-sweep {
+		width: 40%;
+		animation: uiSweep 1.2s var(--ease) infinite;
+	}
+	@keyframes uiSweep {
+		from {
+			transform: translateX(-100%);
+		}
+		to {
+			transform: translateX(250%);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ui-progress-sweep {
+			animation: none;
+			transform: none;
+		}
+	}
+}

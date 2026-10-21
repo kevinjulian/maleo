@@ -1,0 +1,40 @@
+{
+	"name": "@maleo/api",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Content-first HTTP API: projects, storyboards, generation, and metering",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "MALEO_API_PORT=${MALEO_API_PORT:-8090} bun --env-file ../../.env --watch scripts/start.ts",
+		"start": "MALEO_API_PORT=${MALEO_API_PORT:-8090} bun --env-file ../../.env scripts/start.ts",
+		"dev:captions": "MALEO_API_PORT=${MALEO_API_PORT:-8090} MALEO_CAPTION_TRANSCRIBE=1 bun --env-file ../../.env --watch scripts/start.ts",
+		"bake:voice-samples": "bun --env-file ../../.env scripts/bake-voice-samples.ts",
+		"typecheck": "tsc --noEmit",
+		"test": "vp test run --root ../.. --project api",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+	},
+	"dependencies": {
+		"@maleo/auth": "workspace:*",
+		"@maleo/db": "workspace:*",
+		"@maleo/inngest": "workspace:*",
+		"@maleo/media": "workspace:*",
+		"@maleo/shared": "workspace:*",
+		"@maleo/stock": "workspace:*",
+		"@maleo/storage": "workspace:*",
+		"@mastra/core": "1.71.0",
+		"@mastra/inngest": "1.10.0",
+		"@mastra/mcp": "2.1.0",
+		"@mastra/pg": "1.27.1",
+		"@modelcontextprotocol/sdk": "^1.29.0",
+		"hono": "^4.6.0",
+		"inngest": "^4.21.0",
+		"yaml": "^2.6.0",
+		"zod": "^3.25.0",
+		"zod-to-json-schema": "^3.25.2"
+	},
+	"devDependencies": {
+		"@types/bun": "latest",
+		"typescript": "^5.6.0"
+	}
+}

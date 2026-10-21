@@ -1,0 +1,430 @@
+/* The reference library, entity editor, scene cast and per-scene speakers. */
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer feature {
+	/* ── Reference Library (asset manager) ── */
+	/* `.btn-danger` moved to app/styles/controls.css with the rest of the merged
+   button. A cluster sheet may only style its own cluster, and after the merge
+   this was a `cv-` sheet painting `.btn`. */
+	/* Card = single click target (opens detail modal); no inline action buttons. */
+
+	.cv-libnotes {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.cv-libnote-row.cv-libnote-btn {
+		padding: var(--s-2) var(--s-2-5);
+		align-items: flex-start;
+		width: 100%;
+		text-align: left;
+		font-family: inherit;
+		cursor: pointer;
+	}
+	.cv-libnote-btn:focus-visible {
+		outline: none;
+		box-shadow: inset var(--focus-ring);
+	}
+	.cv-lib-usedinline {
+		margin-left: var(--s-1-5);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.cv-libpanel-actions {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		margin-left: auto;
+	}
+
+	/* ════════════════════════════════════════════════════════════════════════════
+   Reference library (consolidated)
+
+   One component, three layout modes, identical operations. The tier accent is
+   load-bearing rather than decorative: an entity the project has not selected
+   cannot be cast into a scene, so the three scopes have to be readable at a
+   glance instead of inferred from which panel you happen to be in.
+   ════════════════════════════════════════════════════════════════════════════ */
+	.cv-reflib {
+		--tier-accent: var(--border);
+		gap: var(--s-2-5);
+	}
+	.cv-reflib.mode-rail {
+		padding-top: var(--s-3);
+	}
+	.cv-reflib.mode-picker {
+		border-right: 1px solid var(--border);
+	}
+
+	/* Selected references that will not render. Warn rather than danger: nothing is
+   broken yet, but a run started now stops on it. */
+	.cv-lib-unresolved {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		margin-bottom: var(--s-3);
+		padding: var(--s-2) var(--s-2-5);
+		border: 1px solid var(--warn);
+		border-radius: var(--r-2);
+		background: var(--warn-bg);
+	}
+	.cv-lib-unresolved-head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--warn);
+	}
+	.cv-lib-unresolved-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-size: var(--type-caption-size);
+	}
+	.cv-lib-unresolved-label {
+		font-weight: var(--weight-medium);
+	}
+	.cv-lib-unresolved-why {
+		color: var(--muted);
+		flex: 1;
+	}
+
+	.cv-lib-groups {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-4);
+	}
+	.cv-lib-group {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+
+	/* Card. The tier sets the left edge and the badge colour; workspace stays
+   neutral so "selected" and "cast" are the states that read as active. */
+
+	.cv-libcard-actions {
+		display: flex;
+		gap: var(--s-1-5);
+		border-top: 1px solid var(--border);
+		padding: var(--s-1) var(--s-2-5);
+	}
+	.cv-libcard-actions .cv-textbtn {
+		font-size: var(--type-micro-size);
+	}
+	.cv-libcard-actions .cv-textbtn.on {
+		color: var(--ai);
+		font-weight: var(--weight-display);
+	}
+
+	.cv-libnote-btn {
+		flex: 1;
+		min-width: 0;
+		padding: 0;
+		border: 0;
+		background: none;
+		text-align: left;
+		font-family: inherit;
+		cursor: pointer;
+	}
+
+	.cv-reflib-confirm {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		font-size: var(--type-body-size);
+		color: var(--fg-dim);
+		line-height: 1.55;
+	}
+	.cv-reflib-confirm-err {
+		font-size: var(--type-caption-size);
+		color: var(--err);
+		background: var(--err-bg);
+		padding: var(--s-2) var(--s-2-5);
+		border-radius: var(--r-1);
+	}
+
+	/* ── Entity editor ── */
+	.cv-entity-editor {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.cv-entity-editor-media {
+		display: grid;
+		grid-template-columns: 96px 1fr;
+		gap: var(--s-2-5);
+		align-items: start;
+	}
+	.cv-entity-editor-tier {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.cv-tier-badge {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		padding: var(--s-0-5) var(--s-2);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		color: var(--muted);
+	}
+	.cv-tier-badge[data-tier="project"],
+	.cv-tier-badge[data-tier="scene"] {
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.cv-entity-editor-used {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	/* The description is a generation input, so the hint carries the accent rather
+   than reading as fine print. */
+	.cv-field-hint {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		margin-top: var(--s-1);
+		font-size: var(--type-micro-size);
+		color: var(--ai);
+	}
+
+	/* ── Scene cast ── */
+	.cv-scenecast {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding: var(--s-3);
+		border-right: 1px solid var(--border);
+		overflow-y: auto;
+	}
+	.cv-scenecast-h {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+	}
+	.cv-scenecast-groups {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	.cv-scenecast-add {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		padding: var(--s-2-5);
+		border: 1px dashed var(--border-strong);
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+	}
+	.cv-scenecast-add-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+	}
+
+	/* Cast thumbs are buttons now — pressed state says "in this scene". */
+	button.cv-srefthumb {
+		position: relative;
+		width: 58px;
+		padding: 0;
+		border: 1px solid transparent;
+		border-radius: var(--r-1);
+		background: none;
+		cursor: pointer;
+		transition:
+			border-color var(--d-fast),
+			opacity var(--d-fast);
+	}
+	button.cv-srefthumb:hover {
+		border-color: var(--border-strong);
+	}
+	button.cv-srefthumb:focus-visible {
+		outline: none;
+		box-shadow: var(--focus-ring);
+	}
+	button.cv-srefthumb.on {
+		border-color: var(--ai);
+	}
+	button.cv-srefthumb.tier-workspace {
+		opacity: 0.72;
+	}
+	.cv-srefthumb-mark {
+		position: absolute;
+		top: -4px;
+		right: -4px;
+		width: 16px;
+		height: 16px;
+		border-radius: 50%;
+		border: 2px solid var(--surface);
+		background: var(--surface-tint);
+		color: var(--muted);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	button.cv-srefthumb.on .cv-srefthumb-mark {
+		background: var(--ai);
+		color: var(--on-ai);
+	}
+	.cv-srefthumb-reason {
+		display: block;
+		max-width: 58px;
+		margin-top: var(--s-0-5);
+		font-size: var(--type-micro-size);
+		line-height: 1.1;
+		color: var(--ai);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	/* Entity editor — image acquisition. An entity without a canonical image cannot
+   be cast, so generate/upload live in the form rather than a separate modal. */
+	.cv-entity-editor-media {
+		grid-template-columns: 132px 1fr;
+	}
+	.cv-entity-editor-thumb {
+		position: relative;
+	}
+	.cv-entity-editor-readonly-media {
+		display: grid;
+		place-items: center;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+		border-radius: var(--r-1);
+		color: white;
+		font-family: var(--font-display);
+		font-size: 34px;
+		font-weight: var(--weight-display);
+	}
+	.cv-entity-editor-readonly-media img {
+		display: block;
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		background: var(--surface-tint);
+	}
+	.cv-entity-editor-image {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		min-width: 0;
+	}
+	.cv-imgsource {
+		display: inline-flex;
+		padding: var(--s-0-5);
+		gap: var(--s-0-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		align-self: flex-start;
+	}
+	.cv-imgsource button {
+		padding: var(--s-0-5) var(--s-2-5);
+		border: 0;
+		border-radius: var(--r-pill);
+		background: none;
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		cursor: pointer;
+		transition:
+			background var(--d-fast),
+			color var(--d-fast);
+	}
+	.cv-imgsource button:hover {
+		color: var(--fg);
+	}
+	.cv-imgsource button.on {
+		background: var(--surface);
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+		box-shadow: var(--shadow-1);
+	}
+	.cv-imgsource button:focus-visible {
+		outline: none;
+		box-shadow: var(--focus-ring);
+	}
+	.cv-field-hint-dim {
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		line-height: 1.45;
+	}
+	.cv-entity-editor-err {
+		font-size: var(--type-caption-size);
+		color: var(--err);
+		background: var(--err-bg);
+		padding: var(--s-1-5) var(--s-2-5);
+		border-radius: var(--r-1);
+	}
+
+	/* Per-scene speakers. A speaker is an audio identity, so it sits with the
+   voiceover rather than in the reference library. */
+	.cv-scenespeakers {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		margin-top: var(--s-1-5);
+	}
+	.cv-scenespeakers-h {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.cv-scenespeakers-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+	}
+	.cv-chiptoggle {
+		padding: var(--s-0-5) var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-pill);
+		background: var(--surface);
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		cursor: pointer;
+		transition:
+			border-color var(--d-fast),
+			background var(--d-fast),
+			color var(--d-fast);
+	}
+	.cv-chiptoggle:hover {
+		border-color: var(--border-strong);
+		color: var(--fg);
+	}
+	.cv-chiptoggle:focus-visible {
+		outline: none;
+		box-shadow: var(--focus-ring);
+	}
+	.cv-chiptoggle.on {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+		color: var(--ai);
+		font-weight: var(--weight-strong);
+	}
+	.cv-libnote-actions {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+
+	/* The image-provider picker in editor settings, and the warning it shows when
+   the media worker is not configured. Moved out of styles/components.css:
+   `editor-settings.tsx` is the only markup that carries them. */
+}

@@ -1,0 +1,385 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The lanes and the clips drawn in them: the shared lane grid, clip fills by kind, waveforms, thumbnail strips and the pending-media badge. */
+
+	/* Tracks read as ONE shared grid: no per-lane card border/radius — rows are
+   separated by a single horizontal rule and the per-second column lines run
+   continuously through every row. */
+	.tl2-lane {
+		position: relative;
+		height: var(--tl2-row-h);
+		background: var(--surface);
+		border-bottom: 1px solid var(--border);
+		cursor: default;
+	}
+	.tl2-lane-empty {
+		position: absolute;
+		left: 10px;
+		top: 50%;
+		transform: translateY(-50%);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1) var(--s-2);
+		border-radius: var(--r-pill);
+		border: 1px dashed var(--border-strong);
+		background: none;
+		color: var(--muted);
+		font-family: inherit;
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		cursor: default;
+		pointer-events: none;
+	}
+
+	/* Inset comes down with the lane — 5px top and bottom leaves almost nothing on a
+   26px free lane. Keyed off the same base/free split the heights use. */
+	.tl2-lane:not([data-lane-base]) {
+		--tl2-clip-inset: 2px;
+	}
+	.tl2-clip {
+		position: absolute;
+		top: var(--tl2-clip-inset, 5px);
+		bottom: var(--tl2-clip-inset, 5px);
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		padding: 0 var(--s-2);
+		box-sizing: border-box;
+		border-radius: var(--tl2-clip-r);
+		border: 1px solid var(--border-strong);
+		background: var(--surface);
+		cursor: grab;
+		overflow: hidden;
+		text-align: left;
+		transition:
+			box-shadow var(--d-fast),
+			border-color var(--d-fast),
+			transform var(--d-fast);
+		/* Browser-level virtualization: skip painting clips scrolled off-screen on
+     long timelines (50+ clips) without changing the absolute-by-time layout.
+     contain-intrinsic-size keeps scrollbar/geometry stable when skipped. */
+		content-visibility: auto;
+		contain-intrinsic-size: auto 36px;
+	}
+
+	.tl2-clip:hover {
+		border-color: var(--ai-border);
+	}
+	.tl2-clip.on {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected), var(--shadow-1);
+		z-index: 3;
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline) .tl2-lane {
+		--tl2-studio-clip-color: var(--clip-video);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		.tl2-lane:nth-child(6n + 2 of .tl2-lane) {
+		--tl2-studio-clip-color: var(--clip-text);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		.tl2-lane:nth-child(6n + 3 of .tl2-lane) {
+		--tl2-studio-clip-color: var(--clip-audio);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		.tl2-lane:nth-child(6n + 4 of .tl2-lane) {
+		--tl2-studio-clip-color: var(--clip-data);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		.tl2-lane:nth-child(6n + 5 of .tl2-lane) {
+		--tl2-studio-clip-color: var(--clip-image);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		.tl2-lane:nth-child(6n + 6 of .tl2-lane) {
+		--tl2-studio-clip-color: var(--clip-effect);
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline) .tl2-lane > .tl2-clip {
+		background: color-mix(in oklch, var(--tl2-studio-clip-color) 48%, var(--surface));
+		border-left: 3px solid var(--tl2-studio-clip-color);
+	}
+	.tl2-clip.gen {
+		opacity: 0.7;
+	}
+	.tl2-clip.over {
+		border-color: var(--ai);
+		transform: translateY(-2px);
+	}
+	.tl2-clip-video:active {
+		cursor: grabbing;
+	}
+	/* Audio clips read as colored chips so the track type is obvious at a glance. */
+	.tl2-clip-text .tl2-clip-ic {
+		color: oklch(0.52 0.13 75);
+	}
+	/* A text clip is its FILL and nothing else — no kind tag, no content, because
+   the lane declares the kind and a 20px lane clipped the label to illegibility
+   anyway. That makes the fill the only thing distinguishing text from motion,
+   so the two must not share it: they did, and dropping the labels without this
+   would have made a motion clip and a text clip identical. Both read from the
+   `--clip-*` tokens the gutter icons are tinted with, so lane and clip agree. */
+	.tl2-clip.tl2-clip-text {
+		background: var(--clip-text);
+		border-color: color-mix(in oklch, var(--clip-text) 66%, black);
+	}
+	/* A caption clip is the one text-bearing clip whose words are its content, so
+   it keeps one line of them, clipped, on a lane tall enough to read it. */
+	.tl2-clip.tl2-clip-caption {
+		background: var(--clip-caption);
+		border-color: color-mix(in oklch, var(--clip-caption) 66%, black);
+		color: #fff;
+		overflow: hidden;
+	}
+	.tl2-clip-caption .tl2-clip-label {
+		display: block;
+		min-width: 0;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		flex: 1 1 auto;
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		padding-inline: var(--s-1);
+	}
+	.tl2-clip.tl2-clip-motion {
+		background: var(--clip-motion);
+		border-color: color-mix(in oklch, var(--clip-motion) 66%, black);
+	}
+	.tl2-clip.tl2-clip-text .tl2-clip-textbody,
+	.tl2-clip.tl2-clip-motion .tl2-clip-textbody {
+		background: transparent;
+	}
+
+	/* ── Clip-first timeline: generic layers, compact clips, transition edges ── */
+	.tl2-lane-free {
+		background: var(--surface);
+	}
+	.tl2-lane-free.drop {
+		box-shadow:
+			inset 0 2px 0 0 oklch(0.62 0.16 150),
+			inset 0 -1px 0 0 oklch(0.62 0.16 150 / 0.4);
+	}
+	/* Magnetic snap line (gray) shown while dragging a clip to a boundary/edge. */
+	.tl2-snapline {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: var(--muted);
+		opacity: 0.8;
+		z-index: 6;
+		pointer-events: none;
+	}
+	/* Marquee box-select rectangle. */
+	.tl2-marquee {
+		z-index: 250;
+		border: 1px solid var(--ai);
+		background: var(--ai-bg);
+		opacity: 0.5;
+		pointer-events: none;
+		border-radius: 2px;
+	}
+	.tl2-lane-hint {
+		position: absolute;
+		left: 12px;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		font-style: normal;
+		pointer-events: none;
+		padding: var(--s-1) var(--s-2);
+		border: 1px dashed var(--border-strong);
+		border-radius: var(--r-pill);
+	}
+	/* A typed empty lane says what it is FOR. It is the only identity signal that
+   survives when the lane holds nothing: height, clip colour and clip icon all
+   need a clip. Quieter and tighter than the trailing lane's invitation, because
+   it sits on a 20px row and is a label rather than a prompt. */
+	.tl2-lane-hint.ghost {
+		left: 8px;
+		padding: 1px var(--s-1-5);
+		font-size: var(--type-micro-size);
+		letter-spacing: 0.04em;
+		border-style: dashed;
+		border-color: color-mix(in oklch, var(--border-strong) 60%, transparent);
+		opacity: 0.75;
+	}
+	/* Video (scene reel + b-roll): thumbnails fill the clip, so the type reads
+   from the solid left edge + border hue. */
+	.tl2-clip-video {
+		border-color: color-mix(in oklch, var(--clip-video) 45%, transparent);
+	}
+	/* Data callouts (infographics). */
+	.tl2-clip-data {
+		background: var(--clip-data);
+		border-color: color-mix(in oklch, var(--clip-data) 72%, black);
+		cursor: grab;
+	}
+	.tl2-clip-audio.tl2-clip-compact {
+		background: var(--clip-audio);
+		border-color: color-mix(in oklch, var(--clip-audio) 72%, black);
+		cursor: grab;
+	}
+	/* Solid fills need light content: labels, icons, and waveform bars go white. */
+	.tl2-clip-text,
+	.tl2-clip-data,
+	.tl2-clip-effect,
+	.tl2-clip-audio.tl2-clip-compact {
+		color: #fff;
+	}
+	.tl2-clip-text .tl2-clip-ic,
+	.tl2-clip-data .tl2-clip-ic,
+	.tl2-clip-audio.tl2-clip-compact .tl2-clip-ic {
+		color: rgba(255, 255, 255, 0.88);
+	}
+	.tl2-clip-audio.tl2-clip-compact .tl2-wave {
+		color: rgba(255, 255, 255, 0.85);
+	}
+	/* The waveform IS the audio clip's body: full width, no reserved strip for a
+   kind label. The lane declares the kind now, so a per-clip pill repeated it and
+   spent the width the waveform needs — which matters far more on a 26px lane
+   than it did on a 42px one.
+
+   `min-height` is dropped here rather than lowered globally: the strip's 18px
+   floor is right on the stage, and wrong inside a clip that is 22px tall. */
+	.tl2-clip-audiobody .tl2-wave {
+		flex: 1;
+		min-width: 10px;
+		height: 82%;
+		min-height: 0;
+	}
+	.tl2-clip-text .tl2-clip-textbody,
+	.tl2-clip-data .tl2-clip-textbody,
+	.tl2-clip-data .tl2-clip-databody {
+		background: transparent;
+	}
+	.tl2-clip-compact {
+		padding: 0;
+		gap: 0;
+	}
+	.tl2-clip-compact.dragging {
+		opacity: 0.6;
+		z-index: 6;
+	}
+
+	/* Full-width thumbnail strip for image/video clips. */
+	.tl2-clip-strip {
+		position: relative;
+		display: block;
+		width: 100%;
+		height: 100%;
+		border-radius: inherit;
+		background-repeat: repeat-x;
+		background-position: left center;
+		background-size: auto 100%;
+	}
+	.tl2-clip-strip::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		background: linear-gradient(90deg, rgba(0, 0, 0, 0.18), transparent 35%, rgba(0, 0, 0, 0.18));
+	}
+	.tl2-clip-strip.video {
+		object-fit: cover;
+	}
+	.tl2-clip-strip.empty {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--muted);
+		background: var(--surface-tint);
+	}
+	.tl2-clip-badge {
+		position: absolute;
+		left: 6px;
+		bottom: 5px;
+		z-index: 1;
+		display: inline-flex;
+		align-items: center;
+		height: 17px;
+		padding: 0 var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: rgba(15, 15, 20, 0.72);
+		color: oklch(0.96 0.005 260);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-clip-compact .tl2-clip-body {
+		padding: 0 var(--s-2);
+	}
+
+	/* Pending media badge (docs/design-system/patterns/timeline-clip.md#pending-media-badge):
+ * an icon chip at the clip's top-right and a 2px line along its foot, clear of the
+ * resize handles, which sit on the clip's sides. */
+	.tl2-clip-upload {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		pointer-events: none;
+	}
+	.tl2-clip-upload-icon {
+		position: absolute;
+		top: 3px;
+		right: 6px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 17px;
+		min-width: 17px;
+		border-radius: var(--r-pill);
+		background: rgba(15, 15, 20, 0.72);
+		color: oklch(0.96 0.005 260);
+	}
+	.tl2-clip-upload[data-upload-phase="failed"] .tl2-clip-upload-icon,
+	.tl2-clip-upload[data-upload-phase="interrupted"] .tl2-clip-upload-icon {
+		color: var(--err);
+		background: var(--err-bg);
+	}
+	.tl2-clip-upload-line {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 2px;
+		background: var(--ai);
+		transform-origin: left center;
+		transform: scaleX(var(--upload-progress, 1));
+		transition: transform var(--d-med) ease-out;
+	}
+	.tl2-clip-upload[data-upload-phase="processing"] .tl2-clip-upload-line {
+		animation: tl2-upload-sweep 1.2s ease-in-out infinite;
+		transform: scaleX(0.3);
+	}
+	@keyframes tl2-upload-sweep {
+		from {
+			transform: translateX(-30%) scaleX(0.3);
+		}
+		to {
+			transform: translateX(100%) scaleX(0.3);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tl2-clip-upload[data-upload-phase="processing"] .tl2-clip-upload-line {
+			animation: none;
+			transform: none;
+			opacity: 0.6;
+		}
+	}
+	.tl2-clip-compact .tl2-clip-upload-line {
+		display: none;
+	}
+
+	.tl2-trans-pill {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		padding: var(--s-0-5) var(--s-1);
+		border-radius: 5px;
+		background: var(--ai);
+		color: #fff;
+	}
+}

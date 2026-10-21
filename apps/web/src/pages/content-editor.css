@@ -1,0 +1,9 @@
+@layer feature {
+	/* Centred in the space the editor will fill, while the engine loads or after it failed. */
+	.editor-engine-gate {
+		display: grid;
+		place-items: center;
+		min-block-size: 100dvh;
+		padding-inline: var(--s-4);
+	}
+}

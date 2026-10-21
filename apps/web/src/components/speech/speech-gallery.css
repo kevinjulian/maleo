@@ -1,0 +1,138 @@
+/* The speech gallery's row list.
+ *
+ * The toolbar, empty state, error and pager are the image gallery's
+ * (images-gallery.css) — the two galleries are deliberately the same surface with
+ * a different body. Only the body is here.
+ *
+ * A row rather than a tile because a clip has no thumbnail: what identifies it is
+ * the text it speaks, which needs a line of prose rather than a square. */
+
+@layer feature {
+	.spk-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: var(--s-2);
+	}
+
+	.spk-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+	}
+
+	.spk-row:hover {
+		border-color: var(--fg-dim);
+	}
+
+	.spk-play {
+		flex-shrink: 0;
+		width: 34px;
+		height: 34px;
+		display: grid;
+		place-items: center;
+		border: 1px solid var(--border);
+		border-radius: 50%;
+		background: var(--bg);
+		color: var(--fg);
+		cursor: pointer;
+	}
+
+	.spk-play:hover:not(:disabled) {
+		border-color: var(--fg);
+	}
+	.spk-play:focus-visible {
+		outline: 2px solid var(--border-focus);
+		outline-offset: 2px;
+	}
+	/* A clip whose file never landed. Dimmed rather than removed, so the row still
+   accounts for a synthesis that was billed. */
+	.spk-play:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+
+	.spk-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	/* Two lines, then ellipsis. A voiceover can be a paragraph, and letting it set
+   the row height would turn the list into a wall of prose. */
+	.spk-text {
+		margin: 0;
+		font-size: var(--type-body-size);
+		line-height: 1.4;
+		color: var(--fg);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.spk-meta {
+		margin-top: var(--s-0-5);
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+
+	/* Separator drawn in CSS so the markup carries no punctuation of its own. */
+	.spk-dot::before {
+		content: "·";
+		margin-right: var(--s-2);
+	}
+
+	.spk-dur {
+		font-variant-numeric: tabular-nums;
+	}
+
+	.spk-actions {
+		display: flex;
+		gap: var(--s-1);
+		flex-shrink: 0;
+	}
+
+	.spk-act {
+		width: 28px;
+		height: 28px;
+		display: grid;
+		place-items: center;
+		border: 1px solid transparent;
+		border-radius: var(--r-1);
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+	}
+
+	.spk-act:hover {
+		color: var(--fg);
+		border-color: var(--border);
+	}
+	.spk-act:focus-visible {
+		outline: 2px solid var(--border-focus);
+		outline-offset: 1px;
+	}
+	.spk-act.on {
+		color: var(--accent, var(--fg));
+	}
+
+	@media (max-width: 560px) {
+		.spk-row {
+			gap: var(--s-2);
+			padding: var(--s-2);
+		}
+		.spk-actions {
+			flex-direction: column;
+		}
+	}
+}

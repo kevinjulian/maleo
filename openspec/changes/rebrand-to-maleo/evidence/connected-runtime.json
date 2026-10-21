@@ -1,0 +1,13 @@
+{
+	"durableMediaGeneration": true,
+	"syntheticProvider": "sandbox",
+	"convertedExistingProject": true,
+	"credentialAndWorkspaceSecretReads": true,
+	"migrationChecksumsUnchanged": true,
+	"managedMediaBytesUnchanged": true,
+	"accountSignIn": true,
+	"maleoApiKey": true,
+	"desktopAndPhoneEditor": true,
+	"durableEditDispatch": true,
+	"externalProvidersCalled": false
+}

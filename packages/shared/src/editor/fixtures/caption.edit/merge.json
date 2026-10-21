@@ -1,0 +1,309 @@
+{
+	"scope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				},
+				{
+					"id": "caption:2",
+					"type": "caption",
+					"startSec": 3,
+					"durationSec": 1,
+					"track": 1,
+					"caption": {
+						"text": "Again",
+						"words": [],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"command": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "merge",
+			"ids": ["caption:1", "caption:2"]
+		}
+	},
+	"expectedScope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 3,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!\nAgain",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.9375
+							},
+							{
+								"text": "world!",
+								"startSec": 0.9375,
+								"endSec": 2.0625
+							},
+							{
+								"text": "Again",
+								"startSec": 2.0625,
+								"endSec": 3
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "estimated"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": true,
+							"style": false
+						},
+						"revision": 1,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 1,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedInverse": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "restore",
+			"ids": ["caption:1", "caption:2"],
+			"entries": [
+				{
+					"index": 0,
+					"clip": {
+						"id": "caption:1",
+						"type": "caption",
+						"startSec": 1,
+						"durationSec": 2,
+						"track": 1,
+						"caption": {
+							"text": "Hello\nworld!",
+							"words": [
+								{
+									"text": "Hello",
+									"startSec": 0,
+									"endSec": 0.8
+								},
+								{
+									"text": "world!",
+									"startSec": 1,
+									"endSec": 2
+								}
+							],
+							"provenance": {
+								"origin": "recognized",
+								"wordTimingOrigin": "recognized"
+							},
+							"sources": [],
+							"protection": {
+								"text": false,
+								"timing": false,
+								"segmentation": false,
+								"style": false
+							},
+							"revision": 0,
+							"groupId": "g",
+							"status": "current"
+						}
+					}
+				},
+				{
+					"index": 1,
+					"clip": {
+						"id": "caption:2",
+						"type": "caption",
+						"startSec": 3,
+						"durationSec": 1,
+						"track": 1,
+						"caption": {
+							"text": "Again",
+							"words": [],
+							"provenance": {
+								"origin": "recognized",
+								"wordTimingOrigin": "recognized"
+							},
+							"sources": [],
+							"protection": {
+								"text": false,
+								"timing": false,
+								"segmentation": false,
+								"style": false
+							},
+							"revision": 0,
+							"groupId": "g",
+							"status": "current"
+						}
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedRestored": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				},
+				{
+					"id": "caption:2",
+					"type": "caption",
+					"startSec": 3,
+					"durationSec": 1,
+					"track": 1,
+					"caption": {
+						"text": "Again",
+						"words": [],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	}
+}

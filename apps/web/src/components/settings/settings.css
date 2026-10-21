@@ -1,0 +1,587 @@
+/* Cascade layer: feature. The order is declared in src/app/index.html, so this
+ * sheet can be imported by the module that owns it — the bundler decides where
+ * it lands and the layer decides which rule wins. */
+@layer feature {
+	.settings-card {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		padding: var(--s-4);
+		margin-bottom: var(--s-4);
+	}
+	.settings-card-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--s-3);
+		margin-bottom: var(--s-3);
+	}
+	.settings-card-head h2 {
+		margin: 0;
+		font-size: var(--type-body-size);
+	}
+	.settings-card-head p {
+		margin: var(--s-1) 0 0;
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+
+	.credits-page {
+		display: grid;
+		gap: var(--s-3);
+	}
+	/* A grid item's minimum is its content, so a wide table inside one widened the
+   page instead of scrolling. */
+	.credits-page > * {
+		min-width: 0;
+	}
+	.credits-tabs {
+		width: fit-content;
+		max-width: 100%;
+		flex-wrap: wrap;
+		margin-bottom: var(--s-1);
+	}
+	/* The table scrolls inside its own region; the page does not. Focusable, so
+   the keyboard can scroll it too. */
+	.credits-table-scroll {
+		overflow-x: auto;
+	}
+	.credits-table-scroll:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.credits-balance-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--s-2-5);
+	}
+	.credits-metric {
+		display: grid;
+		gap: var(--s-1-5);
+		padding: var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+	}
+	.credits-metric span {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		font-weight: var(--weight-display);
+	}
+	.credits-metric b {
+		font-family: var(--font-body);
+		font-size: var(--type-subsection-size);
+		color: var(--fg);
+		font-weight: var(--weight-display);
+	}
+	.credits-metric em {
+		font-style: normal;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+	.credits-bar {
+		height: 5px;
+		overflow: hidden;
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+	}
+	.credits-bar i {
+		display: block;
+		height: 100%;
+		max-width: 100%;
+		border-radius: inherit;
+		background: var(--fg);
+	}
+	.credits-table td {
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+	}
+	/* Rows stay on one line; the region scrolls. Squeezed into 280px a date broke
+   over four lines and every row was four lines tall. */
+	.credits-table th,
+	.credits-table td {
+		white-space: nowrap;
+	}
+	.credits-negative {
+		color: var(--err);
+	}
+	.credits-positive {
+		color: var(--ok);
+	}
+	.credits-policy {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--s-2) var(--s-4);
+		max-width: 460px;
+		padding: var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+	}
+	.credits-policy span {
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+	}
+	.credits-policy b {
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+		color: var(--fg);
+	}
+
+	/* The .env keys. One card per key, at every width — see env-table.tsx for why this
+   is not a table. */
+	.settings-env-keys {
+		display: grid;
+		gap: var(--s-3);
+	}
+
+	.settings-env-key {
+		display: grid;
+		gap: var(--s-2);
+		padding: var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+	}
+
+	.settings-env-key-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-3);
+	}
+
+	/* Keys are long and unbreakable at word boundaries, so break anywhere rather than
+   forcing the card wider than the viewport. */
+	.settings-env-key-name {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		color: var(--fg);
+	}
+	.settings-env-key-current {
+		overflow-wrap: anywhere;
+	}
+
+	.settings-env-key-field {
+		display: grid;
+		gap: var(--s-1);
+	}
+	.settings-env-key-field input {
+		min-width: 0;
+	}
+
+	@media (max-width: 760px) {
+		.credits-balance-grid {
+			grid-template-columns: 1fr;
+		}
+		.settings-card-head {
+			flex-direction: column;
+		}
+	}
+
+	/* ─── Provider settings ──────────────────────────────────────────────────────
+ *
+ * Direction: the app's neutral editor surface — panel on ground, near-black
+ * ink, hairline rules, Space Grotesk throughout with tabular figures for
+ * anything machine-shaped. Nothing invented; the point is to commit to it.
+ *
+ *   Settings                                    (shared Page + PageHeader)
+ *   [Usage] [Capabilities] [Security & Privacy]
+ *   ──────────────────────────────────────────  the tab row's own baseline
+ *   capability │ provider │ setup
+ *
+ * NOTHING IS SELECTED BY FILLING IT IN. Active state is ink — weight, colour, and
+ * a 2px rule — never a background. A filled control competes with the content it
+ * points at, and this surface is almost entirely navigation pointing at one form.
+ *
+ * THE DETAIL IS NOT A CARD. It sits on the page ground like everything else; the
+ * divider under the tabs and the hairline beside the provider list already say
+ * where each region begins. A bordered card inside a bordered layout is one box
+ * too many. */
+
+	/* ─── Section tabs. The divider IS this row's baseline. ─── */
+
+	.settings-tabs {
+		display: flex;
+		gap: var(--s-5);
+		border-bottom: 1px solid var(--border);
+		margin-bottom: var(--s-5);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.settings-tabs::-webkit-scrollbar {
+		display: none;
+	}
+
+	.settings-tab {
+		position: relative;
+		flex-shrink: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		padding: 0 0 var(--s-3);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		color: var(--muted);
+		transition: color 140ms var(--ease);
+	}
+	.settings-tab:hover {
+		color: var(--fg);
+	}
+	.settings-tab.active {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+	}
+	/* Sits ON the divider, so the tab row and the rule are one object. */
+	.settings-tab.active::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1px;
+		height: 2px;
+		background: var(--fg);
+	}
+	.settings-tab:focus-visible {
+		outline: 2px solid var(--border-focus);
+		outline-offset: 2px;
+	}
+
+	/* Prose. NOT `.mono`, which is a label class and uppercases everything it
+   touches — every sentence given it came out shouting. */
+
+	/* ─── Three columns: what it does, what can do it, how it is set up ─────────
+ *
+ * Separated by hairlines, not by cards. A bordered card per column would read as
+ * three equal things competing; these are a sequence, and a rule is enough to
+ * say where one ends. */
+
+	.settings-cols {
+		display: grid;
+		gap: var(--s-5);
+		grid-template-columns: 1fr;
+	}
+
+	/* Every column says what it is. One component draws these so three columns
+   cannot drift into three heading treatments. */
+	.settings-col-title {
+		margin: 0 0 var(--s-3);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+	}
+
+	@media (min-width: 1000px) {
+		.settings-cols {
+			/* The provider column pays 40px to its own divider (margin + padding), so
+		   the declared width is not the usable width — at 248 a long provider
+		   (self-hosted TTS)" wrapped mid-phrase. */
+			grid-template-columns: 168px 280px minmax(0, 1fr);
+			gap: 0;
+			/* Equal-height columns: with each hugging its own content the dividing
+		   rules stopped wherever the shorter column ended, reading as underlines
+		   that ran out rather than as dividers. */
+			align-items: stretch;
+		}
+		.settings-col-providers,
+		.settings-col-detail {
+			border-left: 1px solid var(--border);
+			padding-left: var(--s-5);
+			margin-left: var(--s-5);
+		}
+		.settings-col-detail {
+			min-height: 340px;
+		}
+
+		/* Security has no middle column: a topic and its detail. */
+		.settings-cols-2 {
+			grid-template-columns: 232px minmax(0, 1fr);
+		}
+	}
+
+	/* Narrow: one column at a time, the one at the current level. */
+	@media (max-width: 999px) {
+		.settings-cols[data-level="2"] .settings-col-providers,
+		.settings-cols[data-level="2"] .settings-col-detail,
+		.settings-cols[data-level="3"] .settings-col-caps,
+		.settings-cols[data-level="3"] .settings-col-detail,
+		.settings-cols[data-level="4"] .settings-col-caps,
+		.settings-cols[data-level="4"] .settings-col-providers {
+			display: none;
+		}
+
+		/* Security drills like capabilities: the topic list, then one topic, with a
+	   way back. Showing both at once left no route back to the list. */
+		.settings-cols-2[data-level="2"] .settings-col-caps {
+			display: block;
+		}
+	}
+
+	/* ─── Rows: one line each ─── */
+
+	.settings-rows {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+	}
+
+	.settings-rows li:last-child .settings-row {
+		border-bottom: none;
+	}
+
+	/* Wrap at spaces, never mid-word: `overflow-wrap: anywhere` rendered
+   "Sandbox (local mock)" as "Sandbo / x (local mock)", which reads as a
+   rendering fault rather than as a long label. */
+	.settings-row-label {
+		min-width: 0;
+		overflow-wrap: normal;
+		word-break: normal;
+		line-height: 1.35;
+	}
+
+	/* In the provider column the row is two lines: name, then readiness on the left
+   and the default marker on the right. Side by side with the name they competed
+   for the column and the longer names lost, wrapping mid-phrase. */
+	.settings-col-providers .settings-row {
+		grid-template-columns: auto minmax(0, 1fr);
+		grid-template-areas: "dot label" ". meta";
+		gap: var(--s-0-5) var(--s-3);
+		align-items: center;
+	}
+	.settings-col-providers .settings-row .settings-dot {
+		grid-area: dot;
+	}
+	.settings-col-providers .settings-row .settings-row-label {
+		grid-area: label;
+	}
+	.settings-row-meta {
+		grid-area: meta;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-3);
+	}
+	/* The one provider actually in use. Set apart from readiness because they answer
+   different questions: what CAN serve, and what DOES. */
+	.settings-row-default {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--ok);
+	}
+	.settings-row-state {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.settings-row-state.active {
+		color: var(--ok);
+	}
+
+	/* ─── Readiness ─── */
+
+	.settings-dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		display: inline-block;
+	}
+	.settings-dot-ok {
+		background: var(--ok);
+	}
+	.settings-dot-err {
+		background: var(--err);
+	}
+	/* Absence, not alarm: a hollow ring so a fresh install does not read as six
+   failures. */
+	.settings-dot-idle {
+		background: transparent;
+		box-shadow: inset 0 0 0 1.5px var(--border-strong);
+	}
+
+	/* ─── Panes ─── */
+
+	.settings-provider-list .settings-pane-head {
+		margin-bottom: var(--s-3);
+	}
+	.settings-provider-list .settings-pane-head h2 {
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+	}
+	.settings-provider-list .settings-pane-head p {
+		display: none;
+	}
+
+	.settings-pane-head {
+		margin-bottom: var(--s-5);
+	}
+	.settings-pane-head h2 {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-strong);
+		letter-spacing: -0.01em;
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+	}
+	.settings-pane-head p {
+		margin: var(--s-1) 0 0;
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		line-height: 1.6;
+	}
+
+	/* `.settings-empty` and `.settings-error` were a colour each on a paragraph that
+   is already a Note. They are `tone="muted"` and `tone="error"` now, and the
+   error ones gained the `role="alert"` a reported failure needs. */
+
+	.settings-back {
+		display: none;
+		border: none;
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+		padding: 0 0 var(--s-4);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+	}
+	.settings-back:hover {
+		color: var(--fg);
+	}
+	/* Only needed where the provider column is not on screen beside the setup. */
+	@media (max-width: 999px) {
+		.settings-back {
+			display: block;
+		}
+	}
+
+	.settings-setup,
+	.settings-security {
+		animation: settings-enter 180ms var(--ease-out) both;
+	}
+	.settings-setup-error {
+		margin-bottom: var(--s-3);
+	}
+	@keyframes settings-enter {
+		from {
+			opacity: 0;
+			transform: translateY(3px);
+		}
+		to {
+			opacity: 1;
+			transform: none;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.settings-setup,
+		.settings-security {
+			animation: none;
+		}
+		.settings-tab,
+		.settings-row {
+			transition: none;
+		}
+	}
+
+	/* ─── Generated setup form ─── */
+
+	/* The generated form is the shared form pattern: `.form`, `.form-label`,
+   `.form-optional` and `.form-actions` in app/styles/controls.css.
+   `.settings-form-field` was 3.4's interim home for what `.settings-field` had
+   been carrying, and it is gone — the measure and the rhythm belong to the form,
+   and the `input`/`select` appearance belonged to the control primitives all
+   along. Rendering `Input` and `SelectInput` here means this form's fields get
+   the invalid and disabled states task 3.2 gave every other one, instead of a
+   private copy of the focus ring. */
+	.settings-field-clear {
+		justify-self: start;
+		border: none;
+		background: none;
+		padding: 0;
+		color: var(--muted);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		cursor: pointer;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	.settings-field-clear:hover {
+		color: var(--err);
+	}
+
+	.settings-test {
+		margin-top: var(--s-3);
+	}
+	.settings-test.ok {
+		color: var(--ok);
+	}
+	.settings-test.err {
+		color: var(--err);
+	}
+
+	.settings-activate {
+		margin-top: var(--s-5);
+		padding-top: var(--s-4);
+		border-top: 1px solid var(--border);
+	}
+	.settings-active-note {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+		color: var(--ok);
+		font-size: var(--type-label-size);
+		text-transform: none;
+		letter-spacing: 0;
+	}
+	.settings-active-note::before {
+		content: "";
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--ok);
+	}
+
+	/* ─── Security ─── */
+
+	/* One topic is open at a time and the pane head already names it, so the block
+   is a group of controls rather than a titled card. */
+	/* `.settings-block` was the form pattern under another name — a column of
+   content with a gap and a measure, plus `justify-items: start` so its button
+   would not stretch. All three are `.form` now, the last of them as a rule
+   rather than a workaround. */
+
+	.settings-newkey {
+		display: grid;
+		gap: var(--s-2);
+		width: 100%;
+	}
+	.settings-newkey-value {
+		display: block;
+		padding: var(--s-3);
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-radius: var(--r-1);
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+		overflow-wrap: anywhere;
+		user-select: all;
+	}
+	.settings-shadowed {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: var(--s-0-5);
+		font-family: var(--font-body);
+		color: var(--err);
+	}
+	.settings-raw {
+		width: 100%;
+	}
+}

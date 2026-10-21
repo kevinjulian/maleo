@@ -1,0 +1,454 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The All Media, settings and stock panels, the right-click menu they share,
+   the captions config panel and the global style picker. The scene editor
+   drawer is in scene-drawer.css. */
+
+	/* ── All Media quick-create row ── */
+
+	/* ── Settings / All Media / Stock panels ── */
+	.fc-set {
+		display: flex;
+		flex-direction: column;
+	}
+	.fc-mediagrid {
+		margin-top: var(--s-2);
+	}
+	/* The two halves of the project's media: what the render consumes, and what is
+   staged. The heading carries the count because "Ready to place · 0" never
+   renders — an empty section is omitted, so a visible heading always has items. */
+	.fc-media-sec + .fc-media-sec {
+		margin-top: var(--s-4);
+	}
+	.fc-media-sec-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		margin: 0;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+	}
+	.fc-media-sec-h span {
+		padding: 1px var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		letter-spacing: 0;
+	}
+	/* Right-click context menu */
+	.fc-ctx-scrim {
+		position: fixed;
+		inset: 0;
+		z-index: 320;
+	}
+	.fc-ctx {
+		position: fixed;
+		z-index: 321;
+		min-width: 188px;
+		padding: var(--s-1);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		box-shadow: var(--shadow-3);
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+	}
+	.fc-ctx-item {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-2) var(--s-2-5);
+		border: none;
+		background: none;
+		border-radius: var(--r-1);
+		font-family: inherit;
+		font-size: var(--type-caption-size);
+		color: var(--fg);
+		cursor: pointer;
+		text-align: left;
+		text-decoration: none;
+		transition: background var(--d-fast);
+	}
+	.fc-ctx-item svg {
+		color: var(--muted);
+		flex-shrink: 0;
+	}
+	.fc-ctx-item:hover:not(:disabled) {
+		background: var(--surface-tint);
+	}
+	.fc-ctx-item:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+	.fc-ctx-item.danger {
+		color: var(--err);
+	}
+	.fc-ctx-item.danger svg {
+		color: var(--err);
+	}
+	.fc-ctx-sep {
+		height: 1px;
+		background: var(--border);
+		margin: var(--s-1) var(--s-0-5);
+	}
+	.fc-stock {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	.fc-stock-tabs {
+		display: flex;
+		gap: var(--s-1);
+		background: var(--surface-tint);
+		border-radius: var(--r-pill);
+		padding: var(--s-0-5);
+	}
+	.fc-stock-tab {
+		flex: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1);
+		padding: var(--s-1-5);
+		border: none;
+		border-radius: var(--r-pill);
+		background: none;
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.fc-stock-tab.on {
+		background: var(--surface);
+		color: var(--fg);
+		box-shadow: var(--shadow-1);
+	}
+	/* Source and author on the result itself. It had no rule at all, so inside the
+ * old fixed-ratio cell it fell below the image and was clipped away: the links
+ * existed and could not be seen. */
+	.ui-media-card .fc-stock-attribution {
+		position: absolute;
+		inset: auto 0 0 0;
+		padding: var(--s-3) var(--s-1) var(--s-1);
+		background: linear-gradient(transparent, color-mix(in srgb, var(--media-bg) 70%, transparent));
+		color: var(--on-media);
+		font-size: var(--type-micro-size);
+		line-height: 1.25;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ui-media-card .fc-stock-attribution a {
+		color: inherit;
+	}
+	.fc-stock-credit {
+		margin: var(--s-0-5) 0 0;
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		text-align: center;
+	}
+	.fc-musiclist {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	.fc-music {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		padding: var(--s-2-5);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-music-head {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: var(--s-2);
+	}
+	.fc-music-id {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.fc-music-id b {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fc-music-id span {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-music-add {
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1) var(--s-2);
+		border-radius: var(--r-pill);
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--fg-dim);
+		font-family: inherit;
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		cursor: pointer;
+		transition: all var(--d-fast);
+		white-space: nowrap;
+	}
+	.fc-music-add:hover:not(:disabled) {
+		border-color: var(--ai);
+		color: var(--ai);
+	}
+	.fc-music-add.saved {
+		color: oklch(0.55 0.13 150);
+		border-color: oklch(0.6 0.13 150 / 0.4);
+		cursor: default;
+	}
+	.fc-music-meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+		align-items: center;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.fc-music-tag {
+		padding: var(--s-0-5) var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		font-family: var(--font-body);
+	}
+	.fc-music-audio {
+		width: 100%;
+	}
+	/* The header is the row's drag handle — the scrub bar below it is a range
+   input, and a draggable ancestor would swallow the drag that seeks it. */
+	.fc-music-head.draggable {
+		cursor: grab;
+	}
+	.fc-music-head.draggable:active {
+		cursor: grabbing;
+	}
+
+	/* Video/audio cells in All Media */
+
+	/* ── Captions config panel ── */
+	.fc-cap {
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+	.fc-cap-desc {
+		margin: 0;
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+		color: var(--muted);
+	}
+	/* `.fc-cap-field` was `.tl2-field` byte for byte; both are `.field` now, in
+   app/styles/controls.css. */
+	/* Checkbox variant: label + control on one row (pacing device toggles). Still
+   local, because putting the control beside its label is this form's choice. */
+	/* Global Style reference picker */
+	.fc-style-sel {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+	}
+	.fc-style-lbl {
+		flex: 1;
+		min-width: 0;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fc-style-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: var(--s-1-5);
+		max-height: 220px;
+		overflow-y: auto;
+	}
+	.fc-style-card {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		padding: var(--s-1);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		cursor: pointer;
+		text-align: left;
+		font-family: inherit;
+		transition: border-color var(--d-fast);
+	}
+	.fc-style-card:hover {
+		border-color: var(--border-strong);
+	}
+	.fc-style-card.on {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected);
+	}
+	.fc-style-card-lbl {
+		font-size: var(--type-micro-size);
+		color: var(--fg-dim);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.fc-style-none {
+		aspect-ratio: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+		color: var(--muted);
+	}
+	.tl2-panel-inline {
+		max-width: 420px;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2, 10px);
+		background: var(--surface);
+		overflow: hidden;
+	}
+	.tl2-panel-inline [data-slot="panel-header"] {
+		display: none;
+	}
+
+	/* ── Style panel ── */
+	.fc-style-preset {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		padding: var(--s-3);
+		border-bottom: 1px solid var(--border-subtle);
+	}
+
+	/* Where a value came from. Quiet by default — inherited is the normal case and should
+   not compete with the rows that differ; `on` marks what the project owns. */
+
+	.fc-style-modal-body {
+		display: grid;
+		gap: var(--s-3);
+	}
+	.fc-bg-current {
+		display: grid;
+		grid-template-columns: 32px minmax(0, 1fr) auto;
+		gap: var(--s-2);
+		align-items: center;
+	}
+	.fc-bg-preview {
+		width: 32px;
+		height: 32px;
+		border-radius: var(--r-1);
+		border: 1px solid var(--border-strong);
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+	}
+	.fc-bg-group {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding: var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+	}
+	.fc-bg-group-h {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+	}
+	.fc-bg-group-h b {
+		min-width: 24px;
+		padding: var(--s-0-5) var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		text-align: center;
+	}
+	.fc-bg-grid {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: var(--s-1-5);
+	}
+	.fc-bg-swatch {
+		aspect-ratio: 1.65;
+		min-height: 28px;
+		border: 1px solid transparent;
+		border-radius: var(--r-1);
+		cursor: pointer;
+		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
+		transition:
+			transform var(--d-fast),
+			border-color var(--d-fast),
+			box-shadow var(--d-fast);
+	}
+	.fc-bg-swatch:hover {
+		transform: translateY(-1px);
+		border-color: var(--border-strong);
+	}
+	.fc-bg-swatch.on {
+		border-color: var(--ai);
+		box-shadow:
+			var(--ring-selected),
+			inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+	}
+	/* The caption properties are PropertyRows; this stacks them. */
+	.fc-cap-presets {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--s-2);
+	}
+	.fc-cap-preset {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		padding: var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.fc-cap-preset.on {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected);
+	}
+	.fc-cap-preview {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 38px;
+		border-radius: var(--r-1);
+		font-weight: var(--weight-display);
+		font-size: var(--type-body-size);
+	}
+	.fc-cap-presetlbl {
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		text-align: center;
+	}
+}

@@ -1,0 +1,186 @@
+/* Cascade layer: feature. Declared in src/app/index.html. */
+@layer feature {
+	/* The phone's Editor | Chat views. See phone-workspace.tsx.
+
+   Above the breakpoint the wrapper and its one layer are `display: contents`,
+   so the desktop composition lays out exactly as if they were absent. */
+	.cv-phonews:not(.is-phone),
+	.cv-phonews:not(.is-phone) > .cv-phonews-layer {
+		display: contents;
+	}
+
+	.cv-phonews.is-phone {
+		flex: 1;
+		min-height: 0;
+		display: grid;
+		grid-template-rows: auto minmax(0, 1fr);
+		grid-template-columns: minmax(0, 1fr);
+	}
+	/* The image and text workspaces sit in a page column whose height is not
+   bounded, so they claim the viewport below the topbar themselves. */
+	.cv-phonews--page.is-phone {
+		flex: none;
+		height: calc(100dvh - var(--cv-top));
+	}
+
+	.cv-phonews-bar {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-1-5) var(--s-2-5);
+		background: var(--surface);
+		border-bottom: 1px solid var(--border);
+	}
+	.cv-phonews-tabs {
+		display: inline-grid;
+		grid-template-columns: 1fr 1fr;
+		padding: var(--s-0-5);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+	}
+	.cv-phonews-tab {
+		min-width: 76px;
+		min-height: 36px;
+		padding: 0 var(--s-3);
+		border: 0;
+		border-radius: calc(var(--r-2) - 2px);
+		background: none;
+		color: var(--fg-dim);
+		font: inherit;
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		cursor: pointer;
+	}
+	.cv-phonews-tab[aria-selected="true"] {
+		background: var(--surface);
+		color: var(--fg);
+		box-shadow: 0 1px 2px var(--border-strong);
+	}
+	.cv-phonews-tab:focus-visible,
+	.cv-phonews-run:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: 1px;
+	}
+
+	/* A pointer to Chat, not a second feed: one line, coloured by state. */
+	.cv-phonews-run {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		min-width: 0;
+		min-height: 36px;
+		margin-left: auto;
+		padding: 0 var(--s-2-5);
+		border: 1px solid var(--ai-border);
+		border-radius: var(--r-pill);
+		background: var(--ai-bg);
+		color: var(--ai);
+		font: inherit;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		cursor: pointer;
+	}
+	.cv-phonews-run > span {
+		display: inline-flex;
+	}
+	.cv-phonews-run[data-state="input"] {
+		border-color: var(--warn);
+		background: var(--warn-bg);
+		color: var(--warn);
+	}
+	.cv-phonews-run[data-state="failed"] {
+		border-color: var(--err);
+		background: var(--err-bg);
+		color: var(--err);
+	}
+
+	/* Both views share one cell. The hidden one keeps its box, so the editor's
+   geometry and the chat's scroll offset are where they were on return. No
+   transition: switching is a change of view, not motion worth animating. */
+	.cv-phonews.is-phone > .cv-phonews-layer {
+		grid-row: 2;
+		grid-column: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		background: var(--bg);
+	}
+	.cv-phonews.is-phone > .cv-phonews-layer:not([data-active]) {
+		visibility: hidden;
+	}
+	.cv-phonews.is-phone > .cv-phonews-layer:focus {
+		outline: none;
+	}
+	.cv-phonews--page.is-phone > .cv-phonews-editor {
+		overflow-y: auto;
+	}
+	.cv-phonews.is-phone > .cv-phonews-chat {
+		background: var(--surface);
+	}
+	/* A short view — the keyboard up, or a phone on its side — cannot spare the
+   panel's title row, which repeats the tab already selected. It goes, so the
+   decision and the composer keep the room; the audit it also holds returns
+   with the height. */
+	@media (max-height: 480px) {
+		.cv-phonews-chat [data-slot="panel-header"] {
+			display: none;
+		}
+	}
+	/* A pinned decision may take at most a share of what the view has left, so the
+   composer under it stays on screen when the keyboard shrinks the viewport. */
+	.cv-phonews-chat .fc-pinned {
+		max-height: 36dvh;
+	}
+}
+
+@layer feature {
+	/* A phone on its side has width to spare and no height: the switch moves to a
+   narrow column at the start, so the stage and timeline keep every row. */
+	@media (max-height: 480px) and (orientation: landscape) {
+		.cv-phonews.is-phone {
+			grid-template-rows: minmax(0, 1fr);
+			grid-template-columns: auto minmax(0, 1fr);
+		}
+		.cv-phonews.is-phone > .cv-phonews-layer {
+			grid-row: 1;
+			grid-column: 2;
+		}
+		.cv-phonews-bar {
+			flex-direction: column;
+			align-items: stretch;
+			padding: var(--s-1-5);
+			border-bottom: 0;
+			border-right: 1px solid var(--border);
+		}
+		.cv-phonews-tabs {
+			grid-template-columns: 1fr;
+		}
+		.cv-phonews-tab {
+			min-width: 64px;
+			padding: 0 var(--s-2);
+		}
+		.cv-phonews-run {
+			max-width: 76px;
+			margin: 0;
+			padding: var(--s-1-5) var(--s-2);
+			flex-direction: column;
+			border-radius: var(--r-2);
+			white-space: normal;
+			text-align: center;
+			font-size: var(--type-label-size);
+		}
+	}
+}
+
+@layer feature {
+	/* The indicator's spinner is the only motion the switch owns; it stops with
+   the rest of chat's (see `.fc-run .cv-spin` in chat-workspace.css). */
+	@media (prefers-reduced-motion: reduce) {
+		.cv-phonews-run .cv-spin {
+			animation: none;
+		}
+	}
+}

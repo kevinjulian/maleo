@@ -1,0 +1,119 @@
+/* Cascade layer: chrome. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer chrome {
+	/* The command palette overlay.
+
+   Two definitions of .palette-overlay and .palette: the first is the earlier,
+   plainer treatment and the second overrides it. Both are kept here in order —
+   the second is what renders. */
+	/* Command palette */
+	.palette-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.4);
+		display: grid;
+		place-items: start center;
+		padding-top: var(--s-16);
+		z-index: var(--z-palette);
+	}
+	.palette {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		width: 100%;
+		max-width: 600px;
+		box-shadow: var(--shadow-3);
+		overflow: hidden;
+	}
+
+	/* ─── Command palette ─── */
+	.palette-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.65);
+		backdrop-filter: blur(10px);
+		z-index: var(--z-palette);
+		display: grid;
+		align-items: flex-start;
+		justify-items: center;
+		padding-top: 14vh;
+	}
+	.palette {
+		width: min(580px, 92vw);
+		background: var(--surface);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-3);
+		overflow: hidden;
+	}
+	.palette-input {
+		width: 100%;
+		padding: var(--s-5) var(--s-6);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-medium);
+		letter-spacing: -0.01em;
+	}
+	.palette-section {
+		padding: var(--s-2-5) var(--s-4) var(--s-1-5);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		font-weight: var(--weight-strong);
+	}
+	.palette-results {
+		max-height: 50vh;
+		overflow-y: auto;
+		padding: var(--s-1-5);
+	}
+	.palette-item {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-2-5) var(--s-3);
+		border-radius: var(--r-1);
+		cursor: pointer;
+		transition: background var(--d-fast) var(--ease);
+	}
+	.palette-item.focused {
+		background: var(--surface-tint);
+	}
+	.palette-item-icon {
+		width: 28px;
+		height: 28px;
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+		display: grid;
+		place-items: center;
+		font-size: var(--type-body-size);
+		flex-shrink: 0;
+	}
+	.palette-item-body {
+		flex: 1;
+		min-width: 0;
+	}
+	.palette-item-title {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-medium);
+		color: var(--fg);
+	}
+	.palette-item-sub {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		margin-top: 1px;
+	}
+	.palette-item-kbd {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		padding: var(--s-0-5) var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--bg);
+	}
+	.palette-empty {
+		padding: 40px;
+		text-align: center;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+	}
+}

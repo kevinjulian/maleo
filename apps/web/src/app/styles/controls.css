@@ -1,0 +1,621 @@
+/* Cascade layer: chrome. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer chrome {
+	/* The controls the app composes screens out of: buttons, cards, badges,
+   pills, chips, tabs, the avatar, the modal, the toast, and the loading and
+   empty states.
+
+   Several selectors are defined twice. That is not tidy, but the second
+   definition is the one that wins and screens depend on the merged result, so
+   both stay, in their original order, in this one file. Splitting a pair
+   across sheets would change which one wins. */
+	.kbd {
+		display: inline-block;
+		padding: var(--s-0-5) var(--s-1-5);
+		border-radius: 3px;
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--fg);
+	}
+
+	/* Button paint, variants, states and touch floor live in design-system/components/
+   button.tsx. Contextual rules below only lay buttons out, and select them by
+   `[data-slot="button"]`; none of them changes how a button looks.
+   `.active` is the pressed look a few call sites still toggle by hand, until
+   they become Toggle. */
+	[data-slot="button"].active {
+		outline: 1.5px solid var(--ai);
+	}
+
+	/* Contextual adjustments, gathered from the six cluster sheets that each made
+   their own. They live here because the census asks one question of a class —
+   is every sheet that defines it global? — and while these sat in cluster
+   sheets the answer for `.btn` was no. It read as a leak, and it was one: six
+   clusters reaching into a shared primitive.
+
+   Prefixed selectors in a global sheet look backwards, and are the lesser evil:
+   the alternative is the primitive being redefined in six places nobody reading
+   `.btn` would think to check. All are layout; the search field's repaint was
+   removed once its buttons declared `variant="primary"`.
+
+   `.cv-libpanel-actions-embedded` was never closed where it lived, and had
+   swallowed the whole `.cv-materials-*` block through CSS nesting. See the note
+   in create-content.css. */
+	[data-slot="button"].cv-render-active .cv-spin {
+		border-color: rgba(255, 255, 255, 0.35);
+		border-top-color: #fff;
+	}
+	.cv-libpanel-actions-embedded [data-slot="button"] {
+		width: 100%;
+		justify-content: center;
+	}
+	.fc-cap-trace [data-slot="button"] {
+		flex-shrink: 0;
+	}
+	.tl2-motion-preset-row > [data-slot="button"] {
+		flex: 1;
+		justify-content: flex-start;
+	}
+	/* 760px, which is the storyboard sheet's own breakpoint and one of the thirteen
+   the responsive decision in task 1.3 retires. Preserved exactly on the move;
+   changing it here would hide a reflow change inside a census fix. */
+	@media (max-width: 760px) {
+		.sb-author-actions [data-slot="button"],
+		.sb-author-assist [data-slot="button"] {
+			min-height: 40px;
+		}
+	}
+
+	/* Legacy button compatibility */
+	button.primary,
+	.primary {
+		background: var(--dark);
+		color: var(--dark-fg);
+		border: 1px solid var(--dark);
+		border-radius: var(--r-1);
+		padding: var(--s-2) var(--s-3);
+		font-size: var(--type-body-size);
+		cursor: pointer;
+		font-family: inherit;
+	}
+	button.primary:hover,
+	.primary:hover {
+		background: #1a1a3a;
+	}
+	button.ghost,
+	.ghost {
+		background: var(--surface);
+		color: var(--fg);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		padding: var(--s-2) var(--s-3);
+		font-size: var(--type-body-size);
+		cursor: pointer;
+		font-family: inherit;
+	}
+	button.ghost:hover,
+	.ghost:hover {
+		background: var(--surface-tint);
+	}
+	button.danger,
+	.danger {
+		background: var(--err);
+		color: white;
+		border: 1px solid var(--err);
+		border-radius: var(--r-1);
+		padding: var(--s-2) var(--s-3);
+		font-size: var(--type-body-size);
+		cursor: pointer;
+		font-family: inherit;
+	}
+	button.danger:hover,
+	.danger:hover {
+		background: #9c2f23;
+	}
+	button.ok {
+		/* buttons only: the bare `.ok` arm painted every element with a state class named `ok`, credit chips included */
+		background: var(--ok);
+		color: white;
+		border: 1px solid var(--ok);
+		border-radius: var(--r-1);
+		padding: var(--s-2) var(--s-3);
+		font-size: var(--type-body-size);
+		cursor: pointer;
+		font-family: inherit;
+	}
+	button.ok:hover {
+		background: #146d3a;
+	}
+	button.ghost,
+	button.ok,
+	button.danger,
+	button.primary {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+	}
+	button:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	/* The collection pattern: the chrome around a list of things.
+ *
+ * `.card` used to be here — a surface, a border, `--s-6` of padding and a
+ * shadow — and NOTHING rendered it. Meanwhile three surfaces had written their
+ * own: `.collection-card` + `.collection-card-row` in the library, `.pl-card` and
+ * `.pl-row` in presets (rule for rule the same as the catalog pair), and
+ * `.gal-tile` in the galleries. A shared class nobody uses beside three local
+ * copies of it is the census's whole point.
+ *
+ * So the dead one is deleted and the real one takes its place, under the name
+ * that says what it is part of. Rows rather than an open grid, because every
+ * collection in this app is a list of one-line records; a surface that needs a
+ * tile grid declares that itself. */
+	.collection-card {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		overflow: hidden;
+	}
+	/* One record. `overflow: visible` so a menu opened from inside a row is not
+   clipped by the card that holds it. */
+	.collection-card-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-3) var(--s-4);
+		overflow: visible;
+	}
+	.collection-rows {
+		display: grid;
+		grid-template-columns: minmax(0, 720px);
+		gap: var(--s-2);
+	}
+
+	/* The controls above a collection: search, filters, a scope switch.
+ *
+ * Two arrangements, one rhythm. `.catalog-toolbar` stacked its search over its
+ * group chips and `.collection-toolbar` put its filters in a row, at different bottom
+ * margins; the arrangement is a real difference and the 4px was not. */
+	.collection-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-3);
+		margin: 0 0 var(--s-4);
+	}
+	/* The query takes the free width; each filter keeps its own, up to a
+	 * measure, and the row wraps before the search gets cramped. */
+	.collection-toolbar:not(.collection-toolbar-stack) > [data-slot="search-field"] {
+		flex: 1 1 260px;
+	}
+	.collection-toolbar > [data-slot="select"] {
+		max-width: var(--measure-filter);
+	}
+	.collection-toolbar-stack {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	/* The Pager under a paged collection: the range at the start, the
+	 * directions at the end, wrapping under each other on a phone. */
+	.collection-pager {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-3);
+		margin-top: var(--s-4);
+	}
+	.collection-pager-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.collection-pager-count {
+		color: var(--fg-dim);
+		font-size: var(--type-caption-size);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Nothing to show — and the same treatment whether that is because the
+   collection is empty, filtered to nothing, or still loading.
+ *
+ * Four spellings before this: `EmptyState`'s inline style object (invisible to
+ * every structural check, and at 13.5px), `.pl-empty` (identical, as a class),
+ * `.gal-empty` (56px padding, 14px, `--fg-dim`) and `.cat-busy`. */
+	.collection-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-12) var(--s-5);
+		text-align: center;
+		color: var(--muted);
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+	}
+	/* Some empty states say WHAT is empty before they say why — the galleries name
+   the workspace, the content list names the surface. The section-title role,
+   because that is what a heading inside a page is; it was 18px in one sheet and
+   20px inline in another. */
+	.collection-empty-title {
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		line-height: var(--type-subsection-lh);
+		letter-spacing: var(--type-subsection-track);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	/* Chip and badge recipes live in design-system/components/chip.tsx. */
+
+	/* Note — an advisory line beside a control. Text, with no box of its own.
+ *
+ * One class, where there were three. `.settings-note` (12px/1.6, 20 sites),
+ * `.tl2-dsec-note` (11px/1.5 muted, 11) and `.settings-field-warn` (err/1.6, 5)
+ * were the same paragraph differing in size and in which tone each hardcoded.
+ * `note.tsx` left this open — "converge-web-design-system owns whether 11px/1.5
+ * muted and 12px/1.6 should stay two sizes" — and the answer is one size: the
+ * caption role, which is what 12px is now called.
+ *
+ * The timeline's 11px moves to 12px. That is the intentional part, and it is
+ * the smaller half of the split by call sites.
+ *
+ * Tone is a modifier rather than a separate class, because
+ * `.settings-field-warn` was never written alone — all five of its call sites
+ * spelled it `settings-field-warn settings-note`, which is a tone that forgot
+ * to say so. */
+	/* Note and Callout are drawn by design-system/components/note.tsx. */
+
+	/* Field — a labelled control stack. The label/control/help relationship, and
+ * nothing else.
+ *
+ * One class, where there were four. `.tl2-field` (29 sites) and `.fc-cap-field`
+ * (18) were byte-identical, rule and label rule alike. `.settings-field` (1) was
+ * the same stack as a grid, plus a `max-width`, a `margin-bottom` and its own
+ * `input`/`select` styling — form layout and control appearance, neither of
+ * which is a field's job; those stay with the settings form as
+ * `.settings-form-field` until 4.2 gives the form pattern a home. `.cv-field`
+ * (33) was `display: block` and nothing else, so its callers' spacing came from
+ * whatever happened to be inside them and its label rendered at inherited 16px
+ * against everyone else's micro-label. That is the accident this fixes.
+ *
+ * The name drops its cluster prefix for the same reason `.note` and `.callout`
+ * did in 3.2: `tl2-` named the timeline, and six directories render this.
+ *
+ * The gap is `--s-2`. Both originals said 6px, which is not a step on the
+ * spacing scale — the same half-measure the type sizes had, one line down.
+ *
+ * Width, margin and grouping belong to whatever lays the fields out —
+ * `.tl2-fields`, `.tl2-fields-2` and the settings form already do it. A field
+ * that carries its own width is the mistake `settings-field` made. */
+	/* Field stack layout lives in design-system/components/field.tsx. */
+	/* The label, when the caller writes it as a bare span — which is how both
+ * `tl2-field` and `fc-cap-field` had it, as `> span`.
+ *
+ * `:not([class])` is the one part that is not a faithful port, and it is here
+ * because the port without it reached somewhere neither original did: the
+ * settings form's label carries `.settings-field-label`, a 12px/600 sentence-case
+ * FORM label, and an unscoped `> span` turned it into a mono micro-label. A span
+ * that names itself owns its own type. Whether the settings form should adopt
+ * the micro-label is a question for the form pattern in 4.2, not a side effect
+ * of this migration.
+ *
+ * A field whose head is a row — a label beside a tag or a reset control — uses
+ * its own head element and is not matched here either. */
+	.field > span:not([class]) {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--muted);
+	}
+
+	/* The form pattern: a column of fields, a measure, and the actions that commit
+ * them. What a Field deliberately does not own.
+ *
+ * Six spellings before this, and no two of them near each other: `.pl-form`
+ * (gap 10, max 480), `.ml-form` (14, 560), `.cv-form` (18, no measure),
+ * `.settings-form-field` (a `margin-bottom: 20` per field, max 520),
+ * `.settings-block` (gap 16, 560) and `.tl2-fields` (14). Four gaps and three
+ * measures for one arrangement, which is what happens when the rhythm is
+ * declared by whoever writes the next form.
+ *
+ * The rhythm is the container's gap rather than each field's bottom margin.
+ * A margin per field means the last field carries one too, so the actions row
+ * sits at field-gap plus its own top margin and no form can be spaced
+ * deliberately. */
+	.form {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-4);
+		max-width: var(--measure-form);
+		min-width: 0;
+	}
+	/* A field fills the measure; a button does not. Without this the column's
+   stretch makes a lone action as wide as the form, which reads as a banner and
+   is what `.settings-block` was working around with `justify-items: start`. */
+	.form > button {
+		align-self: flex-start;
+	}
+
+	/* The commit row. Above the fold of the form's measure, so the buttons line up
+ * with the controls they save rather than with the page. */
+	.form-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		margin-top: var(--s-2);
+		padding-top: var(--s-4);
+		border-top: 1px solid var(--border);
+		max-width: var(--measure-form);
+		flex-wrap: wrap;
+	}
+
+	/* The form label — the sentence-case one that names a control in a form, as
+ * distinct from the mono micro-label a dense panel puts above one. Both are real
+ * and 3.4 kept them apart; this is where the form's own is declared instead of
+ * living in the settings sheet as `.settings-field-label`. */
+	.form-label {
+		display: flex;
+		align-items: baseline;
+		gap: var(--s-2);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	.form-optional {
+		font-family: var(--font-body);
+		font-style: normal;
+		font-weight: var(--weight-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+
+	/* Callout — a condition that owns a block, which is what Note is not.
+ *
+ * Was `.cv-provider-warning`, a name describing one caller rather than a job;
+ * it is rendered by provider pickers, the motion editor and editor settings.
+ * Kept separate from Note on anatomy: it has a border, a fill and padding where
+ * Note is a line of text. Folding it in would need a variant that switches the
+ * box on and off, which is the variant the spec rejects. */
+	/* The marker stays for UI Inventory provenance; paint lives in the recipe. */
+
+	/* Avatar */
+	.avatar {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		display: inline-grid;
+		place-items: center;
+		font-size: var(--type-section-size);
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+		flex-shrink: 0;
+	}
+	.avatar.lg {
+		width: 80px;
+		height: 80px;
+		font-size: 36px;
+	}
+	.avatar.xl {
+		width: 120px;
+		height: 120px;
+		font-size: 54px;
+	}
+	.avatar.sm {
+		width: 28px;
+		height: 28px;
+		font-size: var(--type-body-size);
+	}
+	/* Per-persona avatar tint is data-driven: set background/color inline from
+   personaMeta (gradient + color). No per-persona CSS classes. */
+
+	/* Divider */
+	.divider {
+		height: 1px;
+		background: var(--border);
+		margin: var(--s-6) 0;
+		border: none;
+	}
+
+	/* Util */
+	.row {
+		display: flex;
+		gap: var(--s-3);
+		align-items: center;
+	}
+	.col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.between {
+		justify-content: space-between;
+	}
+	.end {
+		justify-content: flex-end;
+	}
+	.text-muted {
+		color: var(--muted);
+	}
+	.full {
+		width: 100%;
+	}
+	.dim {
+		color: var(--fg-dim);
+	}
+	.spacer {
+		flex: 1;
+	}
+
+	/* App container */
+	.app {
+		display: contents;
+	}
+
+	/* Loading / empty / error */
+	.loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--s-12);
+		gap: var(--s-3);
+		color: var(--muted);
+	}
+	.spinner {
+		width: 16px;
+		height: 16px;
+		border: 2px solid var(--border);
+		border-top-color: var(--fg);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
+	}
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	/* `.empty` and `.empty-icon` are gone. Nothing rendered either as a class of
+   its own — and `.empty` was worse than dead: the timeline writes `empty` as a
+   MODIFIER (`.tl2-clip-panel-body.empty`, `.tl2-lane.empty`), so a bare global
+   of that name reached three elements that never asked for a centred column in
+   `--muted`. The collection empty state is `.collection-empty` above, named for
+   the pattern it belongs to rather than for a state any element might be in.
+   `.empty-icon` was declared twice in this file at two sizes, and rendered
+   nowhere. */
+
+	/* Inbox filter chips */
+	.chip {
+		padding: var(--s-1) var(--s-2-5);
+		border-radius: var(--r-1);
+		border: 1px solid var(--border);
+		background: var(--surface);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		cursor: pointer;
+		color: var(--fg);
+	}
+	.chip.active {
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-color: var(--dark);
+	}
+	.chip-row {
+		display: flex;
+		gap: var(--s-2);
+		flex-wrap: wrap;
+		align-items: center;
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   SIMULATE
+   ──────────────────────────────────────────────────────────────────── */
+	.seg {
+		display: inline-flex;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+	}
+	.seg button {
+		padding: var(--s-1-5) var(--s-3);
+		border: none;
+		background: none;
+		cursor: pointer;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.seg button.active {
+		background: var(--dark);
+		color: var(--dark-fg);
+	}
+
+	.ok.big {
+		color: var(--ok);
+		font-size: var(--type-section-size);
+		font-weight: var(--weight-medium);
+	}
+
+	/* Toast */
+	.toast {
+		position: fixed;
+		bottom: var(--s-4);
+		left: 50%;
+		transform: translateX(-50%);
+		padding: var(--s-3) var(--s-5);
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-radius: var(--r-1);
+		box-shadow: var(--shadow-2);
+		z-index: 100;
+	}
+	.toast.err {
+		background: var(--err);
+	}
+
+	/* ─── Toast ─── */
+	.toast {
+		position: fixed;
+		bottom: 24px;
+		right: 24px;
+		z-index: var(--z-toast);
+		background: var(--dark);
+		color: var(--dark-fg);
+		border: 1px solid var(--dark-border);
+		border-radius: var(--r-2);
+		padding: var(--s-3) var(--s-4);
+		box-shadow: var(--shadow-3);
+		max-width: 360px;
+		font-size: var(--type-body-size);
+	}
+	.toast.ok {
+		border-left: 3px solid var(--ok);
+	}
+	.toast.err {
+		border-left: 3px solid var(--err);
+	}
+
+	/* ─── Spinner ─── */
+	.spinner {
+		width: 28px;
+		height: 28px;
+		margin: 0 auto var(--s-3);
+		border: 2px solid var(--border);
+		border-top-color: var(--dark);
+		border-radius: 50%;
+		animation: spin 800ms linear infinite;
+	}
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.dark .empty-icon {
+		opacity: 0.7;
+	}
+
+	/* ── Reject Modal ── */
+	.modal {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		padding: var(--s-6);
+		width: min(420px, 90vw);
+		box-shadow: var(--shadow-3);
+	}
+	.modal h3 {
+		margin: 0 0 var(--s-5);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-display);
+	}
+}

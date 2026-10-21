@@ -1,0 +1,43 @@
+/* Code-owned values templates reference by name. A value validation also reads
+ * lives here once; a template names it and never copies it, so the prompt and the
+ * parser cannot disagree about, say, the allowed plan kinds. */
+import {
+	DEFAULT_CAST_SUBJECT_CAP,
+	MAX_REFERENCE_IMAGES,
+	EMOTIONS,
+	EXPLAINER_TEACHING_MOVES,
+	POV_CAMERA_ROLES,
+	POV_LIFECYCLE_STAGES,
+	storyArcSpecs,
+	MAX_STORY_CLARIFICATION_OPTIONS,
+	MAX_STORY_CLARIFICATION_QUESTIONS,
+	MIN_STORY_CLARIFICATION_OPTIONS,
+	POST_RESEARCH_CLARIFICATION_STAGE,
+	STORY_CLARIFICATION_FIELDS,
+	STORY_CLARIFICATION_PURPOSE,
+	STORY_CLARIFICATION_STAGE,
+	VIDEO_PLAN_KINDS,
+} from "@maleo/shared";
+import { MAX_STORY_SHOTS_PER_SECTION } from "../content-generator-constants.ts";
+
+const CONSTANTS = {
+	MAX_STORY_CLARIFICATION_QUESTIONS,
+	MIN_STORY_CLARIFICATION_OPTIONS,
+	MAX_STORY_CLARIFICATION_OPTIONS,
+	STORY_CLARIFICATION_FIELDS,
+	STORY_CLARIFICATION_STAGE,
+	POST_RESEARCH_CLARIFICATION_STAGE,
+	STORY_CLARIFICATION_PURPOSE,
+	VIDEO_PLAN_KINDS,
+	EMOTIONS,
+	EXPLAINER_TEACHING_MOVES,
+	POV_CAMERA_ROLES,
+	POV_LIFECYCLE_STAGES,
+	MAX_STORY_SHOTS_PER_SECTION,
+	DEFAULT_CAST_SUBJECT_CAP,
+	MAX_REFERENCE_IMAGES,
+	/** Each arc's key and when it fits, in canonical arc order. */
+	STORY_ARC_SPECS: storyArcSpecs().map(({ key, fits }) => ({ key, fits })),
+};
+
+export const PROMPT_CONSTANTS: ReadonlyMap<string, unknown> = new Map(Object.entries(CONSTANTS));

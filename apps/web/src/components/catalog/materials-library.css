@@ -1,0 +1,53 @@
+/* Materials library — what is specific to this surface. The shared catalog form
+ * vocabulary it also uses lives in catalog-form.css. Extracted from 23 inline
+ * style objects; every declaration is what they set. */
+@layer feature {
+	/* `.ml-form` is `.form`: same column, at the shared gap and measure. */
+	.ml-body {
+		padding: var(--s-2) var(--s-3);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		resize: vertical;
+		min-height: 180px;
+		line-height: 1.5;
+	}
+	/* Restores a focus indicator removed by `outline: none`. See task 3.2. */
+	.ml-err-flush {
+		color: var(--err);
+		font-size: var(--type-caption-size);
+		margin: 0;
+	}
+	.ml-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 720px);
+		gap: var(--s-4);
+	}
+	.ml-lead {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		margin: 0 0 var(--s-2);
+	}
+	.ml-full {
+		width: 100%;
+	}
+	/* `.collection-rows` is `.collection-rows`. */
+	.ml-badge {
+		margin-left: var(--s-2);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		font-weight: var(--weight-medium);
+	}
+	.ml-row-sub {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		margin-top: var(--s-0-5);
+	}
+	.ml-row-path {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		margin-top: var(--s-1);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}

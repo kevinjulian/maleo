@@ -1,0 +1,284 @@
+/* The Manage → Workspace surface.
+ *
+ * Two columns on desktop — a panel nav beside the panel — collapsing to one on
+ * a phone, where a sidebar beside content leaves neither enough room.
+ *
+ * The Danger Zone is styled apart rather than merely placed last: a rule above
+ * it, an error-toned label, and the destructive block boxed in its own tinted
+ * surface. Reversible and irreversible controls sharing one visual rhythm is
+ * how the irreversible one gets clicked. */
+
+/* Cascade layer: feature. Declared in src/app/styles.css, which fixes the order
+ * once — an unlayered sheet silently outranks every layered one, which is the
+ * trap the entry sheet's header warns about. */
+@layer feature {
+	.wsm-shell {
+		display: grid;
+		grid-template-columns: 180px minmax(0, 1fr);
+		gap: var(--s-8);
+		max-width: 880px;
+		padding: var(--s-6);
+	}
+
+	@media (max-width: 720px) {
+		.wsm-shell {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--s-5);
+			padding: var(--s-4);
+		}
+	}
+
+	/* ── Panel nav ── */
+
+	.wsm-nav {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+	}
+
+	@media (max-width: 720px) {
+		/* A row of chips on a phone: a vertical nav above the content would push the
+	   panel itself below the fold on every visit. */
+		.wsm-nav {
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: var(--s-1-5);
+		}
+		.wsm-nav-danger {
+			display: contents;
+		}
+	}
+
+	.wsm-nav-item {
+		width: 100%;
+		padding: var(--s-1-5) var(--s-2-5);
+		text-align: left;
+		font-family: var(--font-body);
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+		color: var(--fg-dim);
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: var(--r-1);
+		cursor: pointer;
+		transition: all var(--d-fast) var(--ease);
+	}
+
+	.wsm-nav-item:hover {
+		background: var(--surface-hover);
+		color: var(--fg);
+	}
+
+	.wsm-nav-item.active {
+		background: var(--surface-strong);
+		color: var(--fg);
+		font-weight: var(--weight-medium);
+	}
+
+	.wsm-nav-item:focus-visible {
+		outline: 2px solid var(--border-focus);
+		outline-offset: 1px;
+	}
+
+	.wsm-nav-item.danger {
+		color: var(--err);
+	}
+
+	.wsm-nav-item.danger:hover,
+	.wsm-nav-item.danger.active {
+		background: var(--err-bg);
+		color: var(--err);
+	}
+
+	.wsm-sep {
+		margin: var(--s-2-5) 0;
+		border: 0;
+		border-top: 1px solid var(--border);
+	}
+
+	@media (max-width: 720px) {
+		/* A vertical rule between chips rather than a horizontal one across them. */
+		.wsm-sep {
+			width: 1px;
+			height: 20px;
+			margin: 0 var(--s-1);
+			border-top: 0;
+			border-left: 1px solid var(--border);
+		}
+		.wsm-nav-item {
+			width: auto;
+		}
+	}
+
+	/* ── Panel ── */
+
+	.wsm-panel {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-4);
+		min-width: 0;
+	}
+
+	.wsm-title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		line-height: var(--type-subsection-lh);
+		letter-spacing: var(--type-subsection-track);
+	}
+
+	.wsm-subtitle {
+		margin: var(--s-2) 0 0;
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-medium);
+	}
+
+	.wsm-label {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+
+	.wsm-label code {
+		font-family: var(--font-body);
+		text-transform: none;
+		color: var(--fg);
+	}
+
+	.wsm-help {
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--muted);
+	}
+
+	.wsm-note {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+	}
+
+	.wsm-muted {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+
+	.wsm-ok {
+		font-size: var(--type-caption-size);
+		color: var(--ok);
+	}
+
+	.wsm-error {
+		margin: 0;
+		padding: var(--s-2-5) var(--s-3);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--err);
+		background: var(--err-bg);
+		border: 1px solid color-mix(in srgb, var(--err) 25%, transparent);
+		border-radius: var(--r-1);
+	}
+
+	.wsm-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+	}
+
+	/* ── Lists ── */
+
+	.wsm-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.wsm-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+		padding: var(--s-2) var(--s-2-5);
+		font-size: var(--type-body-size);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+	}
+
+	.wsm-row-main {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		overflow-wrap: anywhere;
+	}
+
+	.wsm-row-sub {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+
+	.wsm-row-role {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+
+	.wsm-tag {
+		padding: 1px var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		background: var(--surface-tint);
+		border-radius: var(--r-pill);
+		white-space: nowrap;
+	}
+
+	/* ── Invite link ── */
+
+	.wsm-invite {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding: var(--s-3);
+		background: var(--surface-tint);
+		border-radius: var(--r-2);
+	}
+
+	.wsm-invite-row {
+		display: flex;
+		gap: var(--s-2);
+	}
+
+	.wsm-invite-row :is([data-slot="input"], [data-slot="textarea"]) {
+		flex: 1;
+		min-width: 0;
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+	}
+
+	/* ── Danger ── */
+
+	.wsm-danger {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		align-items: flex-start;
+		padding: var(--s-4);
+		background: var(--err-bg);
+		border: 1px solid color-mix(in srgb, var(--err) 25%, transparent);
+		border-radius: var(--r-2);
+	}
+
+	.wsm-danger .wsm-subtitle {
+		margin: 0;
+		color: var(--err);
+	}
+
+	.wsm-danger .field {
+		width: 100%;
+		max-width: 320px;
+	}
+}

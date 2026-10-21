@@ -1,0 +1,20 @@
+{
+	"count": 4168,
+	"previous": null,
+	"next": "https://freesound.org/apiv2/search/?&query=whoosh&weights=&page=2&page_size=2&fields=id,name,username,duration,previews,license",
+	"results": [
+		{
+			"id": 845298,
+			"name": "nylon_ raincoat_jacket_whoosh_09302025",
+			"license": "https://creativecommons.org/licenses/by/4.0/",
+			"duration": 23.1458,
+			"username": "Artninja",
+			"previews": {
+				"preview-hq-mp3": "https://cdn.freesound.org/previews/845/845298_10996917-hq.mp3",
+				"preview-hq-ogg": "https://cdn.freesound.org/previews/845/845298_10996917-hq.ogg",
+				"preview-lq-mp3": "https://cdn.freesound.org/previews/845/845298_10996917-lq.mp3",
+				"preview-lq-ogg": "https://cdn.freesound.org/previews/845/845298_10996917-lq.ogg"
+			}
+		}
+	]
+}

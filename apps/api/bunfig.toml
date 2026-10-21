@@ -1,0 +1,3 @@
+[test]
+# See scripts/test-db-guard.ts — keeps suites off data/maleo.db.
+preload = ["../../scripts/test-db-guard.ts"]

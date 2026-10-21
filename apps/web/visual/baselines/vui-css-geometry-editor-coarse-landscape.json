@@ -1,0 +1,89 @@
+{
+	"workspace": {
+		"x": 81,
+		"y": 53,
+		"w": 771,
+		"h": 283
+	},
+	"main": {
+		"x": 81,
+		"y": 53,
+		"w": 771,
+		"h": 283
+	},
+	"preview": {
+		"x": 81,
+		"y": 53,
+		"w": 771,
+		"h": 102
+	},
+	"preview-stage": {
+		"x": 442,
+		"y": 61,
+		"w": 49,
+		"h": 86
+	},
+	"preview-frame": null,
+	"transport": null,
+	"timecode": null,
+	"timeline": {
+		"x": 81,
+		"y": 155,
+		"w": 771,
+		"h": 181
+	},
+	"timeline-toolbar": {
+		"x": 81,
+		"y": 156,
+		"w": 771,
+		"h": 57
+	},
+	"ruler": {
+		"x": 81,
+		"y": 213,
+		"w": 771,
+		"h": 24
+	},
+	"markers": null,
+	"timeline-scroller": {
+		"x": 81,
+		"y": 213,
+		"w": 771,
+		"h": 123
+	},
+	"timeline-grid": null,
+	"rows": {
+		"x": 81,
+		"y": 213,
+		"w": 771,
+		"h": 186
+	},
+	"row": {
+		"x": 81,
+		"y": 237,
+		"w": 771,
+		"h": 42
+	},
+	"gutter": null,
+	"gutter-row": null,
+	"item": {
+		"x": 117,
+		"y": 281,
+		"w": 72,
+		"h": 19
+	},
+	"trim-start": null,
+	"trim-end": null,
+	"playhead": {
+		"x": 81,
+		"y": 213,
+		"w": 2,
+		"h": 186
+	},
+	"inspector": null,
+	"inspector-rail": null,
+	"inspector-panel": null,
+	"category-rail": null,
+	"accordion-header": null,
+	"mobile-actions": null
+}

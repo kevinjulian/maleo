@@ -1,0 +1,225 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The chat panel's credit meter and credit block, assistant prose, audit tabs and empty state, the editor workspace heading and the motion viewport. */
+
+	.fc-creditmeter {
+		display: grid;
+		grid-template-columns: auto auto auto 1fr;
+		gap: var(--s-2);
+		align-items: center;
+		padding: var(--s-1-5) var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-creditmeter span {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		color: var(--fg-dim);
+		font-weight: var(--weight-display);
+	}
+	.fc-creditmeter b {
+		color: var(--fg);
+		font-weight: var(--weight-display);
+		white-space: nowrap;
+	}
+	.fc-creditmeter em {
+		justify-self: end;
+		font-style: normal;
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.fc-creditmeter.low {
+		border-color: var(--lint-warn);
+		background: color-mix(in srgb, var(--lint-warn) 8%, var(--surface));
+	}
+	.fc-creditmeter.blocked {
+		border-color: var(--lint-high);
+		background: color-mix(in srgb, var(--lint-high) 8%, var(--surface));
+	}
+	.fc-creditblock {
+		display: grid;
+		gap: var(--s-1-5);
+		padding: var(--s-2-5);
+		border: 1px solid var(--lint-high);
+		border-radius: var(--r-2);
+		background: color-mix(in srgb, var(--lint-high) 8%, var(--bg));
+	}
+	.fc-creditblock-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.fc-creditblock-body {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+	}
+	.fc-creditblock-grid {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: var(--s-1) var(--s-3);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-creditblock-grid b {
+		color: var(--fg);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+	}
+	.fc-creditblock-actions {
+		display: flex;
+		gap: var(--s-1-5);
+		flex-wrap: wrap;
+	}
+	.fc-creditblock-actions .fc-approval-approve,
+	.fc-creditblock-actions .fc-approval-reject {
+		flex: 0 1 auto;
+		padding: var(--s-1-5) var(--s-2-5);
+		font-size: var(--type-label-size);
+	}
+
+	/* ── Assistant prose (Claude-style, no bubble) ──
+   Assistant turns read as prose on the page — an accent spark marks the voice,
+   the text flows full-width. Only the user's turn keeps a chip (ChatMessage). */
+
+	.fc-md {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		min-width: 0;
+	}
+	.fc-md-p {
+		margin: 0;
+	}
+	.fc-md-list {
+		margin: 0;
+		padding-left: var(--s-4);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+	}
+	.fc-md-list li {
+		line-height: 1.5;
+	}
+	.fc-md a {
+		color: var(--info);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	.fc-md strong {
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.fc-md-code {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		padding: 1px var(--s-1);
+		border-radius: 5px;
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+	}
+	/* Streaming line - use a spinner, not a text caret, so it reads as process state. */
+
+	/* Audit panel tab strip (Changes / Assets). */
+	.fc-audit-tabs {
+		display: flex;
+		gap: var(--s-1-5);
+		padding: var(--s-2) var(--s-2) 0;
+	}
+
+	/* Empty state — a first-run invitation instead of a blank log. */
+	.fc-empty {
+		margin: auto;
+		max-width: 320px;
+		padding: var(--s-6) var(--s-4);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		gap: var(--s-2);
+	}
+	.fc-empty-icon {
+		width: 44px;
+		height: 44px;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		background: var(--surface-tint);
+		color: var(--fg-dim);
+		border: 1px solid var(--border);
+	}
+	.fc-empty-title {
+		font-family: var(--font-display);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.fc-empty-sub {
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+		color: var(--muted);
+	}
+	.fc-empty-sub b {
+		color: var(--fg-dim);
+		font-family: var(--font-body);
+	}
+	.fc-empty-chips {
+		margin-top: var(--s-1-5);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+		justify-content: center;
+	}
+
+	/* An editor workspace's header: a title and the line under it.
+   Two blocks, not a `strong` beside a `small`. Inline elements sit on one line,
+   and at phone width the template editor's subtitle ran straight on from its
+   title — "Create timeline templateGlobal framework, …" — because the header is
+   the one place both are given at once. The package owns the header's box; what
+   goes in it is the app's. */
+	.tl2-editor-heading {
+		min-width: 0;
+	}
+	/* Compact: a back control and a title on one line. The subtitle is explanation,
+   and the viewport with the least height to spend is the wrong one to spend it
+   on. */
+	.tl2-editor-heading.is-compact {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	.tl2-editor-heading.is-compact b {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-editor-heading-back {
+		flex: 0 0 auto;
+		margin-left: -6px;
+	}
+
+	.tl2-motion-viewport {
+		position: relative;
+		overflow-x: auto;
+		min-width: 0;
+	}
+	.tl2-motion-timeline .vui-range {
+		position: absolute;
+		top: 2px;
+		bottom: 2px;
+	}
+	.tl2-motion-timeline .tl2-studio-subclip {
+		pointer-events: none;
+	}
+	.tl2-motion-timeline .tl2-keypoint {
+		pointer-events: auto;
+	}
+}

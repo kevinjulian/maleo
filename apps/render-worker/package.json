@@ -1,0 +1,28 @@
+{
+	"name": "@maleo/render-worker",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Remotion render server: job queue, local and Lambda rendering, rendered-file storage",
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "bun --env-file ../../.env --hot src/index.ts",
+		"start": "bun --env-file ../../.env src/index.ts",
+		"lambda:deploy": "bun --env-file ../../.env scripts/deploy-lambda.ts",
+		"lambda:render": "bun --env-file ../../.env scripts/render-lambda.ts",
+		"typecheck": "tsc --noEmit",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+	},
+	"dependencies": {
+		"@maleo/storage": "workspace:*",
+		"@maleo/video": "workspace:*",
+		"@remotion/bundler": "^4.0.0",
+		"@remotion/lambda": "^4.0.460",
+		"@remotion/renderer": "^4.0.0",
+		"hono": "^4.12.18",
+		"zod": "^3.23.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0"
+	}
+}

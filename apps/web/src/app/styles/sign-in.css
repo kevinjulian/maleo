@@ -1,0 +1,80 @@
+/* The sign-in screen.
+ *
+ * Its own file rather than a corner of shell.css, because it renders INSTEAD of
+ * the shell — no sidebar, no chrome, no workspace. Nothing here is shared, and
+ * nothing in shell.css applies.
+ *
+ * Every value is a token. The card is the only surface on screen, so it earns
+ * the strongest shadow in the scale; the rest is the same type and radius
+ * language as every panel in the app. */
+
+/* Cascade layer: feature. Declared in src/app/styles.css, which fixes the order
+ * once — an unlayered sheet silently outranks every layered one, which is the
+ * trap the entry sheet's header warns about. */
+@layer feature {
+	.signin-shell {
+		min-height: 100dvh;
+		display: grid;
+		place-items: center;
+		padding: var(--s-6);
+		background: var(--bg);
+		color: var(--fg);
+		font-family: var(--font-body);
+	}
+
+	.signin-card {
+		width: 100%;
+		max-width: 380px;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-4);
+		padding: var(--s-6);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-3);
+	}
+
+	.signin-title {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-section-size);
+		line-height: var(--type-section-lh);
+		letter-spacing: var(--type-section-track);
+	}
+
+	.signin-lede {
+		margin: -8px 0 var(--s-1);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--fg-dim);
+	}
+
+	/* Mono uppercase, matching the field label tier the rest of the app uses. */
+	.signin-label {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+
+	.signin-help {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+
+	.signin-error {
+		margin: 0;
+		padding: var(--s-2-5) var(--s-3);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--err);
+		background: var(--err-bg);
+		border: 1px solid color-mix(in srgb, var(--err) 25%, transparent);
+		border-radius: var(--r-1);
+	}
+
+	.signin-loading {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+}

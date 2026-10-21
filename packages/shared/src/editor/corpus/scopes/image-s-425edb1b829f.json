@@ -1,0 +1,84 @@
+{
+	"mediaAssets": [],
+	"doc": {
+		"schemaVersion": 2,
+		"clips": [],
+		"markers": [],
+		"chapters": [],
+		"projectReferences": {
+			"prompt": "",
+			"entityIds": []
+		},
+		"materials": {
+			"story": {
+				"body": "",
+				"assetIds": [],
+				"referenceSettings": [],
+				"materialId": null
+			},
+			"visual": {
+				"body": "",
+				"assetIds": [],
+				"referenceSettings": [],
+				"materialId": null
+			},
+			"voice": {
+				"body": "",
+				"assetIds": [],
+				"referenceSettings": [],
+				"materialId": null
+			},
+			"rules": {
+				"body": "",
+				"assetIds": [],
+				"referenceSettings": [],
+				"materialId": null
+			},
+			"styleBible": {
+				"body": "",
+				"locked": false
+			}
+		},
+		"captions": {
+			"enabled": true,
+			"fontFamily": "Inter",
+			"fontSize": 72,
+			"weight": "Black",
+			"italic": false,
+			"allCaps": false,
+			"style": "Standard",
+			"lines": "Single Line",
+			"chunkDuration": "1,2",
+			"maxWords": 4,
+			"maxChars": 26,
+			"maxPauseMs": 260,
+			"verticalPosition": 100,
+			"maxWidth": 86,
+			"fill": "#ffffff",
+			"activeColor": "#ffd400",
+			"stroke": "transparent",
+			"background": "transparent",
+			"shadow": "transparent",
+			"shadowOpacity": 78,
+			"shadowBlur": 18,
+			"shadowDistance": 5,
+			"shadowAngle": 90,
+			"inactiveOpacity": 55,
+			"motion": "Fade",
+			"preset": "standard"
+		},
+		"trackFlags": {}
+	},
+	"slides": [
+		{
+			"key": "s-f97168c78d6b",
+			"id": 1,
+			"cap": "s-f00e89344500",
+			"vis": "s-8ef9d9c970c5",
+			"img": false,
+			"refIds": [],
+			"noteIds": []
+		}
+	],
+	"posts": []
+}

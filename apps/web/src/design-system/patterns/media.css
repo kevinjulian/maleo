@@ -1,0 +1,216 @@
+/* MediaGrid and MediaCard. Layered, so a feature sheet can still place a card
+ * in its own surface; nothing here is geometry a caller should override. */
+@layer chrome {
+	/* One recipe for every media collection. The column floor is capped at 45%
+	 * of the grid so a phone keeps two columns instead of one enormous tile. */
+	.ui-media-grid {
+		display: grid;
+		gap: var(--s-3);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		grid-template-columns: repeat(auto-fill, minmax(min(var(--ui-media-min, 150px), 45%), 1fr));
+	}
+	.ui-media-grid[data-density="compact"] {
+		gap: var(--s-1-5);
+	}
+	.ui-media-grid[data-layout="list"] {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--s-1);
+	}
+	.ui-media-grid[data-layout="grid"] > .ui-media-card[data-layout="list"] {
+		grid-column: 1 / -1;
+	}
+
+	.ui-media-card {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		overflow: hidden;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		transition: border-color var(--d-fast);
+	}
+	.ui-media-card:hover {
+		border-color: var(--border-strong);
+	}
+	.ui-media-card[data-selected="true"] {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected);
+	}
+	.ui-media-card[draggable="true"] {
+		cursor: grab;
+	}
+	.ui-media-card[draggable="true"]:active {
+		cursor: grabbing;
+	}
+
+	/* The card's one activation. A real button when the card does something,
+	 * so the actions beside it are siblings and never nested inside it. */
+	.ui-media-main {
+		all: unset;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		min-width: 0;
+		text-align: left;
+	}
+	button.ui-media-main {
+		cursor: pointer;
+	}
+	button.ui-media-main:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: calc(-1 * var(--focus-w));
+	}
+
+	.ui-media-preview {
+		position: relative;
+		display: block;
+		overflow: hidden;
+		background: var(--surface-tint);
+	}
+	.ui-media-preview > img,
+	.ui-media-preview > video {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+	.ui-media-preview[data-fit="contain"] > img,
+	.ui-media-preview[data-fit="contain"] > video {
+		object-fit: contain;
+	}
+	.ui-media-gone {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1);
+		padding: var(--s-2);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		text-align: center;
+	}
+	.ui-media-caption {
+		position: absolute;
+		inset: auto 0 0 0;
+		padding: var(--s-3) var(--s-2) var(--s-1-5);
+		pointer-events: none;
+		background: linear-gradient(transparent, color-mix(in srgb, var(--media-bg) 70%, transparent));
+		color: var(--on-media);
+		font-size: var(--type-label-size);
+		line-height: 1.25;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ui-media-grid[data-density="compact"] .ui-media-caption {
+		padding: var(--s-3) var(--s-1) var(--s-1);
+		font-size: var(--type-micro-size);
+	}
+	.ui-media-copy {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+		padding: var(--s-2) var(--s-2-5) var(--s-2-5);
+	}
+	.ui-media-title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	/* A record's facts: a status chip, dates, a length. Each child is one fact;
+	 * a full-width child (a progress bar, a cause) takes its own line. */
+	.ui-media-meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-0-5) var(--s-3);
+		min-width: 0;
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		line-height: 1.35;
+		font-variant-numeric: tabular-nums;
+	}
+	/* A record row: activation, then its actions at the row end. The actions
+	 * wrap under the copy only when the row is too narrow to hold both. */
+	.ui-media-card[data-layout="list"] {
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+	}
+	.ui-media-card[data-layout="list"] > .ui-media-main {
+		flex: 1 1 16rem;
+	}
+	.ui-media-card[data-layout="list"] > :not(.ui-media-main, .ui-media-controls) {
+		flex: none;
+		margin: var(--s-2);
+		margin-inline-start: auto;
+	}
+	.ui-media-card[data-layout="list"] > .ui-media-controls {
+		margin-inline-start: auto;
+	}
+	.ui-media-card[data-layout="list"] .ui-media-main {
+		flex-direction: row;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-2);
+	}
+	.ui-media-card[data-layout="list"] .ui-media-preview {
+		width: var(--s-16);
+		flex: 0 0 var(--s-16);
+		border-radius: var(--r-1);
+	}
+	.ui-media-card[data-layout="list"] .ui-media-copy {
+		flex: 1;
+		padding: 0;
+	}
+	.ui-media-card[data-layout="list"] .ui-media-meta {
+		color: var(--fg-dim);
+		font-size: var(--type-caption-size);
+	}
+	.ui-media-card[data-layout="list"] .ui-media-gone {
+		font-size: var(--type-micro-size);
+		padding: var(--s-0-5);
+	}
+	.ui-media-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1);
+	}
+	.ui-media-selection {
+		display: flex;
+		margin-inline-start: auto;
+	}
+	/* Compact preview tiles retain native activation, focus and drag semantics. */
+	.ui-media-card[data-variant="picker"] {
+		border: 0;
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+	}
+	.ui-media-card[data-variant="picker"]:hover {
+		background: var(--surface-hover);
+	}
+	.ui-media-card[data-variant="picker"][data-selected="true"] {
+		box-shadow: inset 0 0 0 var(--focus-w) var(--ai);
+	}
+	.ui-media-card[data-variant="picker"] .ui-media-main {
+		min-height: var(--control-h-touch);
+	}
+	.ui-media-card[data-variant="picker"] .ui-media-preview {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		background: transparent;
+	}
+}

@@ -1,0 +1,49 @@
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it.
+ *
+ * The script VIEW's own chrome: the density switch and the line it reports a
+ * failed generation on. Separate from the table's sheet because each sheet has
+ * one owner — the table owns how a row looks, the view owns what sits around it.
+ */
+@layer feature {
+	/* Wraps: at phone width the density switch and the file actions do not fit on
+   one line, and a row that cannot wrap widened the page to 358px. */
+	.sc-density-bar {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+		justify-content: flex-end;
+		padding: var(--s-3) var(--s-4) 0;
+		max-width: 88rem;
+		margin: 0 auto;
+	}
+
+	.sc-file-actions {
+		display: inline-flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+	}
+	/* The file input is the label. A bare `<input type=file>` cannot be styled to
+ * match the controls beside it, and hiding it behind its own label is the one
+ * way to keep the row consistent without reimplementing a file picker. */
+
+	.sc-error {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--err);
+		padding: 0 var(--s-4);
+		max-width: 88rem;
+		margin: 0 auto;
+	}
+
+	/* The story arc, named once beside the density chips. Stated, never a control:
+	   the arc is chosen when the plan is made, not from the script. */
+	.sc-arc {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		align-self: center;
+		margin-right: auto;
+		padding-left: var(--s-0-5);
+	}
+}

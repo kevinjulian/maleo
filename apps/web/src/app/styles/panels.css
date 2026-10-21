@@ -1,0 +1,342 @@
+/* Cascade layer: chrome. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer chrome {
+	/* Panels and the data displays inside them: stat blocks, sparklines, the
+   reliability grid, the activity timeline rows, the composer wrapper.
+
+   Like controls.css, this holds the pairs of definitions that override each
+   other (.spark, .timeline, .composer) together and in order. */
+	/* Stat */
+	.stat {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		padding: var(--s-5);
+		box-shadow: var(--shadow-1);
+	}
+	.stat .label {
+		color: var(--muted);
+		margin-bottom: var(--s-3);
+	}
+	.stat .value {
+		font-family: var(--font-display);
+		font-size: 40px;
+		font-weight: var(--weight-medium);
+		letter-spacing: -1.2px;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+	}
+	.stat .delta {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		margin-top: var(--s-2);
+	}
+	.stat .delta.up {
+		color: var(--ok);
+	}
+	.stat .delta.down {
+		color: var(--err);
+	}
+
+	/* Persona dot — color set inline from persona meta (data-driven). */
+
+	/* Pulse */
+	.pulse {
+		position: relative;
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--ok);
+		display: inline-block;
+	}
+	.pulse::before {
+		content: "";
+		position: absolute;
+		inset: -4px;
+		border-radius: 50%;
+		background: var(--ok);
+		opacity: 0.3;
+		animation: pulse 1.8s var(--ease) infinite;
+	}
+	@keyframes pulse {
+		0% {
+			transform: scale(0.5);
+			opacity: 0.6;
+		}
+		100% {
+			transform: scale(1.6);
+			opacity: 0;
+		}
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   OVERVIEW PAGE
+   ──────────────────────────────────────────────────────────────────── */
+	.spark {
+		display: flex;
+		gap: var(--s-0-5);
+		align-items: end;
+		height: 22px;
+	}
+	.spark i {
+		display: block;
+		width: 4px;
+		background: var(--dark);
+		opacity: 0.6;
+	}
+
+	/* Approval queue summary on overview */
+	.queue {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		padding: var(--s-5);
+		box-shadow: var(--shadow-1);
+	}
+
+	/* Health */
+	.health {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		padding: var(--s-5);
+		box-shadow: var(--shadow-1);
+	}
+	.progress {
+		height: 4px;
+		background: var(--surface-tint);
+		border-radius: 2px;
+		overflow: hidden;
+	}
+	.progress > i {
+		display: block;
+		height: 100%;
+		background: var(--accent);
+	}
+
+	/* Feed */
+	.feed {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	.countdown {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--warn);
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   COMPOSER
+   ──────────────────────────────────────────────────────────────────── */
+	.composer {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-5);
+		padding: var(--s-8);
+		max-width: 1100px;
+	}
+	.log {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		padding: var(--s-3);
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-radius: var(--r-1);
+		white-space: pre-wrap;
+		overflow-x: auto;
+		max-height: 300px;
+		overflow-y: auto;
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   COMPOSER fix — avoid double padding
+   ──────────────────────────────────────────────────────────────────── */
+	.page .composer {
+		padding: 0;
+		max-width: 100%;
+	}
+
+	/* ─── Timeline (Activity tab events) ─── */
+	.timeline {
+		display: grid;
+		gap: var(--s-1-5);
+		max-height: 72vh;
+		overflow-y: auto;
+		padding-right: var(--s-2);
+	}
+	.timeline::-webkit-scrollbar {
+		width: 6px;
+	}
+	.timeline::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.timeline::-webkit-scrollbar-thumb {
+		background: var(--border);
+		border-radius: 3px;
+	}
+
+	/* ─── Composer (Social-media-style posting) ─── */
+	.composer {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		transition: border-color 200ms ease;
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   ACTIVITY TAB — content-grid + panel + spark + tl-row + reliability
+   ──────────────────────────────────────────────────────────────────── */
+	.panel {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		padding: var(--s-6);
+		box-shadow: var(--shadow-1);
+	}
+	.panel h3 {
+		font-size: var(--type-subsection-size);
+		letter-spacing: -0.2px;
+		margin: 0;
+	}
+	.panel h4 {
+		font-size: var(--type-body-size);
+		letter-spacing: -0.15px;
+		margin: 0;
+	}
+	.spark {
+		padding: var(--s-4);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		min-width: 0;
+		min-height: 130px;
+	}
+	.spark > div {
+		display: block;
+		max-width: 100%;
+		flex-shrink: 0;
+	}
+	.spark > svg {
+		display: block;
+		max-width: 100%;
+		width: 100%;
+		height: 60px;
+		flex-shrink: 0;
+		margin-top: auto;
+	}
+	.spark .l {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.spark .v {
+		font-family: var(--font-display);
+		font-size: 24px;
+		font-weight: var(--weight-medium);
+		letter-spacing: -0.48px;
+		font-variant-numeric: tabular-nums;
+		margin-top: var(--s-1);
+	}
+	.spark svg {
+		width: 100%;
+		height: 60px;
+		display: block;
+	}
+
+	.rb {
+		aspect-ratio: 1;
+		border-radius: 2px;
+		background: var(--surface-tint);
+	}
+	.rb.ok {
+		background: var(--ok);
+		opacity: 0.85;
+	}
+	.rb.dim {
+		background: var(--ok);
+		opacity: 0.35;
+	}
+	.rb.skip {
+		background: var(--surface-tint);
+	}
+	.rb.err {
+		background: var(--err);
+		opacity: 0.8;
+	}
+
+	/* Activity timeline rows (.tl-row) */
+	.timeline {
+		display: flex;
+		flex-direction: column;
+	}
+	.tl-row .t {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.tl-row .ic {
+		box-sizing: border-box;
+		width: 24px !important;
+		height: 24px !important;
+		min-width: 24px;
+		max-width: 24px;
+		min-height: 24px;
+		max-height: 24px;
+		aspect-ratio: 1 / 1;
+		flex-shrink: 0;
+		align-self: center;
+		justify-self: center;
+		border-radius: 50%;
+		background: var(--surface-tint);
+		display: inline-grid;
+		place-items: center;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		line-height: 1;
+		color: var(--fg);
+		padding: 0;
+		overflow: hidden;
+	}
+	.tl-row .ic.ok {
+		background: rgba(26, 143, 76, 0.15);
+		color: var(--ok);
+	}
+	.tl-row .ic.warn {
+		background: rgba(201, 119, 0, 0.15);
+		color: var(--warn);
+	}
+	.tl-row .ic.info {
+		background: rgba(37, 99, 235, 0.15);
+		color: var(--info);
+	}
+	.tl-row .ic.err {
+		background: rgba(192, 57, 43, 0.15);
+		color: var(--err);
+	}
+	.tl-row .msg {
+		font-size: var(--type-body-size);
+		line-height: 1.4;
+	}
+	.tl-row .msg strong {
+		font-weight: var(--weight-medium);
+	}
+
+	/* The mobile size of the stat value. It lived in the shell's responsive
+   block, which now sits in a sheet loaded before this one — an override has to
+   follow what it overrides. */
+	@media (max-width: 640px) {
+		.stat .value {
+			font-size: 32px;
+		}
+	}
+}

@@ -1,0 +1,13 @@
+node_modules
+.env
+.env.local
+.DS_Store
+*.log
+dist
+bun.lock
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+worktrees/

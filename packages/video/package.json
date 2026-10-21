@@ -1,0 +1,48 @@
+{
+	"name": "@maleo/video",
+	"version": "0.1.0",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		"./composition": "./src/exports.ts",
+		"./paths": "./src/paths.ts",
+		"./schema": "./src/schema.ts",
+		"./lib/*": "./src/lib/*.ts"
+	},
+	"scripts": {
+		"test": "vp test run --root ../.. --project video",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test",
+		"typecheck": "tsc --noEmit",
+		"dev": "bun --env-file ../../.env ./node_modules/.bin/remotion studio",
+		"build": "bun --env-file ../../.env ./node_modules/.bin/remotion bundle",
+		"lint": "tsc --noEmit",
+		"prep": "bun --env-file ../../.env scripts/prep.ts",
+		"render": "bun --env-file ../../.env ./node_modules/.bin/remotion render",
+		"render:all": "bun --env-file ../../.env scripts/render-all.ts"
+	},
+	"dependencies": {
+		"@maleo/media": "workspace:*",
+		"@maleo/shared": "workspace:*",
+		"@maleo/storage": "workspace:*",
+		"@remotion/bundler": "^4.0.0",
+		"@remotion/captions": "4.0.462",
+		"@remotion/cli": "^4.0.0",
+		"@remotion/google-fonts": "^4.0.0",
+		"@remotion/media-utils": "^4.0.0",
+		"@remotion/renderer": "^4.0.0",
+		"@remotion/shapes": "^4.0.0",
+		"@remotion/transitions": "^4.0.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"remotion": "^4.0.0",
+		"sharp": "^0.34.5",
+		"zod": "^3.23.0"
+	},
+	"devDependencies": {
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"bun-types": "latest",
+		"typescript": "^5.6.0"
+	}
+}

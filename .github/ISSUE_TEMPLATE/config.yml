@@ -1,0 +1,21 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Feature request or idea
+    url: https://github.com/kevinjulian/maleo/discussions/new?category=ideas
+    about: >
+      Propose a capability or a change in direction. Explain the problem and why
+      it matters, not the implementation.
+  - name: Question or help
+    url: https://github.com/kevinjulian/maleo/discussions/new?category=q-a
+    about: >
+      Ask about setup, providers, or how something is meant to work. Also use
+      this for behavior you cannot reproduce.
+  - name: Contributing guide
+    url: https://github.com/kevinjulian/maleo/blob/main/CONTRIBUTING.md
+    about: >
+      How to participate, what a good pull request looks like, and how releases
+      are cut.
+  - name: Report a security vulnerability
+    url: https://github.com/kevinjulian/maleo/security/advisories/new
+    about: >
+      Report privately. Do not open a public issue for a security problem.

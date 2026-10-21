@@ -1,0 +1,620 @@
+/* The editor's frame and chrome: the shell, topbar, left drawer, buttons, inputs, the centred launch/setup/generate pages and the workspace grid. */
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer feature {
+	/* The frame both editor entry points wrap `.cv-root` in. It was an identical
+   inline style object in create-content.tsx and create-form.tsx, which put a
+   viewport height outside this sheet — so the vh-to-dvh sweep could read every
+   stylesheet and still miss two of the sites it was meant to fix. */
+	.cv-shell {
+		display: flex;
+		min-height: 100dvh;
+		width: 100%;
+	}
+	.cv-root {
+		min-height: 100dvh;
+		display: flex;
+		flex-direction: column;
+	}
+
+	/* ── Topbar ── */
+
+	/* The editor mode switch is the segmented Tabs. Below 640px each tab is its
+   glyph: the label stays in the accessibility tree and leaves the screen. */
+	@media (max-width: 640px) {
+		.cv-modeseg-label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+	}
+	.cv-export-menu {
+		position: relative;
+		display: inline-flex;
+	}
+	/* On a phone the bar holds the menu, four mode tabs and this button, and they
+ * do not fit: the label goes, the name stays for a screen reader. */
+	@media (max-width: 420px) {
+		.cv-export-label {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+	}
+	.cv-export-pop {
+		position: absolute;
+		top: calc(100% + 8px);
+		right: 0;
+		z-index: 120;
+		width: 292px;
+		padding: var(--s-1-5);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		box-shadow: var(--shadow-3);
+	}
+	.cv-export-pop button {
+		width: 100%;
+		display: grid;
+		grid-template-columns: 20px minmax(0, 1fr);
+		gap: var(--s-2-5);
+		align-items: center;
+		padding: var(--s-2-5);
+		border: 0;
+		border-radius: var(--r-1);
+		background: transparent;
+		color: var(--fg);
+		text-align: left;
+		font-family: inherit;
+		cursor: pointer;
+	}
+	.cv-export-pop button:hover {
+		background: var(--surface-tint);
+	}
+	.cv-export-pop button:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+	.cv-export-pop button:disabled:hover {
+		background: transparent;
+	}
+	.cv-export-pop svg {
+		color: var(--ai);
+	}
+	.cv-export-pop span {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.cv-export-pop b {
+		font-size: var(--type-caption-size);
+	}
+	.cv-export-pop em {
+		font-style: normal;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		line-height: 1.3;
+	}
+	.cv-export-preflight {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		margin: var(--s-0-5) var(--s-0-5) var(--s-1-5);
+		padding: var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+	}
+	.cv-export-preflight-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		color: var(--fg);
+	}
+	.cv-export-preflight-h span {
+		width: 18px;
+		height: 18px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--r-pill);
+		background: var(--surface);
+	}
+	.cv-export-preflight.ready .cv-export-preflight-h span {
+		color: var(--ok);
+	}
+	.cv-export-preflight.warn .cv-export-preflight-h span {
+		color: var(--warn);
+	}
+	.cv-export-preflight.blocked .cv-export-preflight-h span {
+		color: var(--err);
+	}
+	.cv-export-preflight ul {
+		margin: 0;
+		padding-left: var(--s-4);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		line-height: 1.35;
+	}
+
+	/* Left drawer */
+	.cv-crumbs {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.cv-crumbs .cur {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+	}
+	.cv-crumb-sep {
+		display: flex;
+		opacity: 0.5;
+	}
+	@media (max-width: 720px) {
+		.cv-crumbs {
+			display: none;
+		}
+	}
+
+	/* ── Buttons ── */
+	/* `.btn` and its five variants are gone. They were the second spelling of
+ * `.btn`, which now carries the merged contract in app/styles/controls.css —
+ * including the `ai` and `danger` variants this sheet contributed. The editor's
+ * compact metrics survived the merge: they are what `.btn-sm` is now.
+ *
+ * `.cv-textbtn` and `.cv-iconbtn` stay. Neither is a `.btn` without a box:
+ * the text button has no padding box at all and carries `--ai`, and the icon
+ * button is a square with no label. Both are approved on their own contracts. */
+
+	/* One ring, from the foundation. Neither of these declared a focus style. */
+	.cv-textbtn:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+
+	/* IconButton paint and sizes live in design-system/components/icon-button.tsx. */
+	.cv-textbtn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		background: none;
+		border: none;
+		padding: var(--s-1) 0;
+		font-family: inherit;
+		font-size: var(--type-control-size);
+		font-weight: var(--weight-medium);
+		color: var(--ai);
+		cursor: pointer;
+		transition: opacity var(--d-fast);
+	}
+	/* Underline on hover, not just fade. Opacity alone is a colour-only affordance
+   — it is the same signal as the link already being `--ai`, so a reader who
+   cannot separate those two shades gets no hover feedback at all. The offset
+   keeps it off the descenders. */
+	.cv-textbtn:hover {
+		opacity: 0.7;
+		text-decoration: underline;
+		text-underline-offset: 3px;
+	}
+	.cv-textbtn:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+		text-decoration: none;
+	}
+
+	/* ── Inputs ──
+   Fields are drawn entirely by design-system/components/field-recipe.ts; `.cv-input` and
+   `.cv-select` were retired with their rules. */
+	/* `.cv-field` is gone: it was `display: block`, which is the absence of a field
+   rather than a smaller one. Its callers render `.field` now and get the stack
+   they were relying on their contents to fake.
+   The head keeps no bottom margin — the field's own gap is that space, and
+   leaving both made 13px where 7 was intended. */
+	.cv-field-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+	}
+	.cv-field-tag {
+		flex-shrink: 0;
+		padding: var(--s-0-5) var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+		color: var(--muted);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+	}
+	.cv-field-tag.required {
+		color: var(--fg-dim);
+		background: var(--surface);
+		border-color: var(--border-strong);
+	}
+
+	/* ── Centered pages (launch/setup/gen/done) ── */
+	.cv-page {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: var(--s-12) var(--s-6) 64px;
+	}
+
+	/* Launcher */
+	.cv-launch {
+		width: 100%;
+		max-width: 860px;
+	}
+	.cv-launch-head {
+		text-align: center;
+		margin-bottom: 38px;
+	}
+	.cv-mono-eyebrow {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+		margin-bottom: var(--s-2-5);
+	}
+	/* `.cv-launch-title` and `.cv-setup-title` are gone: both were the page-title
+   role written again, at 32px/600 and 23px/600 with pixel letter-spacings, on
+   pages that simply do not fit `PageHeader`'s title/lead/action anatomy. They
+   render `PageTitle` now, so a centred launcher and a page with a normal header
+   are the same title. */
+	.cv-launch-sub {
+		font-size: var(--type-body-size);
+		color: var(--muted);
+		margin-top: var(--s-2-5);
+		max-width: 460px;
+		margin-left: auto;
+		margin-right: auto;
+		line-height: 1.5;
+	}
+	.cv-type-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--s-3);
+	}
+	@media (max-width: 760px) {
+		.cv-type-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+	.cv-typecard {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--s-2-5);
+		padding: var(--s-5) var(--s-5) var(--s-5);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		cursor: pointer;
+		text-align: left;
+		transition: all var(--d-med);
+		box-shadow: var(--shadow-1);
+	}
+	.cv-typecard:hover {
+		transform: translateY(-3px);
+		box-shadow: var(--shadow-2);
+		border-color: var(--ai-border);
+	}
+	.cv-typecard:focus-visible,
+	.cv-chip:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.cv-typecard:hover {
+			transform: none;
+		}
+	}
+	.cv-typecard-ic {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border-radius: var(--r-2);
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.cv-typecard-title {
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-strong);
+		letter-spacing: -0.3px;
+	}
+	.cv-typecard-blurb {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		line-height: 1.5;
+	}
+	.cv-typecard-meta {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		margin-top: var(--s-1);
+	}
+	.cv-typecard-meta span {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.cv-bullet {
+		width: 4px;
+		height: 4px;
+		border-radius: 2px;
+		background: var(--ai);
+		opacity: 0.6;
+		flex-shrink: 0;
+	}
+	.cv-typecard-go {
+		position: absolute;
+		top: 20px;
+		right: 18px;
+		color: var(--muted);
+		transition: transform var(--d-fast);
+	}
+	.cv-typecard:hover .cv-typecard-go {
+		transform: translateX(3px);
+		color: var(--ai);
+	}
+
+	/* Setup */
+	.cv-setup {
+		width: 100%;
+		max-width: 580px;
+	}
+	.cv-setup-id {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		margin-bottom: var(--s-6);
+	}
+	.cv-setup-ic {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 42px;
+		height: 42px;
+		border-radius: var(--r-2);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		color: var(--ai);
+		flex-shrink: 0;
+		box-shadow: var(--shadow-1);
+	}
+	/* `.cv-form` is `.form`. It was the one form with no measure at all, which the
+   580px page container happened to supply. */
+	.cv-form-2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--s-4);
+	}
+	@media (max-width: 520px) {
+		.cv-form-2 {
+			grid-template-columns: 1fr;
+		}
+	}
+	.cv-chiprow {
+		display: flex;
+		gap: var(--s-1-5);
+		flex-wrap: wrap;
+	}
+	.cv-chip {
+		padding: var(--s-1-5) var(--s-3);
+		border-radius: var(--r-pill);
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--muted);
+		font-family: inherit;
+		font-size: var(--type-control-size);
+		font-weight: var(--weight-medium);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-chip:hover {
+		border-color: var(--border-strong);
+		color: var(--fg);
+	}
+	.cv-chip.on {
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-color: var(--dark);
+	}
+
+	/* Preset selection card on the creation page */
+	.cv-preset-empty {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+		width: 100%;
+		padding: var(--s-3) var(--s-3);
+		border-radius: var(--r-1);
+		border: 1px dashed var(--border-strong);
+		background: transparent;
+		color: var(--fg-dim);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-preset-empty:hover {
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	.cv-preset-empty-cta {
+		color: var(--ai);
+		font-weight: var(--weight-strong);
+		font-size: var(--type-caption-size);
+	}
+	.cv-preset-chosen {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+		padding: var(--s-3) var(--s-3);
+		border-radius: var(--r-1);
+		border: 1px solid var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.cv-preset-chosen-name {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.cv-preset-chosen-name svg {
+		color: var(--ai);
+		flex-shrink: 0;
+	}
+	.cv-preset-chosen-actions {
+		display: inline-flex;
+		gap: var(--s-3);
+		flex-shrink: 0;
+	}
+	.cv-setup-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+		margin-top: var(--s-0-5);
+	}
+	.cv-create-error {
+		margin-top: var(--s-3);
+		scroll-margin-bottom: var(--s-1);
+	}
+
+	/* Generating / Done */
+	.cv-generating {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-4);
+		padding: 60px var(--s-5);
+		min-height: 52vh;
+	}
+	.cv-gen-orb {
+		width: 66px;
+		height: 66px;
+		border-radius: 20px;
+		background: linear-gradient(140deg, var(--ai), oklch(0.55 0.18 290));
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		box-shadow: 0 8px 28px rgba(106, 90, 242, 0.4);
+		animation: cvPulse 1.6s var(--ease) infinite;
+	}
+	.cv-gen-orb.ok {
+		background: linear-gradient(140deg, #22c55e, #16a34a);
+		box-shadow: 0 8px 28px rgba(22, 163, 74, 0.4);
+		animation: none;
+	}
+	@keyframes cvPulse {
+		0%,
+		100% {
+			transform: scale(1);
+		}
+		50% {
+			transform: scale(1.06);
+		}
+	}
+	.cv-gen-title {
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-strong);
+		letter-spacing: -0.3px;
+	}
+
+	/* ── Workspace grid ── */
+	.cv-grid {
+		flex: 1;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 326px;
+		align-items: start;
+	}
+	.cv-main {
+		padding: var(--s-6) var(--s-6) var(--s-16);
+		min-width: 0;
+	}
+	.cv-rail {
+		position: sticky;
+		top: var(--cv-top);
+		height: calc(100dvh - var(--cv-top));
+		overflow-y: auto;
+		border-left: 1px solid var(--border);
+		background: var(--surface);
+	}
+	.cv-rail-scrim {
+		display: none;
+	}
+	@media (max-width: 1080px) {
+		.cv-grid {
+			grid-template-columns: 1fr;
+		}
+		.cv-rail {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			height: 100dvh;
+			width: 344px;
+			max-width: 88vw;
+			transform: translateX(100%);
+			transition: transform var(--d-med) var(--ease);
+			z-index: 130;
+			box-shadow: var(--shadow-3);
+		}
+		.cv-grid.rail-open .cv-rail {
+			transform: none;
+		}
+		.cv-grid.rail-open .cv-rail-scrim {
+			display: block;
+			position: fixed;
+			inset: 0;
+			background: rgba(0, 0, 0, 0.25);
+			z-index: 120;
+		}
+	}
+	/* On a wide screen the library is a docked rail with nothing to close; its
+   header's only action is the close control. */
+	@media (min-width: 1081px) {
+		.cv-rail-toggle {
+			display: none !important;
+		}
+		.cv-libpanel-head .ui-phead-actions {
+			display: none !important;
+		}
+	}
+}

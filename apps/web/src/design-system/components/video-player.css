@@ -1,0 +1,26 @@
+@import "@videojs/react/video/compat-skin.css" layer(chrome);
+
+@layer chrome {
+	.ui-video-player {
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		max-height: 60vh;
+		--media-font-family: var(--font-body);
+		--media-border-radius: var(--r-2);
+		--media-object-fit: contain;
+		--media-spacing: var(--s-1);
+	}
+
+	.ui-video-player:fullscreen {
+		max-height: none;
+		height: 100%;
+		aspect-ratio: auto;
+	}
+
+	@media (pointer: coarse) {
+		.ui-video-player .media-button {
+			min-width: var(--control-h-touch);
+			min-height: var(--control-h-touch);
+		}
+	}
+}

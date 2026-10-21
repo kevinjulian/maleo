@@ -1,0 +1,221 @@
+/* Cascade layer: feature. The order is declared in src/app/index.html, so this
+ * sheet wins over `chrome` wherever both style the same element.
+ *
+ * The catalog / gallery rules of the library's Products tab, moved out of
+ * styles/components.css. They arrived there in three passes and the later ones
+ * override the earlier — the base card, then the editorial restyle, then the
+ * masonry grid — so they are kept in that same order here. Splitting them apart
+ * or reordering them changes what the cards look like.
+ */
+@layer feature {
+	/* The catalogue card every library row is built from. This was an exported
+   `CSSProperties` object spread into each call site, alongside a `SEARCH` object
+   and a hand-rolled search box — kept inline at the time so an extraction could
+   be verified against unchanged baselines. That constraint is spent: this change
+   alters these surfaces on purpose, and the search box they belonged to has been
+   replaced by the shared toolbar. */
+	/* `.collection-card`, `.collection-card-row`, `.collection-rows` and `.catalog-toolbar`
+   are the collection pattern in app/styles/controls.css now — the library was
+   one of three surfaces with its own copy. */
+	/* The stack of rows a catalogue list sits in. `minmax(0, …)` rather than a
+   `max-width`, for the reason Materials needed it: an `auto` track floors at its
+   content's min-content width, and these rows carry a `white-space: nowrap`
+   summary line, so the track refuses to shrink and the page runs off a phone. */
+
+	/* The row shape several surfaces repeated: a card laid out as one line. */
+
+	/* Section heading in the voice catalogue: provider and language.
+   Rendered only when there is more than one section — a single-provider,
+   single-language list reads fine without a lone heading over it. */
+	.catalog-voice-group {
+		padding: var(--s-1-5) var(--s-0-5) 0;
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   LIBRARY TOOLBAR — search, and the group chips that combine with it
+   ──────────────────────────────────────────────────────────────────── */
+
+	/* The field is the shared SearchField; the toolbar only caps its measure. */
+	.catalog-search {
+		max-width: 360px;
+	}
+
+	/* Wraps rather than scrolls. A chip that has slid off the end of a strip is a
+   filter the operator cannot know exists, and the app clips horizontal overflow
+   instead of scrolling it. */
+	.catalog-groups {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+	}
+
+	/* ────────────────────────────────────────────────────────────────────
+   ELEMENTS CATALOGUE
+   ──────────────────────────────────────────────────────────────────── */
+	.catalog-el-groups {
+		display: grid;
+		gap: var(--s-8);
+	}
+
+	.catalog-el-group > h2 {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		margin: 0 0 var(--s-0-5);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+	}
+	.catalog-el-group > p {
+		margin: 0 0 var(--s-3);
+		color: var(--fg-dim);
+		font-size: var(--type-caption-size);
+	}
+
+	/* `auto-fill` with a `minmax` floor, so the catalogue uses the width the page
+   gives it — the old body was pinned to an editor panel's 420px column and left
+   two thirds of a desktop page empty — and drops to one column on a phone
+   instead of holding two and clipping. */
+	.catalog-el-tiles {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+		gap: var(--s-3);
+	}
+
+	.catalog-el-tile {
+		display: grid;
+		gap: var(--s-2);
+		margin: 0;
+		padding: var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2, 10px);
+		background: var(--surface);
+		min-width: 0;
+	}
+	/* 2:1, because that is the aspect the preview compositions render at. A 16:9
+   box letterboxed them and left a band of dead black under every tile, which
+   read as "the preview failed" rather than "the preview is a wide frame". */
+	.catalog-el-tile-preview {
+		overflow: hidden;
+		border-radius: var(--r-1, 8px);
+		background: #0b0b10;
+		aspect-ratio: 2 / 1;
+	}
+	/* Beats `.fc-text-preview`'s fixed 66px, which is the rail's tile height and not
+   this one's. Same layer, higher specificity. */
+	.catalog-el-tile-preview > .fc-data-preview {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+	/* A tile whose preview has not mounted yet reads as a skeleton, not as a frame
+   that rendered black. `:empty` is exactly the lazy placeholder state. */
+	.catalog-el-tile-preview:empty {
+		background: var(--surface-tint);
+	}
+
+	/* The custom-element tiles come from the editor's own block, whose grid is a
+   fixed two columns for a rail. On a page that leaves it two columns wide at
+   1440 and two columns clipped at 320, so the library scopes it to the same
+   responsive track its built-in tiles use. */
+	.catalog-el-group .fc-tiles {
+		grid-template-columns: repeat(auto-fill, minmax(min(190px, 100%), 1fr));
+	}
+	.catalog-el-tile figcaption {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.catalog-el-tile figcaption b {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-caption-size);
+		color: var(--fg);
+	}
+	.catalog-el-tile figcaption em {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-style: normal;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+
+	/* The reference detail is a Modal's body, not an overlay of its own.
+ *
+ * It was a hand-rolled one: its own fixed container at z-index 580, its own
+ * scrim, its own `role="dialog"`, and `html:has(.catalog-ref-detail)` in
+ * create-content.css standing in for a scroll lock. What it did not have was
+ * anything the one mechanism provides — no focus trap, no focus restore on
+ * close, no Escape, and no entry in the overlay stack, so it could not know it
+ * was under or over anything else. It opened from a card and the keyboard
+ * stayed on the page behind it.
+ *
+ * All of that arrives by rendering through `Modal`, which is what convergence
+ * means here: three overlays, one mechanism. Only the parts that are this
+ * surface's own content remain below — the media frame and the field list. */
+	.catalog-ref-detail {
+		display: grid;
+		gap: var(--s-3);
+	}
+	.catalog-ref-detail-media {
+		display: grid;
+		place-items: center;
+		overflow: hidden;
+		aspect-ratio: 16 / 10;
+		border-radius: var(--r-1);
+		color: white;
+		font-family: var(--font-display);
+		font-size: 34px;
+		font-weight: var(--weight-display);
+	}
+	.catalog-ref-detail-media img {
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 100%;
+		object-fit: contain;
+		background: var(--surface-tint);
+	}
+	.catalog-ref-detail-fields {
+		display: grid;
+		gap: var(--s-2);
+	}
+	.catalog-ref-detail-fields > div {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+		padding: var(--s-2) 0;
+		border-bottom: 1px solid var(--border);
+	}
+	.catalog-ref-detail-fields span {
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		letter-spacing: 0;
+	}
+	.catalog-ref-detail-fields strong,
+	.catalog-ref-detail-fields p {
+		margin: 0;
+		min-width: 0;
+		overflow-wrap: anywhere;
+		font-size: var(--type-caption-size);
+		line-height: 1.45;
+	}
+
+	/* The phone treatment is the Modal's `dock`, not a second bottom-sheet written
+   here by hand. What stays is the one thing that is this surface's own: a
+   reference image gets a squarer frame when the dialog is the width of a
+   phone. */
+	@media (max-width: 640px) {
+		.catalog-ref-detail-media {
+			aspect-ratio: 4 / 3;
+		}
+	}
+
+	@media (max-width: 640px) {
+	}
+}

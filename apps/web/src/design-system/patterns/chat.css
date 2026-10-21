@@ -1,0 +1,97 @@
+/* ChatMessage and ToolCall. Flat on purpose: in a conversation the only
+ * bordered surface is an output, so a message is a bubble or plain prose and a
+ * tool call is a line of text, not a card. */
+@layer chrome {
+	.ui-chat-msg {
+		align-self: flex-end;
+		max-width: 88%;
+		padding: var(--s-2) var(--s-3);
+		border-radius: var(--r-2);
+		border-bottom-right-radius: var(--r-1);
+		background: var(--surface-tint);
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+		overflow-wrap: anywhere;
+	}
+	.ui-chat-prose {
+		align-self: stretch;
+		display: grid;
+		grid-template-columns: 16px 1fr;
+		gap: var(--s-2);
+		max-width: 100%;
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		line-height: 1.55;
+	}
+	.ui-chat-prose > svg {
+		margin-top: var(--s-0-5);
+		color: var(--muted);
+	}
+	.ui-chat-prose[data-held] {
+		color: var(--fg-dim);
+	}
+	.ui-chat-held {
+		display: block;
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+	}
+
+	/* A message that goes somewhere: text that reads as a link, not a second bubble. */
+	.ui-chat-link {
+		all: unset;
+		cursor: pointer;
+		text-decoration: underline dashed;
+		text-underline-offset: 3px;
+	}
+	.ui-chat-link:hover {
+		text-decoration-style: solid;
+	}
+	.ui-chat-link:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+		border-radius: var(--r-1);
+	}
+
+	.ui-chat-tool {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		min-width: 0;
+	}
+	.ui-chat-tool-h {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		color: var(--fg-dim);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+	}
+	.ui-chat-tool-h .ui-spinner {
+		color: inherit;
+	}
+	.ui-chat-tool-h::first-letter {
+		text-transform: uppercase;
+	}
+	.ui-chat-tool[data-status="error"] .ui-chat-tool-h {
+		color: var(--fg);
+	}
+	.ui-chat-tool-note {
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+	}
+	.ui-chat-tool-thumbs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+	}
+	.ui-chat-tool-thumbs img {
+		width: 56px;
+		height: 56px;
+		object-fit: cover;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+	}
+}

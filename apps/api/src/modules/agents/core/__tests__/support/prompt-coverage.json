@@ -1,0 +1,52 @@
+[
+  {
+    "source": "apps/api/src/lib/story/image-director.ts",
+    "definition": "apps/api/src/lib/story/image-director-prompt-definitions.ts",
+    "owners": [
+      "closedListBlock",
+      "storyBeatVisualPrompt"
+    ]
+  },
+  {
+    "source": "apps/api/src/modules/agents/core/generated-reference.ts",
+    "definition": "apps/api/src/modules/agents/core/generated-reference-prompt-definitions.ts",
+    "owners": [
+      "canonicalReferencePrompt"
+    ]
+  },
+  {
+    "source": "apps/api/src/modules/agents/core/runtime/instructions.ts",
+    "definition": "apps/api/src/modules/agents/core/runtime/instructions-prompt-definitions.ts",
+    "owners": [
+      "COMMON",
+      "VIDEO"
+    ]
+  },
+  {
+    "source": "apps/api/src/modules/agents/core/tools/visual/create-character.ts",
+    "definition": "apps/api/src/modules/agents/core/tools/visual/create-character-prompt-definitions.ts",
+    "owners": [
+      "createCharacter"
+    ]
+  },
+  {
+    "source": "packages/media/src/generation/image-prompt.ts",
+    "definition": "packages/media/src/generation/image-prompt-prompt-definitions.ts",
+    "owners": [
+      "BASE_NEGATIVE",
+      "sentence",
+      "subjectLine",
+      "referenceUseText",
+      "referenceMap",
+      "referenceBrief",
+      "compileImagePrompt"
+    ]
+  },
+  {
+    "source": "packages/media/src/providers/codex/cli.ts",
+    "definition": "packages/media/src/providers/codex/cli-prompt-definitions.ts",
+    "owners": [
+      "buildCodexImagePrompt"
+    ]
+  }
+]

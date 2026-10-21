@@ -1,0 +1,41 @@
+{
+	"result_count": 240,
+	"page_count": 120,
+	"page_size": 2,
+	"page": 1,
+	"results": [
+		{
+			"id": "ba0ad748-2ae3-4d94-9fdb-45a6db4f4a46",
+			"title": "Coffee",
+			"indexed_on": "2020-04-06T03:27:19.464725Z",
+			"foreign_landing_url": "https://www.flickr.com/photos/14340225@N03/15724523757",
+			"url": "https://live.staticflickr.com/65535/15724523757_c69b31b5e8_b.jpg",
+			"creator": "gorekun",
+			"creator_url": "https://www.flickr.com/photos/14340225@N03",
+			"license": "by-nc",
+			"license_version": "2.0",
+			"license_url": "https://creativecommons.org/licenses/by-nc/2.0/",
+			"provider": "flickr",
+			"source": "flickr",
+			"category": null,
+			"filesize": null,
+			"filetype": null,
+			"tags": [
+				{
+					"name": "coffee",
+					"accuracy": null,
+					"unstable__provider": "flickr"
+				}
+			],
+			"attribution": "\"Coffee\" by gorekun is licensed under CC BY-NC 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-nc/2.0/.",
+			"fields_matched": ["description", "title", "tags.name"],
+			"mature": false,
+			"height": 768,
+			"width": 1024,
+			"thumbnail": "https://api.openverse.org/v1/images/ba0ad748-2ae3-4d94-9fdb-45a6db4f4a46/thumb/",
+			"detail_url": "https://api.openverse.org/v1/images/ba0ad748-2ae3-4d94-9fdb-45a6db4f4a46/",
+			"related_url": "https://api.openverse.org/v1/images/ba0ad748-2ae3-4d94-9fdb-45a6db4f4a46/related/",
+			"unstable__sensitivity": []
+		}
+	]
+}

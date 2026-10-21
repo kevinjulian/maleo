@@ -1,0 +1,357 @@
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer feature {
+	/* ONE grid for the whole page, not one per chapter.
+ *
+ * A table element per chapter would auto-size its columns independently, so the
+ * same column would land at a different width in every chapter and the page
+ * would read as broken. Declaring the tracks once here is what lets the eye run
+ * down a column across a chapter break. */
+	.sc-doc {
+		display: grid;
+		/* The three content columns are EQUAL. Unequal tracks meant no two of them
+	 * shared an edge position, so a reader scanning down the page re-found each
+	 * column at every row. The frame is capped inside its track rather than
+	 * given a narrow one, which is what buys the alignment. */
+		grid-template-columns:
+			[label] 4rem
+			[audio] 1fr
+			[visual] 1fr
+			[image] 1fr
+			[duration] 6rem;
+		align-items: start;
+		max-width: 88rem;
+		margin: 0 auto;
+		padding: 0 var(--s-4) var(--s-6);
+		font-family: var(--font-body);
+	}
+
+	/* Density is column visibility. Hiding a track rather than rendering different
+ * rows is what keeps one row template for all three. */
+	.sc-doc[data-density="outline"] {
+		grid-template-columns: [label] 4rem [name] 1fr [duration] 6rem;
+	}
+	.sc-doc[data-density="read"] {
+		grid-template-columns: [audio] minmax(0, 1fr);
+		max-width: 44rem;
+	}
+
+	.sc-head {
+		position: sticky;
+		top: var(--cv-top, 0);
+		z-index: 3;
+		display: grid;
+		grid-column: 1 / -1;
+		grid-template-columns: subgrid;
+		gap: var(--s-3);
+		padding: var(--s-2) 0;
+		background: var(--bg);
+		border-bottom: 1px solid var(--border-strong);
+	}
+	.sc-head span {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+
+	/* A chapter header spans every column: it is a boundary in the document, not a
+ * row in the table. */
+	.sc-chapter {
+		grid-column: 1 / -1;
+		text-align: center;
+		padding: var(--s-6) 0 var(--s-4);
+		border-top: 1px solid var(--border);
+	}
+	.sc-chapter:first-of-type {
+		border-top: none;
+	}
+	.sc-chapter-eyebrow {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.sc-chapter-title {
+		font-family: var(--font-display);
+		font-size: clamp(1.25rem, 1rem + 1vw, 1.75rem);
+		font-weight: var(--weight-strong);
+		margin: var(--s-1) 0 0;
+		color: var(--fg);
+	}
+	/* Writable chapter headers retain document alignment and content sizing;
+ * canonical fields own their filled surface and focus. */
+	.sc-chapter-input {
+		display: block;
+		width: min(34rem, 100%);
+		margin-inline: auto;
+		text-align: center;
+		font: inherit;
+		padding: var(--s-0-5) var(--s-2);
+		resize: none;
+		field-sizing: content;
+	}
+	textarea.sc-chapter-brief {
+		min-height: 1.6em;
+	}
+
+	.sc-chapter-brief {
+		max-width: 34rem;
+		margin: var(--s-2) auto 0;
+		color: var(--fg-dim);
+		font-size: var(--type-body-size);
+		line-height: 1.55;
+	}
+
+	.sc-row {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: subgrid;
+		gap: var(--s-3);
+		padding: var(--s-3) 0;
+		border-top: 1px solid var(--border);
+	}
+	.sc-row:hover {
+		background: var(--surface-tint);
+	}
+	.sc-row[data-current="true"] {
+		box-shadow: inset 2px 0 0 var(--accent);
+	}
+
+	.sc-label {
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		padding-top: var(--s-0-5);
+	}
+	.sc-name {
+		font-weight: var(--weight-medium);
+		color: var(--fg);
+	}
+	.sc-cell {
+		min-width: 0;
+	}
+	.sc-cue {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		margin-bottom: var(--s-1);
+	}
+	.sc-note {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		margin-bottom: var(--s-1);
+	}
+
+	/* One audio element per line, cues before the words under them. A cue is
+ * disclosure, not an edit, so it reads quieter than the narration it sits
+ * above — the weight difference is what says which one you can type into. */
+	.sc-audio-line + .sc-audio-line {
+		margin-top: var(--s-2);
+	}
+	.sc-audio-cue {
+		font-size: var(--type-body-size);
+		line-height: 1.5;
+		color: var(--fg-dim);
+	}
+	.sc-audio-kind {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	/* The measured length of a rendered asset, and where it came from. Trails its
+ * line rather than sitting on its own, because it qualifies the cue. */
+	.sc-audio-meta {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		margin-left: var(--s-1);
+		white-space: nowrap;
+	}
+	/* Runs past this row. A mark, not a sentence. */
+	.sc-audio-on {
+		display: inline-flex;
+		vertical-align: middle;
+		color: var(--muted);
+		margin-left: var(--s-0-5);
+	}
+
+	/* A voiceover the row does not own the write path for. It still reads as
+ * narration, so it keeps the prose treatment and loses only the field. */
+	.sc-audio-text {
+		font-size: var(--type-body-size);
+		line-height: 1.55;
+		color: var(--fg);
+		padding: var(--s-1) var(--s-2);
+	}
+	.sc-prose {
+		width: 100%;
+		font: inherit;
+		font-size: var(--type-body-size);
+		line-height: 1.55;
+		padding: var(--s-1) var(--s-2);
+		resize: vertical;
+		field-sizing: content;
+		min-height: 2.4em;
+	}
+	/* A field that grows with its content, up to a point. A generated visual prompt
+ * runs to a paragraph, and one of them setting the row height made a single
+ * scene stand taller than the four around it. Past the cap it scrolls, so
+ * nothing is hidden — it just stops dictating the row. */
+	.sc-prose-capped {
+		max-height: 12rem;
+		overflow-y: auto;
+	}
+
+	/* Read down this column and it is a storyboard strip — which is why the frame
+ * is a column of its own rather than part of a combined asset cell.
+ *
+ * The frame keeps its own shape and lets its height follow. What changes with
+ * orientation is the WIDTH: a portrait frame at full column width would stand
+ * nearly twice as tall as the prose beside it and turn the script into a
+ * contact sheet, so it takes half. A landscape or square one is wide and short
+ * at full width, so it takes all of it. `data-orient` is set from the decoded
+ * image — a scene records a URL, never its dimensions. */
+	.sc-image {
+		width: 100%;
+		height: auto;
+		object-fit: cover;
+		border-radius: var(--r-1);
+		background: var(--surface-strong);
+		display: block;
+	}
+	.sc-image[data-orient="portrait"] {
+		width: 50%;
+		aspect-ratio: 9 / 16;
+	}
+	.sc-image[data-orient="wide"] {
+		width: 100%;
+		aspect-ratio: auto;
+	}
+	.sc-image-empty {
+		display: grid;
+		place-items: center;
+		border: 1px dashed var(--border-strong);
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+	}
+	.sc-row[data-frame-stale="true"] .sc-image {
+		opacity: 0.45;
+	}
+
+	.sc-time {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		text-align: right;
+		line-height: 1.7;
+	}
+
+	/* Information, not an error: many rows carry it at once while writing, so a
+ * loud treatment would make the whole page shout. */
+	.sc-flag {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--warn);
+		margin-top: var(--s-1);
+	}
+	.sc-owned {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		margin-top: var(--s-1);
+	}
+
+	/* The delete control on a row. Quiet until the row is reached for: it is
+ * destructive, so it should not be the first thing the eye lands on. */
+	.sc-delete {
+		border: none;
+		background: transparent;
+		color: var(--muted);
+		cursor: pointer;
+		padding: var(--s-0-5);
+		opacity: 0;
+		transition: opacity var(--d-fast, 150ms);
+	}
+	.sc-row:hover .sc-delete,
+	.sc-delete:focus-visible {
+		opacity: 1;
+	}
+	.sc-delete:hover {
+		color: var(--err);
+	}
+
+	.sc-footer {
+		grid-column: 1 / -1;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-3) var(--s-5);
+		justify-content: center;
+		padding: var(--s-3) 0 var(--s-2);
+		border-top: 1px solid var(--border-strong);
+	}
+	/* Label above value. The values are what the eye is here for; inline they were
+ * the tail of a run-on line. */
+	.sc-stat {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+	}
+	.sc-stat-label {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.sc-stat-value {
+		font-family: var(--font-body);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg-dim);
+	}
+
+	.sc-empty {
+		grid-column: 1 / -1;
+		padding: var(--s-5) 0;
+		text-align: center;
+		color: var(--muted);
+		font-size: var(--type-body-size);
+	}
+
+	/* Narrow: the cells stack, which is the same shape the Markdown wire format
+ * has. The responsive fallback and the file are one design. */
+	@media (max-width: 60rem) {
+		.sc-doc,
+		.sc-doc[data-density="outline"],
+		.sc-doc[data-density="read"] {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.sc-head {
+			display: none;
+		}
+		.sc-row {
+			grid-template-columns: minmax(0, 1fr);
+			gap: var(--s-1);
+		}
+		.sc-image {
+			aspect-ratio: 16 / 9;
+			max-width: 12rem;
+		}
+		.sc-time {
+			text-align: left;
+		}
+	}
+
+	/* The arc's obligation for a chapter — derived, not authored, so it is stated
+	   rather than offered as a field. Sits under the title beside the operator's own
+	   brief without competing with it. */
+	.sc-chapter-obligation {
+		margin: var(--s-0-5) 0 0;
+		font-size: var(--type-caption-size);
+		line-height: 1.45;
+		color: var(--muted);
+		font-style: italic;
+	}
+}

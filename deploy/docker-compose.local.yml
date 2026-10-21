@@ -1,0 +1,17 @@
+# Local override for the self-host stack: publishes the two ports it keeps
+# internal so the whole thing can be exercised on a laptop. The base file
+# already publishes web, api, and rustfs on loopback. Every binding is
+# 127.0.0.1 — the Inngest dashboard in particular has no authentication of its
+# own.
+#
+#   docker compose --env-file .env \
+#     -f deploy/docker-compose.yml \
+#     -f deploy/docker-compose.local.yml -p maleo up -d
+services:
+  media-worker:
+    ports:
+      - "127.0.0.1:7071:7071"
+
+  inngest:
+    ports:
+      - "127.0.0.1:8288:8288"

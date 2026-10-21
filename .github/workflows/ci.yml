@@ -1,0 +1,68 @@
+# The checks that have to pass before code lands.
+#
+# The root `ci` command owns every gate: `vp check`, workspace typecheck, Rust and
+# WASM, deploy and release hygiene, the Vitest suites with coverage thresholds,
+# the Bun suites, UI layer and census checks, and visual regression. This
+# workflow installs the pinned tools and browser system dependencies, then calls
+# it. Nothing is restored from a cache of earlier results; hooks are not relied on.
+#
+# `check:layers` runs inside the script for the reason it exists at all: the web
+# client's dependency direction is invisible to the type checker and to the test
+# suite, so nothing catches a violation unless a machine looks for it.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # Measured locally: ~19 min for the gate before Vitest, tests now ~9 min.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.1
+
+      # Vite+ (`vp`, from the lockfile's vite-plus catalog entry) and the Node it
+      # runs on; 1.x requires ^22.18.0 || ^24.11.0. Bun stays the package manager
+      # (setup-bun above) and installs from the frozen lockfile below.
+      - uses: voidzero-dev/setup-vp@cff3efc7cbe0c9627b82dc3e846c89fd772a39a6 # v1.21.1
+        with:
+          version-file: package.json
+          node-version: 22.22.2
+          package-manager: false
+          run-install: false
+          cache: false
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      # rustup is on the runner; this installs the toolchain and wasm32 target
+      # pinned by rust-toolchain.toml for `bun run check:rust`.
+      - name: Rust toolchain
+        run: rustup toolchain install
+
+      - name: Install Chromium
+        run: bun run --cwd apps/web playwright install --with-deps chromium
+
+      - name: Checks (bun run ci)
+        run: bun run ci
+
+      - name: Upload visual diff
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: |
+            apps/web/visual/.output
+            apps/web/playwright-report
+          retention-days: 7

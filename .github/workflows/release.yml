@@ -1,0 +1,70 @@
+# Every pushed vX.Y.Z tag becomes a GitHub Release whose notes are that
+# version's CHANGELOG section.
+#
+# The version check runs here as well as in ci.yml on purpose: ci.yml proves the
+# package version and the changelog agree, and this run additionally proves the
+# tag agrees with both. A mismatch should stop the release before it publishes.
+name: release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write # create the release
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.1
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      # rustup is on the runner; this installs the toolchain and wasm32 target
+      # pinned by rust-toolchain.toml for `bun run check:rust`.
+      - name: Rust toolchain
+        run: rustup toolchain install
+
+      # Same script CI runs, so a release cannot pass checks a pull request
+      # would have failed. check-version reads GITHUB_REF_NAME here, so this run
+      # additionally proves the tag matches the canonical version.
+      - name: Checks (bun run ci)
+        run: bun run ci
+
+      - name: Extract release notes
+        id: notes
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          version="${TAG#v}"
+          notes="$RUNNER_TEMP/notes.md"
+          # This version's block: from its `## [x.y.z]` heading to the next one.
+          awk -v ver="$version" '
+            $0 ~ ("^## \\[" ver "\\]") { grab = 1; next }
+            grab && /^## \[/ { exit }
+            grab { print }
+          ' CHANGELOG.md > "$notes"
+          if [ ! -s "$notes" ]; then
+            echo "error: CHANGELOG.md has no section for $version" >&2
+            exit 1
+          fi
+          echo "file=$notes" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          NOTES: ${{ steps.notes.outputs.file }}
+        run: gh release create "$TAG" --title "maleo $TAG" --notes-file "$NOTES"

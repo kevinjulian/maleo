@@ -1,0 +1,71 @@
+# Build context exclusions. Every image is built from the repository root, so
+# this file is the only control over what the daemon has to read. Without it the
+# context includes 27 GB of runtime data and a symlink chain under
+# the since-removed packages/vui/examples/generic/node_modules deep enough that traversal failed
+# with "File name too long".
+#
+# scripts/check-deploy.ts measures the resulting context and fails when it grows
+# past the stated budget.
+
+# Dependency trees. The images install their own from package.json + bun.lock.
+node_modules/
+**/node_modules/
+
+# Runtime data roots: the unified SQLite DB, generated media, voice samples.
+# `public/` is a runtime write target, not a source directory — every one of
+# them is git-ignored, and apps/api/public alone is 51 GB.
+data/
+**/data/
+**/public/
+public/uploads/
+
+# Source music library: a git-ignored local asset store, not part of any image.
+packages/*/music-source/
+
+# Build output. Regenerated in the image from source.
+**/build/
+**/dist/
+**/out/
+# Cargo build output for crates/; the image builds the engine in its own stage.
+target/
+
+# Version control and local tooling state.
+.git/
+.github/
+.claude/
+.codex/
+.agents/
+.pi/
+.kvin/
+.planning/
+.bin/
+
+# Test and capture output, and the visual baselines that are only an assertion.
+coverage/
+test-results/
+apps/web/visual/baselines/
+.playwright-mcp/
+apps/web/playwright-report/
+apps/web/visual/.output/
+openspec/**/evidence/
+build/
+
+# Screenshots dropped at the repository root during UI work.
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.mp4
+*.mov
+
+# Local environment files never belong in an image; configuration arrives as
+# environment variables at the platform.
+.env
+.env.*
+!.env.example
+
+# Editor and OS noise.
+.DS_Store
+*.log
+*.pyc
+spikes/

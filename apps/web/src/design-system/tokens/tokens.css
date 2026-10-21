@@ -1,0 +1,427 @@
+/* Design tokens: palette, type scale, spacing, radii, shadows and motion
+ * curves. Every other sheet reads these; none are redefined elsewhere. */
+/* Design tokens: palette, type scale, spacing, radii, shadows and motion
+ * curves. Every other sheet reads these; none are redefined elsewhere.
+ *
+ * "None are redefined elsewhere" was not true until this file lost its second
+ * copy of itself. Tailwind's `@theme` declared the same palette again as
+ * `--color-bg` / `--radius-1` / `--font-display`, and 62 further lines bridged
+ * those onto shadcn's names. The stylesheets read the `--bg` / `--r-1` set
+ * below more than two thousand times and the `--color-*` set zero times, so
+ * half the token layer rendered nothing while looking authoritative.
+ *
+ * Element defaults moved to `styles/reset.css`, which vendors the Preflight
+ * this sheet's `@import "tailwindcss"` used to pull in. That part of Tailwind
+ * WAS load-bearing; the token half was not. */
+:root {
+	/* Neutral editor palette, ported from OpenCut classic (MIT, Copyright
+	 * 2025-2026 OpenCut — see docs/design-system/foundations.md#palette-source).
+	 * Their values are mapped onto OUR semantic roles rather than their shadcn
+	 * names: the ground is their `--background`, a panel is their `.panel`
+	 * background, and editor fields fill with their panel `--input`. Where they
+	 * have no value for one of our roles (`--fg-dim`, the three overlay tints),
+	 * it is derived on the same neutral axis and says so.
+	 *
+	 * The tints stay alpha overlays, not their solid greys: the same token sits
+	 * on the white ground and on a panel, and only an overlay lands on their
+	 * values in both places (5% black ≈ their 93% panel accent / 96% ground). */
+	--bg: hsl(0 0% 100%);
+	--surface: hsl(210 20% 98%);
+	--surface-tint: rgba(0, 0, 0, 0.05);
+	--surface-hover: rgba(0, 0, 0, 0.07);
+	--surface-strong: rgba(0, 0, 0, 0.1);
+	/* Two surfaces beyond panel paint. Raised is a lifted object inside a panel
+	 * (a focused field, a slider thumb); overlay is a floating surface (menu,
+	 * popover) and pairs with an elevation shadow. Both are lighter than the
+	 * panel in light AND dark, which is why neither can alias the ground. */
+	--surface-raised: hsl(0 0% 100%);
+	--surface-overlay: hsl(0 0% 100%);
+	/* Three text tiers, and only three. `--text` / `--text-dim` / `--text-mute`
+	   were a second spelling of these same values in both themes — 28 call sites
+	   against 662, so the minority spelling was migrated rather than kept. The
+	   rename moved no pixels; it removed the choice. */
+	--fg: hsl(0 0% 11%);
+	--fg-dim: hsl(0 0% 36%); /* derived: between their foreground and muted text */
+	--muted: hsl(0 0% 44%); /* their 48% is 4.1:1 on a panel; 44% is 4.7 */
+	--fg-disabled: hsl(0 0% 68%); /* unavailable only; never idle or read-only content */
+	--border-subtle: hsl(0 0% 92%); /* quiet separators between groups */
+	--border: hsl(0 0% 87%);
+	--border-strong: hsl(0 0% 83%);
+	--border-focus: hsl(0 0% 53%);
+
+	--dark: hsl(0 0% 11%);
+	--dark-fg: hsl(0 0% 98%);
+	--dark-border: rgba(255, 255, 255, 0.12);
+
+	/* Semantic tones. Four states, each one hue with a derived wash.
+	 *
+	 * The wash uses the tone's channels rather than a second colour value, because
+	 * writing it out is what went wrong: `.pill` hardcoded rgba(26,143,76,0.10)
+	 * for `ok` while `--ok` was rgb(22,163,74), and rgba(192,57,43,0.10) for
+	 * `err` while `--err` was rgb(220,38,38). Three of the four tones had a
+	 * background in a different hue from their own foreground, and nothing could
+	 * detect it because both halves were valid CSS. Derivation removes the
+	 * second place a tone can be stated.
+	 *
+	 * 8% is the existing alpha `--warn-bg` and `--err-bg` already carried, so
+	 * their fourteen and three call sites do not move. The pill's tone
+	 * backgrounds do move: from 10% of a near-miss hue to 8% of the real one. */
+	--ok: hsl(
+		141 71% 27%
+	); /* their hue; 48% is 2.0:1 as text. 27% clears 4.5 on its own wash (4.9) */
+	--ok-bg: rgb(from var(--ok) r g b / 8%);
+	--warn: hsl(38 92% 29%); /* their hue; 29% clears 4.5 on its own wash (4.9) */
+	--warn-bg: rgb(from var(--warn) r g b / 8%);
+	--err: hsl(
+		0 83% 46%
+	); /* their 50% is 4.4:1 as text on a panel; 46% is 5.0, and 5.3 under white */
+	--err-bg: rgb(from var(--err) r g b / 8%);
+	--info: hsl(220 70% 45%); /* 4.4:1 on its wash at 50%; 45% is 5.5 */
+	--info-bg: rgb(from var(--info) r g b / 8%);
+
+	/* The editor accent. Once the base of a per-persona palette injected onto
+	   <body>; the persona system went in the workspace pivot, and the four
+	   tokens that served it (--accent-bright, --accent-deep, --accent-glow,
+	   --persona-gradient) went with it here, unread by anything. */
+	--accent: hsl(0 0% 2%);
+	--accent-bg: rgba(0, 0, 0, 0.06);
+
+	/* Type — Space Grotesk only. There is no monospace in the interface. */
+	--font-display:
+		"Space Grotesk", "The Future", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+	--font-body:
+		"Space Grotesk", "The Future", "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+	/* The type roles. Eight of them, and every size below is one a screen in this
+	 * app already renders — the scale is snapped to the evidence, not invented.
+	 *
+	 * What the evidence said: 15 distinct sizes live in the 8-15px band, and 190
+	 * declarations sit on a half-pixel (10.5px x51, 11.5px x50, 12.5px x42). A
+	 * scale whose steps are 0.5px is not a scale, it is a continuum, and no
+	 * component can be "the same size" as another by construction. The roles
+	 * below are the peaks of that histogram: 11px (126 uses), 12px (91), 13px
+	 * (42), 10px (75). Snapping the half-pixel sizes onto them moves pixels and
+	 * belongs to the component sections, not here.
+	 *
+	 * "Section title" is two tiers because the product has two: a panel's heading
+	 * and a group heading inside it. Collapsing them would flatten a hierarchy the
+	 * editor and Settings both rely on. */
+	--type-display-size: clamp(48px, 6vw, 80px);
+	--type-display-lh: 1.02;
+	--type-display-track: -0.03em;
+
+	--type-title-size: clamp(28px, 3.5vw, 40px);
+	--type-title-lh: 1.15;
+	--type-title-track: -0.02em;
+
+	--type-section-size: 22px;
+	--type-section-lh: 1.2;
+	--type-section-track: -0.01em;
+
+	--type-subsection-size: 18px;
+	--type-subsection-lh: 1.2;
+	--type-subsection-track: -0.01em;
+
+	--type-body-size: 13px;
+	--type-body-lh: 1.45;
+
+	/* Control text: the value inside a field, a select, a tab, a chip. The
+	 * `text-xs` utility reads it (shadcn.css), so every control recipe already
+	 * speaks this role. Same 12px as caption, but a different job: a caption
+	 * is prose under something, control text is the thing being operated. */
+	--type-control-size: 12px;
+
+	--type-caption-size: 12px;
+	--type-caption-lh: 1.4;
+
+	--type-label-size: 11px;
+	--type-label-lh: 1.4;
+
+	/* There is one label tier. The second — a mono, uppercase, letter-spaced
+	 * 10px "micro label" — is retired: labels are the Label role in sentence
+	 * case. Numbers align by tabular figures (base.css), not by a monospace. */
+
+	/* The floor. For labels inside timeline clips and badges, where 11 does not
+	 * fit; sentence case, never the retired uppercase micro label. Nothing in
+	 * the interface is set smaller. */
+	--type-micro-size: 10px;
+
+	--type-data-size: 12px;
+	--type-data-lh: 1.45;
+
+	/* Weights. The font is loaded at 400, 500, 600 and 700 and nothing between:
+	 * an in-between weight renders as the next one up (550 drew as 600, 650 as
+	 * 700), so the scale names only what the browser can draw. */
+	--weight-body: 400;
+	--weight-medium: 500;
+	--weight-strong: 600;
+	/* Titles. Added in 4.1, when converging the page headers found the same title
+	 * written at three weights — `.pg-title` 700, `.cv-launch-title` and
+	 * `.cv-setup-title` 600, and the storyboard's bare `h1` inheriting whatever
+	 * the reset left. A heading weight is a decision the scale should hold, the
+	 * same as its size. 700 is the majority and the one the shared header
+	 * already used. */
+	--weight-display: 700;
+
+	/* Radius: four roles and no more.
+	 *   none   0          panels, rows, separators — flat regions
+	 *   sm     --r-1  4px  controls: buttons, fields, chips' squared cousins
+	 *   md     --r-2  8px  floating surfaces and dialogs; the rare content tile
+	 *   full   --r-pill    badges, avatars, pills only
+	 * There were five steps (4/6/10/14 and pill), so a button, a field, a card
+	 * and a popover could each pick a different curve. 6 became 4 and 10 became
+	 * 8 so controls read as editor controls; 14 had eleven users and joined md. */
+	--r-1: 4px;
+	--r-2: 8px;
+	--r-pill: 999px;
+
+	/* Spacing */
+	/* The half steps exist because dense editor rows use them: 2, 6 and 10 were
+	 * written as literals 408 times before they had names. */
+	--s-0-5: 2px;
+	--s-1: 4px;
+	--s-1-5: 6px;
+	--s-2: 8px;
+	--s-2-5: 10px;
+	--s-3: 12px;
+	--s-4: 16px;
+	--s-5: 20px;
+	--s-6: 24px;
+	--s-8: 32px;
+	--s-12: 48px;
+	--s-16: 80px;
+
+	/* Shadow — warm-neutral multi-layer */
+	/* The modal elevation's backdrop: one dimming for every dialog and sheet.
+	 * Modal used 28% and Sheet 50% for the same job. */
+	--scrim: rgba(0, 0, 0, 0.4);
+
+	--shadow-1: 0 1px 3px rgba(15, 15, 20, 0.04), 0 1px 2px rgba(15, 15, 20, 0.03);
+	--shadow-2: 0 4px 12px rgba(15, 15, 20, 0.06), 0 2px 4px rgba(15, 15, 20, 0.04);
+	--shadow-3: 0 16px 40px rgba(15, 15, 20, 0.1), 0 4px 8px rgba(15, 15, 20, 0.04);
+
+	/* Motion */
+	--d-fast: 120ms;
+	--d-med: 220ms;
+	--ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+	/* Focus. One ring, stated in three parts because a ring is a width, a colour
+	 * and an offset and no single token can hold all three.
+	 *
+	 * The app had five: `--border-focus` (8 rules), `--ai` (8), `--ai-border`
+	 * (2), `--accent` (2) and `--tl2-playhead` (1), at 2px and 1.5px. Chromatic
+	 * rather than the neutral `--border-focus`, because a focus ring has to clear
+	 * whatever it lands on and `rgba(fg, 0.32)` does not clear `--surface-strong`.
+	 * `--border-focus` keeps its job as an emphasised *border*, which is not this.
+	 *
+	 * 28 rules say `outline: none`. Each needs a `:focus-visible` of its own or it
+	 * is a keyboard trap; auditing them is section 3's, listed there. */
+	--focus-w: 2px;
+	--focus-offset: 2px;
+	--focus-color: var(--ai);
+	/* The same ring as a shadow, for elements whose outline is clipped or taken.
+	 * `--ring-selected` is the thinner mark of a chosen card. */
+	--focus-ring: 0 0 0 var(--focus-w) var(--focus-color);
+	--ring-selected: 0 0 0 1px var(--ai);
+
+	/* Density. Two button heights, MEASURED rather than guessed — an earlier pass
+	 * of this change put 30px and 26px here by reading where `height:` literals
+	 * cluster across the sheets, and rendering the buttons said otherwise:
+	 *
+	 *     .btn        40.19px        .cv-iconbtn      34px
+	 *     .btn-sm     31.59px        .cv-iconbtn.sm   26px
+	 *
+	 * These are the button's. `.btn`/`.btn-sm` read them as a `min-height`, so
+	 * the step is a floor the control cannot fall below when its padding or type
+	 * changes — today's padding already exceeds it, which is the point: the token
+	 * pins the density, the padding sets the comfort.
+	 *
+	 * THREE steps, not two, and `xs` is not a new invention: the icon buttons
+	 * already had three heights (34 / 26 / 24) beside the buttons' two, which is
+	 * how a small icon button next to a small button sat 6px short. Task 4.4
+	 * aligned them — an icon button is square at a step of this scale — and the
+	 * two nearest steps absorbed the odd sizes, 34 → 32 and 26 → 24, retiring the
+	 * third icon size rather than tokenising it.
+	 *
+	 * `--control-h-touch` is BACK, and this time something reads it. Task 1.3
+	 * deleted it because it was claiming a floor `touch.css` did not enforce —
+	 * that sheet raised input `font-size` to 16px against iOS focus-zoom and did
+	 * nothing about hit-target size, so a 26px icon button stayed 26px under a
+	 * finger. 4.4 wrote the rule; 44px is the platform guidance both Apple and
+	 * Google publish, and it applies on `pointer: coarse` only, so a mouse still
+	 * gets the density the editor is designed at. */
+	--control-h: 40px;
+	--control-h-sm: 32px;
+	--control-h-xs: 24px;
+	--control-h-touch: 44px;
+
+	/* Editor geometry. Panels and inspector rows read these instead of each
+	 * stating a number that "looked right". */
+	--panel-w: 312px;
+
+	/* Stacking: floating surfaces (menus, popovers, context menus) sit above
+	 * page and chrome and above an open dialog's content, so a menu opened
+	 * inside a dialog is not trapped under it. Modal layering itself belongs to
+	 * the overlay stack (controllers/overlay), not to a number here. */
+	--z-floating: 1100;
+	/* The app-level layers under it, lowest first. A stage, track or panel that
+	 * orders its own children with small numbers is local stacking and stays a
+	 * literal; anything that covers the page takes one of these. The overlay
+	 * stack's own orders (modal 1100, lightbox 1140, sheet 700) are passed in
+	 * script and match. */
+	--z-nav: 50;
+	--z-palette: 100;
+	--z-toast: 200;
+	--z-topbar: 500;
+	--z-modal: 600;
+	--z-sheet: 700;
+	--z-dialog: 1000;
+	--section-header-h: var(--control-h-sm);
+	--property-row-h: var(--control-h-xs);
+
+	/* Backdrop-friendly translucent surface (topbar etc.) */
+	--surface-translucent: rgba(255, 255, 255, 0.85);
+
+	/* Measures. How wide a column of text or controls is allowed to get.
+	 *
+	 * The forms had four answers — 480 (presets), 520 (settings), 560 (materials,
+	 * and the settings install block), and none at all (project setup) — none of
+	 * them written near another, so no two forms could agree by construction.
+	 * 520 is the median and the one the settings actions row already used. */
+	--measure-form: 520px;
+	--measure-table: 620px;
+	/* A collection filter Select: wide enough for a project title, then ellipsis. */
+	--measure-filter: 200px;
+
+	/* Layout */
+	--sidebar-w: 240px;
+	--page-pad: 28px;
+	--topbar-h: 48px; /* the sticky top bar, at every width */
+}
+
+/* THE BREAKPOINTS. Three, and these three only:
+ *
+ *   (max-width: 640px)    phone
+ *   (max-width: 1023px)   below desktop
+ *   (min-width: 1024px)   desktop
+ *
+ * The app currently writes sixteen distinct widths — 640 (9 rules) and 1024 (8)
+ * carry the layout, and 520, 560, 600, 700, 720, 760, 820, 860, 900, 999, 1000,
+ * 1080, 1081 and 1180 are one or two rules each. Every one of those is a
+ * component deciding privately where it reflows, so two components that should
+ * change together change 100px apart and no width exists at which the page is
+ * "the phone layout".
+ *
+ * CSS cannot read a custom property inside a media query, so these cannot be
+ * tokens and this comment is the definition. Migrating the other thirteen moves
+ * reflow points on real surfaces and belongs to section 4, per surface.
+ *
+ * Phones get a tighter gutter: 28px either side of a 320px viewport spends a
+ * sixth of the width on margin. This is a token tier rather than a rule on
+ * `.pg`, because `.pg` had it as a hardcoded `var(--s-4)` — which made the page
+ * padding true in two places at once, and the one place that reads the token to
+ * position the breadcrumb bar disagreed with the one that padded the page.
+ * layout.spec.ts asserts h1 sits exactly --page-pad in from main, and had been
+ * failing on that ever since. */
+@media (max-width: 640px) {
+	:root {
+		--page-pad: 16px;
+	}
+}
+
+/* Desktop layout tokens. These belong here, beside the base values they
+   override — they were in components.css, which worked only while both sheets
+   were unlayered and that one came second. */
+@media (min-width: 1024px) {
+	:root {
+		--page-pad: 32px;
+	}
+}
+
+/* Dark theme — swaps CSS variables. All var(--*) consumers auto-adapt. */
+.dark {
+	--bg: hsl(0 0% 5%);
+	--surface: hsl(0 0% 10%);
+	--surface-tint: rgba(255, 255, 255, 0.05);
+	--surface-hover: rgba(255, 255, 255, 0.08);
+	--surface-strong: rgba(255, 255, 255, 0.12);
+	--surface-raised: hsl(0 0% 14%);
+	--surface-overlay: hsl(0 0% 13%);
+	--fg: hsl(0 0% 87%);
+	--fg-dim: hsl(0 0% 66%);
+	--muted: hsl(0 0% 52%);
+	--fg-disabled: hsl(0 0% 36%);
+	--border-subtle: hsl(0 0% 14%);
+	--border: hsl(0 0% 18%);
+	--border-strong: hsl(0 0% 22%);
+	--border-focus: hsl(0 0% 52%);
+
+	--dark: hsl(0 0% 87%);
+	--dark-fg: hsl(0 0% 10%);
+	--dark-border: rgba(0, 0, 0, 0.12);
+
+	/* `--accent` had no dark value, and the foundation board is what made that
+	 * visible. It stayed #0f0f14 here, so the `accent` pill drew near-black text
+	 * on a near-black wash, and `--accent-bg` — a black wash — rendered the
+	 * active sidebar item and the selected library card DARKER than the surface
+	 * behind them. An emphasis token that recedes is worse than no token.
+	 *
+	 * Mirrored rather than reused: in light, `--accent` sits a shade beyond `--fg`
+	 * toward the ground's opposite. It does the same here. */
+	--accent: hsl(0 0% 95%);
+	--accent-bg: rgba(255, 255, 255, 0.07);
+	--ok: hsl(141 71% 48%);
+	--warn: hsl(38 92% 60%);
+	--err: hsl(0 83% 62%); /* their 50% is 3.8:1 on a dark panel; 62% is 4.9 */
+	--info: hsl(220 70% 65%); /* 50% is 3.2:1 as text on a dark panel; 65% is 5.6 */
+
+	--shadow-1: 0 1px 3px rgba(0, 0, 0, 0.2);
+	--shadow-2: 0 4px 12px rgba(0, 0, 0, 0.25);
+	--shadow-3: 0 16px 40px rgba(0, 0, 0, 0.35);
+
+	--surface-translucent: hsl(0 0% 5% / 0.85);
+}
+
+/* Editor and timeline tokens. These were declared on `:root` from
+ * create-content.css — a cluster sheet owning global custom properties — and
+ * the lint trio was declared a second time, identically, inside
+ * `.tl2-insights` in the timeline sheet. One home, one definition. */
+:root {
+	/* OpenCut's primary blue: selection, focus, checked and active state. Ink
+     (`--dark`) stays the default button fill, as it is there.
+  Their 52% lightness carries white text at 2.6:1; 36% is 4.9 under white
+     and 4.7 as text on a panel. Same hue and saturation. */
+	--ai: hsl(200 90% 36%);
+	--ai-bg: hsl(204 100% 96%);
+	--ai-border: hsl(200 90% 36%);
+	/* Text on an `--ai` fill. Its own token because `--on-accent` also sits on
+     the destructive red, which wants white in both themes. */
+	--on-ai: #ffffff;
+	/* Text on a generated identity colour (a workspace's). The same in both
+     themes because the colour under it is: it is data, not a theme surface. */
+	--on-identity: #ffffff;
+	--cv-top: 53px;
+	/* Chat semantics — text on accent fills, media letterbox, pacing-lint dots. */
+	--on-accent: #ffffff;
+	--media-bg: #0a0a0c;
+	/* Text laid over media. The same in both themes: the scrim under it is. */
+	--on-media: #ffffff;
+	--lint-high: #ff4d4d;
+	--lint-warn: #ffb020;
+	--lint-info: #4da3ff;
+}
+
+/* The editor's accent, dark variant. Lived in create-content.css, which made
+ * a cluster sheet the owner of a token. */
+/* Dark keeps their 52% blue (6.7:1 as text on a panel) and puts near-black
+ * text on it (7.4:1) rather than white (2.6:1). */
+.dark {
+	--ai: hsl(200 90% 52%);
+	--ai-bg: hsl(204 67% 12%);
+	--ai-border: hsl(200 90% 52%);
+	--on-ai: hsl(0 0% 5%);
+	/* Text on the red fill. Declared here, not in the theme block above: this
+     sheet's later `:root` sets --on-accent at equal specificity and would win. */
+	--on-accent: hsl(0 0% 5%);
+}

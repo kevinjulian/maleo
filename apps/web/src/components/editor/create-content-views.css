@@ -1,0 +1,299 @@
+/* The studio's view switcher and the board and list views it switches between, with the setup timer and breadcrumb slug. */
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer feature {
+	/* View switcher */
+	.cv-viewseg {
+		display: inline-flex;
+		gap: var(--s-0-5);
+		padding: var(--s-0-5);
+		background: var(--surface-tint);
+		border-radius: var(--r-1);
+		margin-right: var(--s-1);
+	}
+	.cv-viewseg button {
+		padding: var(--s-1) var(--s-2-5);
+		border-radius: 5px;
+		border: none;
+		background: transparent;
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-viewseg button:hover {
+		color: var(--fg);
+	}
+	.cv-viewseg button.on {
+		background: var(--surface);
+		color: var(--fg);
+		box-shadow: var(--shadow-1);
+	}
+
+	/* Board view */
+	.cv-board {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: var(--s-4);
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+		gap: var(--s-3);
+		align-content: start;
+	}
+	.cv-boardcard {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		overflow: hidden;
+		cursor: pointer;
+		box-shadow: var(--shadow-1);
+		transition: all var(--d-fast);
+	}
+	.cv-boardcard:hover {
+		box-shadow: var(--shadow-2);
+		transform: translateY(-2px);
+		border-color: var(--border-strong);
+	}
+	.cv-boardcard.on {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected), var(--shadow-1);
+	}
+	.cv-boardframe {
+		background: var(--surface-tint);
+		padding: var(--s-3);
+		display: flex;
+		justify-content: center;
+		border-bottom: 1px solid var(--border);
+	}
+	.cv-boardbody {
+		padding: var(--s-2-5) var(--s-3) var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+	}
+	.cv-boardname {
+		border: none;
+		background: none;
+		outline: none;
+		font-family: var(--font-display);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		padding: 0;
+		width: 100%;
+	}
+	/* Borderless inline title field; `outline: none` left no focus indicator. Task 3.2. */
+	.cv-boardname:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.cv-boardmeta {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.cv-boardvo {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		line-height: 1.4;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		min-height: 17px;
+	}
+	.cv-boardrefs {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		margin-top: var(--s-0-5);
+	}
+
+	/* List view */
+	.cv-list {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: var(--s-3) var(--s-4) var(--s-4);
+	}
+	.cv-listrow {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-2) var(--s-2-5);
+		border-bottom: 1px solid var(--border);
+		cursor: pointer;
+		transition: background var(--d-fast);
+	}
+	.cv-listrow:hover {
+		background: var(--surface-tint);
+	}
+	.cv-listrow.on {
+		background: var(--ai-bg);
+	}
+	.cv-listhead {
+		position: sticky;
+		top: 0;
+		background: var(--surface);
+		cursor: default;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.cv-listhead:hover {
+		background: var(--surface);
+	}
+	.cv-lc-num {
+		width: 22px;
+		flex-shrink: 0;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--fg-dim);
+		text-align: center;
+	}
+	.cv-lc-frame {
+		width: 44px;
+		flex-shrink: 0;
+		display: flex;
+		justify-content: center;
+	}
+	.cv-lc-name {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		font-size: var(--type-body-size);
+	}
+	.cv-lc-name b {
+		font-weight: var(--weight-strong);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.cv-listsub {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.cv-lc-shot {
+		width: 110px;
+		flex-shrink: 0;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+	.cv-lc-dur {
+		width: 52px;
+		flex-shrink: 0;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+	.cv-lc-dur.mono {
+		font-family: var(--font-body);
+	}
+	.cv-lc-ref {
+		width: 38px;
+		flex-shrink: 0;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		text-align: center;
+	}
+	.cv-lc-tools {
+		width: 92px;
+		flex-shrink: 0;
+		display: flex;
+		gap: 1px;
+		justify-content: flex-end;
+	}
+	@media (max-width: 700px) {
+		.cv-lc-shot {
+			display: none;
+		}
+	}
+
+	/* Setup min:sec */
+
+	/* Breadcrumb slug */
+	.cv-crumb-btn {
+		min-height: 0;
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		text-transform: inherit;
+		letter-spacing: inherit;
+		color: var(--muted);
+		cursor: pointer;
+		transition: color var(--d-fast);
+	}
+	.cv-crumb-btn:hover {
+		color: var(--fg);
+	}
+	.cv-crumb-static {
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.cv-crumb-slug {
+		max-width: 200px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	@media (max-width: 600px) {
+		.cv-crumb-slug {
+			max-width: 110px;
+		}
+	}
+	@media (max-width: 1180px) {
+		.cv-studio {
+			flex-direction: column;
+			overflow-y: auto;
+		}
+		.cv-studio-right {
+			display: contents;
+		}
+		.cv-cat {
+			width: auto;
+			height: auto;
+			overflow: visible;
+			border-right: none;
+			border-bottom: 1px solid var(--border);
+		}
+		.cv-studio-rcols {
+			display: flex;
+			flex-direction: column;
+		}
+		.cv-mid,
+		.cv-right {
+			height: auto;
+			overflow: visible;
+			border-right: none;
+			border-bottom: 1px solid var(--border);
+		}
+	}
+
+	::-webkit-scrollbar {
+		width: 7px;
+		height: 7px;
+	}
+	::-webkit-scrollbar-thumb {
+		background: var(--border-strong);
+		border-radius: var(--r-1);
+	}
+	::-webkit-scrollbar-track {
+		background: transparent;
+	}
+}

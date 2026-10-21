@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Design System"
+  short_description: "Resolve Maleo UI patterns, tokens, and ownership"
+  default_prompt: "Use $web-design-system to resolve design-system choices for this Maleo UI change."

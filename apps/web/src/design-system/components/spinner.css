@@ -1,0 +1,20 @@
+/* Cascade layer: chrome. The Spinner's turn (spinner.tsx); the theme bridge
+ * carries no keyframes. Reduced motion slows it: surrounding text or the
+ * spinner's label carries the meaning, never the movement. */
+@layer chrome {
+	.ui-spinner {
+		display: inline-flex;
+		color: var(--muted);
+		animation: uiSpin 1s linear infinite;
+	}
+	@keyframes uiSpin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ui-spinner {
+			animation-duration: 3s;
+		}
+	}
+}

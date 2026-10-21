@@ -1,0 +1,367 @@
+{
+	"scope": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [
+				{
+					"id": "video:1",
+					"type": "video",
+					"startSec": 2,
+					"durationSec": 4,
+					"track": 0,
+					"video": {
+						"id": 1,
+						"mediaAssetId": "asset-video",
+						"kind": "video",
+						"url": "/api/media/00000000-0000-4000-8000-000000000001",
+						"start": 2,
+						"dur": 4,
+						"mediaStartSec": 3,
+						"layout": {
+							"xPct": 0,
+							"yPct": 0,
+							"widthPct": 100,
+							"fit": "contain",
+							"playbackRate": 1
+						}
+					}
+				},
+				{
+					"id": "text:2",
+					"type": "text",
+					"startSec": 8,
+					"durationSec": 2,
+					"track": 1
+				}
+			],
+			"markers": [
+				{
+					"id": 1,
+					"title": "Hook",
+					"clipIds": ["video:1"],
+					"startSec": 0,
+					"endSec": 6
+				}
+			],
+			"bookmarks": [
+				{
+					"id": "bm-1",
+					"label": "Beat",
+					"timeSec": 3
+				}
+			],
+			"captions": {
+				"enabled": true,
+				"fontFamily": "Inter",
+				"fontSize": 72,
+				"weight": "Black",
+				"italic": false,
+				"allCaps": false,
+				"style": "Standard",
+				"lines": "Single Line",
+				"chunkDuration": "1,2",
+				"maxWords": 4,
+				"maxChars": 26,
+				"maxPauseMs": 260,
+				"verticalPosition": 100,
+				"maxWidth": 86,
+				"fill": "#ffffff",
+				"activeColor": "#ffd400",
+				"stroke": "transparent",
+				"background": "transparent",
+				"shadow": "transparent",
+				"shadowOpacity": 78,
+				"shadowBlur": 18,
+				"shadowDistance": 5,
+				"shadowAngle": 90,
+				"inactiveOpacity": 55,
+				"motion": "Fade",
+				"preset": "standard"
+			},
+			"trackFlags": {
+				"1": {
+					"hidden": true
+				}
+			}
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	},
+	"command": {
+		"type": "bookmark.set",
+		"bookmarks": []
+	},
+	"expectedScope": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [
+				{
+					"id": "video:1",
+					"type": "video",
+					"startSec": 2,
+					"durationSec": 4,
+					"track": 0,
+					"video": {
+						"id": 1,
+						"mediaAssetId": "asset-video",
+						"kind": "video",
+						"url": "/api/media/00000000-0000-4000-8000-000000000001",
+						"start": 2,
+						"dur": 4,
+						"mediaStartSec": 3,
+						"layout": {
+							"xPct": 0,
+							"yPct": 0,
+							"widthPct": 100,
+							"fit": "contain",
+							"playbackRate": 1
+						}
+					}
+				},
+				{
+					"id": "text:2",
+					"type": "text",
+					"startSec": 8,
+					"durationSec": 2,
+					"track": 1
+				}
+			],
+			"markers": [
+				{
+					"id": 1,
+					"title": "Hook",
+					"clipIds": ["video:1"],
+					"startSec": 0,
+					"endSec": 6
+				}
+			],
+			"bookmarks": [],
+			"captions": {
+				"enabled": true,
+				"fontFamily": "Inter",
+				"fontSize": 72,
+				"weight": "Black",
+				"italic": false,
+				"allCaps": false,
+				"style": "Standard",
+				"lines": "Single Line",
+				"chunkDuration": "1,2",
+				"maxWords": 4,
+				"maxChars": 26,
+				"maxPauseMs": 260,
+				"verticalPosition": 100,
+				"maxWidth": 86,
+				"fill": "#ffffff",
+				"activeColor": "#ffd400",
+				"stroke": "transparent",
+				"background": "transparent",
+				"shadow": "transparent",
+				"shadowOpacity": 78,
+				"shadowBlur": 18,
+				"shadowDistance": 5,
+				"shadowAngle": 90,
+				"inactiveOpacity": 55,
+				"motion": "Fade",
+				"preset": "standard"
+			},
+			"trackFlags": {
+				"1": {
+					"hidden": true
+				}
+			}
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	},
+	"expectedInverse": {
+		"type": "bookmark.set",
+		"bookmarks": [
+			{
+				"id": "bm-1",
+				"label": "Beat",
+				"timeSec": 3
+			}
+		]
+	},
+	"expectedRestored": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [
+				{
+					"id": "video:1",
+					"type": "video",
+					"startSec": 2,
+					"durationSec": 4,
+					"track": 0,
+					"video": {
+						"id": 1,
+						"mediaAssetId": "asset-video",
+						"kind": "video",
+						"url": "/api/media/00000000-0000-4000-8000-000000000001",
+						"start": 2,
+						"dur": 4,
+						"mediaStartSec": 3,
+						"layout": {
+							"xPct": 0,
+							"yPct": 0,
+							"widthPct": 100,
+							"fit": "contain",
+							"playbackRate": 1
+						}
+					}
+				},
+				{
+					"id": "text:2",
+					"type": "text",
+					"startSec": 8,
+					"durationSec": 2,
+					"track": 1
+				}
+			],
+			"markers": [
+				{
+					"id": 1,
+					"title": "Hook",
+					"clipIds": ["video:1"],
+					"startSec": 0,
+					"endSec": 6
+				}
+			],
+			"bookmarks": [
+				{
+					"id": "bm-1",
+					"label": "Beat",
+					"timeSec": 3
+				}
+			],
+			"captions": {
+				"enabled": true,
+				"fontFamily": "Inter",
+				"fontSize": 72,
+				"weight": "Black",
+				"italic": false,
+				"allCaps": false,
+				"style": "Standard",
+				"lines": "Single Line",
+				"chunkDuration": "1,2",
+				"maxWords": 4,
+				"maxChars": 26,
+				"maxPauseMs": 260,
+				"verticalPosition": 100,
+				"maxWidth": 86,
+				"fill": "#ffffff",
+				"activeColor": "#ffd400",
+				"stroke": "transparent",
+				"background": "transparent",
+				"shadow": "transparent",
+				"shadowOpacity": 78,
+				"shadowBlur": 18,
+				"shadowDistance": 5,
+				"shadowAngle": 90,
+				"inactiveOpacity": 55,
+				"motion": "Fade",
+				"preset": "standard"
+			},
+			"trackFlags": {
+				"1": {
+					"hidden": true
+				}
+			}
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	}
+}

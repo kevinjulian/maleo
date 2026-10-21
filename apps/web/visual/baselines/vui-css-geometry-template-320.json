@@ -1,0 +1,104 @@
+{
+	"workspace": null,
+	"main": {
+		"x": 0,
+		"y": 48,
+		"w": 320,
+		"h": 699
+	},
+	"preview": {
+		"x": 0,
+		"y": 48,
+		"w": 320,
+		"h": 419
+	},
+	"preview-stage": {
+		"x": 0,
+		"y": 48,
+		"w": 320,
+		"h": 328
+	},
+	"preview-frame": null,
+	"transport": null,
+	"timecode": null,
+	"timeline": {
+		"x": 0,
+		"y": 467,
+		"w": 320,
+		"h": 280
+	},
+	"timeline-toolbar": {
+		"x": 0,
+		"y": 467,
+		"w": 320,
+		"h": 45
+	},
+	"ruler": {
+		"x": 120,
+		"y": 512,
+		"w": 762,
+		"h": 24
+	},
+	"markers": null,
+	"timeline-scroller": {
+		"x": 120,
+		"y": 512,
+		"w": 200,
+		"h": 235
+	},
+	"timeline-grid": {
+		"x": 0,
+		"y": 512,
+		"w": 320,
+		"h": 235
+	},
+	"rows": null,
+	"row": {
+		"x": 120,
+		"y": 536,
+		"w": 762,
+		"h": 36
+	},
+	"gutter": {
+		"x": 0,
+		"y": 512,
+		"w": 120,
+		"h": 235
+	},
+	"gutter-row": {
+		"x": 0,
+		"y": 536,
+		"w": 119,
+		"h": 36
+	},
+	"item": {
+		"x": 120,
+		"y": 538,
+		"w": 340,
+		"h": 31
+	},
+	"trim-start": {
+		"x": 453,
+		"y": 683,
+		"w": 16,
+		"h": 29
+	},
+	"trim-end": {
+		"x": 484,
+		"y": 539,
+		"w": 16,
+		"h": 29
+	},
+	"playhead": {
+		"x": 120,
+		"y": 512,
+		"w": 2,
+		"h": 384
+	},
+	"inspector": null,
+	"inspector-rail": null,
+	"inspector-panel": null,
+	"category-rail": null,
+	"accordion-header": null,
+	"mobile-actions": null
+}

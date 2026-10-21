@@ -1,0 +1,618 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The editor's vertical icon rail and the contextual asset panel it opens:
+   scene media, the reference grid and the per-scene field panels. */
+
+	/* Maleo — Content-First Create · clip-first timeline editor.
+ * Prefix: tl2- (avoids collision with the legacy cv-timeline rules). */
+
+	.tl2 {
+		--tl2-rail-w: 41px;
+		--tl2-panel-w: var(--panel-w);
+		--tl2-tl-h: clamp(220px, calc((100dvh - var(--cv-top)) * 0.3), 392px);
+		display: flex;
+		flex-direction: column;
+		/* `--cv-top` is the topbar only, and that is a known hole rather than an
+     oversight: `.cv-root` is a flex column, and anything else the shell puts
+     above the editor — the save-failure banner is 43px — pushes it down without
+     changing the height it claims. The editor then overflows the viewport by
+     exactly that much and the bottom bar, which is the whole navigation at
+     phone width, goes off screen.
+
+     `flex: 1` is the obvious fix and is wrong here: `.cv-root` declares
+     `min-height`, not `height`, so a flex child grows the container instead of
+     being bounded by it, and the desktop editor stopped being viewport-height.
+     The fix belongs in the shell — either `--cv-top` accounts for everything
+     above the editor, or that banner moves inside `.tl2`, which already has
+     `.tl2-err` for exactly this. Left as-is rather than papered over here. */
+		height: calc(100dvh - var(--cv-top));
+		min-height: 0;
+		background: var(--bg);
+	}
+
+	.tl2-err {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-1-5) var(--s-3);
+		font-size: var(--type-caption-size);
+		background: var(--err-bg);
+		color: var(--err);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.tl2-body {
+		flex: 1;
+		display: flex;
+		min-height: 0;
+	}
+	.tl2-tools {
+		display: flex;
+		height: 100%;
+		min-height: 0;
+	}
+	.tl2-tools .tl2-rail,
+	.tl2-clip-rail {
+		overflow-y: auto;
+	}
+
+	/* Shared desktop rail vocabulary; phone bottom bar overrides below. */
+	.tl2-rail,
+	.tl2-clip-rail {
+		width: var(--tl2-rail-w, 41px);
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-2) 0;
+		background: var(--surface);
+		border-right: 1px solid var(--border);
+		z-index: 20;
+	}
+	.tl2-rail-sep {
+		height: 1px;
+		width: calc(100% - var(--s-3));
+		margin: var(--s-1-5) 0;
+		background: var(--border);
+		flex-shrink: 0;
+	}
+	.tl2-railbtn,
+	.tl2-clip-railbtn {
+		position: relative;
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: var(--r-1);
+		padding: 0;
+		border: 1px solid transparent;
+		background: none;
+		color: var(--muted);
+		font-family: inherit;
+		cursor: pointer;
+		transition:
+			background var(--d-fast),
+			color var(--d-fast);
+	}
+	:is(.tl2-railbtn, .tl2-clip-railbtn):hover {
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	:is(.tl2-railbtn, .tl2-clip-railbtn).on {
+		background: var(--ai-bg);
+		color: var(--ai);
+		border-color: var(--ai-border);
+	}
+	:is(.tl2-railbtn, .tl2-clip-railbtn):focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: calc(-1 * var(--focus-w));
+	}
+	/* ── Contextual asset panel ── */
+	.tl2-panel {
+		width: var(--tl2-panel-w);
+		flex-shrink: 0;
+		/* The containing block for the element detail, which covers this panel and nothing
+     beyond it. */
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+		background: var(--surface);
+		border-right: 1px solid var(--border);
+	}
+	/* The panel's header is the PanelHeader pattern (design-system/patterns). */
+	.tl2-panel-body {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: var(--s-3);
+	}
+	.tl2-panel-body:has(> [data-slot="inspector-section"]) {
+		padding: 0;
+		gap: 0;
+	}
+	:is(.tl2-panel-body, .tl2-clip-panel-body, .tl2-tools .tl2-rail, .tl2-clip-rail),
+	:is(.tl2-panel-body, .tl2-clip-panel-body) * {
+		scrollbar-width: none;
+	}
+	:is(
+		.tl2-panel-body,
+		.tl2-clip-panel-body,
+		.tl2-tools .tl2-rail,
+		.tl2-clip-rail
+	)::-webkit-scrollbar,
+	:is(.tl2-panel-body, .tl2-clip-panel-body) *::-webkit-scrollbar {
+		display: none;
+	}
+	.tl2-asset-tabs {
+		flex: 0 0 auto;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--s-1);
+		padding: var(--s-2) var(--s-2-5);
+		border-bottom: 1px solid var(--border);
+		background: var(--surface);
+	}
+	.tl2-asset-tabs button {
+		min-width: 0;
+		height: 31px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1);
+		padding: 0 var(--s-1-5);
+		border: 1px solid transparent;
+		border-radius: var(--r-pill);
+		background: transparent;
+		color: var(--muted);
+		font: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		cursor: pointer;
+	}
+	.tl2-asset-tabs button:hover {
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	.tl2-asset-tabs button.on {
+		background: var(--ai-bg);
+		border-color: var(--ai-border);
+		color: var(--ai);
+	}
+
+	/* Scene media list */
+
+	/* Reference grid */
+
+	/* Scene field panels */
+	.tl2-fields {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.tl2-fields-2 {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--s-3);
+	}
+	/* `.tl2-field` is `.field` in app/styles/controls.css — one field, not four. The
+   group layouts above stay here: where fields sit is the rail's business. */
+
+	.tl2-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-3);
+		padding: var(--s-12) var(--s-5);
+		text-align: center;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+	}
+	.tl2-empty svg {
+		opacity: 0.5;
+	}
+
+	/* `--tl2-bottombar-h` is only the FALLBACK for the measured band that
+   use-editor-sheet-bounds.ts publishes — what a sheet uses in the frame before
+   the first measurement lands. Derived from the numbers the shared rule below
+   uses: 6 top pad + 44 control + 1 border, plus whatever the home indicator
+   claims. It stopped being load-bearing once two different bars could occupy
+   the slot, which is exactly when a constant became the wrong shape. */
+	:root {
+		--tl2-bottombar-gap: 8px;
+		--tl2-bottombar-h: calc(51px + max(6px, env(safe-area-inset-bottom)));
+	}
+
+	/* The pending media badge beside the subject, as on the clip itself. */
+	.tl2-clipbar-upload {
+		position: relative;
+		display: inline-block;
+		width: 18px;
+		height: 18px;
+		margin-inline-start: var(--s-1-5);
+		vertical-align: middle;
+	}
+	.tl2-clipbar-upload .tl2-clip-upload-icon {
+		top: 0;
+		right: 0;
+	}
+	.tl2-clipbar-subject {
+		max-width: 38vw;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	/* A bar with ends that must not move does not scroll as one strip: the leading
+   control is the way out and, in a studio, the trailing control is the commit.
+   Either can be carried off screen by a scroll that takes the whole bar, and a
+   save control that has scrolled away is not visible in any sense that matters.
+   The middle scrolls instead. */
+	.tl2-clipbar {
+		overflow: visible;
+	}
+
+	/* The scrolling middle. Ten tools or five property groups do not fit at 393px,
+   and compressing controls below a thumb's width is not an option, so this is
+   what gives. `pan-x` because the lowest strip on screen must not also be able
+   to scroll the page vertically. */
+	.tl2-clipbar-groups,
+	.tl2-studiobar-cats {
+		display: flex;
+		align-items: center;
+		gap: var(--tl2-bottombar-gap);
+		min-width: 0;
+		flex: 1 1 auto;
+		overflow-x: auto;
+		overflow-y: hidden;
+		touch-action: pan-x;
+		scrollbar-width: none;
+	}
+	.tl2-clipbar-groups::-webkit-scrollbar,
+	.tl2-studiobar-cats::-webkit-scrollbar {
+		display: none;
+	}
+	/* The pinned ends. */
+	.tl2-studiobar-lead,
+	.tl2-studiobar-commit {
+		flex: 0 0 auto;
+	}
+	.tl2-studiobar-subject {
+		flex: 0 0 auto;
+		max-width: 30vw;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	/* Sizing comes from `.tl2-bottombar`, shared with the rail's buttons. What is
+   left here is the skin. */
+	.tl2-clipbar-btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: none;
+		border-radius: var(--r-2);
+		background: none;
+		color: var(--muted);
+		font-family: inherit;
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.tl2-clipbar-btn.on {
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-clipbar-btn.on svg {
+		stroke: var(--ai);
+	}
+	/* Deselect reads as the escape from the mode, so it takes the accent the
+   groups only get when active. */
+
+	/* ── Frame-accurate In / Out ──
+   The steppers are 44px on every pointer, not only on coarse. A one-frame
+   nudge is a repeated action — the operator taps it four or five times in a
+   row — and a 24px target that has to be hit repeatedly is worse with a mouse
+   too. The value is monospaced so the digits do not shuffle as they change. */
+	.tl2-frametrim {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+	}
+	.tl2-frametrim-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	/* Each trim edge is a whole line: as two FieldRow cells sharing one, the step buttons
+   shrank under the next row's label at phone width. */
+	.tl2-frametrim .ui-insp-cells > .tl2-frametrim-row {
+		flex: 1 1 100%;
+	}
+	.tl2-frametrim-label {
+		flex: 0 0 32px;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-frametrim-value {
+		flex: 1;
+		text-align: center;
+		font-family: var(--font-body);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		font-variant-numeric: tabular-nums;
+		color: var(--fg);
+	}
+	.tl2-frametrim-step {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.tl2-frametrim-step:hover {
+		background: var(--surface-tint);
+		border-color: var(--ai-border, var(--ai));
+		color: var(--ai);
+	}
+	.tl2-frametrim-step:active {
+		background: var(--ai-bg);
+	}
+
+	/* ── Clip properties as a bottom sheet ──
+   The docked inspector's housing at phone width. Declared in this feature layer
+   deliberately: `.ui-sheet` sets its geometry from `chrome`, and layer beats
+   specificity, so these are the rules that win.
+
+   The inner icon rail is hidden rather than removed from the tree. The
+   contextual bottom bar is the rail on this surface, and showing both puts the
+   same four glyphs on screen twice as if they were different controls — but the
+   rail is still what the desktop inspector renders from the same markup, so the
+   hiding belongs in CSS and not in a branch. */
+	/* ── Every bottom sheet is the size of the timeline ──
+
+   One rule for all four, and it is a rule about WHERE rather than how big: a
+   sheet covers the timeline's lanes and nothing else. The transport stays above
+   it, the bottom bar below, and the operator keeps both while the sheet is up.
+
+   `--tl2-sheet-h` is measured from those two edges (see
+   use-editor-sheet-bounds.ts). A fixed `svh` share was the previous answer and
+   was wrong in both directions at once: 62svh overshot the band and got clamped
+   by `max-height`, leaving a strip of dimmed timeline showing above the sheet
+   that looked like a sheet which had failed to reach its own top. */
+	.tl2-clip-sheet,
+	.tl2-clipactions-sheet,
+	.tl2-more-sheet,
+	.tl2-panel-sheet {
+		height: var(--tl2-sheet-h, 46svh);
+	}
+	/* The panel wrapper is shared with the desktop inspector slot, so the sheet
+   flattens the parts of it that only make sense docked: no border against a
+   neighbour it does not have here, and no reserved width inside a sheet that is
+   already the width of the phone. */
+	.tl2-clip-sheet .tl2-clippanel {
+		width: 100%;
+		height: 100%;
+		border-left: 0;
+	}
+	/* The rail is the bar at this width, so the sheet does not repeat it. Two rows
+   of the same glyphs read as two different controls, and the sheet's copy is the
+   one that costs a second tap. Same rule for the studios, whose sheet carries
+   the package's rail rather than the clip panel's. */
+	.tl2-clip-sheet .tl2-clip-rail,
+	[data-vui-slot="sheet"] [data-vui-slot="category-rail"] {
+		display: none;
+	}
+	/* Inset, to the same rhythm the studios' sheets take from
+   `--vui-sheet-body-padding`. The content editor's clip sheet is the app's own
+   `Sheet`, not the package's, so the package token does not reach it — and
+   without this the three mobile inspectors disagreed about their own edge, which
+   is the drift this change exists to close rather than a spacing preference.
+   `8px` is `--vui-space`, stated rather than imported: the app does not consume
+   the package's private scale, and a value that silently tracked it would break
+   here when the package rebalanced its own spacing. */
+	.tl2-clip-sheet .tl2-clip-content {
+		flex: 1 1 auto;
+		min-height: 0;
+		padding: var(--s-2);
+	}
+
+	/* Clip actions sheet. It used to size to its three rows, which made it the one
+   sheet with a different geometry from the others opened by the same bar — the
+   bar stayed put and the pane behind it changed shape. It now fills the band
+   like the rest; the rows simply do not reach the bottom. */
+	.tl2-clipactions {
+		display: flex;
+		flex-direction: column;
+		padding: var(--s-1-5) var(--s-2) var(--s-3);
+	}
+	/* A clip whose file is still uploading says so above its actions (timeline-clip.md#pending-media-badge). */
+	.tl2-clipactions-status {
+		margin: var(--s-1-5) var(--s-2-5) 0;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-clipaction {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+		min-height: 48px;
+		padding: 0 var(--s-2-5);
+		border: none;
+		border-radius: var(--r-2);
+		background: none;
+		color: var(--fg);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-clipaction:hover {
+		background: var(--surface-tint);
+	}
+	.tl2-clipactions-sep {
+		height: 1px;
+		margin: var(--s-1-5) var(--s-2-5);
+		background: var(--border);
+	}
+	/* Delete is separated above and coloured here: it is the only entry that
+   repeating the gesture does not undo. */
+	.tl2-clipaction.danger {
+		color: var(--err);
+	}
+
+	/* ─────────────────────────────────────────────────────────────────────
+   Phone composition.
+
+   The editor commits 726px of fixed width before the stage gets anything —
+   a 360px chat pane, this 54px rail and a 312px panel — plus a further
+   clamp(340px, 28vw, 380px) for the clip panel inside the stage. A portrait
+   phone is 393px. Below the breakpoint those panes stop being columns: the
+   rail panel becomes a bottom sheet (see ui/sheet.tsx), chat becomes the
+   workspace's Chat view (see editor/phone-workspace.tsx), and the rail itself
+   rotates from a left column into a bottom bar, which is what the sheets are
+   triggered from.
+
+   860px must agree with PHONE_MAX_WIDTH in hooks/editor/use-phone-layout.ts.
+   The hook decides whether a pane renders as a sheet; these rules decide what
+   the remaining layout does. They describe one composition, so a change to
+   either is a change to both.
+   ───────────────────────────────────────────────────────────────────── */
+	@media (max-width: 860px) {
+		.tl2-body {
+			flex-direction: column;
+		}
+
+		/* ── The standard bottom bar ──
+
+	   Both bottom bars are this: the project bar (the tool rail, rotated) and the
+	   clip bar that replaces it while something is selected. They occupy the same
+	   slot, one at a time, so any difference in their metrics is a difference the
+	   operator sees as the bar jumping when a clip is tapped.
+
+	   The rules were written for the clip bar first and the rail kept its own
+	   near-copy — 4px gap against 8px, 40px controls against 44px, scrollbar
+	   visible against hidden. Same structure, two sets of numbers, which is how
+	   they would have drifted further. Declared once here and worn by both.
+
+	   Scoped to the phone media query even though `.tl2-bottombar` is on the rail
+	   at every width: above the breakpoint the rail is a LEFT COLUMN and none of
+	   this applies to it. */
+		.tl2-bottombar {
+			/* Last in the column, so it reads as a bottom bar. `order` rather than moving
+	     the element: TimelineRail already owns the rail/panelOpen state that opens
+	     the sheets, and rewriting it as a second component would mean two places to
+	     register a tool. */
+			order: 3;
+			width: auto;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			/* ONE gap, everywhere. No `margin-left: auto` pushing a group to the far end:
+	     an auto margin consumes the free space a scroll container needs to compute
+	     its overflow from, so the row both spread unevenly AND refused to scroll
+	     once it was full. Uniform spacing is also what makes a row of unlabelled
+	     glyphs readable — the rhythm is the only grouping cue left. */
+			gap: var(--tl2-bottombar-gap);
+			padding: var(--s-1-5) var(--tl2-bottombar-gap);
+			/* Clears the home indicator — the bar is the lowest thing on screen. */
+			padding-bottom: max(6px, env(safe-area-inset-bottom));
+			background: var(--surface);
+			border-right: none;
+			border-top: 1px solid var(--border);
+			/* Neither bar fits its contents at 393px: ten tools on one, up to five
+	     property groups plus a label on the other. Both scroll rather than
+	     compressing controls below a thumb's width, and neither picks a subset that
+	     would then drift from what the desktop offers.
+
+	     `pan-x` because the bar's own handler owns nothing — the browser scrolls
+	     it, and the lowest strip on screen must not also be able to scroll the page
+	     vertically. */
+			/* The tool rail scrolls as one strip, and that is right for it: every
+	     control on it is a destination, so there is nothing that must stay put
+	     and nothing to pin. The bars that DO have a fixed exit and a commit
+	     scroll their middle instead — see `.tl2-clipbar` below. Scoped rather
+	     than shared, because making this `visible` for everyone left the rail's
+	     ten tools overflowing with no way to reach the last of them. */
+			overflow-x: auto;
+			overflow-y: hidden;
+			touch-action: pan-x;
+			scrollbar-width: none;
+			z-index: 20;
+		}
+		.tl2-bottombar::-webkit-scrollbar {
+			display: none;
+		}
+		/* Nothing in a bottom bar shrinks. A control squeezed under 44px is unhittable
+	   and a label squeezed to an ellipsis says nothing — scrolling costs the
+	   operator a swipe and costs the design nothing. */
+		.tl2-bottombar > * {
+			flex: 0 0 auto;
+		}
+		/* 44px square, the platform minimum, on BOTH bars. The rail's 40px was
+	   inherited from a desktop column where the pointer is a mouse. Square because
+	   a glyph with no caption has the same target on both axes. */
+		.tl2-bottombar .tl2-railbtn,
+		.tl2-bottombar .tl2-clipbar-btn {
+			width: 44px;
+			height: 44px;
+			padding: 0;
+			flex: 0 0 auto;
+		}
+
+		/* Everything structural comes from `.tl2-bottombar`, which the rail also
+	   wears — see the block above. Only the separator's orientation is specific
+	   to this bar, because the clip bar has none. */
+		/* No horizontal margin: the bar's own `gap` already spaces it, and adding
+	   margin on top made the two gaps either side of a separator wider than
+	   every other gap in the row — the one place the shared rhythm broke. */
+		.tl2-rail-sep {
+			width: 1px;
+			height: auto;
+			margin: var(--s-1-5) 0;
+		}
+
+		/* `position` and `transform` are restated here for a CASCADE reason, not a
+	   layout one. The panel keeps its `.tl2-panel` class inside the sheet
+	   because that class carries the header, body and field styling the panels
+	   rely on — but `.tl2-panel` declares `position: relative` from the
+	   `feature` layer, and `.ui-sheet` declares `fixed` from `chrome`. Layer
+	   beats specificity, so the sheet fell into normal flow at the end of
+	   <body>, below the fold, and the open-state transform never overrode the
+	   closed one. On screen that is indistinguishable from a sheet that never
+	   rendered: scrim dimmed, page modal, no content — while the element still
+	   reported a full-width, full-height box to every assertion.
+	   The 312px column width goes too, or a sheet pinned left:0 right:0 renders
+	   312px wide. Scoped to the marker class, so the four catalog surfaces that
+	   also use `.tl2-panel` are untouched. */
+		.tl2-panel-sheet {
+			position: fixed;
+			width: auto;
+			flex-shrink: 1;
+		}
+		.tl2-panel-sheet.ui-sheet-open {
+			transform: none;
+		}
+	}
+}

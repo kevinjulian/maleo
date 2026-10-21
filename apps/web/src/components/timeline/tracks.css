@@ -1,0 +1,644 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The timeline itself: the ruler, the label gutter, the scrolling lanes and
+   the row heights they share, and the beat, insight and marker strips. The
+   clips are in tracks-clips.css; what acts on them in tracks-interaction.css. */
+
+	/* Independent ruler point annotations; same height in gutter and time surface. */
+	.tl2-bookmark-band {
+		position: relative;
+		height: var(--control-h-touch);
+		flex-shrink: 0;
+	}
+
+	/* Keyframe rows retain main timeline time geometry; touch markers have 44px hits. */
+	.tl2-keylane,
+	.tl2-keylane-label {
+		position: relative;
+		height: var(--control-h-touch);
+		border-bottom: 1px solid var(--border);
+	}
+	.tl2-keylane-label {
+		display: flex;
+		align-items: center;
+		padding-inline: var(--s-2);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		overflow: hidden;
+	}
+	.tl2-keyrange {
+		position: absolute;
+		top: 50%;
+		height: 1px;
+		background: var(--border-strong);
+		pointer-events: none;
+	}
+	.tl2-keypoint {
+		position: absolute;
+		z-index: 10;
+		top: 50%;
+		translate: -50% -50%;
+		width: var(--control-h-touch);
+		height: var(--control-h-touch);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: var(--muted);
+		cursor: pointer;
+		touch-action: none;
+	}
+	.tl2-keypoint[aria-pressed="true"] {
+		color: var(--ai);
+	}
+	.tl2-keypoint:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: -2px;
+	}
+	.tl2-keypoint[aria-disabled="true"] {
+		cursor: default;
+	}
+	/* The selected clip's moments sit on its own bar: a zero-height strip after the
+   clip's lane, so each ◆ straddles the bar's bottom edge without taking a row. */
+	.tl2-keylanes {
+		position: relative;
+	}
+	.tl2-keymoments {
+		position: relative;
+		height: 0;
+		z-index: 12;
+	}
+	.tl2-keypoint.moment {
+		top: 0;
+		translate: -50% -70%;
+		color: var(--fg);
+		filter: drop-shadow(0 0 1px var(--surface)) drop-shadow(0 0 2px var(--surface));
+	}
+	.tl2-keypoint.moment[aria-pressed="true"] {
+		color: var(--ai);
+	}
+
+	/* ── Timeline ── */
+	.tl2-timeline {
+		position: relative;
+		flex-shrink: 0;
+		height: var(--tl2-tl-h);
+		display: flex;
+		flex-direction: column;
+		-webkit-user-select: none;
+		user-select: none;
+		cursor: default;
+		background: var(--surface);
+		border-top: 1px solid var(--border);
+	}
+	.tl2-timeline :is(input, textarea, [contenteditable]:not([contenteditable="false"])) {
+		-webkit-user-select: text;
+		user-select: text;
+		cursor: text;
+	}
+
+	/* The splitter is desktop-only. It was introduced for the phone — no fixed
+   stage/timeline share suits every project, and a phone showing two to four
+   lanes where the design assumed nine is the case that motivated it — and then
+   removed from the phone anyway.
+
+   The reason is that a drag is the scarcest gesture on this surface. The
+   timeline now owns pan, clip move, trim, scrub and pinch, and a 28px strip
+   whose whole purpose is a sixth drag sits directly between two of them. The
+   bottom sheets also occupy the band between the transport and the bottom bar,
+   which the splitter could resize out from under them mid-gesture.
+
+   What that costs is stated rather than designed away: at phone width the
+   timeline is back to a fixed share of the viewport. */
+
+	.tl2-tlbar {
+		display: grid;
+		grid-template-columns: minmax(180px, 1fr) auto minmax(360px, 1fr);
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-1-5) var(--s-3);
+		border-bottom: 1px solid var(--border);
+		background: color-mix(in oklab, var(--surface) 96%, transparent);
+	}
+	.tl2-tlbar-l,
+	.tl2-tlbar-r {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+	}
+	.tl2-tlbar-r {
+		justify-content: flex-end;
+	}
+	.tl2-tlbar-c {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+		justify-content: center;
+		min-width: 320px;
+	}
+
+	.tl2-flow {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		height: 26px;
+		padding: 0 var(--s-2);
+		white-space: nowrap;
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		color: var(--fg-dim);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+	}
+	/* By the editor's own width, not the viewport's: docked beside a rail panel and
+ * the inspector the strip is under 1000px on a 1440 screen, and there the
+ * count sat on top of the timecode. A label, so the first thing to go. */
+	@container (max-width: 1180px) {
+		.tl2-tlbar-r .tl2-flow {
+			display: none;
+		}
+	}
+	.tl2-zoom {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	/* The canonical Slider draws the track and thumb; the toolbar sets its width. */
+	.tl2-zoom-slider {
+		width: 78px;
+	}
+
+	/* Multi-track area: fixed label gutter + horizontally scrolling lanes.
+   --tl2-ruler-h and --tl2-lane-h keep the gutter rows aligned to the lanes. */
+	.tl2-tlmain {
+		--tl2-ruler-h: 26px;
+		/* Lane height follows lane group (timeline-lane-types): `--tl2-lane-h` is
+     the scene row, which carries the render and needs its filmstrip legible;
+     `--tl2-lane-h-visual` a visual lane's thumbnails; `--tl2-lane-h-audio`
+     about two thirds of that, enough for a waveform to read (half was too
+     thin), which also fits a caption lane's one line of cue text;
+     `--tl2-lane-h-short` text, data and effect, which are a bare fill.
+     Every density rule sets all four so the ladder scales together, and the
+     cross axis MEASURES each row rather than copying these numbers. */
+		/* Clips and markers share ONE corner radius. They sit in the same column of
+     the same grid, so two values drift into two visual languages — clips were
+     10px against the marker band's 4px and read as pills next to it. */
+		--tl2-clip-r: 4px;
+		--tl2-lane-h: 46px;
+		--tl2-lane-h-visual: 40px;
+		--tl2-lane-h-audio: 30px;
+		--tl2-lane-h-short: 24px;
+		--tl2-lane-gap: 0px;
+		--tl2-mark-h: 18px;
+		--tl2-insights-h: 26px;
+		/* Playhead red (always visible over any art); hoverhead blue (cursor ghost). */
+		/* Per-type clip hues — every clip type is visually distinguishable at a
+     glance (tinted fill + solid left edge in that hue). */
+		--clip-video: oklch(0.62 0.14 250);
+		--clip-image: oklch(0.62 0.13 160);
+		--clip-audio: oklch(0.7 0.17 58);
+		--clip-text: oklch(0.74 0.08 145);
+		/* Captions carry their own text, so their clips are read, not just seen:
+     a mid-lightness cyan holds white text and stays clear of text's soft green. */
+		--clip-caption: oklch(0.6 0.1 205);
+		/* Motion is a text overlay with a preset, so it keeps the TEXT hue and
+     separates by lightness instead — related at a glance, still distinct once
+     the labels are gone. Do NOT give it its own hue: the first attempt did and
+     collided with `--clip-data`. */
+		--clip-motion: oklch(0.6 0.07 145);
+		--clip-data: oklch(0.6 0.24 330);
+		/* Hues kept apart on purpose — audio 58, text 145, image 160, caption 205,
+     video 250, effect 285, data 330. A clip's fill is now the ONLY thing naming it, so
+     neighbouring hues are a legibility bug, not a taste question. Text is a
+     SOFT green: low chroma, high lightness. Image sits 15 away and is only ever
+     a border under a thumbnail, so the two do not compete in practice. */
+		--clip-effect: oklch(0.58 0.19 285);
+		/* Two columns, neither of which is this element: the gutter, and
+     `.tl2-tlscroll`, which scrolls the lanes on both axes. The gutter used to
+     be a sticky child of one shared scroller, which put the horizontal
+     scrollbar under it and slid the lanes beneath it. */
+		flex: 1;
+		display: flex;
+		min-height: 0;
+		overflow: hidden;
+	}
+	/* Studios consume the editor's timeline vocabulary; only their two-column
+   housing differs from the project's flex scroller. */
+	/* Match the project timeline: toolbar stays outside the scroll area, while
+   ruler and gutter heads stick inside their synchronized scrollers. */
+	[data-vui-slot="timeline"]:has(> .tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)) {
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline) {
+		display: grid;
+		grid-template-columns: 120px minmax(0, 1fr);
+		flex: 1;
+		min-height: 0;
+		overflow: hidden;
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline)
+		:is(.tl2-gutter, [data-vui-slot="timeline-scroller"]) {
+		height: 100%;
+		min-height: 0;
+		overflow-y: auto;
+	}
+	.tl2-tlmain:is(.tl2-template-timeline, .tl2-motion-timeline) .tl2-gutter-spacer {
+		border-bottom: 1px solid var(--border);
+	}
+	.tl2-template-timeline .tl2-playhead,
+	.tl2-motion-timeline .tl2-playhead {
+		pointer-events: none;
+	}
+	.tl2-density-comfortable .tl2-tlmain {
+		--tl2-lane-h: 58px;
+		--tl2-lane-h-visual: 48px;
+		--tl2-lane-h-audio: 32px;
+		--tl2-lane-h-short: 26px;
+		--tl2-lane-gap: 0px;
+		--tl2-ruler-h: 30px;
+	}
+	:is(.tl2-density-compact .tl2-tlmain, .tl2-template-timeline, .tl2-motion-timeline) {
+		--tl2-lane-h: 42px;
+		--tl2-lane-h-visual: 36px;
+		--tl2-lane-h-audio: 26px;
+		--tl2-lane-h-short: 24px;
+		--tl2-lane-gap: 0px;
+		--tl2-ruler-h: 24px;
+	}
+
+	/* On a touch device the comfortable metrics are not affordable.
+ *
+ * The portrait height budget leaves roughly 429px for the timeline: at 58px
+ * that is about six lanes, at 42px about nine. Six is a peephole on a
+ * multi-track edit, so a coarse pointer takes the compact metrics whichever
+ * density is selected.
+ *
+ * This does override an explicit user setting, which is worth naming rather
+ * than hiding. The setting survives — rotate to a wide viewport, or open the
+ * project on a desktop, and the chosen density applies again. What it cannot
+ * do is spend height the device does not have.
+ *
+ * Keyed on `pointer: coarse`, not on width: a touch laptop at 1400px needs the
+ * larger hit targets, and a desktop window dragged to 390px does not. */
+	@media (pointer: coarse) {
+		:is(.tl2-density-comfortable .tl2-tlmain, .tl2-template-timeline, .tl2-motion-timeline) {
+			--tl2-lane-h: 42px;
+			--tl2-lane-h-visual: 36px;
+			--tl2-lane-h-audio: 26px;
+			--tl2-lane-h-short: 24px;
+			--tl2-lane-gap: 0px;
+			--tl2-ruler-h: 24px;
+		}
+	}
+	/* The gutter mirrors the lanes' box model exactly: no flex gap, each row carries
+   its own margin-bottom like a lane, and a marker-band spacer is inserted when
+   the lanes show the marker band — otherwise every lane drifts below its rail row
+   (the band has no rail counterpart) and the last track gets clipped. */
+	/* 120px, down from 176px. At 176 the gutter took 45% of a 390px phone for two
+   lines of text per row; four icons say the same thing, and per-group lane
+   heights already say most of it for free. */
+	.tl2-gutter {
+		width: 120px;
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		border-right: 1px solid var(--border);
+		background: var(--surface);
+		/* Scrolls vertically, in step with the lanes (`useGutterScrollSync`), and
+     never horizontally. It scrolls rather than being driven by a transform so a
+     vertical finger drag on a row still moves the timeline. No scrollbar of its
+     own: the lanes' scrollbar is the one the operator reads. */
+		overflow-x: hidden;
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+	.tl2-gutter::-webkit-scrollbar {
+		display: none;
+	}
+	.tl2-gutter-body {
+		display: flex;
+		flex-direction: column;
+		flex-shrink: 0;
+	}
+	.tl2-gutter-tail {
+		flex-shrink: 0;
+	}
+	.tl2-gutter-spacer {
+		height: var(--tl2-ruler-h);
+		flex-shrink: 0;
+	}
+	.tl2-gutter-markspace {
+		height: var(--tl2-mark-h);
+		margin-bottom: var(--tl2-lane-gap);
+		flex-shrink: 0;
+	}
+	/* Mirrors the insights strip in the lanes — same rule as the marker band: any
+   band in the sticky head needs a gutter counterpart or the rows drift. */
+	.tl2-gutter-insightspace {
+		height: var(--tl2-insights-h);
+		margin-bottom: var(--tl2-lane-gap);
+		flex-shrink: 0;
+	}
+	/* ── The one place a row's height is decided ──
+ *
+ * A lane and its gutter row MUST resolve to the same number. They are separate
+ * columns with no shared layout, so a mismatch does not misalign one row — it
+ * drifts every row below it and clips the last track. That has happened before,
+ * which is why each rule lists both selectors rather than two rules that have to
+ * be kept equal by hand: dropping a selector is a visible deletion, whereas two
+ * numbers falling out of step is not.
+ *
+ * Keyed on `data-lane-group`, which the lane and the gutter row both carry, and
+ * on `data-lane-base` for the scene row. An undeclared lane may hold any free
+ * clip, so it takes the visual height. */
+	.tl2-lane,
+	.tl2-gutter-row {
+		--tl2-row-h: var(--tl2-lane-h-visual);
+	}
+	.tl2-lane:is([data-lane-group="audio"], [data-lane-group="caption"]),
+	.tl2-gutter-row:is([data-lane-group="audio"], [data-lane-group="caption"]) {
+		--tl2-row-h: var(--tl2-lane-h-audio);
+	}
+	.tl2-lane:is([data-lane-group="text"], [data-lane-group="data"], [data-lane-group="effect"]),
+	.tl2-gutter-row:is(
+		[data-lane-group="text"],
+		[data-lane-group="data"],
+		[data-lane-group="effect"]
+	) {
+		--tl2-row-h: var(--tl2-lane-h-short);
+	}
+	.tl2-lane[data-lane-base],
+	.tl2-gutter-row[data-lane-base] {
+		--tl2-row-h: var(--tl2-lane-h);
+	}
+
+	.tl2-gutter-row {
+		height: var(--tl2-row-h);
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		padding: 0 var(--s-1);
+		color: var(--fg-dim);
+		font-size: var(--type-label-size);
+		border-bottom: 1px solid transparent; /* mirrors the lane's rule so rows align */
+	}
+	.tl2-gutter-row.droptarget {
+		box-shadow: inset 0 2px 0 0 var(--ai);
+	}
+	/* Selection ARMS reorder, so it must read before the drag — and on the LANE,
+   which is where the operator looks once the gutter is hidden. */
+	/* Holding a selected clip: a quieter tint than a selected header, on both the
+   lane and its row, so the operator can find the selection's lane at a glance. */
+	.tl2-gutter-row.holds,
+	.tl2-lane.holds {
+		background: color-mix(in oklch, var(--ai) 6%, var(--surface));
+	}
+	.tl2-gutter-row.on {
+		background: var(--ai-bg);
+		box-shadow: inset 2px 0 0 var(--ai);
+	}
+	.tl2-lane.on {
+		background: color-mix(in oklch, var(--ai) 10%, var(--surface));
+	}
+	.tl2-lane.on::after {
+		background-color: color-mix(in oklch, var(--ai) 6%, transparent);
+	}
+	.tl2-gutter-row.dragging {
+		opacity: 0.6;
+	}
+	/* An unselected header keeps the pan gesture; a selected one takes it, which is
+   the same two-state rule clips use and the reason no press-and-hold is needed. */
+	.tl2-gutter-row {
+		touch-action: pan-y;
+		cursor: grab;
+	}
+	.tl2-gutter-row.on {
+		touch-action: none;
+	}
+	.tl2-gutter-row:active {
+		cursor: grabbing;
+	}
+
+	/* The lanes' scroller, both axes, no padding — the grid runs flush against
+   the gutter border and the ruler. A column so the lanes can take at least its
+   full height: the playhead, snap line and hover cursor are drawn top-to-bottom
+   of `.tl2-lanes`, and with few lanes they used to stop at the last one. */
+	.tl2-tlscroll {
+		flex: 1;
+		min-width: 0;
+		overflow: auto;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+	}
+	.tl2-lanes {
+		position: relative;
+		min-width: 100%;
+		flex: 1 0 auto;
+		display: flex;
+		flex-direction: column;
+	}
+	/* Below the last lane: empty lane space, filling to the panel's bottom. */
+	.tl2-lanes-fill {
+		flex: 1 0 0;
+		min-height: 0;
+	}
+
+	/* Native sticky header inside each scroller: the ruler pins to the top of the
+   lanes, the gutter head to the top of the gutter. */
+	.tl2-stick {
+		position: sticky;
+		top: 0;
+	}
+	.tl2-head {
+		z-index: 8;
+		background: var(--surface);
+	}
+	.tl2-gutter-head {
+		z-index: 12;
+		background: var(--surface);
+	}
+
+	.tl2-ruler {
+		position: relative;
+		height: var(--tl2-ruler-h);
+		cursor: default;
+		/* Plain surface (opaque — clips scroll underneath the sticky header). */
+		background: var(--surface);
+		border-bottom: 1px solid var(--border);
+	}
+	/* A minor tick is a short stub on the ruler's bottom edge; a labelled time is
+   its text alone, in the band above the stubs, so a label never runs into the
+   next stub. Full-height lines on every tick read as a grid laid over the ruler
+   rather than a scale. */
+	.tl2-tick {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		pointer-events: none;
+	}
+	.tl2-tick::after {
+		content: "";
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		width: 1px;
+		height: 6px;
+		background: var(--border-strong);
+	}
+	.tl2-tick.major::after {
+		content: none;
+	}
+	/* At time zero the playhead grip sits on the label; clear it. */
+	.tl2-tick.origin em {
+		left: 7px;
+	}
+	.tl2-tick em {
+		/* Clear of the playhead line, which sits on the same time. */
+		position: absolute;
+		top: 5px;
+		left: 3px;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-style: normal;
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+		color: var(--muted);
+		white-space: nowrap;
+	}
+
+	/* The marked range: the span a ruler drag covered, and what replaces
+   multi-select on a coarse pointer. Drawn IN the ruler, where it was marked,
+   because a selection the operator cannot see is the failure the contextual bar
+   exists to prevent for clips — the same mistake would be no better here. */
+	.tl2-rulerrange {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-0-5);
+		background: color-mix(in oklab, var(--ai) 18%, transparent);
+		border-left: 2px solid var(--ai);
+		border-right: 2px solid var(--ai);
+		z-index: 3;
+	}
+	.tl2-rulerrange em {
+		padding-left: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-style: normal;
+		color: var(--ai);
+		white-space: nowrap;
+		overflow: hidden;
+		pointer-events: none;
+	}
+	.tl2-rulerrange-x {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 20px;
+		height: 100%;
+		border: none;
+		background: none;
+		color: var(--ai);
+		cursor: pointer;
+	}
+
+	/* Beat grid ticks — music onsets rendered inside the ruler; snapping targets. */
+	.tl2-beat {
+		position: absolute;
+		top: 10px;
+		bottom: 2px;
+		width: 1px;
+		background: var(--ai);
+		opacity: 0.55;
+		pointer-events: none;
+	}
+
+	/* Pacing insights strip — retention heatmap cells, density bars, lint badges. */
+	.tl2-insights {
+		position: relative;
+		height: var(--tl2-insights-h);
+		margin-bottom: var(--tl2-lane-gap);
+		background: var(--surface-tint);
+		border-radius: var(--r-2);
+		overflow: hidden;
+	}
+	.tl2-insights-canvas {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+	}
+
+	.tl2-lint {
+		position: absolute;
+		top: 1px;
+		height: 6px;
+		border: none;
+		border-radius: 3px;
+		cursor: pointer;
+		padding: 0;
+		opacity: 0.9;
+	}
+	.tl2-lint.high {
+		background: var(--lint-high);
+	}
+	.tl2-lint.warn {
+		background: var(--lint-warn);
+	}
+	.tl2-lint.info {
+		background: var(--lint-info);
+	}
+	.tl2-lint:hover {
+		opacity: 1;
+		box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5);
+	}
+
+	/* Story-beat marker band — thin annotation strip above the clip lanes. */
+	.tl2-markband {
+		position: relative;
+		height: var(--tl2-mark-h);
+		margin-bottom: var(--tl2-lane-gap);
+	}
+	.tl2-mark {
+		position: absolute;
+		top: 0;
+		height: 16px;
+		display: flex;
+		align-items: center;
+		padding: 0 var(--s-1-5);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--tl2-clip-r);
+		background: color-mix(in oklch, var(--surface-tint) 70%, transparent);
+		color: var(--muted);
+		cursor: pointer;
+		overflow: hidden;
+	}
+	.tl2-mark:hover {
+		border-color: var(--ai);
+		color: var(--fg);
+	}
+	.tl2-mark.on {
+		border-color: var(--ai);
+		color: var(--fg);
+		background: color-mix(in oklch, var(--ai) 14%, transparent);
+	}
+	.tl2-mark-label {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		letter-spacing: 0.04em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+}

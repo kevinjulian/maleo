@@ -1,0 +1,95 @@
+/* Cascade layer: chrome. The Slider primitive (slider.tsx).
+ *
+ * Geometry is ours: a 4px track and a 12px thumb inside a `--control-h-xs`
+ * hit area, so it sits on the 24px line of the editor fields beside it.
+ * Colouring is OpenCut classic's (MIT): the value in the accent blue on a
+ * tinted track, and a raised thumb ringed in the accent. Hover grows
+ * the thumb with a transform; focus rings the thumb, not a row-wide box. */
+@layer chrome {
+	.ui-slider {
+		--ui-slider-track: var(--surface-strong);
+		--ui-slider-value: var(--ai);
+		--ui-slider-thumb: var(--surface-raised);
+		appearance: none;
+		width: 100%;
+		min-width: 0;
+		height: var(--control-h-xs);
+		margin: 0;
+		background: transparent;
+		cursor: pointer;
+	}
+	/* The track stays 4px; the hit area grows to the touch floor. */
+	@media (pointer: coarse) {
+		.ui-slider {
+			height: var(--control-h-touch);
+		}
+	}
+	.ui-slider:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+	.ui-slider:focus-visible {
+		outline: none;
+	}
+
+	.ui-slider::-webkit-slider-runnable-track {
+		height: 4px;
+		border-radius: var(--r-pill);
+		background: linear-gradient(
+			to right,
+			var(--ui-slider-value) var(--ui-slider-fill, 0%),
+			var(--ui-slider-track) var(--ui-slider-fill, 0%)
+		);
+	}
+	.ui-slider::-moz-range-track {
+		height: 4px;
+		border-radius: var(--r-pill);
+		background: var(--ui-slider-track);
+	}
+	.ui-slider::-moz-range-progress {
+		height: 4px;
+		border-radius: var(--r-pill);
+		background: var(--ui-slider-value);
+	}
+
+	.ui-slider::-webkit-slider-thumb {
+		appearance: none;
+		width: 12px;
+		height: 12px;
+		margin-top: -4px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: var(--ui-slider-thumb);
+		box-shadow:
+			0 0 0 1px var(--ai-border),
+			var(--shadow-1);
+		transition: transform var(--d-fast);
+	}
+	.ui-slider::-moz-range-thumb {
+		width: 12px;
+		height: 12px;
+		border: 0;
+		border-radius: var(--r-pill);
+		background: var(--ui-slider-thumb);
+		box-shadow:
+			0 0 0 1px var(--ai-border),
+			var(--shadow-1);
+		transition: transform var(--d-fast);
+	}
+	.ui-slider:not(:disabled):hover::-webkit-slider-thumb {
+		transform: scale(1.2);
+	}
+	.ui-slider:not(:disabled):hover::-moz-range-thumb {
+		transform: scale(1.2);
+	}
+	.ui-slider:focus-visible::-webkit-slider-thumb {
+		box-shadow:
+			0 0 0 1px var(--ai-border),
+			0 0 0 calc(1px + var(--focus-w)) var(--focus-color);
+	}
+	.ui-slider:focus-visible::-moz-range-thumb {
+		box-shadow:
+			0 0 0 1px var(--ai-border),
+			0 0 0 calc(1px + var(--focus-w)) var(--focus-color);
+	}
+}

@@ -1,0 +1,21 @@
+/* The timeline editor's stylesheet, split by the region of the editor each
+ * rule draws. Four modules import this path, so it stays the entry.
+ *
+ * The order below is the order the rules were written in and must stay that
+ * way: `.tl2-timeline` and `.tl2-flow` are each defined in two regions, and
+ * the second definition is the one that renders. */
+@import "./rail.css";
+@import "./stage.css";
+@import "./stage-layout.css";
+@import "./tracks.css";
+@import "./tracks-clips.css";
+@import "./tracks-interaction.css";
+@import "./clip-animation.css";
+@import "./base-lane.css";
+@import "./studio.css";
+@import "./studio-motion.css";
+@import "./studio-assistant.css";
+@import "./editing.css";
+@import "./editing-elements.css";
+@import "./media.css";
+@import "./scene-drawer.css";

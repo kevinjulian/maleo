@@ -1,0 +1,838 @@
+{
+	"frame": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"planKind": "explainer",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": true,
+					"questions": [
+						"What returns are typical?"
+					]
+				},
+				"degraded": false
+			}
+		},
+		"invalid": {
+			"calls": 1,
+			"value": {
+				"planKind": "story",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": false,
+					"questions": []
+				},
+				"degraded": false
+			}
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"planKind": "explainer",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": true,
+					"questions": [
+						"What returns are typical?"
+					]
+				},
+				"degraded": false
+			}
+		},
+		"plain": {
+			"calls": 2,
+			"value": {
+				"planKind": "story",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": false,
+					"questions": []
+				},
+				"degraded": true
+			}
+		},
+		"empty": {
+			"calls": 2,
+			"value": {
+				"planKind": "story",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": false,
+					"questions": []
+				},
+				"degraded": true
+			}
+		},
+		"truncated": {
+			"calls": 2,
+			"value": {
+				"planKind": "story",
+				"arc": "three_act",
+				"language": "en",
+				"grounding": {
+					"needed": false,
+					"questions": []
+				},
+				"degraded": true
+			}
+		}
+	},
+	"draft": {
+		"valid": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Opening",
+						"narration": "Seeds wait.",
+						"visualPrompt": "A seed",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Growth",
+						"narration": "Then they grow.",
+						"visualPrompt": "A sprout",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"[\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"beats\"\n    ],\n    \"message\": \"Required\"\n  }\n]"
+				]
+			}
+		},
+		"invalid": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 1",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: Establish the world and what is normal in it, concretely enough that a change will register.",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: the drafter returned an invalid section (sections: expected array, received string). Re-run planning or edit it by hand.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 2",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: What the viewer is left understanding, stated once and not restated.",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: the drafter returned an invalid section (sections: expected array, received string). Re-run planning or edit it by hand.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"2 section(s) were never drafted and are still empty: Section 1, Section 2. Re-run planning, or write them by hand, then approve again."
+				]
+			}
+		},
+		"fenced": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Opening",
+						"narration": "Seeds wait.",
+						"visualPrompt": "A seed",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Growth",
+						"narration": "Then they grow.",
+						"visualPrompt": "A sprout",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"[\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"beats\"\n    ],\n    \"message\": \"Required\"\n  }\n]"
+				]
+			}
+		},
+		"plain": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 1",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: Establish the world and what is normal in it, concretely enough that a change will register.",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unexpected identifier \"I\". Re-run planning or edit it by hand.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 2",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: What the viewer is left understanding, stated once and not restated.",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unexpected identifier \"I\". Re-run planning or edit it by hand.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"2 section(s) were never drafted and are still empty: Section 1, Section 2. Re-run planning, or write them by hand, then approve again."
+				]
+			}
+		},
+		"empty": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 1",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: Establish the world and what is normal in it, concretely enough that a change will register.",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unexpected EOF. Re-run planning or edit it by hand.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 2",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: What the viewer is left understanding, stated once and not restated.",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unexpected EOF. Re-run planning or edit it by hand.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"2 section(s) were never drafted and are still empty: Section 1, Section 2. Re-run planning, or write them by hand, then approve again."
+				]
+			}
+		},
+		"truncated": {
+			"calls": 3,
+			"value": {
+				"sections": [
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 1",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: Establish the world and what is normal in it, concretely enough that a change will register.",
+						"chapterFunction": "setup",
+						"chapterObligation": "Establish the world and what is normal in it, concretely enough that a change will register.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unterminated string. Re-run planning or edit it by hand.",
+						"emotion": "curiosity"
+					},
+					{
+						"id": "<uuid>",
+						"semanticBeatId": "<uuid>",
+						"title": "Section 2",
+						"narration": "",
+						"visualPrompt": "Placeholder for an undrafted section: What the viewer is left understanding, stated once and not restated.",
+						"chapterFunction": "resolution",
+						"chapterObligation": "What the viewer is left understanding, stated once and not restated.",
+						"needsDrafting": true,
+						"notes": "Drafting failed for this section after a retry: JSON Parse error: Unterminated string. Re-run planning or edit it by hand.",
+						"emotion": "relief"
+					}
+				],
+				"planKind": "story",
+				"arc": "three_act",
+				"plannedReferences": [],
+				"referenceAliases": [],
+				"language": "en",
+				"needsDirection": true,
+				"directionErrors": [
+					"2 section(s) were never drafted and are still empty: Section 1, Section 2. Re-run planning, or write them by hand, then approve again."
+				]
+			}
+		}
+	},
+	"clarification": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"id": "pre-1",
+				"stage": "pre_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"options": [
+							{
+								"id": "new",
+								"label": "Beginners",
+								"value": "Explain for beginners",
+								"description": "Introduce the subject.",
+								"recommended": true
+							},
+							{
+								"id": "expert",
+								"label": "Experts",
+								"value": "Explain for experts",
+								"description": "Assume prior knowledge."
+							}
+						]
+					}
+				]
+			}
+		},
+		"invalid": {
+			"calls": 1,
+			"value": null
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"id": "pre-1",
+				"stage": "pre_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"options": [
+							{
+								"id": "new",
+								"label": "Beginners",
+								"value": "Explain for beginners",
+								"description": "Introduce the subject.",
+								"recommended": true
+							},
+							{
+								"id": "expert",
+								"label": "Experts",
+								"value": "Explain for experts",
+								"description": "Assume prior knowledge."
+							}
+						]
+					}
+				]
+			}
+		},
+		"plain": {
+			"calls": 1,
+			"value": null
+		},
+		"empty": {
+			"calls": 1,
+			"value": null
+		},
+		"truncated": {
+			"calls": 1,
+			"value": null
+		}
+	},
+	"evidence": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"kind": "batch",
+				"batch": {
+					"id": "post-1",
+					"stage": "post_research",
+					"purpose": "story_brief",
+					"questions": [
+						{
+							"id": "case",
+							"header": "Case study",
+							"question": "Which fund should the video follow?",
+							"options": [
+								{
+									"id": "ohio",
+									"label": "Ohio",
+									"value": "Follow the Ohio pension fund",
+									"description": "A high-return fund.",
+									"recommended": true,
+									"sources": [
+										{
+											"title": "Ohio pension study",
+											"url": "https://example.test/ohio"
+										}
+									]
+								},
+								{
+									"id": "vt",
+									"label": "Vermont",
+									"value": "Follow the Vermont pension fund",
+									"description": "A low-return counterexample.",
+									"sources": [
+										{
+											"title": "Vermont pension study",
+											"url": "https://example.test/vermont"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"invalid": {
+			"calls": 1,
+			"value": {
+				"kind": "fallback",
+				"reason": "the evidence analysis returned a batch that does not fit the question contract"
+			}
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"kind": "batch",
+				"batch": {
+					"id": "post-1",
+					"stage": "post_research",
+					"purpose": "story_brief",
+					"questions": [
+						{
+							"id": "case",
+							"header": "Case study",
+							"question": "Which fund should the video follow?",
+							"options": [
+								{
+									"id": "ohio",
+									"label": "Ohio",
+									"value": "Follow the Ohio pension fund",
+									"description": "A high-return fund.",
+									"recommended": true,
+									"sources": [
+										{
+											"title": "Ohio pension study",
+											"url": "https://example.test/ohio"
+										}
+									]
+								},
+								{
+									"id": "vt",
+									"label": "Vermont",
+									"value": "Follow the Vermont pension fund",
+									"description": "A low-return counterexample.",
+									"sources": [
+										{
+											"title": "Vermont pension study",
+											"url": "https://example.test/vermont"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		"plain": {
+			"calls": 1,
+			"value": {
+				"kind": "fallback",
+				"reason": "the evidence analysis did not return readable JSON"
+			}
+		},
+		"empty": {
+			"calls": 1,
+			"value": {
+				"kind": "fallback",
+				"reason": "the evidence analysis did not return readable JSON"
+			}
+		},
+		"truncated": {
+			"calls": 1,
+			"value": {
+				"kind": "fallback",
+				"reason": "the evidence analysis did not return readable JSON"
+			}
+		}
+	},
+	"direction": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"story": "a seed story",
+				"visual": "ink",
+				"voice": "calm",
+				"rules": "no text"
+			}
+		},
+		"invalid": {
+			"calls": 1,
+			"value": {
+				"story": "ink, calm, no text",
+				"visual": "",
+				"voice": "",
+				"rules": ""
+			}
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"story": "a seed story",
+				"visual": "ink",
+				"voice": "calm",
+				"rules": "no text"
+			}
+		},
+		"plain": {
+			"calls": 1,
+			"value": {
+				"story": "ink, calm, no text",
+				"visual": "",
+				"voice": "",
+				"rules": ""
+			}
+		},
+		"empty": {
+			"calls": 1,
+			"value": {
+				"story": "ink, calm, no text",
+				"visual": "",
+				"voice": "",
+				"rules": ""
+			}
+		},
+		"truncated": {
+			"calls": 1,
+			"value": {
+				"story": "ink, calm, no text",
+				"visual": "",
+				"voice": "",
+				"rules": ""
+			}
+		}
+	},
+	"style": {
+		"valid": {
+			"calls": 1,
+			"value": "ink wash, muted greens, soft light"
+		},
+		"invalid": {
+			"calls": 1,
+			"value": "{\"unexpected\":true,\"sections\":\"no\",\"beats\":3,\"questions\":\"none\",\"subjects\":\"x\"}"
+		},
+		"fenced": {
+			"calls": 1,
+			"value": "Here you go: ```json ink wash, muted greens, soft light ```"
+		},
+		"plain": {
+			"calls": 1,
+			"value": "I would rather describe this in prose."
+		},
+		"empty": {
+			"calls": 1,
+			"value": ""
+		},
+		"truncated": {
+			"calls": 1,
+			"value": "ink wash, muted g"
+		}
+	},
+	"bible": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"subjects": [
+					{
+						"id": "seed",
+						"label": "Seed",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "garden",
+						"label": "Garden",
+						"descriptors": []
+					}
+				],
+				"palette": "green",
+				"negatives": [],
+				"summary": "ink"
+			}
+		},
+		"invalid": {
+			"calls": 1,
+			"error": "[\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"string\",\n    \"path\": [\n      \"subjects\"\n    ],\n    \"message\": \"Expected array, received string\"\n  }\n]"
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"subjects": [
+					{
+						"id": "seed",
+						"label": "Seed",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "garden",
+						"label": "Garden",
+						"descriptors": []
+					}
+				],
+				"palette": "green",
+				"negatives": [],
+				"summary": "ink"
+			}
+		},
+		"plain": {
+			"calls": 1,
+			"error": "JSON Parse error: Unexpected identifier \"I\""
+		},
+		"empty": {
+			"calls": 1,
+			"error": "JSON Parse error: Unexpected EOF"
+		},
+		"truncated": {
+			"calls": 1,
+			"error": "JSON Parse error: Expected ':' before value in object property definition"
+		}
+	},
+	"sequence": {
+		"valid": {
+			"calls": 1,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image",
+						"editorial": {
+							"purpose": "establish",
+							"presentation": "narrative",
+							"visualConcept": "Concept 0",
+							"noveltyKey": "novel-0",
+							"sfxCue": null
+						}
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image",
+						"editorial": {
+							"purpose": "reveal",
+							"presentation": "narrative",
+							"visualConcept": "Concept 1",
+							"noveltyKey": "novel-1",
+							"sfxCue": null
+						}
+					}
+				]
+			}
+		},
+		"invalid": {
+			"calls": 2,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image"
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image"
+					}
+				],
+				"needsDirection": true,
+				"directionErrors": [
+					"[\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"array\",\n    \"received\": \"number\",\n    \"path\": [\n      \"beats\"\n    ],\n    \"message\": \"Expected array, received number\"\n  },\n  {\n    \"code\": \"unrecognized_keys\",\n    \"keys\": [\n      \"unexpected\",\n      \"sections\",\n      \"questions\",\n      \"subjects\"\n    ],\n    \"path\": [],\n    \"message\": \"Unrecognized key(s) in object: 'unexpected', 'sections', 'questions', 'subjects'\"\n  }\n]"
+				]
+			}
+		},
+		"fenced": {
+			"calls": 1,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image",
+						"editorial": {
+							"purpose": "establish",
+							"presentation": "narrative",
+							"visualConcept": "Concept 0",
+							"noveltyKey": "novel-0",
+							"sfxCue": null
+						}
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image",
+						"editorial": {
+							"purpose": "reveal",
+							"presentation": "narrative",
+							"visualConcept": "Concept 1",
+							"noveltyKey": "novel-1",
+							"sfxCue": null
+						}
+					}
+				]
+			}
+		},
+		"plain": {
+			"calls": 2,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image"
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image"
+					}
+				],
+				"needsDirection": true,
+				"directionErrors": [
+					"JSON Parse error: Unexpected identifier \"I\""
+				]
+			}
+		},
+		"empty": {
+			"calls": 2,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image"
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image"
+					}
+				],
+				"needsDirection": true,
+				"directionErrors": [
+					"JSON Parse error: Unexpected EOF"
+				]
+			}
+		},
+		"truncated": {
+			"calls": 2,
+			"value": {
+				"sections": [
+					{
+						"id": "section-1",
+						"semanticBeatId": "beat-1",
+						"title": "One",
+						"narration": "First fact.",
+						"visualPrompt": "First image"
+					},
+					{
+						"id": "section-2",
+						"semanticBeatId": "beat-2",
+						"title": "Two",
+						"narration": "Second fact.",
+						"visualPrompt": "Second image"
+					}
+				],
+				"needsDirection": true,
+				"directionErrors": [
+					"JSON Parse error: Unexpected identifier \"n\""
+				]
+			}
+		}
+	}
+}

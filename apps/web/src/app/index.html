@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!-- user-scalable=no is deliberate, and deliberately unconditional.
+		     It fails WCAG 1.4.4 if it takes effect in a browser tab — but iOS
+		     Safari has ignored it in a tab since iOS 10 and honours it only
+		     inside a standalone install. So declaring it once gives the app-like
+		     behaviour where the app is installed and leaves the browser tab
+		     conformant, with no runtime branching on display-mode.
+		     Do NOT "reinforce" this with gesturestart/touchmove handlers: that
+		     would defeat the platform override and break the tab case.
+		     Focus zoom is a different problem and is fixed in controls.css. -->
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, interactive-widget=resizes-content"
+		/>
+		<meta name="theme-color" content="#f0eeeb" />
+		<!-- Cascade layer order, declared before any stylesheet loads.
+		     A layer's position is fixed by where its name FIRST appears, and the
+		     feature sheets are imported from their own modules, so the bundler can
+		     emit them ahead of styles.css. Declaring the order here — not in
+		     styles.css — is what makes it independent of that. See styles.css for
+		     what each layer holds. -->
+		<style>
+			@layer theme, reset, workspace, app-base, chrome, feature, utilities;
+		</style>
+		<title>Maleo</title>
+		<link rel="license" type="text/plain" href="/player-licenses.txt" />
+		<!-- These hrefs are RELATIVE, and must stay relative.
+		     Bun's HTML bundler resolves every <link href> as a bundle input,
+		     including rel="icon" and rel="manifest". A root-absolute "/x.png"
+		     does not resolve on disk, and the failure is not scoped to the tag —
+		     the whole build fails with "Could not resolve", so the app serves a
+		     500 and never renders. Pointing at the real files lets the bundler
+		     emit content-hashed copies and rewrite these hrefs.
+		     The same files are ALSO served at stable root paths by serve.ts, for
+		     sw.js's sibling assets and for anything that fetches them by a
+		     known URL. Two reachable copies is the cost of the bundler owning
+		     what the document links. See static/README.md. -->
+		<link rel="icon" type="image/png" sizes="32x32" href="../../static/maleo-favicon-32.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="../../static/maleo-apple-touch-180.png" />
+		<link rel="manifest" href="../../static/manifest.webmanifest" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+		/>
+		<link rel="stylesheet" href="./styles.css" />
+	</head>
+	<body>
+		<div id="root">
+			<div
+				style="
+					display: grid;
+					place-items: center;
+					min-height: 100vh;
+					color: #5a607a;
+					font-family: system-ui;
+					font-size: 12px;
+				"
+			>
+				loading…
+			</div>
+		</div>
+		<script type="module" src="./main.tsx"></script>
+	</body>
+</html>

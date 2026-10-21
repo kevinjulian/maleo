@@ -1,0 +1,180 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* How the stage, rail and timeline compose across viewports: the phone and short-viewport layout and the VUI shell slots. */
+
+	/* ── Phone / short-viewport composition ──
+   Must agree with PHONE_MAX_WIDTH in hooks/editor/use-phone-layout.ts and with
+   the rail rules in rail.css.
+
+   These live HERE, not beside the rail rules that share the breakpoint,
+   because stage.css owns `.tl2-stage-top` and `.tl2-timeline`, and this sheet
+   is imported after both it and rail.css. Same layer, same specificity, later file wins — so the same
+   declarations written in rail.css lost silently: `.tl2-stage-top` collapsed to
+   0px and `.tl2-timeline` kept its fixed 392px, running 64px past the bottom of
+   a landscape viewport while every portrait assertion still passed. */
+	@media (max-width: 860px) {
+		.tl2-stage {
+			order: 1;
+		}
+
+		/* A share of the height, deliberately NOT a 16:9 aspect box: the preview
+	   renders at the project's own aspect and a short is 9:16, so pinning the
+	   container to 16:9 would letterbox vertical projects into a sliver. A
+	   proportion is aspect-agnostic. `min-height` keeps it alive in landscape,
+	   where 38svh of a 393px viewport is only 149px. */
+		/* Override the TOKEN, not the layout.
+	   An earlier version pinned `.tl2-stage-top` to a share of the viewport and
+	   forced the timeline to flex — which silently broke the splitter, because
+	   `startStageResize` writes `--tl2-tl-h` and nothing read it any more. The
+	   drag ran, the value changed, and the layout ignored it.
+	   Overriding the token instead keeps the desktop mechanism intact: the
+	   timeline is still sized by `--tl2-tl-h`, the stage still takes the rest,
+	   and the splitter still moves the boundary. Only the default differs, since
+	   the desktop 392px is most of a phone viewport. */
+		.tl2 {
+			--tl2-tl-h: 46svh;
+		}
+		.tl2-stage-top {
+			flex: 1 1 auto;
+			align-self: stretch;
+			width: 100%;
+			min-height: 96px;
+		}
+		.tl2-stage-top .tl2-preview {
+			flex: 1 1 auto;
+			min-width: 0;
+			min-height: 0;
+			align-items: stretch;
+			padding: var(--s-2);
+		}
+		.tl2-stage-top .tl2-canvas {
+			height: 100%;
+			width: auto;
+			margin: 0 auto;
+		}
+
+		.tl2-timeline {
+			min-height: 96px;
+		}
+	}
+}
+
+/* Consumer layout override stays in app feature layer so it outranks the
+   `workspace` layer's defaults and the stage's own flex shell. */
+@layer feature {
+	/* Addressed through the package's documented `data-vui-slot` selectors rather
+   than its private `.vui-*` class names.
+
+   The editor sizes its own stage and timeline THROUGH the workspace's regions
+   rather than by removing them. An earlier version set `display: contents` on
+   `.tl2-stage` and on its `main`, `preview` and `timeline` slots, on the
+   argument that the app owned the layout anyway. What that actually removed was
+   the flex column at the top of this file — `.tl2-stage` is the element that
+   stacked the stage over the timeline — so the two reparented into
+   `.tl2-body`, which is a ROW. At 1440 the timeline took 912px, `.tl2-stage-top`
+   was left with 114px, and `.tl2-canvas`, sized by `aspect-ratio`, collapsed to
+   width 0: the preview was simply gone. Below 860px the phone rules stack the
+   same elements anyway, so every phone assertion kept passing while the desktop
+   editor had no preview at all.
+
+   Sizing is unchanged in mechanism: `--tl2-tl-h` still comes from the splitter
+   and still reaches `.tl2-timeline`, and the timeline's row is `auto` so it is
+   that height that decides the row. */
+	.tl2-content-vui-shell > [data-vui-slot="main"] {
+		grid-template-rows: minmax(0, 1fr) auto;
+	}
+	/* The docked inspector's width, on the track rather than on the panel. Guarded
+   by the same `:has()` the package uses to collapse the column, so the phone —
+   where the inspector is a sheet and the slot is not rendered — keeps a single
+   full-width column instead of reserving 340px for nothing. */
+	.tl2-content-vui-shell > [data-vui-slot="main"]:has(> [data-vui-slot="inspector"]) {
+		grid-template-columns: minmax(0, 1fr) clamp(340px, 28vw, 380px);
+	}
+	/* Block, not flex: `.tl2-timeline` is itself a flex column that reads
+   `--tl2-tl-h` for its height, so as a block-level child it fills the slot's
+   width and its own height decides the `auto` row. As a flex item it was sized
+   by its content instead and sat 162px short of the slot it lives in. */
+	.tl2-content-vui-shell [data-vui-slot="timeline"] {
+		display: block;
+		min-width: 0;
+		min-height: 0;
+		overflow: hidden;
+	}
+
+	/* Desktop tools join the upper row: the timeline spans all three panes.
+   Public slots own sizing; phone housing stays separate. */
+	@media (min-width: 861px) {
+		.tl2-content-vui-shell .tl2-preview {
+			container-type: size;
+		}
+		.tl2-content-vui-shell .tl2-canvas {
+			height: auto;
+			width: min(100cqw, calc(100cqh * var(--tl2-canvas-aspect)));
+		}
+		.tl2-content-vui-shell > [data-vui-slot="main"]:has(> [data-vui-slot="tools"]) {
+			grid-template-columns: var(--tl2-tools-w, max-content) minmax(0, 1fr);
+		}
+		.tl2-content-vui-shell
+			> [data-vui-slot="main"]:has(> [data-vui-slot="tools"]):has(> [data-vui-slot="inspector"]) {
+			grid-template-columns: var(--tl2-tools-w, max-content) minmax(0, 1fr) var(
+					--tl2-inspector-w,
+					clamp(280px, 24vw, 360px)
+				);
+		}
+		.tl2-content-vui-shell [data-vui-slot="tools"] {
+			grid-column: 1;
+			grid-row: 1;
+		}
+		.tl2-content-vui-shell
+			:is([data-vui-slot="tools"], [data-vui-slot="inspector"], [data-vui-slot="timeline"]) {
+			position: relative;
+			overflow: visible;
+		}
+		.tl2-content-vui-shell :is(.tl2-tools, .tl2-clippanel, .tl2-timeline) {
+			overflow: hidden;
+			border-radius: inherit;
+		}
+		.tl2-tools .tl2-panel {
+			width: var(--tl2-panel-w);
+			flex: 1;
+			min-width: 0;
+		}
+		.tl2-pane-separator {
+			position: absolute;
+			z-index: 25;
+			touch-action: none;
+		}
+		.tl2-pane-separator[data-pane="tools"] {
+			inset: 0 calc(-1 * var(--s-2) - 1px) 0 auto;
+			width: var(--s-2);
+			cursor: col-resize;
+		}
+		.tl2-pane-separator[data-pane="inspector"] {
+			inset: 0 auto 0 calc(-1 * var(--s-2) - 1px);
+			width: var(--s-2);
+			cursor: col-resize;
+		}
+		.tl2-pane-separator[data-pane="timeline"] {
+			inset: calc(-1 * var(--s-2) - 1px) 0 auto 0;
+			height: var(--s-2);
+			cursor: row-resize;
+		}
+		.tl2-pane-separator:focus-visible {
+			outline: var(--focus-w) solid var(--focus-color);
+			outline-offset: calc(-1 * var(--focus-w));
+		}
+		.tl2-content-vui-shell [data-vui-slot="preview"] {
+			grid-column: 2;
+			grid-row: 1;
+		}
+		.tl2-content-vui-shell [data-vui-slot="inspector"] {
+			grid-column: 3;
+			grid-row: 1;
+		}
+		.tl2-content-vui-shell [data-vui-slot="timeline"] {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+	}
+}

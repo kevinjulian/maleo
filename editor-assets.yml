@@ -1,0 +1,104 @@
+- generic [ref=f17e3]:
+    - dialog "Navigation menu" [ref=f17e86]:
+        - generic [ref=f17e87]:
+            - generic [ref=f17e88]: maleo
+            - button "close menu" [ref=f17e89] [cursor=pointer]
+        - generic [ref=f17e93]:
+            - button [ref=f17e94] [cursor=pointer]
+            - button [ref=f17e99] [cursor=pointer]
+        - generic [ref=f17e102]:
+            - generic [ref=f17e103]: Library
+            - button [ref=f17e104] [cursor=pointer]
+            - button [ref=f17e110] [cursor=pointer]
+            - button [ref=f17e114] [cursor=pointer]
+        - generic [ref=f17e118]:
+            - generic [ref=f17e119]: Tools
+            - button [ref=f17e120] [cursor=pointer]
+            - button [ref=f17e125] [cursor=pointer]
+            - button [ref=f17e131] [cursor=pointer]
+        - generic "Credit limits" [ref=f17e137] [cursor=pointer]:
+            - generic [ref=f17e138]:
+                - generic [ref=f17e139]: Credits
+                - emphasis [ref=f17e140]: observe
+            - generic [ref=f17e141]:
+                - generic [ref=f17e142]: Daily left
+                - generic [ref=f17e143]: 10,000 / 10,000
+                - generic [ref=f17e144]: 5h left
+                - generic [ref=f17e145]: 3,000 / 3,000
+                - generic [ref=f17e146]: 5h refresh
+                - generic [ref=f17e147]: now
+        - generic [ref=f17e148]:
+            - button "Search (Cmd+K)" [ref=f17e149] [cursor=pointer]
+            - button "toggle theme" [ref=f17e153] [cursor=pointer]
+            - button "collapse sidebar" [ref=f17e156] [cursor=pointer]
+            - generic [ref=f17e159]: v0.1
+    - generic [ref=f17e161]:
+        - banner [ref=f17e162]:
+            - generic [ref=f17e163]:
+                - button "toggle menu" [ref=f17e164] [cursor=pointer]
+                - navigation [ref=f17e166]:
+                    - button "Content" [ref=f17e167] [cursor=pointer]
+                    - generic "remove scene gate" [ref=f17e171]
+            - generic [ref=f17e172]:
+                - tablist "Editor mode" [ref=f17e173]:
+                    - tab "Timeline" [selected] [ref=f17e174] [cursor=pointer]
+                    - tab "Studio" [ref=f17e177] [cursor=pointer]
+                - button "Export Video" [ref=f17e183] [cursor=pointer]
+        - generic [ref=f17e187]:
+            - navigation "Editor tools" [ref=f17e188]:
+                - button "Assets" [active] [ref=f17e189] [cursor=pointer]:
+                    - tooltip "Assets"
+                - button "Chat" [ref=f17e194] [cursor=pointer]:
+                    - tooltip "Chat"
+                - button "Style" [ref=f17e198] [cursor=pointer]:
+                    - tooltip "Style"
+                - button "Templates" [ref=f17e205] [cursor=pointer]:
+                    - tooltip "Templates"
+                - button "Elements" [ref=f17e210] [cursor=pointer]:
+                    - tooltip "Elements"
+                - button "Transitions" [ref=f17e216] [cursor=pointer]:
+                    - tooltip "Transitions"
+                - button "Effects" [ref=f17e222] [cursor=pointer]:
+                    - tooltip "Effects"
+                - button "Captions" [ref=f17e227] [cursor=pointer]:
+                    - tooltip "Captions"
+                - button "Project" [ref=f17e230] [cursor=pointer]:
+                    - tooltip "Project"
+            - complementary [ref=f17e234]:
+                - generic [ref=f17e565]:
+                    - generic [ref=f17e566]: Assets
+                    - button "Hide panel" [ref=f17e567] [cursor=pointer]
+                - tablist "Asset source" [ref=f17e571]:
+                    - tab "All Media" [selected] [ref=f17e572] [cursor=pointer]
+                    - tab "Reference Library" [ref=f17e577] [cursor=pointer]
+                    - tab "Stock" [ref=f17e581] [cursor=pointer]
+                - generic [ref=f17e586]:
+                    - generic [ref=f17e587]:
+                        - button "New Image" [ref=f17e588] [cursor=pointer]
+                        - button "New Speech" [ref=f17e594] [cursor=pointer]
+                        - button "New Music" [ref=f17e599] [cursor=pointer]
+                        - button "New SFX" [ref=f17e605] [cursor=pointer]
+                        - button "New Video" [ref=f17e610] [cursor=pointer]
+                    - textbox "Search media…" [ref=f17e618]
+                    - tablist "Filter media by kind" [ref=f17e619]:
+                        - button "All" [ref=f17e620] [cursor=pointer]
+                        - button "Images" [ref=f17e621] [cursor=pointer]
+                        - button "Videos" [ref=f17e622] [cursor=pointer]
+                        - button "Audio" [ref=f17e623] [cursor=pointer]
+                    - generic [ref=f17e624]: No media yet. Generate frames or add files from Stock.
+            - generic [ref=f17e293]:
+                - generic [ref=f17e294]:
+                    - generic [ref=f17e295]:
+                        - button "Project refs 1" [ref=f17e297] [cursor=pointer]
+                        - generic [ref=f17e303]
+                    - complementary [ref=f17e322]:
+                        - generic [ref=f17e324]
+                - button "Resize preview and timeline" [ref=f17e347]
+                - generic [ref=f17e348]:
+                    - generic [ref=f17e349]:
+                        - generic [ref=f17e350]
+                        - generic [ref=f17e372]
+                        - generic [ref=f17e385]
+                    - generic [ref=f17e423]:
+                        - generic [ref=f17e424]
+                        - generic [ref=f17e541]

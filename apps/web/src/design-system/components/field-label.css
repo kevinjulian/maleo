@@ -1,0 +1,21 @@
+/* The field label: the Label role (foundations) for a label stacked above its
+ * control. It was the mono, uppercase, 0.07em-tracked 10px "micro label" — the
+ * style four spellings once shared — and is now plain interface type: 11px,
+ * sentence case, `--fg-dim`. No mono and no letter-spacing; case is the
+ * author's, not the stylesheet's. */
+@layer chrome {
+	.ui-ml {
+		display: block;
+		margin-bottom: var(--s-1);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--fg-dim);
+	}
+
+	/* Every caller that passed a `style` prop passed it to zero this margin, so the
+ * override is a variant rather than an escape hatch. */
+	.ui-ml-flush {
+		margin-bottom: 0;
+	}
+}

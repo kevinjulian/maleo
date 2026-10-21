@@ -1,0 +1,458 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The scene editor drawer and the fields it holds: reference chips, template fields, the mention popover and frame slots. */
+
+	/* ── Scene editor drawer ── */
+	.tl2-scenedrawer-scrim {
+		position: absolute;
+		inset: 0;
+		z-index: 20;
+		border: none;
+		background: rgba(10, 12, 18, 0.16);
+	}
+	.tl2-scenedrawer {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 21;
+		width: min(440px, 94vw);
+		background: var(--surface);
+		border-left: 1px solid var(--border);
+		box-shadow: -18px 0 48px rgba(0, 0, 0, 0.22);
+	}
+	.tl2-scenedrawer-inner {
+		height: 100%;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+	.tl2-scenedrawer-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-3);
+		padding: var(--s-3) var(--s-4);
+		border-bottom: 1px solid var(--border);
+	}
+	.tl2-scenedrawer-id {
+		flex: 1;
+		min-width: 0;
+	}
+	.tl2-scenedrawer-kicker {
+		display: block;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		margin-bottom: var(--s-0-5);
+	}
+	.tl2-scenedrawer-title {
+		width: 100%;
+		padding: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-strong);
+		letter-spacing: -0.2px;
+	}
+	.tl2-scenedrawer-body {
+		flex: 1;
+		overflow-y: auto;
+		padding: var(--s-4);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-5);
+	}
+
+	.tl2-dsec {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	/* The middle tier: a group heading inside a panel, at the caption role. */
+	.tl2-dsec-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.tl2-dsec-h svg {
+		color: var(--ai);
+	}
+	/* The hint beside it is the Label role. */
+	.tl2-dsec-hint {
+		margin-left: auto;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+	}
+	.tl2-checkrow {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: fit-content;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		cursor: pointer;
+	}
+	.tl2-checkrow input {
+		accent-color: var(--ai);
+	}
+	.tl2-dsec .cv-cat {
+		border: none;
+		border-radius: 0;
+		padding: 0;
+	}
+	.tl2-dsec .cv-panel-h {
+		display: none;
+	}
+	.tl2-refs-used {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+	}
+	.tl2-edit-refs {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding-top: var(--s-0-5);
+	}
+	.tl2-edit-refs-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-ref-chip {
+		display: grid;
+		grid-template-columns: 30px minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		align-items: center;
+		gap: 1px var(--s-2);
+		max-width: 220px;
+		padding: var(--s-1-5) var(--s-2) var(--s-1-5) var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+	}
+	.tl2-ref-chip img,
+	.tl2-ref-chip-empty {
+		grid-row: 1 / span 2;
+		width: 30px;
+		height: 30px;
+		border-radius: 7px;
+		object-fit: cover;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--surface);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		overflow: hidden;
+	}
+	.tl2-ref-chip span:not(.tl2-ref-chip-empty) {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.tl2-ref-chip em {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-family: var(--font-body);
+		font-style: normal;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-ref-chip.dropped {
+		border-style: dashed;
+		opacity: 0.6;
+	}
+	.tl2-ref-chip.dropped img,
+	.tl2-ref-chip.dropped .tl2-ref-chip-empty {
+		filter: grayscale(1);
+	}
+	.tl2-ref-chip.dropped em {
+		color: var(--err);
+	}
+	.tl2-tplfields {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	.tl2-tplfield {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+	}
+	.tl2-tplfield-label {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-tplfield-error {
+		font-size: var(--type-micro-size);
+		color: var(--err);
+		margin: 0;
+	}
+	.tl2-tpllist {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.tl2-tpllist-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	.tl2-tpllist-row input {
+		flex: 1;
+		min-width: 0;
+	}
+	.tl2-tplimg {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+	}
+	.tl2-tplimg-preview {
+		width: 48px;
+		height: 48px;
+		border-radius: var(--r-2);
+		object-fit: contain;
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+	}
+	.tl2-tplimg-empty {
+		width: 48px;
+		height: 48px;
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+		border: 1px dashed var(--border);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--muted);
+	}
+	.tl2-tplimg-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	.tl2-mention-wrap {
+		position: relative;
+	}
+	.tl2-mention-wrap textarea {
+		width: 100%;
+	}
+	.tl2-mention-pop {
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: calc(100% + 6px);
+		z-index: calc(var(--z-floating) + 100);
+		max-height: 260px;
+		overflow-y: auto;
+		background: var(--surface);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-2);
+		padding: var(--s-1-5);
+	}
+	.ui-prompt-box > .fc-command-pop {
+		top: auto;
+		bottom: calc(100% + 6px);
+	}
+
+	@media (max-width: 760px) {
+		.fc-creditmeter {
+			grid-template-columns: 1fr 1fr;
+		}
+		.fc-creditmeter em {
+			justify-self: start;
+		}
+	}
+	.tl2-mention-group + .tl2-mention-group {
+		margin-top: var(--s-1);
+		padding-top: var(--s-1);
+		border-top: 1px solid var(--border);
+	}
+	.tl2-mention-group-h {
+		padding: var(--s-1) var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-mention-item {
+		width: 100%;
+		display: grid;
+		grid-template-columns: 34px minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-1-5);
+		border: 0;
+		border-radius: var(--r-2);
+		background: transparent;
+		color: var(--fg);
+		cursor: pointer;
+		text-align: left;
+	}
+	.fc-command-pop .tl2-mention-item {
+		grid-template-columns: minmax(116px, 0.78fr) minmax(0, 1.22fr);
+		padding: var(--s-2) var(--s-2);
+	}
+	.tl2-mention-item:hover,
+	.tl2-mention-item.active {
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-mention-thumb {
+		width: 34px;
+		height: 34px;
+		border-radius: var(--r-2);
+		object-fit: cover;
+		background: var(--surface-tint);
+		border: 1px solid var(--border);
+	}
+	.tl2-mention-thumb.empty {
+		display: inline-block;
+	}
+	.tl2-mention-label {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-mention-kind {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-command-token {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.fc-command-intent {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-mention-item:hover .fc-command-token,
+	.tl2-mention-item.active .fc-command-token {
+		color: var(--ai);
+	}
+	.tl2-mention-item:hover .fc-command-intent,
+	.tl2-mention-item.active .fc-command-intent {
+		color: var(--fg-dim);
+	}
+	.tl2-mention-empty {
+		padding: var(--s-3) var(--s-2-5);
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		text-align: center;
+	}
+
+	.tl2-frames {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--s-3);
+	}
+	.tl2-frameslot {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.tl2-frame-cap {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-frame-cap em {
+		font-style: normal;
+		opacity: 0.7;
+	}
+	.tl2-frame-gen {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1-5) var(--s-3);
+		border-radius: var(--r-pill);
+		border: none;
+		background: var(--ai);
+		color: #fff;
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		cursor: pointer;
+		box-shadow: 0 3px 12px rgba(106, 90, 242, 0.45);
+		white-space: nowrap;
+	}
+	.tl2-frame-gen:hover {
+		filter: brightness(1.08);
+	}
+	.tl2-frame-regen,
+	.tl2-frame-clear {
+		position: absolute;
+		top: 6px;
+		width: 24px;
+		height: 24px;
+		border-radius: 7px;
+		border: none;
+		background: rgba(0, 0, 0, 0.5);
+		color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity var(--d-fast);
+	}
+	.tl2-frame-regen {
+		right: 6px;
+	}
+	.tl2-frame-clear {
+		right: 34px;
+	}
+	.tl2-frameslot .cv-frame:hover .tl2-frame-regen,
+	.tl2-frameslot .cv-frame:hover .tl2-frame-clear {
+		opacity: 1;
+	}
+
+	@media (max-width: 900px) {
+		.tl2 {
+			--tl2-panel-w: 260px;
+		}
+		.tl2-scenedrawer {
+			width: min(100vw, 440px);
+		}
+	}
+}

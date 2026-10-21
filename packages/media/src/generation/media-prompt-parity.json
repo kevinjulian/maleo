@@ -1,0 +1,20 @@
+{
+	"native": {
+		"prompt": "Create one image: 9:16, full frame.\n\nSubject: Seed. Preserve: brown shell.\n\nReference images:\nImage 1 = Seed: brown shell. match identity exactly. Use only for Seed.\n\nScene: seed opening, roots emerging, sprout.\n\nComposition: close-up, static.\n\nStyle: ink.\n\nLighting/color: soft, earth tones.\n\nMust include: root.\n\nAvoid: human hands, text.\n\nNegative: text overlay, watermark, UI elements, border, letterbox, collage, multiple panels.",
+		"referenceUrls": ["https://example.org/seed.png"]
+	},
+	"textOnly": {
+		"prompt": "Create one image: 9:16, full frame.\n\nSubject: Seed. Preserve: brown shell.\n\nReference brief:\nSeed (character): brown shell. match identity exactly.\n\nScene: seed opening, roots emerging, sprout.\n\nComposition: close-up, static.\n\nStyle: ink.\n\nLighting/color: soft, earth tones.\n\nMust include: root.\n\nAvoid: human hands, text.\n\nNegative: text overlay, watermark, UI elements, border, letterbox, collage, multiple panels."
+	},
+	"none": {
+		"prompt": "Create one image: 9:16, full frame.\n\nSubject: Seed. Preserve: brown shell.\n\nScene: seed opening, roots emerging, sprout.\n\nComposition: close-up, static.\n\nStyle: ink.\n\nLighting/color: soft, earth tones.\n\nMust include: root.\n\nAvoid: human hands, text.\n\nNegative: text overlay, watermark, UI elements, border, letterbox, collage, multiple panels."
+	},
+	"directPlacement": {
+		"prompt": "Create one image: 9:16, full frame.\n\nSubject: Seed. Preserve: brown shell.\n\nReference brief:\nSeed (product): brown shell. needs direct placement from the original asset; text-only generation cannot guarantee exact pixels.\n\nScene: seed opening, roots emerging, sprout.\n\nComposition: close-up, static.\n\nStyle: ink.\n\nLighting/color: soft, earth tones.\n\nMust include: root.\n\nAvoid: human hands, text.\n\nNegative: text overlay, watermark, UI elements, border, letterbox, collage, multiple panels.",
+		"warnings": [
+			"Seed needs direct placement from original asset; text-only provider cannot guarantee exact pixels."
+		]
+	},
+	"codexPlain": "$imagegen seed opening\n\nRequirements:\n- Follow the request exactly, including any negative constraints such as 'no text'.\n- Do not add requirements the request did not ask for.\n- Save the generated image file into the current working directory.\n- Reply with ONLY the absolute path of the saved image file, and nothing else.",
+	"codexReference": "$imagegen seed opening\n\nAspect ratio: 9:16\n\nUse the 1 attached image(s) as visual references for subject, style, and identity.\n\nRequirements:\n- Follow the request exactly, including any negative constraints such as 'no text'.\n- Do not add requirements the request did not ask for.\n- Save the generated image file into the current working directory.\n- Reply with ONLY the absolute path of the saved image file, and nothing else."
+}

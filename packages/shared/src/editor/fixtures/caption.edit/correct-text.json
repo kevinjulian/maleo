@@ -1,0 +1,227 @@
+{
+	"scope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"command": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "update",
+			"id": "caption:1",
+			"text": "Hi all"
+		}
+	},
+	"expectedScope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hi all",
+						"words": [
+							{
+								"text": "Hi",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "all",
+								"startSec": 0.8,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "manual",
+							"wordTimingOrigin": "estimated"
+						},
+						"sources": [],
+						"protection": {
+							"text": true,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 1,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 1,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedInverse": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "restore",
+			"ids": ["caption:1"],
+			"entries": [
+				{
+					"index": 0,
+					"clip": {
+						"id": "caption:1",
+						"type": "caption",
+						"startSec": 1,
+						"durationSec": 2,
+						"track": 1,
+						"caption": {
+							"text": "Hello\nworld!",
+							"words": [
+								{
+									"text": "Hello",
+									"startSec": 0,
+									"endSec": 0.8
+								},
+								{
+									"text": "world!",
+									"startSec": 1,
+									"endSec": 2
+								}
+							],
+							"provenance": {
+								"origin": "recognized",
+								"wordTimingOrigin": "recognized"
+							},
+							"sources": [],
+							"protection": {
+								"text": false,
+								"timing": false,
+								"segmentation": false,
+								"style": false
+							},
+							"revision": 0,
+							"groupId": "g",
+							"status": "current"
+						}
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedRestored": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 0,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 0,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	}
+}

@@ -1,0 +1,104 @@
+@layer feature {
+	.tl2-animation-removal {
+		position: absolute;
+		inset: auto var(--s-3) var(--s-3);
+		z-index: 6;
+		pointer-events: none;
+		color: var(--fg);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		font-size: var(--type-label-size);
+		padding: var(--s-1) var(--s-3);
+	}
+	/* Feature-owned preset illustrations; controls retain their canonical recipe. */
+	.tl2-animation-presets {
+		width: 100%;
+	}
+	.tl2-animation-tile {
+		flex-direction: column;
+	}
+	.tl2-animation-diagram {
+		width: 100%;
+		height: 44px;
+	}
+	.tl2-animation-plate {
+		fill: var(--fg-dim);
+		opacity: 0.2;
+	}
+	.tl2-animation-sample {
+		fill: var(--ai);
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+	.tl2-animation-tile:is(:hover, :focus-visible) .fade {
+		animation: tl2-preset-fade 1.2s ease-in-out infinite;
+	}
+	.tl2-animation-tile:is(:hover, :focus-visible) .slide {
+		animation: tl2-preset-slide 1.2s ease-in-out infinite;
+	}
+	.tl2-animation-tile:is(:hover, :focus-visible) .zoom {
+		animation: tl2-preset-zoom 1.2s ease-in-out infinite;
+	}
+	@keyframes tl2-preset-fade {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+	@keyframes tl2-preset-slide {
+		from {
+			transform: translateX(-12px);
+			opacity: 0;
+		}
+		to {
+			transform: translateX(0);
+			opacity: 1;
+		}
+	}
+	@keyframes tl2-preset-zoom {
+		from {
+			transform: scale(0.5);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.tl2-animation-tile .tl2-animation-sample {
+			animation: none;
+		}
+	}
+	.tl2-animation-duration {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+	}
+	.tl2-animation-duration > .ui-slider {
+		flex: 1;
+		min-width: 0;
+	}
+	.tl2-animation-duration > [data-slot="number-field"] {
+		width: 76px;
+		flex: 0 0 76px;
+	}
+	.tl2-key-curve {
+		width: 100%;
+		height: 90px;
+		color: var(--ai);
+	}
+	.tl2-key-curve path {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 2;
+	}
+	.tl2-key-curve .tl2-key-curve-axis {
+		stroke: var(--border);
+		stroke-width: 1;
+	}
+}

@@ -1,0 +1,258 @@
+/* Cascade layer: chrome. Order declared in src/app/index.html.
+ *
+ * The Inspector patterns (inspector.tsx). `chrome` so a feature sheet can still
+ * override a default, and below `utilities` so the components composed inside a
+ * row keep their own recipes: this sheet lays controls out, it never restyles
+ * an Input or a Select.
+ *
+ * Labels stack above values at every width. Adjacent actions wrap with the
+ * value line. Reset reserves space beside values, so neither labels nor
+ * controls collide on touch. Controls keep their own recipes.
+ */
+@layer chrome {
+	.ui-insp-section {
+		border-bottom: 1px solid var(--border-subtle);
+	}
+
+	.ui-insp-head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		min-height: var(--section-header-h);
+		padding-inline: var(--s-3);
+		height: 44px;
+	}
+
+	.ui-insp-title {
+		flex: 1;
+		min-width: 0;
+		margin: 0;
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+
+	.ui-insp-title-text {
+		display: block;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* The toggle fills the heading and takes over the header's inline padding, so
+   the hit target and focus ring span the row up to the action. The hover fill
+   belongs to the header row, so it covers the action too. The chevron sits at
+   the end, as in the editor's accordions, and turns rather than swapping. */
+	.ui-insp-toggle {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		min-height: var(--section-header-h);
+		padding: 0 var(--s-3);
+		border: 0;
+		background: none;
+		font: inherit;
+		color: inherit;
+		text-align: start;
+		cursor: pointer;
+	}
+	.ui-insp-summary {
+		color: var(--muted);
+		font-weight: var(--weight-body);
+		max-width: 50%;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ui-insp-toggle .ui-insp-title-text {
+		flex: 1;
+	}
+	.ui-insp-head:has(.ui-insp-toggle) {
+		padding-inline: 0;
+	}
+	.ui-insp-head:has(.ui-insp-toggle) .ui-insp-action {
+		padding-inline-end: var(--s-3);
+	}
+	.ui-insp-head {
+		transition: background-color var(--d-fast);
+	}
+	.ui-insp-toggle:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: calc(var(--focus-w) * -1);
+	}
+
+	.ui-insp-chev {
+		display: inline-flex;
+		flex-shrink: 0;
+		color: var(--muted);
+		transition: transform var(--d-fast);
+	}
+	.ui-insp-toggle[aria-expanded="false"] .ui-insp-chev {
+		transform: rotate(-90deg);
+	}
+
+	.ui-insp-action {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		flex-shrink: 0;
+	}
+
+	.ui-insp-body {
+		container-type: inline-size;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		padding: 0 var(--s-3) var(--s-3);
+	}
+
+	/* ── PropertyRow ── */
+
+	.ui-insp-row {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+		min-height: var(--property-row-h);
+	}
+
+	/* Under a finger the row is the target: a switch or a select is reached by its
+   label, so the whole row takes the touch floor. */
+	@media (pointer: coarse) {
+		.ui-insp-row {
+			min-height: var(--control-h-touch);
+		}
+	}
+
+	.ui-insp-main {
+		flex: 1;
+		min-width: 0;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-items: center;
+		gap: var(--s-1);
+	}
+
+	.ui-insp-labelline {
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+	}
+
+	.ui-insp-label {
+		min-width: 0;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		overflow-wrap: anywhere;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--fg-dim);
+	}
+
+	/* The value line wraps actions rather than shrinking touch targets. */
+	.ui-insp-value {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+	}
+	.ui-insp-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		flex: 0 0 auto;
+	}
+	.ui-insp-control {
+		flex: 1 1 8rem;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+	}
+	.ui-insp-control > * {
+		flex: 1 1 0;
+		min-width: 0;
+	}
+	.ui-insp-control > [data-slot="switch"] {
+		flex: 0 0 auto;
+	}
+
+	/* ── FieldRow ── number cells share the line down to --ui-field-min, then wrap;
+   icon cells (lock, flip, a switch) keep their own width. */
+	.ui-insp-cells {
+		--ui-field-min: calc(var(--s-12) + var(--s-12));
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+	}
+	.ui-insp-cells > * {
+		flex: 1 1 var(--ui-field-min);
+		min-width: 0;
+	}
+	.ui-insp-cells
+		> :is(
+			[data-slot="icon-button"],
+			[data-slot="toggle"],
+			[data-slot="switch"],
+			[data-cell="icon"]
+		) {
+		flex: 0 0 auto;
+	}
+
+	/* Reset has reserved space on the value line, outside its wrapping label. */
+	.ui-insp-row:has(.ui-insp-reset:not(:empty)) .ui-insp-value {
+		padding-inline-end: calc(var(--control-h-xs) + var(--s-1));
+	}
+	@media (pointer: coarse) {
+		.ui-insp-row:has(.ui-insp-reset:not(:empty)) .ui-insp-value {
+			padding-inline-end: calc(var(--control-h-touch) + var(--s-1));
+		}
+	}
+	.ui-insp-reset {
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-end: 0;
+		display: flex;
+		align-items: center;
+		background: var(--surface);
+		opacity: 0;
+		transition: opacity var(--d-fast);
+	}
+	.ui-insp-reset:empty {
+		display: none;
+	}
+	.ui-insp-row:hover .ui-insp-reset,
+	.ui-insp-row:focus-within .ui-insp-reset {
+		opacity: 1;
+	}
+	@media (hover: none) {
+		.ui-insp-reset {
+			opacity: 1;
+		}
+	}
+
+	/* States are read from the control, not passed to the row: the control is the
+   one that knows it is disabled or invalid. A disabled property cannot be
+   reset, so the reset leaves the focus order with it. */
+	.ui-insp-row:has(.ui-insp-control :disabled, .ui-insp-control [data-disabled]) .ui-insp-label {
+		color: var(--fg-disabled);
+	}
+	.ui-insp-row:has(.ui-insp-control :disabled, .ui-insp-control [data-disabled]) .ui-insp-reset {
+		visibility: hidden;
+	}
+	.ui-insp-row:has([aria-invalid="true"]) .ui-insp-label {
+		color: var(--err);
+	}
+}

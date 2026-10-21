@@ -1,0 +1,19 @@
+{
+	"name": "@maleo/media-worker",
+	"version": "0.1.0",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "MALEO_MEDIA_WORKER_PORT=${MALEO_MEDIA_WORKER_PORT:-7071} INNGEST_APP_ID=maleo-media bun --env-file ../../.env --hot src/index.ts",
+		"start": "MALEO_MEDIA_WORKER_PORT=${MALEO_MEDIA_WORKER_PORT:-7071} INNGEST_APP_ID=maleo-media bun --env-file ../../.env src/index.ts",
+		"typecheck": "tsc --noEmit",
+		"captions:setup": "bun --env-file ../../.env ../../packages/media/src/processing/setup-whisper.ts"
+	},
+	"dependencies": {
+		"@maleo/media": "workspace:*"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0"
+	}
+}

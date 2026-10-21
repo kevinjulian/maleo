@@ -1,0 +1,478 @@
+{
+	"events": [
+		{
+			"kind": "question",
+			"question": "Who watches?",
+			"options": [
+				{
+					"label": "Beginners",
+					"value": "Explain for beginners"
+				},
+				{
+					"label": "Experts",
+					"value": "Explain for experts"
+				}
+			],
+			"actionId": "<id:0>",
+			"batch": {
+				"id": "pre-baseline",
+				"stage": "pre_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"options": [
+							{
+								"id": "new",
+								"label": "Beginners",
+								"value": "Explain for beginners",
+								"description": "Introduce the subject.",
+								"recommended": true
+							},
+							{
+								"id": "expert",
+								"label": "Experts",
+								"value": "Explain for experts",
+								"description": "Assume prior knowledge."
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "plan_story",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"targetDurationSec": 90
+			}
+		},
+		{
+			"kind": "thinking_note",
+			"title": "Planning",
+			"body": "Drafting the story plan for ~2 min (~234 words)…",
+			"elapsedSec": "<volatile>"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "generate_style",
+			"args": {
+				"brief": "why compound interest is counter-intuitive"
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "generate_style",
+			"note": "Locked visual style: test style bible",
+			"effect": "asset"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "author_story_bible",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"plannedReferences": 0
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "author_story_bible",
+			"note": "Story bible: 1 subject(s), 1 location(s), palette p.",
+			"effect": "asset"
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:1>",
+				"kind": "story_plan",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:2>"
+				},
+				"projectId": "<id:3>",
+				"revision": 1,
+				"inputRefs": [],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"planningBrief": "why compound interest is counter-intuitive",
+					"factual": false,
+					"visualStyle": "test style bible",
+					"bible": {
+						"subjects": [
+							{
+								"id": "s",
+								"label": "subject",
+								"aliases": [],
+								"descriptors": [],
+								"mustAvoid": []
+							}
+						],
+						"locations": [
+							{
+								"id": "l",
+								"label": "place",
+								"descriptors": []
+							}
+						],
+						"medium": "m",
+						"palette": "p",
+						"negatives": [
+							"n"
+						],
+						"summary": "test style bible"
+					},
+					"structure": "narration_section",
+					"directionFingerprint": "<volatile>",
+					"directionInputs": {
+						"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+						"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+					},
+					"clarification": {
+						"batchId": "pre-baseline",
+						"stage": "pre_research",
+						"status": "answered",
+						"decisions": [
+							{
+								"questionId": "audience",
+								"header": "Audience",
+								"question": "Who watches?",
+								"answer": "Explain for beginners",
+								"source": "option",
+								"status": "supplied"
+							}
+						]
+					},
+					"generationState": {
+						"planId": "<id:4>",
+						"draft": {
+							"revisionId": "<id:5>",
+							"sections": [
+								{
+									"id": "sec-1",
+									"title": "Opening",
+									"beats": [
+										{
+											"id": "<id:6>",
+											"title": "Opening",
+											"narration": "A concise opening about compounding.",
+											"visualPrompt": "A ledger filling with numbers",
+											"visualPrompts": [
+												"A ledger filling with numbers"
+											],
+											"factual": false,
+											"sourceEvidence": [],
+											"sourceUrls": [],
+											"citationStatus": "not_required",
+											"status": "draft",
+											"estimatedDurationSec": 1.9
+										}
+									],
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": false,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "not_required",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							]
+						}
+					},
+					"targetSec": 90,
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": false,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "not_required",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					],
+					"unverified": false,
+					"planKind": "story"
+				}
+			}
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:7>",
+				"kind": "storyboard_table",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:2>"
+				},
+				"projectId": "<id:3>",
+				"revision": 1,
+				"inputRefs": [],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"title": "Story plan · 1 sections · ~2 min",
+					"rows": [
+						{
+							"startSec": 0,
+							"endSec": 1.9,
+							"content": "Opening — A concise opening about compounding.",
+							"kind": "scene"
+						}
+					]
+				}
+			}
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "plan_story",
+			"note": "Planned 1 sections (~234 words). Planning received 1 clarification decision(s). Review the story plan, then approve to generate voiceover + images.",
+			"effect": "patch"
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "final",
+			"text": "Plan ready."
+		}
+	],
+	"planningCalls": {
+		"frames": 1,
+		"searches": 0,
+		"drafts": [
+			"why compound interest is counter-intuitive\n\nClarified planning decisions (answered by the user before framing):\n- Audience: Explain for beginners"
+		]
+	},
+	"run": {
+		"status": "done",
+		"plan": {
+			"planningBrief": "why compound interest is counter-intuitive",
+			"factual": false,
+			"visualStyle": "test style bible",
+			"bible": {
+				"subjects": [
+					{
+						"id": "s",
+						"label": "subject",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "l",
+						"label": "place",
+						"descriptors": []
+					}
+				],
+				"medium": "m",
+				"palette": "p",
+				"negatives": [
+					"n"
+				],
+				"summary": "test style bible"
+			},
+			"structure": "narration_section",
+			"directionFingerprint": "<volatile>",
+			"directionInputs": {
+				"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+				"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+			},
+			"clarification": {
+				"batchId": "pre-baseline",
+				"stage": "pre_research",
+				"status": "answered",
+				"decisions": [
+					{
+						"questionId": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"answer": "Explain for beginners",
+						"source": "option",
+						"status": "supplied"
+					}
+				]
+			},
+			"generationState": {
+				"planId": "<id:4>",
+				"draft": {
+					"revisionId": "<id:5>",
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"beats": [
+								{
+									"id": "<id:6>",
+									"title": "Opening",
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": false,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "not_required",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							],
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": false,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "not_required",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					]
+				}
+			},
+			"targetSec": 90,
+			"sections": [
+				{
+					"id": "sec-1",
+					"title": "Opening",
+					"narration": "A concise opening about compounding.",
+					"visualPrompt": "A ledger filling with numbers",
+					"visualPrompts": [
+						"A ledger filling with numbers"
+					],
+					"factual": false,
+					"sourceEvidence": [],
+					"sourceUrls": [],
+					"citationStatus": "not_required",
+					"status": "draft",
+					"estimatedDurationSec": 1.9
+				}
+			],
+			"unverified": false,
+			"planKind": "story"
+		},
+		"direction": null,
+		"targetDurationSec": 90,
+		"storyClarification": {
+			"batch": {
+				"id": "pre-baseline",
+				"stage": "pre_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"options": [
+							{
+								"id": "new",
+								"label": "Beginners",
+								"value": "Explain for beginners",
+								"description": "Introduce the subject.",
+								"recommended": true
+							},
+							{
+								"id": "expert",
+								"label": "Experts",
+								"value": "Explain for experts",
+								"description": "Assume prior knowledge."
+							}
+						]
+					}
+				]
+			},
+			"status": "answered",
+			"actionId": "<id:0>",
+			"provenance": {
+				"batchId": "pre-baseline",
+				"stage": "pre_research",
+				"status": "answered",
+				"decisions": [
+					{
+						"questionId": "audience",
+						"header": "Audience",
+						"question": "Who watches?",
+						"answer": "Explain for beginners",
+						"source": "option",
+						"status": "supplied"
+					}
+				]
+			}
+		},
+		"postResearchClarification": null,
+		"pendingQuestion": null,
+		"approveAll": false,
+		"scenes": 0
+	}
+}

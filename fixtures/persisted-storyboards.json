@@ -1,0 +1,581 @@
+{
+	"v2": {
+		"schemaVersion": 2,
+		"clips": [
+			{
+				"id": "scene:1",
+				"type": "image",
+				"startSec": 0,
+				"durationSec": 100,
+				"track": 0,
+				"scene": {
+					"id": 1,
+					"dur": 100,
+					"name": "A",
+					"shot": "Medium Shot",
+					"move": "Slow Zoom In",
+					"transition": "fade",
+					"vis": "v1",
+					"vo": "first",
+					"src": "/uploads/redacted-1.png",
+					"img": true
+				}
+			},
+			{
+				"id": "text:1",
+				"type": "text",
+				"startSec": 0,
+				"durationSec": 4,
+				"track": 40,
+				"text": {
+					"id": 1,
+					"content": "A",
+					"start": 0,
+					"dur": 4,
+					"preset": "chapter",
+					"layout": {
+						"xPct": 6,
+						"yPct": 60,
+						"widthPct": 88,
+						"heightPct": 28
+					}
+				}
+			},
+			{
+				"id": "audio:1000",
+				"type": "audio",
+				"startSec": 0,
+				"durationSec": 100,
+				"track": 0,
+				"audio": {
+					"id": 1000,
+					"kind": "voiceover",
+					"content": "first",
+					"url": "/uploads/redacted-2.png",
+					"start": 0,
+					"dur": 100,
+					"track": 0,
+					"volume": 1,
+					"fadeIn": 0,
+					"fadeOut": 0,
+					"originalDur": 100
+				}
+			},
+			{
+				"id": "infographic:20000000",
+				"type": "infographic",
+				"startSec": 0.8,
+				"durationSec": 68,
+				"track": 1,
+				"infographic": {
+					"id": 20000000,
+					"start": 0.8,
+					"dur": 68,
+					"track": 1,
+					"layout": {
+						"xPct": 7,
+						"yPct": 13,
+						"widthPct": 86,
+						"fit": "contain"
+					},
+					"animation": {
+						"in": "slide_up",
+						"main": "build",
+						"out": "fade"
+					},
+					"payload": {
+						"type": "table_build",
+						"title": "A",
+						"columns": ["Beat", "Point"],
+						"rows": [["1", "first"]]
+					}
+				}
+			}
+		],
+		"markers": [
+			{
+				"id": 1,
+				"title": "A",
+				"clipIds": ["scene:1"],
+				"voiceoverText": "first"
+			}
+		],
+		"captions": null,
+		"artifacts": [
+			{
+				"kind": "longform_plan",
+				"targetSec": 100,
+				"sections": [
+					{
+						"id": "sec-1",
+						"title": "A",
+						"narration": "first",
+						"visualPrompt": "v1",
+						"visualPrompts": ["v1"],
+						"factual": false,
+						"sourceEvidence": [],
+						"sourceUrls": [],
+						"citationStatus": "not_required",
+						"status": "ready",
+						"estimatedDurationSec": 1,
+						"audioUrl": "/uploads/redacted-3.png",
+						"audioDurationSec": 100,
+						"imageUrls": ["/uploads/redacted-4.png"],
+						"imageUrl": "/uploads/redacted-5.png"
+					},
+					{
+						"id": "sec-2",
+						"title": "B",
+						"narration": "second",
+						"visualPrompt": "v2",
+						"visualPrompts": ["v2"],
+						"factual": false,
+						"sourceEvidence": [],
+						"sourceUrls": [],
+						"citationStatus": "not_required",
+						"status": "failed",
+						"estimatedDurationSec": 1,
+						"audioUrl": "/uploads/redacted-6.png",
+						"audioDurationSec": 100,
+						"error": "image: image down"
+					}
+				],
+				"unverified": false,
+				"planningBrief": "",
+				"factual": false,
+				"visualStyle": "test style bible"
+			}
+		]
+	},
+	"v2Flat": {
+		"schemaVersion": 2,
+		"clips": [
+			{
+				"id": "scene:1",
+				"type": "image",
+				"startSec": 0,
+				"durationSec": 150,
+				"track": 0,
+				"markerId": 1,
+				"scene": {
+					"id": 1,
+					"dur": 150,
+					"name": "A",
+					"shot": "Medium Shot",
+					"move": "Static",
+					"transition": "fade",
+					"vis": "v1",
+					"vo": "first",
+					"src": "/uploads/redacted-7.png",
+					"img": true,
+					"start": 0,
+					"track": 0,
+					"visualClips": [
+						{
+							"id": "scene-1-visual-1",
+							"kind": "image",
+							"label": "A",
+							"url": "/uploads/redacted-8.png",
+							"startSec": 0,
+							"durationSec": 150,
+							"primary": true
+						}
+					],
+					"audioClips": [
+						{
+							"id": "scene-1-audio-voiceover",
+							"kind": "voiceover",
+							"label": "Voiceover",
+							"content": "first",
+							"startSec": 0,
+							"durationSec": 150
+						}
+					]
+				}
+			},
+			{
+				"id": "scene:2",
+				"type": "image",
+				"startSec": 150,
+				"durationSec": 100,
+				"track": 0,
+				"markerId": 2,
+				"scene": {
+					"id": 2,
+					"dur": 100,
+					"name": "B",
+					"shot": "Medium Shot",
+					"move": "Static",
+					"transition": "fade",
+					"vis": "v2",
+					"vo": "second",
+					"src": "/uploads/redacted-9.png",
+					"img": true,
+					"start": 150,
+					"track": 0,
+					"visualClips": [
+						{
+							"id": "scene-2-visual-1",
+							"kind": "image",
+							"label": "B",
+							"url": "/uploads/redacted-10.png",
+							"startSec": 0,
+							"durationSec": 100,
+							"primary": true
+						}
+					],
+					"audioClips": [
+						{
+							"id": "scene-2-audio-voiceover",
+							"kind": "voiceover",
+							"label": "Voiceover",
+							"content": "second",
+							"startSec": 0,
+							"durationSec": 100
+						}
+					]
+				}
+			},
+			{
+				"id": "audio:1000",
+				"type": "audio",
+				"startSec": 0,
+				"durationSec": 150,
+				"track": 0,
+				"audio": {
+					"id": 1000,
+					"kind": "voiceover",
+					"content": "first",
+					"url": "/uploads/redacted-11.png",
+					"start": 0,
+					"dur": 150,
+					"track": 0,
+					"volume": 1,
+					"fadeIn": 0,
+					"fadeOut": 0,
+					"originalDur": 150
+				}
+			},
+			{
+				"id": "audio:1001",
+				"type": "audio",
+				"startSec": 150,
+				"durationSec": 100,
+				"track": 0,
+				"audio": {
+					"id": 1001,
+					"kind": "voiceover",
+					"content": "second",
+					"url": "/uploads/redacted-12.png",
+					"start": 150,
+					"dur": 100,
+					"track": 0,
+					"volume": 1,
+					"fadeIn": 0,
+					"fadeOut": 0,
+					"originalDur": 100
+				}
+			}
+		],
+		"markers": [
+			{
+				"id": 1,
+				"title": "A",
+				"clipIds": ["scene:1"],
+				"startSec": 0,
+				"endSec": 150,
+				"voiceoverText": "first"
+			},
+			{
+				"id": 2,
+				"title": "B",
+				"clipIds": ["scene:2"],
+				"startSec": 150,
+				"endSec": 250,
+				"voiceoverText": "second"
+			}
+		],
+		"projectReferences": {
+			"prompt": "",
+			"entityIds": []
+		},
+		"captions": {
+			"enabled": false,
+			"fontFamily": "Inter",
+			"fontSize": 72,
+			"weight": "Black",
+			"italic": false,
+			"allCaps": false,
+			"style": "Standard",
+			"lines": "Single Line",
+			"chunkDuration": "1,2",
+			"verticalPosition": 100,
+			"fill": "#ffffff",
+			"stroke": "transparent",
+			"background": "transparent",
+			"shadow": "transparent",
+			"preset": "standard"
+		}
+	},
+	"preV2Full": {
+		"scenes": [
+			{
+				"key": "scene_1",
+				"name": "Hook Cepat: Suapan Pertama",
+				"duration_sec": 2.2,
+				"shot": "redacted text 1",
+				"movement": "quick cut lalu subtle push-in",
+				"transition": "slide",
+				"transition_dur": null,
+				"transition_color_phase": null,
+				"visual": "redacted text 2",
+				"voiceover": "redacted text 3",
+				"voice_id": null,
+				"action": null,
+				"sfx": null,
+				"image": "/uploads/redacted-4.png",
+				"end_image": null,
+				"vignette": false,
+				"grain": false,
+				"visual_clips": [
+					{
+						"id": "scene-1-visual-1",
+						"kind": "image",
+						"label": "Hook Cepat: Suapan Pertama",
+						"url": "/uploads/redacted-5.png",
+						"startSec": 0,
+						"durationSec": 2.2,
+						"primary": true
+					}
+				],
+				"audio_clips": [
+					{
+						"id": "scene-1-audio-voiceover",
+						"kind": "voiceover",
+						"label": "Voiceover",
+						"content": "redacted text 6",
+						"startSec": 0,
+						"durationSec": 2.2
+					}
+				],
+				"reference_ids": [],
+				"voice_ids": [],
+				"note_ids": [],
+				"layout": null,
+				"history": []
+			},
+			{
+				"key": "scene_2",
+				"name": "Reaksi Ditahan: Senyum Palsu",
+				"duration_sec": 4,
+				"shot": "redacted text 7",
+				"movement": "redacted text 8",
+				"transition": "fade",
+				"transition_dur": null,
+				"transition_color_phase": null,
+				"visual": "redacted text 9",
+				"voiceover": "redacted text 10",
+				"voice_id": null,
+				"action": null,
+				"sfx": null,
+				"image": "/uploads/redacted-11.png",
+				"end_image": null,
+				"vignette": false,
+				"grain": false,
+				"visual_clips": [
+					{
+						"id": "scene-2-visual-1",
+						"kind": "image",
+						"label": "Reaksi Ditahan: Senyum Palsu",
+						"url": "/uploads/redacted-12.png",
+						"startSec": 2.2,
+						"durationSec": 4,
+						"primary": true
+					}
+				],
+				"audio_clips": [
+					{
+						"id": "scene-2-audio-voiceover",
+						"kind": "voiceover",
+						"label": "Voiceover",
+						"content": "redacted text 13",
+						"startSec": 2.2,
+						"durationSec": 4
+					}
+				],
+				"reference_ids": [],
+				"voice_ids": [],
+				"note_ids": [],
+				"layout": null,
+				"history": []
+			}
+		],
+		"text_overlays": [
+			{
+				"id": 1781481532294,
+				"content": "Title",
+				"start_sec": 1.5356987847222214,
+				"duration_sec": 2,
+				"preset": "title",
+				"track": 2,
+				"layout": null,
+				"style": null
+			}
+		],
+		"audio_overlays": [
+			{
+				"id": 1,
+				"kind": "voiceover",
+				"content": "redacted text 14",
+				"url": "/uploads/redacted-15.png",
+				"voice": null,
+				"start_sec": 0,
+				"duration_sec": 3.4133333333333336,
+				"track": 0,
+				"volume": 1,
+				"fade_in_sec": 0,
+				"fade_out_sec": 0,
+				"original_dur": 3.4133333333333336
+			},
+			{
+				"id": 2,
+				"kind": "voiceover",
+				"content": "redacted text 16",
+				"url": "/uploads/redacted-17.png",
+				"voice": null,
+				"start_sec": 2.2,
+				"duration_sec": 3.4133333333333336,
+				"track": 1,
+				"volume": 1,
+				"fade_in_sec": 0,
+				"fade_out_sec": 0,
+				"original_dur": 3.4133333333333336
+			}
+		],
+		"video_overlays": [
+			{
+				"id": 1781480709437,
+				"url": "/uploads/redacted-18.png",
+				"thumb": null,
+				"kind": "video",
+				"label": null,
+				"start_sec": 14.495768229166666,
+				"duration_sec": 3.5,
+				"track": 2,
+				"source": "stock",
+				"gen": null,
+				"layout": {
+					"xPct": -0.5218253968253967,
+					"yPct": 0.1004464285714286,
+					"widthPct": 100,
+					"heightPct": 100,
+					"fit": "contain",
+					"rotationDeg": 0,
+					"opacity": 1,
+					"playbackRate": 1,
+					"reverse": false
+				}
+			},
+			{
+				"id": 1781480786120,
+				"url": "/uploads/redacted-19.png",
+				"thumb": "/uploads/redacted-20.png",
+				"kind": "image",
+				"label": null,
+				"start_sec": 11.493272569444445,
+				"duration_sec": 3,
+				"track": 2,
+				"source": "stock",
+				"gen": null,
+				"layout": null
+			}
+		],
+		"effects": [
+			{
+				"id": 1781442701655,
+				"effect": "zoom_out_from_black",
+				"start_sec": 6.216688368055555,
+				"duration_sec": 1.5,
+				"track": 0,
+				"intensity": 1
+			}
+		],
+		"transitions": [
+			{
+				"id": 1,
+				"from_scene": 1,
+				"to_scene": 2,
+				"type": "slide",
+				"duration_sec": 0.8,
+				"color_phase": null
+			},
+			{
+				"id": 3,
+				"from_scene": 3,
+				"to_scene": 4,
+				"type": "slide",
+				"duration_sec": 0.8,
+				"color_phase": null
+			}
+		],
+		"captions": {
+			"enabled": false,
+			"fontFamily": "Inter",
+			"fontSize": 72,
+			"weight": "Black",
+			"italic": false,
+			"allCaps": false,
+			"style": "Standard",
+			"lines": "Single Line",
+			"chunkDuration": "1,2",
+			"verticalPosition": 100,
+			"fill": "#ffffff",
+			"stroke": "transparent",
+			"background": "transparent",
+			"shadow": "transparent",
+			"preset": "standard"
+		},
+		"media_assets": [
+			{
+				"id": "stock-10380651",
+				"label": "Pexels · cottonbro studio",
+				"url": "/uploads/redacted-21.png",
+				"kind": "video",
+				"thumb": "/uploads/redacted-22.png",
+				"dur": 21,
+				"source": "stock"
+			}
+		],
+		"chat": [
+			{
+				"id": 1,
+				"role": "user",
+				"text": "make it punchier"
+			},
+			{
+				"id": 2,
+				"role": "assistant",
+				"tool": {
+					"name": "view_timeline",
+					"status": "done",
+					"note": "redacted text 23"
+				}
+			}
+		]
+	},
+	"preV2Snake": {
+		"scenes": [],
+		"text_overlays": [],
+		"video_overlays": [],
+		"artifacts": []
+	},
+	"preV2Minimal": {
+		"outline": "bb",
+		"scenes": [
+			{
+				"key": "scene_1",
+				"beat": "bb"
+			}
+		]
+	}
+}

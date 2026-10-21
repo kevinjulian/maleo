@@ -1,0 +1,106 @@
+/* Cascade layer: chrome. Order declared in src/app/index.html.
+ *
+ * `chrome` rather than `feature`: this is the frame feature sheets sit inside, so a
+ * feature rule that needs to override a page-level default still can.
+ *
+ * Class prefix is `pg-`, not `page-`. `.page-head` is already the sticky breadcrumb
+ * bar in shell.css and `.page` is the old container — colliding with either would
+ * make the two idioms fight during the conversion.
+ */
+@layer chrome {
+	.pg {
+		padding: var(--page-pad) var(--page-pad) var(--s-16);
+		max-width: 1200px;
+		min-width: 0;
+	}
+	.pg-narrow {
+		max-width: 1000px;
+	}
+
+	@media (min-width: 1024px) {
+		.pg {
+			margin: 0 auto;
+		}
+	}
+
+	.pg-head {
+		margin-bottom: var(--s-5);
+	}
+
+	.pg-head-row {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: var(--s-4);
+		flex-wrap: wrap;
+	}
+
+	/* Explicit, because the base `h1` is the display scale — clamp(48px, 6vw, 80px) —
+   which is a masthead, not a page title.
+
+   It reads the page-title ROLE now rather than the 28px it was written at. That
+   28 was never a decision: page.tsx records it as "the majority idiom's numbers
+   moved to one place", taken from seven surfaces that had each hand-rolled an
+   `h1`. Task 1.2 then decided the role — clamp(28px, 3.5vw, 40px) — and the
+   whole point of a role is that the page title is one size everywhere it
+   appears. So the title grows on a wide screen and is unchanged at 800px and
+   below, where the clamp is already at its 28px floor.
+
+   The phone override that set 24px is gone with it: a clamp that bottoms out at
+   28 does not need a second rule saying something smaller, and the two together
+   were a scale and an exception to it. */
+	.pg-title {
+		font-family: var(--font-display);
+		font-size: var(--type-title-size);
+		font-weight: var(--weight-display);
+		line-height: var(--type-title-lh);
+		letter-spacing: var(--type-title-track);
+		margin: 0;
+	}
+
+	/* Sub-page editors (new/edit material, new/edit preset) put their title inline with
+   a Back control and carry no lead, so they take a title's type without the rest
+   of the header. One notch down, because they are a detail view within a page —
+   which is the section-title role, not a fourth size. */
+	.pg-title-sub {
+		font-family: var(--font-display);
+		font-size: var(--type-section-size);
+		font-weight: var(--weight-display);
+		line-height: var(--type-section-lh);
+		letter-spacing: var(--type-section-track);
+		margin: 0;
+	}
+
+	.pg-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		flex-wrap: wrap;
+	}
+
+	/* The lead is body copy that happens to sit under a title. It was 14px, which is
+   not a step on the scale — what separates it from the paragraphs below is the
+   measure and the colour, not a size of its own. */
+	.pg-lead {
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+		color: var(--fg-dim);
+		margin: var(--s-2) 0 0;
+		max-width: 640px;
+	}
+
+	@media (max-width: 640px) {
+		/* Horizontal padding is not restated here: --page-pad carries the phone tier,
+	   so the base rule above already resolves to it. Only the bottom differs. */
+		.pg {
+			padding-bottom: var(--s-12);
+		}
+		/* The action area drops below the title rather than competing with it for a
+	   width neither can win. */
+		.pg-head-row {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: var(--s-3);
+		}
+	}
+}

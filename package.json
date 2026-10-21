@@ -1,0 +1,72 @@
+{
+	"name": "maleo-mono",
+	"version": "0.1.0",
+	"private": true,
+	"license": "MIT",
+	"workspaces": [
+		"packages/*",
+		"apps/*"
+	],
+	"scripts": {
+		"prepare": "vp config --no-agent",
+		"typecheck": "vp run --filter '!maleo-mono' typecheck",
+		"test": "MALEO_COVERAGE=1 vp test run --coverage && bun run test:bun && vp run --parallel --concurrency-limit 10 --filter '!maleo-mono' test:bun",
+		"test:bun": "cd scripts && bun test --preload ./test-db-guard.ts .bun.test",
+		"lint": "vp lint",
+		"check": "bun run check:version && bun run check:references && vp check && bun run typecheck",
+		"ci": "bun run check && bun run check:rust && bun run check:deploy && bun run check:release-hygiene && bun run check:fixtures && bun run test && bun run --cwd apps/web check:layers && bun run --cwd apps/web check:census && bun run --cwd apps/web playwright install chromium && bun run --cwd apps/web visual",
+		"check:version": "bun scripts/check-version.ts",
+		"check:references": "bun scripts/check-references.ts",
+		"check:deploy": "bun scripts/check-deploy.ts",
+		"check:release-hygiene": "bun scripts/check-release-hygiene.ts",
+		"check:fixtures": "bun run --cwd apps/web visual/fixtures/build.ts --check",
+		"check:rust": "cargo fmt --check && cargo clippy --workspace --all-targets --features maleo-editor-core/typescript -- -D warnings && cargo test --workspace --features maleo-editor-core/typescript && bun scripts/editor-engine.mts build",
+		"publish:ui-inventory": "bun scripts/publish-ui.ts --mode inventory",
+		"publish:ui-kit": "bun scripts/publish-ui.ts --mode kit",
+		"build": "vp run --filter '!maleo-mono' build",
+		"api": "cd apps/api && bun run dev",
+		"web": "cd apps/web && bun run dev",
+		"media-worker": "cd apps/media-worker && bun run dev",
+		"video": "cd packages/video && bun run dev",
+		"render-worker": "cd apps/render-worker && bun run dev",
+		"dev": "bun scripts/dev.ts",
+		"restart": "bun scripts/restart.ts",
+		"setup": "bun scripts/setup.ts",
+		"key:generate": "bun scripts/generate-master-key.ts",
+		"migrate:legacy-image-cache": "bun scripts/migrate-legacy-image-cache.ts",
+		"media:migrate": "bun --env-file .env scripts/migrate-media.ts",
+		"media:cleanup": "bun --env-file .env scripts/cleanup-media.ts",
+		"db:migrate-from-sqlite": "bun --env-file .env scripts/migrate-to-postgres.ts",
+		"storyboards:reclaim": "bun --env-file .env scripts/reclaim-storyboard-history.ts",
+		"auth:reset-password": "bun --env-file .env scripts/reset-password.ts",
+		"bake:voice-samples": "cd apps/api && bun run bake:voice-samples"
+	},
+	"devDependencies": {
+		"@types/node": "^25.8.0",
+		"@vitest/coverage-v8": "5.0.3",
+		"binaryen": "132.0.0",
+		"bun-types": "^1.3.14",
+		"inngest-cli": "1.45.1",
+		"vite": "catalog:",
+		"vite-plus": "catalog:"
+	},
+	"overrides": {
+		"@remotion/player": "4.0.462",
+		"react": "^19.2.6",
+		"react-dom": "^19.2.6",
+		"remotion": "4.0.462",
+		"vite": "catalog:"
+	},
+	"packageManager": "bun@1.3.1",
+	"catalog": {
+		"vite": "npm:@voidzero-dev/vite-plus-core@1.1.0",
+		"vite-plus": "1.1.0"
+	},
+	"trustedDependencies": [
+		"@embedded-postgres/darwin-arm64",
+		"@embedded-postgres/darwin-x64",
+		"@embedded-postgres/linux-arm64",
+		"@embedded-postgres/linux-x64",
+		"inngest-cli"
+	]
+}

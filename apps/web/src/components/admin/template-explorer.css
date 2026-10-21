@@ -1,0 +1,391 @@
+@layer feature {
+	.template-explorer {
+		container-type: inline-size;
+		min-width: 0;
+	}
+	.template-explorer .god-section-heading {
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--s-3);
+	}
+	.template-lead {
+		margin: var(--s-2) 0 0;
+		color: var(--fg-dim);
+		font-size: var(--type-body-size);
+	}
+	/* Same tab row as Settings: the divider is the row's baseline and the active tab sits on it. */
+	.template-navigation {
+		display: flex;
+		gap: var(--s-5);
+		border-bottom: 1px solid var(--border);
+		margin-bottom: var(--s-5);
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+	.template-navigation a {
+		position: relative;
+		flex-shrink: 0;
+		padding-bottom: var(--s-3);
+		color: var(--muted);
+		text-decoration: none;
+		font-size: var(--type-body-size);
+		transition: color 140ms var(--ease);
+	}
+	.template-navigation a:hover {
+		color: var(--fg);
+	}
+	.template-navigation [aria-current="page"] {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+	}
+	.template-navigation [aria-current="page"]::after {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		bottom: -1px;
+		height: 2px;
+		background: var(--fg);
+	}
+	/* Column names: the Settings column-title treatment, so the two surfaces label regions alike. */
+	.template-col-title {
+		margin: 0 0 var(--s-3);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+	}
+	.template-col-lead {
+		margin: 0 0 var(--s-3);
+		color: var(--fg-dim);
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+	}
+	.template-muted {
+		color: var(--muted);
+	}
+	.template-columns {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+	}
+	.template-list,
+	.template-stages,
+	.template-inspector {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+	}
+	.template-list > [data-slot="toolbar"] {
+		margin-bottom: var(--s-3);
+	}
+	/* Step rows: name and usage on one line, the step's purpose beneath. */
+	.template-stage-pipeline .ui-selection-row {
+		row-gap: var(--s-1);
+	}
+	.template-stage-pipeline .ui-selection-row p {
+		grid-column: 1 / -1;
+	}
+	.template-inventory-group .ui-selection-row p {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	/* Detail head: the Settings pane title, so the chosen thing is the largest text in the pane. */
+	.template-pane-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-3);
+		min-height: var(--control-h-sm);
+		margin-bottom: var(--s-3);
+	}
+	.template-pane-head h2 {
+		margin: 0;
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		font-weight: var(--weight-strong);
+		letter-spacing: -0.01em;
+	}
+	.template-description {
+		margin: 0 0 var(--s-4);
+		color: var(--fg);
+	}
+	/* Facts read as label | value rows; empty facts are never rendered. */
+	.template-inspector-content .template-fact {
+		margin: 0;
+	}
+	.template-fact {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--s-1) var(--s-4);
+		padding-block: var(--s-3);
+		border-top: 1px solid var(--border);
+	}
+	.template-inspector-content .template-fact h3 {
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-medium);
+	}
+	.template-inspector-content .template-fact p {
+		margin: 0 0 var(--s-1);
+	}
+	@container (min-width: 560px) {
+		.template-fact {
+			grid-template-columns: 8rem minmax(0, 1fr);
+		}
+	}
+	.template-inspector-content .template-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.template-inspector-content .template-chips li {
+		margin: 0;
+	}
+	.template-chips .template-definition-link:not(.ui-selection-row) {
+		display: inline-flex;
+		align-items: center;
+		padding: var(--s-0-5) var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		text-decoration: none;
+		transition:
+			border-color 140ms var(--ease),
+			color 140ms var(--ease);
+	}
+	.template-chips .template-definition-link:not(.ui-selection-row):hover {
+		border-color: var(--border-strong);
+		color: var(--fg);
+	}
+	.template-rows {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: grid;
+	}
+	.template-rows > li {
+		min-width: 0;
+	}
+	.template-rows > li:last-child > .ui-selection-row {
+		border-bottom: 0;
+	}
+	.template-inspector-content li > small {
+		display: block;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+	}
+	.template-definition-link:not(.ui-selection-row) {
+		color: var(--fg);
+		text-decoration: underline;
+		text-underline-offset: 0.2em;
+		overflow-wrap: anywhere;
+	}
+	.template-definition-link:not(.ui-selection-row):hover {
+		color: var(--ai);
+	}
+	.template-explorer a:not(.ui-selection-row):focus-visible,
+	.template-explorer summary:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.template-inventory-group {
+		margin-block: var(--s-4);
+	}
+	.template-inventory-group h3 {
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-medium);
+	}
+	.template-inspector-content section {
+		margin-block: var(--s-4);
+	}
+	.template-inspector-content h3 {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		margin-block: var(--s-2);
+	}
+	.template-inspector-content ul {
+		padding-inline-start: var(--s-5);
+	}
+	.template-inspector-content li {
+		margin-block: var(--s-2);
+	}
+	.template-inspector-content p {
+		margin-block: var(--s-3);
+	}
+	.template-inspector-content summary {
+		cursor: pointer;
+		padding-block: var(--s-2);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	/* Drawer: the same detail view, beside the page instead of replacing the pane. */
+	.template-drawer-body {
+		container-type: inline-size;
+		height: 100%;
+		overflow-y: auto;
+		padding: var(--s-5);
+		font-size: var(--type-body-size);
+		line-height: var(--type-body-lh);
+		overflow-wrap: anywhere;
+	}
+	.template-drawer-actions {
+		display: flex;
+		gap: var(--s-1);
+	}
+	.template-drawer .template-definition-link:focus-visible,
+	.template-drawer summary:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	/* Workflow context that belongs to the chat assistant, set apart from the workflow's own facts. */
+	.template-inspector-content .template-around {
+		margin-block: var(--s-4) 0;
+		padding-top: var(--s-3);
+		border-top: 1px solid var(--border);
+	}
+	.template-inspector-content .template-around > h3 {
+		margin: 0;
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+	}
+	.template-inspector-content .template-around > p {
+		margin-block: var(--s-1) var(--s-3);
+		font-size: var(--type-caption-size);
+	}
+	.template-implementation {
+		border-top: 1px solid var(--border);
+		margin-top: var(--s-2);
+	}
+	.template-implementation > summary {
+		color: var(--muted);
+	}
+	.template-implementation dt {
+		font-weight: var(--weight-strong);
+		margin-top: var(--s-3);
+	}
+	.template-implementation dd {
+		margin: var(--s-1) 0;
+		color: var(--muted);
+	}
+	.template-detail {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+	.template-detail section {
+		padding-block: var(--s-3);
+		border-bottom: 1px solid var(--border);
+	}
+	.template-detail section:last-child {
+		border-bottom: 0;
+	}
+	.template-detail h4 {
+		font-size: var(--type-caption-size);
+	}
+	.template-detail-badges {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+	.template-section-hint {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+	.template-table-scroll {
+		margin-block: var(--s-3);
+	}
+	.template-inspector-content pre {
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
+		user-select: text;
+		font: var(--type-caption-size)/var(--type-body-lh) var(--font-body);
+		padding: var(--s-3);
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+	}
+	.template-prompt-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+	}
+	.template-breadcrumb {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-2);
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		margin-block: var(--s-3);
+	}
+	.template-breadcrumb > * + *::before {
+		content: "/";
+		margin-inline-end: var(--s-2);
+	}
+	.template-announcement,
+	.template-skip-links {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+	}
+	.template-skip-links:focus-within {
+		position: static;
+		width: auto;
+		height: auto;
+		clip-path: none;
+	}
+	@container (min-width: 960px) {
+		.template-columns {
+			grid-template-columns: 200px 300px minmax(0, 1fr);
+			align-items: stretch;
+		}
+		.template-columns[data-inventory="true"] {
+			grid-template-columns: 340px minmax(0, 1fr);
+		}
+		.template-list,
+		.template-stages,
+		.template-inspector {
+			max-height: calc(100dvh - var(--topbar-h) * 4);
+			overflow-y: auto;
+		}
+		.template-stages,
+		.template-inspector {
+			border-left: 1px solid var(--border);
+			padding-left: var(--s-5);
+			margin-left: var(--s-5);
+		}
+		.template-phone-back {
+			display: none;
+		}
+	}
+	@container (max-width: 959px) {
+		.template-skip-links {
+			display: none;
+		}
+		.template-columns[data-level="list"] > :not(.template-list),
+		.template-columns[data-level="stages"] > :not(.template-stages),
+		.template-columns[data-level="inspector"] > :not(.template-inspector) {
+			display: none;
+		}
+	}
+	@media (pointer: coarse) {
+		.template-explorer .template-definition-link:not(.ui-selection-row),
+		.template-navigation a,
+		.template-inspector-content summary {
+			display: inline-flex;
+			align-items: center;
+			min-height: var(--control-h-touch);
+		}
+	}
+}

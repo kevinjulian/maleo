@@ -1,0 +1,112 @@
+/* The create flow's stylesheet, split by the region of the editor each rule
+ * draws. The order below is the order the rules were written in and must stay
+ * that way, and the two blocks after the imports were last in the sheet. */
+@import "./create-content-shell.css";
+@import "./create-content-workspace.css";
+@import "./create-content-studio.css";
+@import "./create-content-views.css";
+@import "./create-content-storyboard.css";
+@import "./create-content-references.css";
+
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+
+/* Heights in this sheet and the ones it imports are dvh, not vh.
+ *
+ * `100vh` on a mobile browser is the viewport with the URL bar RETRACTED, so
+ * every pane sized against it is taller than what the operator can actually
+ * see — and the part that disappears is the bottom, which is where the
+ * timeline's lowest lanes and the editor's controls live. `dvh` tracks the
+ * chrome as it collapses.
+ *
+ * Not applied blindly. The clamped modal maximums in studio.css, editing.css
+ * and stage.css use `svh` instead — the SMALL viewport, as if the browser
+ * chrome were always showing. dvh would make an open modal grow while the URL
+ * bar animates, resizing under the operator; plain vh does not resize but does
+ * overflow, because `calc(100vh - 40px)` on a phone resolves against the
+ * retracted-chrome height and lands ~20px past what is visible. svh is static
+ * and never overflows, which is what a clamped modal wants.
+ *
+ * No vh fallback is paired with these. dvh (Safari 15.4, Chrome 108) predates
+ * `color-mix()` and `oklch()`, which this codebase already requires, so any
+ * browser that could not parse dvh has already failed on the palette. */
+
+/* Moved out of the timeline sheets, which were styling cv- elements they do
+ * not own. A two-class selector, so it outranks the plain .cv-chip rules on
+ * specificity and the move cannot change which one wins.
+ *
+ * `.btn.active` was on this line too and has gone to controls.css: after the
+ * button merge it made this `cv-` sheet paint `.btn`, which is the boundary
+ * `check:layers` enforces. */
+@layer feature {
+	.cv-chip.active {
+		outline: 1.5px solid var(--ai);
+	}
+}
+
+/* ── Create flow: Materials + Video Template ──
+   One row per material group. The row leads with the group's name and where its
+   value came from, because "which of these is still the preset's?" is the
+   question an operator asks before they override anything.
+
+   THESE RULES DID NOT APPLY. The rule directly above them was
+   `.cv-libpanel-actions-embedded .cv-btn` opening a block it never closed, so
+   CSS nesting made this whole group a descendant of it: every `.cv-materials-*`
+   rule matched only inside an embedded libpanel button, which is nowhere. That
+   is why the materials rows on the create-setup screen rendered unaligned, with
+   each icon on its own line and no card around it.
+
+   Found by the button merge — renaming `.cv-btn` to `.btn` put the swallowing
+   selector in the census's sights, and closing it revealed what it had eaten.
+   The rule itself has moved to controls.css beside the primitive it adjusts.
+
+   The `@layer feature` wrapper is explicit because these rules are no longer
+   inside anything that provided one; `cascade-layers.test.ts` asserts it. */
+@layer feature {
+	.cv-materials-rows {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.cv-materials-row {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		padding: var(--s-2-5) var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+	}
+	.cv-materials-row-head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		flex-wrap: wrap;
+	}
+	.cv-materials-row-name {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.cv-materials-row-name svg {
+		color: var(--ai);
+		flex-shrink: 0;
+	}
+	.cv-materials-row-head .cv-textbtn {
+		margin-left: auto;
+	}
+	.cv-materials-row [data-slot="native-select"] {
+		width: 100%;
+	}
+	.cv-materials-row-sum {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+}

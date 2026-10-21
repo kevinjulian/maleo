@@ -1,0 +1,42 @@
+title: "[Idea] "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a capability or a change in direction.
+
+        Write this for a human to read. Explain the problem and why it matters,
+        not the implementation your agent already produced. Upvotes show
+        interest; they do not guarantee it gets built.
+
+        If the idea touches product direction, the API, the schema, persistence,
+        the editor UI, or architecture, an accepted discussion becomes an
+        OpenSpec change before any code is written.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What is hard or impossible today, and who it affects.
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it matters
+      description: >
+        What you are trying to accomplish, and what you do instead right now.
+    validations:
+      required: true
+
+  - type: textarea
+    id: shape
+    attributes:
+      label: Rough shape of a solution
+      description: >
+        Optional. A sketch is useful; a finished design is not required and does
+        not reserve the work.
+    validations:
+      required: false

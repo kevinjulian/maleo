@@ -1,0 +1,161 @@
+/* Cascade layer: chrome. Declared in app/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in. */
+@layer chrome {
+	/* The sheet primitive: a pane that slides in over the app from a viewport edge,
+   behind a scrim.
+
+   This behaviour already existed once, correctly, as `.nav-drawer` and
+   `.nav-scrim` in app/styles/shell.css. It is lifted here rather than copied
+   because two more instances were about to be written by hand, and the parts
+   that get dropped when you write it a second time are exactly the two that no
+   reviewer notices missing: the reduced-motion arm, and the safe-area padding
+   that keeps a footer clear of the home indicator.
+
+   shell.css keeps its own rules. Refactoring the nav drawer onto this
+   primitive would move desktop pixels and belongs to its own change. */
+
+	/* ── Stacking ──
+
+   Declared here as named steps rather than picked per call site.
+
+   The app shell's order is nav scrim 60 / nav drawer 61, and reading only that
+   file suggested 70/71 for sheets. It was wrong: the EDITOR keeps its own,
+   much higher stack — `.cv-topbar` at 500, a rail drawer at 120/130, and the
+   floating nav at 900/901. At 70 the scrim covered the page but not the
+   topbar, so a modal sheet left the editor's own header undimmed and still
+   clickable. Playwright found it as a click interception; by eye it reads as a
+   header that simply did not dim.
+
+   700/701 clears the topbar and everything below it, and stays under the
+   floating nav drawer at 900/901 so the hamburger can still open over a sheet.
+   A sheet must not be able to bury the navigation that reaches the rest of the
+   app. */
+	.ui-sheet-scrim {
+		z-index: var(--z-sheet);
+	}
+	.ui-sheet {
+		z-index: calc(var(--z-sheet) + 1);
+	}
+
+	.ui-sheet-scrim {
+		position: fixed;
+		inset: 0;
+		/* The scrim keeps clear of exactly what the sheet keeps clear of, at both
+	 * edges. Anything the sheet deliberately leaves uncovered has to stay
+	 * clickable too — a scrim left flush renders that chrome visible and dead,
+	 * which reads as a broken control rather than a covered one. */
+		top: var(--ui-sheet-headroom, 0);
+		bottom: var(--ui-sheet-offset, 0);
+		background: var(--scrim);
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.28s ease;
+	}
+	.ui-sheet-scrim.ui-sheet-open {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	.ui-sheet {
+		position: fixed;
+		display: flex;
+		flex-direction: column;
+		background: var(--surface);
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+		/* Panes that reach an edge must clear the device's own furniture. Declared
+	   on every edge rather than only the bottom, because a left/right sheet is
+	   full-height and its last row lands on the home indicator too. */
+		padding-bottom: env(safe-area-inset-bottom);
+	}
+
+	/* ── Edges ──
+   Each edge pins three sides and translates fully out along the fourth, so the
+   closed state is off-screen rather than merely invisible — a sheet that is
+   only `opacity: 0` still traps taps. */
+	.ui-sheet-left {
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: var(--ui-sheet-size, 290px);
+		max-width: 86vw;
+		border-right: 1px solid var(--border);
+		transform: translateX(-100%);
+	}
+	.ui-sheet-right {
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: var(--ui-sheet-size, 290px);
+		max-width: 86vw;
+		border-left: 1px solid var(--border);
+		transform: translateX(100%);
+	}
+	.ui-sheet-bottom {
+		left: 0;
+		right: 0;
+		bottom: var(--ui-sheet-offset, 0);
+		/* `height`, not just `max-height`. A fixed element with only a max-height
+	   takes its content's intrinsic height, and the panels that go in here are
+	   `display: flex; flex-direction: column; min-height: 0` — which resolves to
+	   zero. The sheet rendered as a full-width strip of nothing: the scrim
+	   dimmed, the page went modal, and no content appeared. It passed a width
+	   assertion the whole time, which is why the height one below it now
+	   exists. */
+		height: var(--ui-sheet-size, 70svh);
+		/* Capped by the band it is allowed to occupy, so a sheet asking for more
+	   height than there is between the two edges yields rather than covering the
+	   chrome it was told to keep clear of.
+
+	   `100svh` inside the subtraction, not `92svh`. Subtracting the reserved
+	   edges from the smaller figure capped every banded sheet BELOW its own
+	   band — a sheet sized to fill the gap exactly was clamped ~50px short, and
+	   the dimmed strip of timeline left showing above it read as a sheet that
+	   had failed to reach its own top. The 92svh guard survives as the other arm
+	   of the `min`, for sheets that reserve nothing. */
+		max-height: min(
+			92svh,
+			calc(100svh - var(--ui-sheet-headroom, 0px) - var(--ui-sheet-offset, 0px))
+		);
+		border-top: 1px solid var(--border);
+		/* The offset has to be added back, or a sheet standing off the edge is
+	   translated down by its own height and still leaves that offset's worth of
+	   itself on screen. `visibility: hidden` below would hide the strip, but the
+	   closed position would be wrong and the open transition would start from
+	   part-way up. */
+		transform: translateY(calc(100% + var(--ui-sheet-offset, 0px)));
+	}
+
+	.ui-sheet.ui-sheet-open {
+		transform: translate(0, 0);
+	}
+
+	/* A closed sheet must not be hittable, and `transform` alone cannot guarantee
+   that. The closed offset is declared in this `chrome` layer, and callers put
+   their own feature-layer classes on the sheet for its skin — `.tl2-panel`
+   does. Layer beats specificity, so any transform those
+   sheets inherit silently cancels the offset and the closed sheet sits on
+   screen at full size, swallowing taps meant for whatever is beneath it.
+   `.tl2-panel-sheet` needed `position` and `transform` restated in its own
+   layer for exactly this reason; this is the general defence so the next
+   caller does not have to discover it.
+
+   `visibility` is the belt to that brace. It is not animatable in a way that
+   fights the transform, it inherits down to every child so nothing inside a
+   closed sheet is hittable either, and it survives whatever geometry a caller's
+   own classes impose. */
+	.ui-sheet:not(.ui-sheet-open) {
+		visibility: hidden;
+	}
+	.ui-sheet.ui-sheet-open {
+		visibility: visible;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ui-sheet,
+		.ui-sheet-scrim {
+			transition: none;
+		}
+	}
+}

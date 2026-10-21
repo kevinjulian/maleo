@@ -1,0 +1,184 @@
+{
+	"scope": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [],
+			"markers": []
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	},
+	"command": {
+		"type": "doc.setCaptions",
+		"captions": {
+			"enabled": true,
+			"fontFamily": "Inter",
+			"fontSize": 72,
+			"weight": "Black",
+			"italic": false,
+			"allCaps": false,
+			"style": "Standard",
+			"lines": "Single Line",
+			"chunkDuration": "1,2",
+			"maxWords": 4,
+			"maxChars": 26,
+			"maxPauseMs": 260,
+			"verticalPosition": 100,
+			"maxWidth": 86,
+			"fill": "#ffffff",
+			"activeColor": "#ffd400",
+			"stroke": "transparent",
+			"background": "transparent",
+			"shadow": "transparent",
+			"shadowOpacity": 78,
+			"shadowBlur": 18,
+			"shadowDistance": 5,
+			"shadowAngle": 90,
+			"inactiveOpacity": 55,
+			"motion": "Fade",
+			"preset": "standard"
+		}
+	},
+	"expectedScope": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [],
+			"markers": [],
+			"captions": {
+				"enabled": true,
+				"fontFamily": "Inter",
+				"fontSize": 72,
+				"weight": "Black",
+				"italic": false,
+				"allCaps": false,
+				"style": "Standard",
+				"lines": "Single Line",
+				"chunkDuration": "1,2",
+				"maxWords": 4,
+				"maxChars": 26,
+				"maxPauseMs": 260,
+				"verticalPosition": 100,
+				"maxWidth": 86,
+				"fill": "#ffffff",
+				"activeColor": "#ffd400",
+				"stroke": "transparent",
+				"background": "transparent",
+				"shadow": "transparent",
+				"shadowOpacity": 78,
+				"shadowBlur": 18,
+				"shadowDistance": 5,
+				"shadowAngle": 90,
+				"inactiveOpacity": 55,
+				"motion": "Fade",
+				"preset": "standard"
+			}
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	},
+	"expectedInverse": {
+		"type": "doc.setCaptions"
+	},
+	"expectedRestored": {
+		"mediaAssets": [
+			{
+				"id": "asset-video",
+				"label": "Source clip",
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"kind": "video",
+				"source": "upload",
+				"dur": 20,
+				"metadata": {
+					"kind": "video",
+					"originalFilename": "source.mp4",
+					"byteSize": 4096,
+					"duration": 20
+				}
+			}
+		],
+		"doc": {
+			"schemaVersion": 2,
+			"clips": [],
+			"markers": []
+		},
+		"slides": [
+			{
+				"key": "slide-a",
+				"id": 1,
+				"cap": "First",
+				"vis": "a product shot",
+				"img": false
+			}
+		],
+		"posts": [
+			{
+				"key": "post-a",
+				"id": 1,
+				"body": "Hello",
+				"img": false
+			}
+		]
+	}
+}

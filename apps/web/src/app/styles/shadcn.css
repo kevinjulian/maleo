@@ -1,0 +1,34 @@
+/* Only utility values used by installed recipes. Every value reads Maleo tokens. */
+@theme inline {
+	--*: initial;
+	--color-primary: var(--dark);
+	--color-primary-foreground: var(--dark-fg);
+	--color-ring: var(--focus-color);
+	--color-border: var(--border);
+	--color-background: var(--surface);
+	--color-foreground: var(--fg);
+	--color-muted-foreground: var(--muted);
+	--color-secondary: var(--surface-tint);
+	--color-accent: var(--surface-hover);
+	--color-pressed: var(--surface-strong);
+	--color-destructive: var(--err);
+	--color-destructive-foreground: var(--on-accent);
+	--color-ai: var(--ai);
+	--color-ai-foreground: var(--on-ai);
+	--color-ai-border: var(--ai-border);
+	--color-input: var(--border);
+	--radius-md: var(--r-1);
+	--radius-lg: var(--r-2);
+	--radius-full: var(--r-pill);
+	--font-sans: var(--font-body);
+	--text-sm: var(--type-body-size);
+	--text-xs: var(--type-control-size);
+	--font-weight-medium: var(--weight-medium);
+	--font-weight-semibold: var(--weight-strong);
+	--spacing: var(--s-1);
+	--color-warning: var(--warn);
+	--color-popover: var(--surface-overlay);
+	--shadow-md: var(--shadow-2);
+	/* The desktop breakpoint from tokens.css; the only one the shell reads. */
+	--breakpoint-lg: 1024px;
+}

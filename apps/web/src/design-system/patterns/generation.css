@@ -1,0 +1,121 @@
+/* GenerationCard, GenerationProgress and GenerationError. A run is a column in
+ * the conversation, not a box: its status line, then what it made. */
+@layer chrome {
+	.ui-gen {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		min-width: 0;
+	}
+
+	.ui-gen-status {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		min-height: 26px;
+	}
+	.ui-gen-state {
+		display: inline-flex;
+		color: var(--muted);
+	}
+	.ui-gen-stage {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	.ui-gen-count {
+		color: var(--fg-dim);
+		font-size: var(--type-micro-size);
+		white-space: nowrap;
+	}
+	.ui-gen-action {
+		flex: none;
+		margin-left: auto;
+	}
+	.ui-gen-state .ui-spinner {
+		color: inherit;
+	}
+	/* Colour is the state, and only where it is a state someone can act on. */
+	.ui-gen-status[data-tone="active"] .ui-gen-state,
+	.ui-gen-status[data-tone="active"] .ui-gen-stage {
+		color: var(--ai);
+	}
+	.ui-gen-status[data-tone="warn"] .ui-gen-stage {
+		color: var(--warn);
+	}
+	.ui-gen-status[data-tone="error"] .ui-gen-stage {
+		color: var(--err);
+	}
+
+	.ui-gen-bar {
+		width: 100%;
+		height: 3px;
+		appearance: none;
+		border: 0;
+		border-radius: var(--r-pill);
+		overflow: hidden;
+		background: var(--surface-tint);
+		accent-color: var(--ai);
+	}
+	.ui-gen-bar::-webkit-progress-bar {
+		background: var(--surface-tint);
+	}
+	.ui-gen-bar::-webkit-progress-value {
+		background: var(--ai);
+		transition: width var(--d-med) var(--ease-out);
+	}
+	.ui-gen-bar::-moz-progress-bar {
+		background: var(--ai);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ui-gen-bar::-webkit-progress-value {
+			transition: none;
+		}
+	}
+
+	.ui-gen-error {
+		display: grid;
+		gap: var(--s-1);
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+	}
+	.ui-gen-error-h {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+		font-weight: var(--weight-display);
+	}
+	.ui-gen-error-code {
+		flex: none;
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-body);
+	}
+	.ui-gen-error-body {
+		color: var(--fg-dim);
+		line-height: 1.45;
+	}
+	.ui-gen-error details {
+		min-width: 0;
+		color: var(--muted);
+	}
+	.ui-gen-error summary {
+		cursor: pointer;
+		font-size: var(--type-label-size);
+	}
+	.ui-gen-error pre {
+		max-height: 160px;
+		overflow: auto;
+		margin: var(--s-1-5) 0 0;
+		padding: var(--s-1-5) 0 0;
+		border-top: 1px solid var(--border);
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		line-height: 1.45;
+		white-space: pre-wrap;
+		word-break: break-word;
+	}
+}

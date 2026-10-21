@@ -1,0 +1,20 @@
+{
+	"name": "@maleo/storage",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Media object storage: local filesystem or S3-compatible store",
+	"license": "MIT",
+	"type": "module",
+	"main": "./src/storage.ts",
+	"types": "./src/storage.ts",
+	"exports": {
+		".": "./src/storage.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0"
+	}
+}

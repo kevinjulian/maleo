@@ -1,0 +1,1670 @@
+{
+  "job": {
+    "id": "agent-1792093169703-5cyky",
+    "projectId": "2ec944c7-f9c8-47d8-9d88-9b98a1275251",
+    "workspace": "default",
+    "contentType": "video",
+    "status": "done",
+    "events": [
+      {
+        "kind": "tool_call_started",
+        "tool": "plan_story",
+        "args": {
+          "brief": "why compound interest is counter-intuitive",
+          "targetDurationSec": 90
+        }
+      },
+      {
+        "kind": "thinking_note",
+        "title": "Planning",
+        "body": "Drafting the story plan for ~2 min (~234 words)…",
+        "elapsedSec": 0
+      },
+      {
+        "kind": "tool_call_started",
+        "tool": "generate_style",
+        "args": {
+          "brief": "why compound interest is counter-intuitive"
+        }
+      },
+      {
+        "kind": "tool_call_completed",
+        "tool": "generate_style",
+        "note": "Locked visual style: test style bible",
+        "effect": "asset"
+      },
+      {
+        "kind": "tool_call_started",
+        "tool": "author_story_bible",
+        "args": {
+          "brief": "why compound interest is counter-intuitive",
+          "plannedReferences": 0
+        }
+      },
+      {
+        "kind": "tool_call_completed",
+        "tool": "author_story_bible",
+        "note": "Story bible: 1 subject(s), 1 location(s), palette p.",
+        "effect": "asset"
+      },
+      {
+        "kind": "artifact",
+        "artifact": {
+          "id": "5be2d128-0ea3-4262-bad6-e63c2819bd00",
+          "kind": "story_plan",
+          "schemaVersion": 1,
+          "status": "in_progress",
+          "producer": {
+            "type": "stage",
+            "stage": "plan",
+            "runId": "agent-1792093169703-5cyky"
+          },
+          "projectId": "2ec944c7-f9c8-47d8-9d88-9b98a1275251",
+          "revision": 1,
+          "inputRefs": [],
+          "context": [
+            {
+              "key": "brief",
+              "hash": "55wag0gxqz"
+            },
+            {
+              "key": "materials.story",
+              "hash": "1sr25h5qi0i"
+            },
+            {
+              "key": "materials.voice",
+              "hash": "17jkv1smhky"
+            },
+            {
+              "key": "materials.rules",
+              "hash": "1eoa0cxmzci"
+            },
+            {
+              "key": "styleLock",
+              "hash": "uceux4x8bt"
+            }
+          ],
+          "contentHash": "2d387t3o0ty",
+          "createdAt": "2026-10-15T19:39:30.010Z",
+          "payload": {
+            "planningBrief": "why compound interest is counter-intuitive",
+            "factual": false,
+            "visualStyle": "test style bible",
+            "bible": {
+              "subjects": [
+                {
+                  "id": "s",
+                  "label": "subject",
+                  "aliases": [],
+                  "descriptors": [],
+                  "mustAvoid": []
+                }
+              ],
+              "locations": [
+                {
+                  "id": "l",
+                  "label": "place",
+                  "descriptors": []
+                }
+              ],
+              "medium": "m",
+              "palette": "p",
+              "negatives": [
+                "n"
+              ],
+              "summary": "test style bible"
+            },
+            "structure": "narration_section",
+            "directionFingerprint": "2321w0jl57v",
+            "directionInputs": {
+              "materials": "{\"visual\":\"\",\"rules\":\"\"}",
+              "templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+            },
+            "clarification": {
+              "stage": "pre_research",
+              "status": "bypassed",
+              "bypass": "unavailable",
+              "decisions": []
+            },
+            "generationState": {
+              "planId": "c59643b2-d8c4-47b3-81fb-f1f1087a0ba9",
+              "draft": {
+                "revisionId": "999661c3-2e6d-4a86-be41-f9af4b05df53",
+                "sections": [
+                  {
+                    "id": "sec-1",
+                    "title": "Opening",
+                    "beats": [
+                      {
+                        "id": "2dff0254-9abd-49c3-be0f-5f159618166f",
+                        "title": "Opening",
+                        "narration": "A concise opening about compounding.",
+                        "visualPrompt": "A ledger filling with numbers",
+                        "visualPrompts": [
+                          "A ledger filling with numbers"
+                        ],
+                        "factual": false,
+                        "sourceEvidence": [],
+                        "sourceUrls": [],
+                        "citationStatus": "not_required",
+                        "status": "draft",
+                        "estimatedDurationSec": 1.9
+                      }
+                    ],
+                    "narration": "A concise opening about compounding.",
+                    "visualPrompt": "A ledger filling with numbers",
+                    "visualPrompts": [
+                      "A ledger filling with numbers"
+                    ],
+                    "factual": false,
+                    "sourceEvidence": [],
+                    "sourceUrls": [],
+                    "citationStatus": "not_required",
+                    "status": "draft",
+                    "estimatedDurationSec": 1.9
+                  }
+                ]
+              }
+            },
+            "targetSec": 90,
+            "sections": [
+              {
+                "id": "sec-1",
+                "title": "Opening",
+                "narration": "A concise opening about compounding.",
+                "visualPrompt": "A ledger filling with numbers",
+                "visualPrompts": [
+                  "A ledger filling with numbers"
+                ],
+                "factual": false,
+                "sourceEvidence": [],
+                "sourceUrls": [],
+                "citationStatus": "not_required",
+                "status": "draft",
+                "estimatedDurationSec": 1.9
+              }
+            ],
+            "unverified": false,
+            "planKind": "story"
+          }
+        }
+      },
+      {
+        "kind": "artifact",
+        "artifact": {
+          "id": "f6e093e5-933e-4849-88c6-262ed8707287",
+          "kind": "storyboard_table",
+          "schemaVersion": 1,
+          "status": "in_progress",
+          "producer": {
+            "type": "stage",
+            "stage": "plan",
+            "runId": "agent-1792093169703-5cyky"
+          },
+          "projectId": "2ec944c7-f9c8-47d8-9d88-9b98a1275251",
+          "revision": 1,
+          "inputRefs": [],
+          "context": [
+            {
+              "key": "brief",
+              "hash": "55wag0gxqz"
+            },
+            {
+              "key": "materials.story",
+              "hash": "1sr25h5qi0i"
+            },
+            {
+              "key": "materials.voice",
+              "hash": "17jkv1smhky"
+            },
+            {
+              "key": "materials.rules",
+              "hash": "1eoa0cxmzci"
+            },
+            {
+              "key": "styleLock",
+              "hash": "uceux4x8bt"
+            }
+          ],
+          "contentHash": "1e41olrhd6w",
+          "createdAt": "2026-10-15T19:39:30.017Z",
+          "payload": {
+            "title": "Story plan · 1 sections · ~2 min",
+            "rows": [
+              {
+                "startSec": 0,
+                "endSec": 1.9,
+                "content": "Opening — A concise opening about compounding.",
+                "kind": "scene"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "kind": "storyboard_patch"
+      },
+      {
+        "kind": "tool_call_completed",
+        "tool": "plan_story",
+        "note": "Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images.",
+        "effect": "patch"
+      },
+      {
+        "kind": "storyboard_patch"
+      },
+      {
+        "kind": "final",
+        "text": "Plan ready."
+      }
+    ],
+    "scenes": [],
+    "editorScenes": [],
+    "baseFingerprints": [],
+    "baseRevisionId": null,
+    "textOverlays": [],
+    "infographicOverlays": [],
+    "videoOverlays": [],
+    "audioOverlays": [],
+    "characters": [],
+    "artifacts": [
+      {
+        "id": "5be2d128-0ea3-4262-bad6-e63c2819bd00",
+        "kind": "story_plan",
+        "schemaVersion": 1,
+        "status": "complete",
+        "producer": {
+          "type": "stage",
+          "stage": "plan",
+          "runId": "agent-1792093169703-5cyky"
+        },
+        "projectId": "2ec944c7-f9c8-47d8-9d88-9b98a1275251",
+        "revision": 1,
+        "inputRefs": [],
+        "context": [
+          {
+            "key": "brief",
+            "hash": "55wag0gxqz"
+          },
+          {
+            "key": "materials.story",
+            "hash": "1sr25h5qi0i"
+          },
+          {
+            "key": "materials.voice",
+            "hash": "17jkv1smhky"
+          },
+          {
+            "key": "materials.rules",
+            "hash": "1eoa0cxmzci"
+          },
+          {
+            "key": "styleLock",
+            "hash": "uceux4x8bt"
+          }
+        ],
+        "contentHash": "2d387t3o0ty",
+        "createdAt": "2026-10-15T19:39:30.010Z",
+        "payload": {
+          "planningBrief": "why compound interest is counter-intuitive",
+          "factual": false,
+          "visualStyle": "test style bible",
+          "bible": {
+            "subjects": [
+              {
+                "id": "s",
+                "label": "subject",
+                "aliases": [],
+                "descriptors": [],
+                "mustAvoid": []
+              }
+            ],
+            "locations": [
+              {
+                "id": "l",
+                "label": "place",
+                "descriptors": []
+              }
+            ],
+            "medium": "m",
+            "palette": "p",
+            "negatives": [
+              "n"
+            ],
+            "summary": "test style bible"
+          },
+          "structure": "narration_section",
+          "directionFingerprint": "2321w0jl57v",
+          "directionInputs": {
+            "materials": "{\"visual\":\"\",\"rules\":\"\"}",
+            "templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+          },
+          "clarification": {
+            "stage": "pre_research",
+            "status": "bypassed",
+            "bypass": "unavailable",
+            "decisions": []
+          },
+          "generationState": {
+            "planId": "c59643b2-d8c4-47b3-81fb-f1f1087a0ba9",
+            "draft": {
+              "revisionId": "999661c3-2e6d-4a86-be41-f9af4b05df53",
+              "sections": [
+                {
+                  "id": "sec-1",
+                  "title": "Opening",
+                  "beats": [
+                    {
+                      "id": "2dff0254-9abd-49c3-be0f-5f159618166f",
+                      "title": "Opening",
+                      "narration": "A concise opening about compounding.",
+                      "visualPrompt": "A ledger filling with numbers",
+                      "visualPrompts": [
+                        "A ledger filling with numbers"
+                      ],
+                      "factual": false,
+                      "sourceEvidence": [],
+                      "sourceUrls": [],
+                      "citationStatus": "not_required",
+                      "status": "draft",
+                      "estimatedDurationSec": 1.9
+                    }
+                  ],
+                  "narration": "A concise opening about compounding.",
+                  "visualPrompt": "A ledger filling with numbers",
+                  "visualPrompts": [
+                    "A ledger filling with numbers"
+                  ],
+                  "factual": false,
+                  "sourceEvidence": [],
+                  "sourceUrls": [],
+                  "citationStatus": "not_required",
+                  "status": "draft",
+                  "estimatedDurationSec": 1.9
+                }
+              ]
+            }
+          },
+          "targetSec": 90,
+          "sections": [
+            {
+              "id": "sec-1",
+              "title": "Opening",
+              "narration": "A concise opening about compounding.",
+              "visualPrompt": "A ledger filling with numbers",
+              "visualPrompts": [
+                "A ledger filling with numbers"
+              ],
+              "factual": false,
+              "sourceEvidence": [],
+              "sourceUrls": [],
+              "citationStatus": "not_required",
+              "status": "draft",
+              "estimatedDurationSec": 1.9
+            }
+          ],
+          "unverified": false,
+          "planKind": "story"
+        }
+      },
+      {
+        "id": "f6e093e5-933e-4849-88c6-262ed8707287",
+        "kind": "storyboard_table",
+        "schemaVersion": 1,
+        "status": "complete",
+        "producer": {
+          "type": "stage",
+          "stage": "plan",
+          "runId": "agent-1792093169703-5cyky"
+        },
+        "projectId": "2ec944c7-f9c8-47d8-9d88-9b98a1275251",
+        "revision": 1,
+        "inputRefs": [],
+        "context": [
+          {
+            "key": "brief",
+            "hash": "55wag0gxqz"
+          },
+          {
+            "key": "materials.story",
+            "hash": "1sr25h5qi0i"
+          },
+          {
+            "key": "materials.voice",
+            "hash": "17jkv1smhky"
+          },
+          {
+            "key": "materials.rules",
+            "hash": "1eoa0cxmzci"
+          },
+          {
+            "key": "styleLock",
+            "hash": "uceux4x8bt"
+          }
+        ],
+        "contentHash": "1e41olrhd6w",
+        "createdAt": "2026-10-15T19:39:30.017Z",
+        "payload": {
+          "title": "Story plan · 1 sections · ~2 min",
+          "rows": [
+            {
+              "startSec": 0,
+              "endSec": 1.9,
+              "content": "Opening — A concise opening about compounding.",
+              "kind": "scene"
+            }
+          ]
+        }
+      }
+    ],
+    "aspect": "9:16",
+    "brief": "why compound interest is counter-intuitive",
+    "projectRefIds": [],
+    "startedAt": 1792093169705,
+    "targetDurationSec": 90,
+    "timelineTemplate": {
+      "id": "f267d3d4-a220-4ede-89fe-dff83fd9c39d",
+      "name": "Documentary flow",
+      "description": "Narration-first sections with chapter motion, entry accents, and data when useful.",
+      "introTextPreset": "chapter",
+      "introEntrySfx": "subtle transition stinger",
+      "introEntrySfxUrl": "",
+      "introLeadInSec": 0.6,
+      "introTitleDurationSec": 4,
+      "introEntrySfxVolume": 0.6,
+      "introEntrySfxOffsetSec": 0,
+      "sectionGapSec": 0.6,
+      "sectionTitlePolicy": "every_section",
+      "sectionTextPreset": "chapter",
+      "sceneEntrySfx": "",
+      "sceneEntrySfxUrl": "",
+      "musicCue": "calm ambient background",
+      "musicUrl": "",
+      "musicVolume": 1,
+      "musicPolicy": "single",
+      "musicEmotionCues": {
+        "calm": {
+          "cue": "soft ambient pad",
+          "url": ""
+        },
+        "curiosity": {
+          "cue": "playful pizzicato",
+          "url": ""
+        },
+        "suspense": {
+          "cue": "suspense ambient",
+          "url": ""
+        },
+        "tension": {
+          "cue": "dark driving pulse",
+          "url": ""
+        },
+        "shock": {
+          "cue": "dramatic impact",
+          "url": ""
+        },
+        "sadness": {
+          "cue": "melancholic slow piano",
+          "url": ""
+        },
+        "relief": {
+          "cue": "warm ambient",
+          "url": ""
+        },
+        "hope": {
+          "cue": "hopeful ambient",
+          "url": ""
+        },
+        "victory": {
+          "cue": "triumphant orchestral swell",
+          "url": ""
+        },
+        "chaos": {
+          "cue": "distorted chaos",
+          "url": ""
+        }
+      },
+      "sentenceVoiceoverPauseSec": 0.15,
+      "sceneVoiceoverPauseSec": 0.35,
+      "maxVisualBeatSec": 6,
+      "maxVoiceoverSegmentSec": 8,
+      "staticSceneMovement": false,
+      "overrideSceneTransition": false,
+      "sceneTransition": "fade",
+      "useData": true,
+      "imageGuidancePrompt": "Illustrate {{section.title}} in direct support of this narration: {{section.narration}}",
+      "slug": "timeline-default-documentary",
+      "source": "fixture",
+      "retired": false,
+      "createdAt": 1792093169682,
+      "updatedAt": 1792093169682
+    },
+    "outcomeContract": {
+      "schemaVersion": 1,
+      "objective": "make a 90 second video about compounding\n\nwhy compound interest is counter-intuitive",
+      "contentType": "video",
+      "format": "9:16",
+      "targetDurationSec": 90,
+      "createdAt": 1792093169705,
+      "requirements": [
+        {
+          "id": "content_present",
+          "label": "Deliver editable content, not only a plan or note",
+          "blocking": true
+        },
+        {
+          "id": "brief_coverage",
+          "label": "Keep output aligned with requested topic and action",
+          "blocking": false
+        },
+        {
+          "id": "valid_timeline",
+          "label": "Keep clip timing and media references render-safe",
+          "blocking": true
+        },
+        {
+          "id": "visual_assets",
+          "label": "Materialize required visual assets",
+          "blocking": true
+        },
+        {
+          "id": "evidence",
+          "label": "Ground factual claims in matched project evidence",
+          "blocking": true
+        },
+        {
+          "id": "viewer_attention",
+          "label": "Keep one clear viewer focus at a time",
+          "blocking": true
+        },
+        {
+          "id": "target_duration",
+          "label": "Stay near 90s target duration",
+          "blocking": true
+        }
+      ]
+    },
+    "run": {
+      "instruction": "",
+      "transcript": "\nPipeline stage plan reads: brief, materials.story, materials.voice, materials.rules, styleLock\nPipeline plan: plan_story({\"brief\":\"why compound interest is counter-intuitive\",\"targetDurationSec\":90}) -> Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images.",
+      "step": 0,
+      "builtSomething": false,
+      "finishRejected": false,
+      "asks": 0,
+      "toolCallSteps": {
+        "call-workflow-plan_story": 0
+      },
+      "flows": {
+        "call-workflow-plan_story": {
+          "workflow": "plan_story",
+          "revision": "6579a75958cd7a88",
+          "definition": {
+            "id": "plan_story",
+            "description": "PLAN-FIRST for video/story: produce one durable Story Plan (premise, hook, tension, arc, narration sections or beats, ordered visual changes). Generates no assets. Use this first for every new video/story build; leave structure and planKind on auto unless the user asks.",
+            "root": {
+              "type": "sequence",
+              "id": "plan_story",
+              "steps": [
+                {
+                  "type": "step",
+                  "id": "duration",
+                  "op": "guard.duration"
+                },
+                {
+                  "type": "branch",
+                  "id": "replace-approved",
+                  "if": {
+                    "rule": "plan.approvedExists"
+                  },
+                  "then": {
+                    "type": "sequence",
+                    "id": "replacement",
+                    "steps": [
+                      {
+                        "type": "suspend",
+                        "id": "approve-replacement",
+                        "kind": "approval",
+                        "ask": "guard.askReplacement",
+                        "onAnswer": "guard.answerReplacement",
+                        "out": "state.replacement",
+                        "skipIf": {
+                          "fact": "run.approveAll"
+                        }
+                      },
+                      {
+                        "type": "branch",
+                        "id": "replacement-rejected",
+                        "if": {
+                          "eq": [
+                            "state.replacement.decision",
+                            "reject"
+                          ]
+                        },
+                        "then": {
+                          "type": "end",
+                          "id": "kept",
+                          "outcome": {
+                            "ok": false,
+                            "note": "Kept the approved story plan."
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "branch",
+                  "id": "route-direction",
+                  "if": {
+                    "rule": "direction.needsRouting"
+                  },
+                  "then": {
+                    "type": "step",
+                    "id": "direction",
+                    "op": "direction.route",
+                    "prompts": [
+                      "prompt:content:directionRouterPrompt"
+                    ]
+                  }
+                },
+                {
+                  "type": "step",
+                  "id": "bypass",
+                  "op": "clarify.bypass",
+                  "out": "state.bypass"
+                },
+                {
+                  "type": "branch",
+                  "id": "bypassed",
+                  "if": {
+                    "exists": "state.bypass.bypass"
+                  },
+                  "then": {
+                    "type": "step",
+                    "id": "record-bypass",
+                    "op": "clarify.recordBypass",
+                    "in": {
+                      "bypass": "state.bypass.bypass"
+                    }
+                  },
+                  "else": {
+                    "type": "branch",
+                    "id": "clarification-eligible",
+                    "if": {
+                      "rule": "clarification.eligible"
+                    },
+                    "then": {
+                      "type": "sequence",
+                      "id": "clarify",
+                      "steps": [
+                        {
+                          "type": "step",
+                          "id": "questions",
+                          "op": "clarify.generate",
+                          "out": "state.questions",
+                          "prompts": [
+                            "prompt:clarification:storyClarificationPrompt"
+                          ]
+                        },
+                        {
+                          "type": "branch",
+                          "id": "has-questions",
+                          "if": {
+                            "exists": "state.questions.batch"
+                          },
+                          "then": {
+                            "type": "suspend",
+                            "id": "ask-questions",
+                            "kind": "questions",
+                            "ask": "clarify.ask",
+                            "onAnswer": "clarify.answer",
+                            "in": {
+                              "batch": "state.questions.batch"
+                            }
+                          },
+                          "else": {
+                            "type": "step",
+                            "id": "questions-unavailable",
+                            "op": "clarify.unavailable"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "type": "step",
+                  "id": "bind",
+                  "op": "plan.bind",
+                  "in": {
+                    "args": "input"
+                  },
+                  "out": "state.args"
+                },
+                {
+                  "type": "call",
+                  "id": "plan",
+                  "workflow": "plan_story_core",
+                  "in": {
+                    "args": "state.args"
+                  },
+                  "out": "state.core",
+                  "contract": "plan"
+                },
+                {
+                  "type": "end",
+                  "id": "planned",
+                  "from": "state.core"
+                }
+              ]
+            }
+          },
+          "input": {
+            "brief": "why compound interest is counter-intuitive"
+          },
+          "status": "completed",
+          "state": {
+            "bypass": {
+              "bypass": null
+            },
+            "questions": {
+              "batch": null
+            },
+            "args": {
+              "brief": "why compound interest is counter-intuitive",
+              "targetDurationSec": 90
+            },
+            "core": {
+              "ok": true,
+              "note": "Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images."
+            }
+          },
+          "done": [
+            "duration",
+            "replace-approved",
+            "route-direction",
+            "bypass",
+            "questions",
+            "questions-unavailable",
+            "has-questions",
+            "clarify",
+            "clarification-eligible",
+            "bypassed",
+            "bind",
+            "plan",
+            "planned"
+          ],
+          "branches": {
+            "replace-approved": "none",
+            "route-direction": "none",
+            "bypassed": "else",
+            "clarification-eligible": "then",
+            "has-questions": "else"
+          },
+          "calls": {
+            "plan": {
+              "workflow": "plan_story_core",
+              "revision": "f9d1c68519a35f1c",
+              "definition": {
+                "id": "plan_story_core",
+                "description": "Frame, research when grounding is needed, ask post-research decisions, draft, resolve style and Story Bible, and save the plan. Generates no media.",
+                "root": {
+                  "type": "sequence",
+                  "id": "plan_story_core",
+                  "steps": [
+                    {
+                      "type": "step",
+                      "id": "setup",
+                      "op": "plan.setup",
+                      "in": {
+                        "args": "input.args"
+                      },
+                      "out": "state.setup"
+                    },
+                    {
+                      "type": "branch",
+                      "id": "generated-work",
+                      "if": {
+                        "rule": "plan.hasGeneratedWork"
+                      },
+                      "then": {
+                        "type": "sequence",
+                        "id": "preserve-generated",
+                        "steps": [
+                          {
+                            "type": "step",
+                            "id": "preserve",
+                            "op": "plan.preserve",
+                            "out": "state.preserved"
+                          },
+                          {
+                            "type": "end",
+                            "id": "not-re-planning",
+                            "from": "state.preserved",
+                            "unchanged": true
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "step",
+                      "id": "brief",
+                      "op": "plan.brief",
+                      "in": {
+                        "setup": "state.setup"
+                      },
+                      "out": "state.brief"
+                    },
+                    {
+                      "type": "step",
+                      "id": "frame",
+                      "op": "plan.frame",
+                      "in": {
+                        "args": "input.args",
+                        "setup": "state.setup",
+                        "brief": "state.brief"
+                      },
+                      "out": "state.framed",
+                      "prompts": [
+                        "prompt:content:storyFramePrompt"
+                      ]
+                    },
+                    {
+                      "type": "branch",
+                      "id": "needs-research",
+                      "if": {
+                        "and": [
+                          {
+                            "eq": [
+                              "state.framed.grounded",
+                              true
+                            ]
+                          },
+                          {
+                            "not": {
+                              "exists": "state.framed.matchedKey"
+                            }
+                          }
+                        ]
+                      },
+                      "then": {
+                        "type": "step",
+                        "id": "research",
+                        "op": "plan.research",
+                        "in": {
+                          "topic": "state.setup.brief",
+                          "questions": "state.framed.frame.grounding.questions"
+                        },
+                        "out": "state.retrieved",
+                        "tools": [
+                          "research_topic"
+                        ]
+                      }
+                    },
+                    {
+                      "type": "step",
+                      "id": "hold",
+                      "op": "plan.hold",
+                      "in": {
+                        "matched": "state.framed.matchedKey",
+                        "retrieved": "state.retrieved.key"
+                      },
+                      "out": "state.hold"
+                    },
+                    {
+                      "type": "branch",
+                      "id": "review-evidence",
+                      "if": {
+                        "and": [
+                          {
+                            "not": {
+                              "empty": "state.hold.sourceCount"
+                            }
+                          },
+                          {
+                            "not": {
+                              "in": [
+                                "fact:clarification.bypass",
+                                [
+                                  "skip_request",
+                                  "one_shot"
+                                ]
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      "then": {
+                        "type": "sequence",
+                        "id": "evidence",
+                        "steps": [
+                          {
+                            "type": "step",
+                            "id": "decide",
+                            "op": "evidence.decide",
+                            "in": {
+                              "args": "input.args",
+                              "brief": "state.setup.brief",
+                              "frame": "state.framed.frame",
+                              "hold": "state.hold"
+                            },
+                            "out": "state.decision",
+                            "prompts": [
+                              "prompt:evidence:evidenceDecisionPrompt"
+                            ]
+                          },
+                          {
+                            "type": "branch",
+                            "id": "evidence-fallback",
+                            "if": {
+                              "eq": [
+                                "state.decision.kind",
+                                "fallback"
+                              ]
+                            },
+                            "then": {
+                              "type": "step",
+                              "id": "fallback",
+                              "op": "evidence.fallback",
+                              "in": {
+                                "reason": "state.decision.reason"
+                              }
+                            }
+                          },
+                          {
+                            "type": "branch",
+                            "id": "evidence-question",
+                            "if": {
+                              "eq": [
+                                "state.decision.kind",
+                                "batch"
+                              ]
+                            },
+                            "then": {
+                              "type": "suspend",
+                              "id": "ask-evidence",
+                              "kind": "questions",
+                              "ask": "evidence.ask",
+                              "onAnswer": "evidence.answer",
+                              "in": {
+                                "batch": "state.decision.batch"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "step",
+                      "id": "draft",
+                      "op": "plan.draft",
+                      "in": {
+                        "args": "input.args",
+                        "setup": "state.setup",
+                        "brief": "state.brief",
+                        "framed": "state.framed",
+                        "hold": "state.hold"
+                      },
+                      "out": "state.drafted",
+                      "prompts": [
+                        "prompt:content:storyDraftPrompt",
+                        "prompt:sequence:storySequenceDirectionPrompt"
+                      ]
+                    },
+                    {
+                      "type": "step",
+                      "id": "materialize",
+                      "op": "plan.materialize",
+                      "in": {
+                        "wordBudget": "state.brief.wordBudget",
+                        "plan": "state.drafted.plan",
+                        "hold": "state.hold",
+                        "grounded": "state.framed.grounded"
+                      },
+                      "out": "state.materialized"
+                    },
+                    {
+                      "type": "branch",
+                      "id": "no-style-image",
+                      "if": {
+                        "empty": "fact:job.styleImageUrl"
+                      },
+                      "then": {
+                        "type": "sequence",
+                        "id": "style",
+                        "steps": [
+                          {
+                            "type": "step",
+                            "id": "load-style",
+                            "op": "style.load",
+                            "out": "state.style"
+                          },
+                          {
+                            "type": "branch",
+                            "id": "missing-style",
+                            "if": {
+                              "empty": "state.style.visualStyle"
+                            },
+                            "then": {
+                              "type": "step",
+                              "id": "generate-style",
+                              "op": "style.generate",
+                              "in": {
+                                "brief": "state.setup.brief"
+                              },
+                              "out": "state.style",
+                              "prompts": [
+                                "prompt:content:generateStyleBible"
+                              ],
+                              "onError": "continue"
+                            }
+                          },
+                          {
+                            "type": "branch",
+                            "id": "resolved-style",
+                            "if": {
+                              "not": {
+                                "empty": "state.style.visualStyle"
+                              }
+                            },
+                            "then": {
+                              "type": "step",
+                              "id": "save-style",
+                              "op": "style.save",
+                              "in": {
+                                "visualStyle": "state.style.visualStyle"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "step",
+                      "id": "bible",
+                      "op": "plan.bible",
+                      "in": {
+                        "brief": "state.setup.brief",
+                        "plan": "state.drafted.plan",
+                        "visualStyle": "state.style.visualStyle"
+                      },
+                      "out": "state.bible",
+                      "prompts": [
+                        "prompt:content:authorStoryBible"
+                      ],
+                      "onError": "continue"
+                    },
+                    {
+                      "type": "step",
+                      "id": "persist",
+                      "op": "plan.persist",
+                      "in": {
+                        "setup": "state.setup",
+                        "brief": "state.brief",
+                        "framed": "state.framed",
+                        "hold": "state.hold",
+                        "plan": "state.drafted.plan",
+                        "sections": "state.materialized.sections",
+                        "visualStyle": "state.style.visualStyle",
+                        "bible": "state.bible.bible"
+                      },
+                      "out": "state.result"
+                    },
+                    {
+                      "type": "end",
+                      "id": "planned",
+                      "from": "state.result"
+                    }
+                  ]
+                }
+              },
+              "input": {
+                "args": {
+                  "brief": "why compound interest is counter-intuitive",
+                  "targetDurationSec": 90
+                }
+              },
+              "status": "completed",
+              "state": {
+                "setup": {
+                  "brief": "why compound interest is counter-intuitive",
+                  "clarification": "",
+                  "targetSec": 90,
+                  "structure": "narration_section",
+                  "sectionCount": 4,
+                  "wordsPerSec": 2.6
+                },
+                "brief": {
+                  "wordBudget": 234,
+                  "scriptingBrief": "why compound interest is counter-intuitive"
+                },
+                "framed": {
+                  "shape": {
+                    "sectionCount": 4,
+                    "wordBudget": 234
+                  },
+                  "frame": {
+                    "planKind": "story",
+                    "arc": "three_act",
+                    "language": "en",
+                    "grounding": {
+                      "needed": false,
+                      "questions": []
+                    },
+                    "degraded": false
+                  },
+                  "grounded": false,
+                  "matchedKey": null
+                },
+                "hold": {
+                  "researchKey": null,
+                  "sourceCount": 0,
+                  "clarification": {
+                    "stage": "pre_research",
+                    "status": "bypassed",
+                    "bypass": "unavailable",
+                    "decisions": []
+                  }
+                },
+                "drafted": {
+                  "plan": {
+                    "sections": [
+                      {
+                        "title": "Opening",
+                        "narration": "A concise opening about compounding.",
+                        "visualPrompt": "A ledger filling with numbers"
+                      }
+                    ],
+                    "planKind": "story"
+                  }
+                },
+                "materialized": {
+                  "sections": [
+                    {
+                      "id": "sec-1",
+                      "title": "Opening",
+                      "narration": "A concise opening about compounding.",
+                      "visualPrompt": "A ledger filling with numbers",
+                      "visualPrompts": [
+                        "A ledger filling with numbers"
+                      ],
+                      "factual": false,
+                      "sourceEvidence": [],
+                      "sourceUrls": [],
+                      "citationStatus": "not_required",
+                      "status": "draft",
+                      "estimatedDurationSec": 1.9
+                    }
+                  ]
+                },
+                "style": {
+                  "visualStyle": "test style bible"
+                },
+                "bible": {
+                  "bible": {
+                    "subjects": [
+                      {
+                        "id": "s",
+                        "label": "subject",
+                        "aliases": [],
+                        "descriptors": [],
+                        "mustAvoid": []
+                      }
+                    ],
+                    "locations": [
+                      {
+                        "id": "l",
+                        "label": "place",
+                        "descriptors": []
+                      }
+                    ],
+                    "medium": "m",
+                    "palette": "p",
+                    "negatives": [
+                      "n"
+                    ],
+                    "summary": "test style bible"
+                  }
+                },
+                "result": {
+                  "ok": true,
+                  "note": "Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images."
+                }
+              },
+              "done": [
+                "setup",
+                "generated-work",
+                "brief",
+                "frame",
+                "needs-research",
+                "hold",
+                "review-evidence",
+                "draft",
+                "materialize",
+                "load-style",
+                "generate-style",
+                "missing-style",
+                "save-style",
+                "resolved-style",
+                "style",
+                "no-style-image",
+                "bible",
+                "persist",
+                "planned"
+              ],
+              "branches": {
+                "generated-work": "none",
+                "needs-research": "none",
+                "review-evidence": "none",
+                "no-style-image": "then",
+                "missing-style": "then",
+                "resolved-style": "then"
+              },
+              "calls": {},
+              "trace": [
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "setup",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169845,
+                  "endedAt": 1792093169846,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "generated-work",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169855,
+                  "endedAt": 1792093169862,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "none"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "brief",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169868,
+                  "endedAt": 1792093169869,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "frame",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169874,
+                  "endedAt": 1792093169876,
+                  "outcome": "completed",
+                  "prompts": [
+                    "prompt:content:storyFramePrompt"
+                  ],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "needs-research",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169884,
+                  "endedAt": 1792093169890,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "none"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "hold",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169895,
+                  "endedAt": 1792093169896,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "review-evidence",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169901,
+                  "endedAt": 1792093169908,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "none"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "draft",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169913,
+                  "endedAt": 1792093169915,
+                  "outcome": "completed",
+                  "prompts": [
+                    "prompt:content:storyDraftPrompt",
+                    "prompt:sequence:storySequenceDirectionPrompt"
+                  ],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "materialize",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169921,
+                  "endedAt": 1792093169922,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "load-style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169937,
+                  "endedAt": 1792093169937,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "generate-style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169950,
+                  "endedAt": 1792093169952,
+                  "outcome": "completed",
+                  "prompts": [
+                    "prompt:content:generateStyleBible"
+                  ],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "missing-style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169945,
+                  "endedAt": 1792093169957,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "then"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "save-style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169970,
+                  "endedAt": 1792093169971,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "resolved-style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169964,
+                  "endedAt": 1792093169976,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "then"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "style",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169936,
+                  "endedAt": 1792093169981,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "no-style-image",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169930,
+                  "endedAt": 1792093169989,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": [],
+                  "branch": "then"
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "bible",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093169997,
+                  "endedAt": 1792093169999,
+                  "outcome": "completed",
+                  "prompts": [
+                    "prompt:content:authorStoryBible"
+                  ],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "persist",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093170005,
+                  "endedAt": 1792093170017,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                },
+                {
+                  "runId": "agent-1792093169703-5cyky",
+                  "workflow": "plan_story_core",
+                  "node": "planned",
+                  "revision": "f9d1c68519a35f1c",
+                  "startedAt": 1792093170024,
+                  "endedAt": 1792093170024,
+                  "outcome": "completed",
+                  "prompts": [],
+                  "tools": []
+                }
+              ],
+              "outcome": {
+                "ok": true,
+                "note": "Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images."
+              }
+            }
+          },
+          "trace": [
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "duration",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169823,
+              "endedAt": 1792093169823,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "replace-approved",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169825,
+              "endedAt": 1792093169826,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": [],
+              "branch": "none"
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "route-direction",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169827,
+              "endedAt": 1792093169827,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": [],
+              "branch": "none"
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "bypass",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169828,
+              "endedAt": 1792093169829,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "questions",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169832,
+              "endedAt": 1792093169832,
+              "outcome": "completed",
+              "prompts": [
+                "prompt:clarification:storyClarificationPrompt"
+              ],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "questions-unavailable",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169835,
+              "endedAt": 1792093169835,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "has-questions",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169834,
+              "endedAt": 1792093169835,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": [],
+              "branch": "else"
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "clarify",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169832,
+              "endedAt": 1792093169836,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "clarification-eligible",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169831,
+              "endedAt": 1792093169837,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": [],
+              "branch": "then"
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "bypassed",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169830,
+              "endedAt": 1792093169839,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": [],
+              "branch": "else"
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "bind",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169840,
+              "endedAt": 1792093169841,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "plan",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093169842,
+              "endedAt": 1792093170039,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            },
+            {
+              "runId": "agent-1792093169703-5cyky",
+              "workflow": "plan_story",
+              "node": "planned",
+              "revision": "6579a75958cd7a88",
+              "startedAt": 1792093170045,
+              "endedAt": 1792093170045,
+              "outcome": "completed",
+              "prompts": [],
+              "tools": []
+            }
+          ],
+          "outcome": {
+            "ok": true,
+            "note": "Planned 1 sections (~234 words). Review the story plan, then approve to generate voiceover + images."
+          }
+        }
+      },
+      "storyClarification": {
+        "status": "bypassed",
+        "provenance": {
+          "stage": "pre_research",
+          "status": "bypassed",
+          "bypass": "unavailable",
+          "decisions": []
+        }
+      },
+      "jobWrites": true
+    }
+  },
+  "framework": {
+    "runs": [],
+    "total": 0
+  }
+}

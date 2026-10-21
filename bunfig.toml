@@ -1,0 +1,15 @@
+# Supply-chain cooldown. A dependency version must have been on the registry for
+# at least this long before we will install it — the window in which a
+# compromised release is usually caught and unpublished.
+#
+# It applies to fresh resolutions (`bun add`, `bun update`, an unlocked install),
+# NOT to `--frozen-lockfile`, which installs exactly what the lockfile pins. CI
+# is therefore unaffected. A brand-new version resolving to an older one is the
+# rule working, not a bug.
+[install]
+minimumReleaseAge = 604800 # 7 days, in seconds
+
+[test]
+# Redirect the default DB path to a temp dir so no suite can write data/maleo.db.
+# See scripts/test-db-guard.ts for why.
+preload = ["./scripts/test-db-guard.ts"]

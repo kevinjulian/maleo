@@ -1,0 +1,177 @@
+/* Cascade layer: feature, the layer these rules were written in.
+ *
+ * AlphaColorControl's own appearance. It lived in components/timeline/stage.css,
+ * which meant the control was styled only where a timeline sheet happened to be
+ * in the bundle and rendered bare in isolation. Moved verbatim, same layer, so
+ * nothing on screen changes; the timeline keeps only its in-panel width rule
+ * (`.tl2-clippanel .alpha-color`), which is the timeline's business. */
+@layer feature {
+	.alpha-color {
+		position: relative;
+		min-width: 0;
+	}
+	/* The trigger sits on the control-height scale: sm beside form rows, xs
+   (`compact`) beside editor fields. */
+	.alpha-color-trigger {
+		width: 100%;
+		min-height: var(--control-h-sm);
+		min-width: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-1);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+		color: var(--fg);
+		padding: 0 var(--s-2);
+		font: inherit;
+		font-size: var(--type-control-size);
+		cursor: pointer;
+		transition:
+			border-color var(--d-fast),
+			background var(--d-fast);
+	}
+	/* In a narrow cell the label gives way; the swatch is the value and never
+   leaves the box. */
+	.alpha-color-trigger span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.alpha-color-trigger:hover {
+		border-color: var(--border-strong);
+		background: var(--surface-hover);
+	}
+	.alpha-color-trigger:active {
+		background: var(--surface-strong);
+	}
+	.alpha-color-trigger[data-popup-open] {
+		border-color: var(--ai-border);
+	}
+	.alpha-color-trigger:focus-visible,
+	.alpha-color-actions button:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.alpha-color.compact .alpha-color-trigger {
+		width: auto;
+		min-height: var(--control-h-xs);
+	}
+	/* `value`: the editor field, for a PropertyRow. Swatch first, then the colour
+   as text; filled and borderless at rest like Input and Select `xs`. */
+	.alpha-color[data-display="value"] .alpha-color-trigger {
+		justify-content: flex-start;
+		gap: var(--s-2);
+		min-height: var(--control-h-xs);
+		border-color: transparent;
+		font-variant-numeric: tabular-nums;
+	}
+	.alpha-color[data-display="value"] .alpha-color-trigger[data-popup-open] {
+		border-color: var(--ai-border);
+	}
+	/* The swatch and its transparency checker are glyph drawing, not spacing. */
+	.alpha-color-trigger i {
+		width: 20px;
+		height: 16px;
+		border-radius: var(--r-1);
+		border: 1px solid var(--border-strong);
+		flex-shrink: 0;
+		background-color: transparent;
+		background-image:
+			linear-gradient(
+				45deg,
+				color-mix(in oklch, var(--border) 60%, transparent) 25%,
+				transparent 25%
+			),
+			linear-gradient(
+				-45deg,
+				color-mix(in oklch, var(--border) 60%, transparent) 25%,
+				transparent 25%
+			),
+			linear-gradient(
+				45deg,
+				transparent 75%,
+				color-mix(in oklch, var(--border) 60%, transparent) 75%
+			),
+			linear-gradient(
+				-45deg,
+				transparent 75%,
+				color-mix(in oklch, var(--border) 60%, transparent) 75%
+			);
+		background-size: 8px 8px;
+		background-position:
+			0 0,
+			0 4px,
+			4px -4px,
+			-4px 0;
+	}
+	.alpha-color-trigger i.none {
+		background-color: transparent !important;
+	}
+	/* The picker's surface, placement and stacking are the Popover's. */
+	.alpha-color-pop {
+		width: 220px;
+	}
+	.alpha-color-pop .react-colorful {
+		width: 100%;
+		height: 150px;
+	}
+	.alpha-color-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+		margin-top: var(--s-2);
+		min-height: var(--control-h-xs);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--bg);
+		padding: 0 var(--s-2);
+		color: var(--muted);
+		font-size: var(--type-control-size);
+	}
+	.alpha-color-row input {
+		min-width: 0;
+		flex: 1;
+		border: none;
+		background: transparent;
+		color: var(--fg);
+		font: var(--weight-strong) var(--type-control-size) var(--font-body);
+		outline: none;
+	}
+	/* Borderless and transparent, so `outline: none` left this with no focus
+   indicator at all. Audited in converge-web-design-system task 3.2. */
+	.alpha-color-row input:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.alpha-color-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+		margin-top: var(--s-2);
+	}
+	.alpha-color-actions button {
+		flex: 1 1 auto;
+		min-height: var(--control-h-xs);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+		color: var(--fg);
+		padding: 0 var(--s-2);
+		font: inherit;
+		font-size: var(--type-label-size);
+		cursor: pointer;
+		transition:
+			border-color var(--d-fast),
+			background var(--d-fast);
+	}
+	.alpha-color-actions button:hover {
+		border-color: var(--border-strong);
+		background: var(--surface-hover);
+	}
+	.alpha-color-actions button:active {
+		background: var(--surface-strong);
+	}
+}

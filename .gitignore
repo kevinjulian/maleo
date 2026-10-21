@@ -1,0 +1,62 @@
+# Dependencies and installed local tools
+node_modules/
+/.bin/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+*.pyc
+
+# Runtime state. Keep only the data-directory instructions as source.
+/data/*
+!/data/AGENTS.md
+packages/core/data/
+packages/core/personas/
+packages/*/personas/
+packages/image/data/
+packages/media-provider-browseros/data/
+packages/media-provider-gemini-canvas/data/
+packages/affiliate/data/
+packages/video/data/
+apps/media-worker/data/
+public/
+*.db
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
+packages/**/music-source/**
+
+# Generated build, coverage and browser-test output
+target/
+build/
+dist/
+coverage/
+test-results/
+/apps/web/storybook-static/
+/apps/web/playwright-report/
+/apps/web/visual/.output/
+/.playwright-mcp/
+
+# Root-level captures are scratch output. Images under static assets,
+# fixtures, documentation and visual baselines remain eligible for tracking.
+/*.png
+/*.jpg
+/*.jpeg
+/*.webp
+/*.mp4
+/*.mov
+
+# Retired client scaffolding and historical publication exclusions
+/.claude/
+/.pi/
+/.kvin/
+/CLAUDE.md
+/openspec/changes/archive/
+/spikes/
+/.planning/
+/editor.md
+/.dolt/
+/.beads-credential-key

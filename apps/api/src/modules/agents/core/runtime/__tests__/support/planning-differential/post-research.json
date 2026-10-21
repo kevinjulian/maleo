@@ -1,0 +1,643 @@
+{
+	"events": [
+		{
+			"kind": "tool_call_started",
+			"tool": "plan_story",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"targetDurationSec": 90
+			}
+		},
+		{
+			"kind": "thinking_note",
+			"title": "Planning",
+			"body": "Drafting the story plan for ~2 min (~234 words)…",
+			"elapsedSec": "<volatile>"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "research_topic",
+			"args": {
+				"topic": "why compound interest is counter-intuitive",
+				"questions": [
+					"what returns are typical?"
+				]
+			}
+		},
+		{
+			"kind": "thinking_note",
+			"title": "Research",
+			"body": "Searching the web for \"why compound interest is counter-intuitive\"…",
+			"elapsedSec": "<volatile>"
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:0>",
+				"kind": "research_bundle",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:1>"
+				},
+				"projectId": "<id:2>",
+				"revision": 1,
+				"inputRefs": [],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"topic": "why compound interest is counter-intuitive",
+					"sources": [
+						{
+							"title": "Ohio pension study",
+							"url": "https://example.test/ohio",
+							"excerpt": "Ohio pension study — 7.1% over 30 years.",
+							"retrievedAt": "<time>"
+						},
+						{
+							"title": "Vermont pension study",
+							"url": "https://example.test/vermont",
+							"excerpt": "Vermont pension study — 4.4% over 30 years.",
+							"retrievedAt": "<time>"
+						}
+					],
+					"claimCount": 2,
+					"briefKey": "why compound interest is counter-intuitive",
+					"queries": [
+						"why compound interest is counter-intuitive",
+						"what returns are typical?"
+					]
+				}
+			}
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "research_topic",
+			"note": "Researched \"why compound interest is counter-intuitive\": 2 source(s), 2 cited claim(s)."
+		},
+		{
+			"kind": "question",
+			"question": "Which fund should the video follow?",
+			"options": [
+				{
+					"label": "Ohio",
+					"value": "Follow the Ohio pension fund"
+				},
+				{
+					"label": "Vermont",
+					"value": "Follow the Vermont pension fund"
+				}
+			],
+			"actionId": "<id:3>",
+			"batch": {
+				"id": "post-1",
+				"stage": "post_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "case",
+						"header": "Case study",
+						"question": "Which fund should the video follow?",
+						"options": [
+							{
+								"id": "ohio",
+								"label": "Ohio",
+								"value": "Follow the Ohio pension fund",
+								"description": "A high-return fund.",
+								"recommended": true,
+								"sources": [
+									{
+										"title": "Ohio pension study",
+										"url": "https://example.test/ohio"
+									}
+								]
+							},
+							{
+								"id": "vt",
+								"label": "Vermont",
+								"value": "Follow the Vermont pension fund",
+								"description": "A low-return counterexample.",
+								"sources": [
+									{
+										"title": "Vermont pension study",
+										"url": "https://example.test/vermont"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "plan_story",
+			"note": "Researched the topic and found 1 editorial decision only you can make — planning is paused until you answer.",
+			"effect": "await"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "plan_story",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"targetDurationSec": 90
+			}
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "generate_style",
+			"args": {
+				"brief": "why compound interest is counter-intuitive"
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "generate_style",
+			"note": "Locked visual style: test style bible",
+			"effect": "asset"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "author_story_bible",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"plannedReferences": 0
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "author_story_bible",
+			"note": "Story bible: 1 subject(s), 1 location(s), palette p.",
+			"effect": "asset"
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:4>",
+				"kind": "story_plan",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:1>"
+				},
+				"projectId": "<id:2>",
+				"revision": 1,
+				"inputRefs": [
+					{
+						"id": "<id:0>",
+						"kind": "research_bundle",
+						"schemaVersion": 1,
+						"contentHash": "<volatile>"
+					}
+				],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"planningBrief": "why compound interest is counter-intuitive",
+					"factual": true,
+					"visualStyle": "test style bible",
+					"bible": {
+						"subjects": [
+							{
+								"id": "s",
+								"label": "subject",
+								"aliases": [],
+								"descriptors": [],
+								"mustAvoid": []
+							}
+						],
+						"locations": [
+							{
+								"id": "l",
+								"label": "place",
+								"descriptors": []
+							}
+						],
+						"medium": "m",
+						"palette": "p",
+						"negatives": [
+							"n"
+						],
+						"summary": "test style bible"
+					},
+					"structure": "narration_section",
+					"directionFingerprint": "<volatile>",
+					"directionInputs": {
+						"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+						"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+					},
+					"clarification": {
+						"stage": "pre_research",
+						"status": "bypassed",
+						"bypass": "unavailable",
+						"decisions": []
+					},
+					"postResearchClarification": {
+						"batchId": "post-1",
+						"stage": "post_research",
+						"status": "answered",
+						"decisions": [
+							{
+								"questionId": "case",
+								"header": "Case study",
+								"question": "Which fund should the video follow?",
+								"answer": "Follow the Vermont pension fund",
+								"source": "option",
+								"status": "supplied"
+							}
+						]
+					},
+					"generationState": {
+						"planId": "<id:5>",
+						"draft": {
+							"revisionId": "<id:6>",
+							"sections": [
+								{
+									"id": "sec-1",
+									"title": "Opening",
+									"beats": [
+										{
+											"id": "<id:7>",
+											"title": "Opening",
+											"narration": "A concise opening about compounding.",
+											"visualPrompt": "A ledger filling with numbers",
+											"visualPrompts": [
+												"A ledger filling with numbers"
+											],
+											"factual": true,
+											"sourceEvidence": [],
+											"sourceUrls": [],
+											"citationStatus": "unsupported",
+											"status": "draft",
+											"estimatedDurationSec": 1.9
+										}
+									],
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": true,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "unsupported",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							]
+						}
+					},
+					"targetSec": 90,
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": true,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "unsupported",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					],
+					"unverified": true,
+					"verificationStatus": "unverified",
+					"citationCoverage": {
+						"verified": 0,
+						"total": 1
+					},
+					"researchKey": "why compound interest is counter-intuitive",
+					"planKind": "story"
+				}
+			}
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:8>",
+				"kind": "storyboard_table",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:1>"
+				},
+				"projectId": "<id:2>",
+				"revision": 1,
+				"inputRefs": [],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"title": "Story plan · 1 sections · ~2 min",
+					"rows": [
+						{
+							"startSec": 0,
+							"endSec": 1.9,
+							"content": "Opening — A concise opening about compounding.",
+							"kind": "scene"
+						}
+					]
+				}
+			}
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "plan_story",
+			"note": "Planned 1 sections (~234 words). UNVERIFIED: 2 source(s), 0/1 factual sections citation-verified. Drafted against 1 post-research decision(s) — Case study: Follow the Vermont pension fund. Review the story plan, then approve to generate voiceover + images.",
+			"effect": "patch"
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "final",
+			"text": "Plan ready."
+		}
+	],
+	"planningCalls": {
+		"frames": 1,
+		"searches": 2,
+		"drafts": [
+			"why compound interest is counter-intuitive\n\nClarified planning decisions (chosen by the user after reading the retrieved sources):\n- Case study: Follow the Vermont pension fund"
+		]
+	},
+	"run": {
+		"status": "done",
+		"plan": {
+			"planningBrief": "why compound interest is counter-intuitive",
+			"factual": true,
+			"visualStyle": "test style bible",
+			"bible": {
+				"subjects": [
+					{
+						"id": "s",
+						"label": "subject",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "l",
+						"label": "place",
+						"descriptors": []
+					}
+				],
+				"medium": "m",
+				"palette": "p",
+				"negatives": [
+					"n"
+				],
+				"summary": "test style bible"
+			},
+			"structure": "narration_section",
+			"directionFingerprint": "<volatile>",
+			"directionInputs": {
+				"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+				"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+			},
+			"clarification": {
+				"stage": "pre_research",
+				"status": "bypassed",
+				"bypass": "unavailable",
+				"decisions": []
+			},
+			"postResearchClarification": {
+				"batchId": "post-1",
+				"stage": "post_research",
+				"status": "answered",
+				"decisions": [
+					{
+						"questionId": "case",
+						"header": "Case study",
+						"question": "Which fund should the video follow?",
+						"answer": "Follow the Vermont pension fund",
+						"source": "option",
+						"status": "supplied"
+					}
+				]
+			},
+			"generationState": {
+				"planId": "<id:5>",
+				"draft": {
+					"revisionId": "<id:6>",
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"beats": [
+								{
+									"id": "<id:7>",
+									"title": "Opening",
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": true,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "unsupported",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							],
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": true,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "unsupported",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					]
+				}
+			},
+			"targetSec": 90,
+			"sections": [
+				{
+					"id": "sec-1",
+					"title": "Opening",
+					"narration": "A concise opening about compounding.",
+					"visualPrompt": "A ledger filling with numbers",
+					"visualPrompts": [
+						"A ledger filling with numbers"
+					],
+					"factual": true,
+					"sourceEvidence": [],
+					"sourceUrls": [],
+					"citationStatus": "unsupported",
+					"status": "draft",
+					"estimatedDurationSec": 1.9
+				}
+			],
+			"unverified": true,
+			"verificationStatus": "unverified",
+			"citationCoverage": {
+				"verified": 0,
+				"total": 1
+			},
+			"researchKey": "why compound interest is counter-intuitive",
+			"planKind": "story"
+		},
+		"direction": null,
+		"targetDurationSec": 90,
+		"storyClarification": {
+			"status": "bypassed",
+			"provenance": {
+				"stage": "pre_research",
+				"status": "bypassed",
+				"bypass": "unavailable",
+				"decisions": []
+			}
+		},
+		"postResearchClarification": {
+			"batch": {
+				"id": "post-1",
+				"stage": "post_research",
+				"purpose": "story_brief",
+				"questions": [
+					{
+						"id": "case",
+						"header": "Case study",
+						"question": "Which fund should the video follow?",
+						"options": [
+							{
+								"id": "ohio",
+								"label": "Ohio",
+								"value": "Follow the Ohio pension fund",
+								"description": "A high-return fund.",
+								"recommended": true,
+								"sources": [
+									{
+										"title": "Ohio pension study",
+										"url": "https://example.test/ohio"
+									}
+								]
+							},
+							{
+								"id": "vt",
+								"label": "Vermont",
+								"value": "Follow the Vermont pension fund",
+								"description": "A low-return counterexample.",
+								"sources": [
+									{
+										"title": "Vermont pension study",
+										"url": "https://example.test/vermont"
+									}
+								]
+							}
+						]
+					}
+				]
+			},
+			"status": "answered",
+			"actionId": "<id:3>",
+			"provenance": {
+				"batchId": "post-1",
+				"stage": "post_research",
+				"status": "answered",
+				"decisions": [
+					{
+						"questionId": "case",
+						"header": "Case study",
+						"question": "Which fund should the video follow?",
+						"answer": "Follow the Vermont pension fund",
+						"source": "option",
+						"status": "supplied"
+					}
+				]
+			}
+		},
+		"pendingQuestion": null,
+		"approveAll": false,
+		"scenes": 0
+	}
+}

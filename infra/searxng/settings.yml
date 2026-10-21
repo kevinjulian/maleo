@@ -1,0 +1,115 @@
+# SearXNG configuration for maleo research retrieval.
+#
+# `use_default_settings: true` inherits upstream's full engine catalogue and
+# schema; only the keys below are overridden. That keeps this file readable and
+# lets an upstream engine fix arrive with a pin bump instead of a merge.
+#
+# This file is part of the image (see Dockerfile). Changing it is a deploy.
+use_default_settings: true
+
+general:
+  instance_name: "maleo research"
+  # No public-instance surface: exactly one machine calls this.
+  enable_metrics: false
+  contact_url: false
+
+server:
+  # Substituted at boot from the SEARXNG_SECRET environment variable by the
+  # upstream entrypoint. Never commit a real secret here.
+  secret_key: "ultrasecretkey"
+  # The limiter's bot detection rejects non-browser callers, which is every
+  # request this instance will ever receive. Access control is the proxy's job
+  # here — the service is behind HTTP basic auth and is not reachable
+  # anonymously (see AGENTS.md). Leaving the limiter on would block the client
+  # while doing nothing an authenticated attacker could not already bypass.
+  limiter: false
+  public_instance: false
+  # The image proxy exists to hide a browsing user's IP from result hosts.
+  # There is no browsing user; it would only add latency.
+  image_proxy: false
+  # API callers issue GET /search?q=...; upstream defaults to POST-only.
+  method: "GET"
+
+search:
+  # JSON is NOT in upstream's default formats. Without this the API returns 403,
+  # which reads as a network failure rather than a configuration one. This is
+  # the single most load-bearing line in the file.
+  formats:
+    - html
+    - json
+  safe_search: 0
+  # Autocomplete is a browsing-UI feature and costs an upstream request.
+  autocomplete: ""
+  default_lang: "auto"
+
+engines:
+  # Google and Bing are DISABLED deliberately, not by oversight.
+  #
+  # Both rate-limit and captcha datacenter IPs, intermittently. An engine that
+  # answers most of the time is worse here than one that never answers: the
+  # grounding a story plan receives would depend on which query happened to hit
+  # a captcha, and nothing downstream can see that happen. The plan would look
+  # grounded while being thin. Everything below answers reliably from a server.
+  - name: google
+    disabled: true
+  - name: bing
+    disabled: true
+
+  # Startpage CAPTCHAs from this server's IP on every query — measured, not
+  # assumed. A permanently failing engine still costs a request and a timeout on
+  # each search, so it is off rather than left to fail.
+  - name: startpage
+    disabled: true
+
+  # DuckDuckGo returns "HTTP connection error" from this server AND from a
+  # residential IP at this SearXNG version, so it is not an IP-reputation
+  # problem and not something a different network would fix. Off until the
+  # upstream engine works again; re-test on a pin bump.
+  - name: duckduckgo
+    disabled: true
+
+  # Onion engines. They cannot register without a Tor proxy and log an error on
+  # every boot; nothing here wants them.
+  - name: ahmia
+    disabled: true
+  - name: torch
+    disabled: true
+
+  # Kept: general-purpose engines that answer from a server IP. `google cse` is
+  # left at its upstream default (enabled) because, unlike plain `google`, it
+  # answered every measured query — but it is Google infrastructure, so treat a
+  # sudden drop in results as this engine first.
+  - name: brave
+    disabled: false
+  - name: mojeek
+    disabled: false
+
+  # Kept: reference and scholarly sources. These are the ones that actually
+  # ground an explainer or documentary script, and they are keyless and stable.
+  #
+  # NOTE FOR THE CALLER: these live in the `science` category, so a request that
+  # does not ask for it never reaches them. The provider must send
+  # `categories=general,science`. Measured on the technical brief: `general`
+  # alone returned 35 results from 2 engines; `general,science` returned 55 from
+  # 4, and put a peer-reviewed review paper in the top ten. See AGENTS.md.
+  - name: wikipedia
+    disabled: false
+  - name: wikidata
+    disabled: false
+
+  # Keyless scholarly indexes, off in upstream's defaults. No captcha, no rate
+  # limit worth worrying about, and they answer exactly the factual questions a
+  # grounded plan asks.
+  - name: crossref
+    disabled: false
+  - name: openalex
+    disabled: false
+
+outgoing:
+  # 6.0s timed out `semantic scholar` on a real query. Scholarly APIs are slower
+  # than web search and research is a background pre-production step, not an
+  # interactive one, so latency buys grounding here.
+  request_timeout: 10.0
+  max_request_timeout: 20.0
+  pool_connections: 20
+  pool_maxsize: 10

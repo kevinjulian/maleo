@@ -1,0 +1,316 @@
+/* Cascade layer: feature. The order is declared in src/app/index.html, so this
+ * sheet wins over `chrome` wherever both style the same element — which is why
+ * it can live here instead of in styles/components.css. */
+@layer feature {
+	/* The chat surface fills the shell minus the app chrome above it. The image lab
+ * owns its input chrome, so the app bottom nav is not rendered on this route. */
+	.imagelab-chat {
+		height: calc(100dvh - 48px);
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		position: relative;
+		background: var(--bg);
+	}
+	.imagelab-feed {
+		flex: 1;
+		overflow-y: auto;
+		padding: var(--s-6) var(--s-4) var(--s-8);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-6);
+		scroll-padding-bottom: 220px;
+	}
+	.imagelab-empty {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		color: var(--muted);
+		gap: var(--s-2-5);
+		padding: 40px var(--s-4);
+		text-align: center;
+	}
+	.imagelab-empty span {
+		font-family: var(--font-body);
+		font-size: var(--type-body-size);
+	}
+
+	/* The composer row. `flex: 1` alone let the prompt box be crushed to ~50px at
+   320px, because the reference button, the three aspect chips and send all
+   refuse to shrink. Giving the input a flex-basis wide enough to not fit
+   alongside them makes the row wrap instead, so the input takes its own line. */
+	.imagelab-composer-wrap {
+		flex-shrink: 0;
+		position: relative;
+		padding: var(--s-3) var(--s-4) var(--s-4);
+		background: linear-gradient(180deg, transparent 0, var(--bg) 22px, var(--bg) 100%);
+	}
+	.imagelab-composer-wrap > [data-slot="prompt-composer"] {
+		max-width: 760px;
+		margin: 0 auto;
+	}
+	.imagelab-ref-chips {
+		max-width: 760px;
+		margin: 0 auto var(--s-2);
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+		align-items: center;
+	}
+	.imagelab-ref-chip {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		min-width: 0;
+		max-width: 100%;
+		padding: var(--s-0-5) var(--s-1-5) var(--s-0-5) var(--s-0-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-pill);
+		background: var(--surface);
+		color: var(--fg-dim);
+		font-size: var(--type-label-size);
+	}
+	.imagelab-ref-chip img {
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+	.imagelab-ref-popover {
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-bottom: var(--s-2);
+		width: min(560px, calc(100vw - 32px));
+		max-height: min(320px, calc(100dvh - 220px));
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		box-shadow: var(--shadow-3);
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		z-index: 20;
+	}
+	.imagelab-ref-popover-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--s-2-5) var(--s-3);
+		border-bottom: 1px solid var(--border);
+	}
+	.imagelab-ref-popover-head span {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	.imagelab-ref-popover-body {
+		overflow-y: auto;
+		padding: var(--s-3);
+	}
+	.imagelab-ref-empty {
+		padding: var(--s-5);
+		text-align: center;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+	}
+	.imagelab-ref-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+		gap: var(--s-2);
+	}
+	.imagelab-ref-tile {
+		all: unset;
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		border: 2px solid transparent;
+		border-radius: var(--r-2);
+		padding: var(--s-0-5);
+	}
+	.imagelab-ref-tile.selected {
+		border-color: var(--fg);
+	}
+	.imagelab-ref-thumb {
+		aspect-ratio: 1 / 1;
+		border-radius: 6px;
+		overflow: hidden;
+		background: var(--surface-tint);
+	}
+	.imagelab-ref-thumb img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+	}
+	.imagelab-ref-tile span {
+		font-size: var(--type-micro-size);
+		color: var(--fg-dim);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.imagelab-tool-btn {
+		all: unset;
+		cursor: pointer;
+		flex-shrink: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		min-height: 30px;
+		padding: 0 var(--s-2);
+		border-radius: var(--r-pill);
+		color: var(--muted);
+		font-size: var(--type-control-size);
+	}
+	.imagelab-tool-btn.active,
+	.imagelab-tool-btn:hover {
+		background: var(--ai-bg, var(--surface-tint));
+		color: var(--ai, var(--fg));
+	}
+	.imagelab-provider-trigger,
+	.imagelab-ratio-trigger {
+		gap: var(--s-1);
+		all: unset;
+		display: inline-flex;
+		cursor: pointer;
+		min-height: 30px;
+		min-width: 0;
+		align-items: center;
+		justify-content: center;
+		padding: 0 var(--s-2);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	.imagelab-provider-trigger {
+		cursor: default;
+	}
+	.imagelab-provider-trigger:disabled,
+	.imagelab-ratio-trigger:disabled {
+		cursor: not-allowed;
+		color: var(--muted);
+	}
+	.imagelab-provider-trigger b,
+	.imagelab-ratio-trigger b {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.imagelab-provider-message,
+	.imagelab-service-warning {
+		max-width: 760px;
+		margin: var(--s-1-5) auto 0;
+		text-align: center;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.imagelab-service-warning {
+		color: var(--err);
+	}
+	.imagelab-option-popover {
+		position: absolute;
+		bottom: 100%;
+		left: 50%;
+		transform: translateX(-50%);
+		margin-bottom: var(--s-2);
+		width: min(360px, calc(100vw - 32px));
+		max-height: min(320px, calc(100dvh - 220px));
+		padding: var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		background: var(--surface);
+		box-shadow: var(--shadow-3);
+		overflow-y: auto;
+		z-index: 21;
+	}
+	.imagelab-option-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+
+	.imagelab-option-row {
+		all: unset;
+		cursor: pointer;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--s-0-5) var(--s-3);
+		align-items: center;
+		min-height: 46px;
+		padding: var(--s-2) var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+		color: var(--fg);
+	}
+	.imagelab-option-row.active {
+		border-color: var(--fg);
+		background: var(--surface-tint);
+	}
+	.imagelab-option-row:disabled {
+		cursor: not-allowed;
+		opacity: 0.55;
+	}
+	.imagelab-option-row strong {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+	}
+	.imagelab-option-row small {
+		grid-column: 1;
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		line-height: 1.2;
+	}
+
+	@media (max-width: 520px) {
+		.imagelab-feed {
+			padding: var(--s-4) var(--s-3) var(--s-6);
+			gap: var(--s-5);
+		}
+		.imagelab-composer-wrap {
+			padding: var(--s-2-5) var(--s-2-5) var(--s-3);
+		}
+		.imagelab-provider-trigger {
+			flex: 1 1 120px;
+		}
+		.imagelab-ratio-trigger {
+			flex: 0 0 auto;
+		}
+		.imagelab-tool-btn span {
+			max-width: 56px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+	/* The generating spinner: the registry's loader glyph, turned. It used to
+   inject its own <style> keyframes from inside the SVG on every render. */
+	.imagelab-spinner {
+		display: inline-flex;
+		animation: imagelabSpin 1s linear infinite;
+	}
+	@keyframes imagelabSpin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.imagelab-spinner {
+			animation-duration: 3s;
+		}
+	}
+}

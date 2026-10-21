@@ -1,0 +1,73 @@
+@layer chrome {
+	/* Shared column selection recipe, retained from Providers and Security & Storage. */
+	.ui-selection-row {
+		position: relative;
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr) auto;
+		align-items: center;
+		gap: var(--s-3);
+		width: 100%;
+		padding: var(--s-3) var(--s-2);
+		border: none;
+		border-bottom: 1px solid var(--border);
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+		text-align: left;
+		text-decoration: none;
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		transition: color 140ms var(--ease);
+	}
+	.ui-selection-row:hover {
+		color: var(--fg);
+	}
+	.ui-selection-row:focus-visible {
+		outline: var(--focus-w) solid var(--border-focus);
+		outline-offset: calc(-1 * var(--focus-w));
+	}
+	.ui-selection-row[aria-current="true"] {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+		background: none;
+	}
+	.ui-selection-row[aria-current="true"]::before {
+		content: "";
+		position: absolute;
+		left: -1px;
+		top: var(--s-1-5);
+		bottom: var(--s-1-5);
+		width: 2px;
+		background: var(--fg);
+	}
+	.ui-selection-row-label {
+		min-width: 0;
+		overflow-wrap: normal;
+		word-break: normal;
+		line-height: 1.35;
+	}
+	.ui-selection-row[data-layout="inline"] {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+	.ui-selection-row[data-layout="stacked"] {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--s-1);
+	}
+	.ui-selection-row small,
+	.ui-selection-row p {
+		margin: 0;
+		color: var(--muted);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-body);
+	}
+	@media (pointer: coarse) {
+		.ui-selection-row {
+			min-height: var(--control-h-touch);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.ui-selection-row {
+			transition: none;
+		}
+	}
+}

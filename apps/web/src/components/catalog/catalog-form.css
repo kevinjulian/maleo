@@ -1,0 +1,58 @@
+/* The catalog's shared form vocabulary.
+ *
+ * `presets-library.tsx` and `materials-library.tsx` were each carrying their own
+ * copy of these as inline style objects — the same header row, the same back
+ * button, the same two button sizes, the same field stack, label, input, error
+ * and busy treatments, written twice with no way to tell they were the same
+ * thing. A class scan could not have found it, because a style object is not a
+ * class.
+ *
+ * `.cat-field` is `display: flex; flex-direction: column; gap: 6px` — which is
+ * `.tl2-field` and `.fc-cap-field` verbatim, and `.cat-input` is a fourth input
+ * spelling beside `.cv-input` (9px/12px at 13.5px against 10px/12px at 13px).
+ * Both are recorded rather than reconciled: merging them changes pixels, and
+ * that decision belongs to `converge-web-design-system`.
+ */
+@layer feature {
+	.cat-head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		margin-bottom: var(--s-4);
+	}
+	.cat-actions {
+		display: flex;
+		gap: var(--s-2);
+	}
+	.cat-err {
+		color: var(--err);
+		font-size: var(--type-caption-size);
+	}
+	/* `.cat-busy` is gone: a loading collection is `EmptyState busy`, which is
+   the same line of muted text the empty one is, and announces itself. */
+	.cat-row-main {
+		flex: 1;
+		min-width: 0;
+	}
+	.cat-row-name {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+	}
+	.cat-field {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.cat-field-label {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+	}
+	.cat-input {
+		padding: var(--s-2) var(--s-3);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+	}
+	/* Restores a focus indicator this control removed with `outline: none` and
+   never replaced. Audited in converge-web-design-system task 3.2. */
+}

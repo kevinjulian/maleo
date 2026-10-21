@@ -1,0 +1,539 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The panels beside the stage: the project panel, the chat authoring panel
+   and the artifact cards a run produces. The motion tools are in
+   studio-motion.css; the rest of the chat surface in studio-assistant.css. */
+
+	/* ── Project panel ── */
+
+	/* ── Chat authoring panel ── */
+	.fc-chat {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+	.fc-chat-log {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		padding: var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.fc-chat,
+	.fc-chat * {
+		scrollbar-width: none;
+	}
+	.fc-chat::-webkit-scrollbar,
+	.fc-chat *::-webkit-scrollbar {
+		display: none;
+	}
+	.fc-script {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		overflow: hidden;
+	}
+	.fc-script-head {
+		display: grid;
+		grid-template-columns: 64px 1fr;
+		gap: var(--s-2-5);
+		padding: var(--s-2) var(--s-2-5);
+		border-bottom: 1px solid var(--border);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-script-row {
+		display: grid;
+		grid-template-columns: 64px 1fr;
+		gap: var(--s-2-5);
+		padding: var(--s-2) var(--s-2-5);
+		border-bottom: 1px solid var(--border);
+	}
+	.fc-script-row:last-child {
+		border-bottom: none;
+	}
+	.fc-script-ts {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.fc-script-content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.fc-script-content b {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.fc-script-content em,
+	.fc-script-content span {
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+		color: var(--fg-dim);
+		font-style: normal;
+	}
+	.fc-script-content em {
+		font-style: italic;
+	}
+
+	.fc-knowledge {
+		align-self: stretch;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+		padding: var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.fc-knowledge-title {
+		font-family: var(--font-display);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.fc-knowledge-body {
+		font-size: var(--type-caption-size);
+		line-height: 1.55;
+		color: var(--fg-dim);
+		white-space: pre-wrap;
+		max-height: 280px;
+		overflow-y: auto;
+	}
+	/* ask_user card — the run is paused awaiting an answer, so it reads as an active
+   prompt (accent edge) rather than a passive log entry. */
+	.fc-ask {
+		align-self: stretch;
+		border: 1px solid var(--border);
+		border-left: 2.5px solid var(--ai);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		padding: var(--s-2-5) var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-ask-q {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		line-height: 1.45;
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.fc-ask-q svg {
+		flex: none;
+		margin-top: 1px;
+		color: var(--ai);
+	}
+	.fc-ask-hint {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		line-height: 1.4;
+	}
+	.fc-ask-opts {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+	}
+	.fc-ask-opt {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		padding: var(--s-1) var(--s-2-5);
+		border-radius: var(--r-pill);
+		border: 1px solid var(--border);
+		background: var(--bg);
+		color: var(--fg);
+		cursor: pointer;
+		transition:
+			background var(--d-fast),
+			border-color var(--d-fast);
+	}
+	.fc-ask-opt:hover:not(:disabled) {
+		background: var(--surface-tint);
+		border-color: var(--fg-dim);
+	}
+	.fc-ask-opt:disabled {
+		opacity: 0.5;
+		cursor: default;
+	}
+	/* Pre-research story clarification — one batch, one card. Each question is a
+   real fieldset/radiogroup, so keyboard traversal and labelling are the
+   platform's, not ours. */
+	.fc-clarify-group {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		padding: var(--s-2) var(--s-2-5) var(--s-2-5);
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.fc-clarify-group.fc-clarify-invalid {
+		border-color: var(--err);
+	}
+	.fc-clarify-legend {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		padding: 0 0 var(--s-1);
+	}
+	.fc-clarify-header {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--fg-dim);
+	}
+	.fc-clarify-question {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		line-height: 1.4;
+		color: var(--fg);
+	}
+	/* A row is a label for an option, and a plain container for the Other field —
+   which owns a second control, so the cursor belongs on the text that activates
+   the radio rather than on the whole row. */
+	.fc-clarify-opt {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--s-2);
+		padding: var(--s-1-5) var(--s-1-5);
+		border-radius: var(--r-1);
+		transition: background var(--d-fast);
+	}
+	label.fc-clarify-opt,
+	label.fc-clarify-opt-label {
+		cursor: pointer;
+	}
+	.fc-clarify-opt:hover {
+		background: var(--surface-tint);
+	}
+	.fc-clarify-opt input[type="radio"] {
+		flex: none;
+		margin-top: var(--s-0-5);
+		accent-color: var(--ai);
+	}
+	.fc-clarify-opt input[type="radio"]:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: 2px;
+	}
+	.fc-clarify-opt-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		min-width: 0;
+		flex: 1;
+	}
+	.fc-clarify-opt-label {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.fc-clarify-opt-desc {
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+		color: var(--fg-dim);
+	}
+	/* Retrieved sources behind a post-research option. Quieter than the description
+   — they are evidence to check, not the choice itself. */
+	.fc-clarify-opt-sources {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1) var(--s-2-5);
+		margin-top: var(--s-0-5);
+	}
+	.fc-clarify-opt-source {
+		font-size: var(--type-label-size);
+		line-height: 1.4;
+		color: var(--ai);
+		text-decoration: none;
+		border-bottom: 1px solid color-mix(in oklab, var(--ai) 35%, transparent);
+	}
+	.fc-clarify-opt-source:hover {
+		border-bottom-color: var(--ai);
+	}
+	.fc-clarify-opt-source:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: 2px;
+		border-radius: 2px;
+	}
+	.fc-clarify-rec {
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		padding: 1px var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-tint);
+		color: var(--fg-dim);
+	}
+	.fc-clarify-other {
+		margin-top: var(--s-0-5);
+		width: 100%;
+		font: inherit;
+		font-size: var(--type-label-size);
+		padding: var(--s-1) var(--s-2);
+	}
+	.fc-clarify-error {
+		margin: 0;
+		font-size: var(--type-label-size);
+		color: var(--err);
+	}
+	/* Submit stays reachable while the card scrolls.
+   The pinned region caps at 42vh, so a card with several questions — one per open
+   blocker — scrolls inside it, and a submit that scrolled with the content ended
+   up below the fold with nothing saying so. */
+	.fc-clarify-actions {
+		position: sticky;
+		bottom: 0;
+		display: flex;
+		gap: var(--s-2);
+		flex-wrap: wrap;
+		padding-top: var(--s-1-5);
+		background: var(--surface);
+	}
+	/* The primary and secondary buttons of the clarification and credit cards.
+   Neutral: the accent is reserved for running work, selection and focus. */
+	.fc-approval-approve,
+	.fc-approval-reject {
+		flex: 1;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		padding: var(--s-2) var(--s-3);
+		border-radius: var(--r-2);
+		cursor: pointer;
+		transition:
+			background var(--d-fast),
+			border-color var(--d-fast);
+	}
+	.fc-approval-approve {
+		border: none;
+		background: var(--fg);
+		color: var(--bg);
+	}
+	.fc-approval-approve:hover:not(:disabled) {
+		background: color-mix(in oklab, var(--fg) 85%, var(--bg));
+	}
+	.fc-approval-reject {
+		border: 1px solid var(--border);
+		background: var(--bg);
+		color: var(--fg-dim);
+	}
+	.fc-approval-reject:hover:not(:disabled) {
+		border-color: var(--err);
+		color: var(--err);
+	}
+	.fc-approval-approve:disabled,
+	.fc-approval-reject:disabled {
+		opacity: 0.55;
+		cursor: default;
+	}
+	/* Readable working note. */
+	.fc-note {
+		align-self: flex-start;
+		max-width: 92%;
+		border-left: 2px solid var(--border);
+		padding: var(--s-1) 0 var(--s-1) var(--s-2-5);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+	}
+	.fc-note-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		letter-spacing: 0.04em;
+		color: var(--muted);
+	}
+	.fc-note.running .fc-note-h {
+		color: var(--ai);
+	}
+	.fc-note-h em {
+		font-style: normal;
+		color: var(--muted);
+	}
+	.fc-note-body {
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+		color: var(--fg-dim);
+	}
+
+	/* Collapsible per-run process trail: one "Thinking" toggle folds the notes +
+   tool calls so outputs stay front-and-center. */
+	.fc-run-think {
+		align-self: stretch;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-run-think-h {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--s-0-5);
+		width: 100%;
+		padding: var(--s-1-5) var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+		color: var(--muted);
+		text-align: left;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		letter-spacing: 0.03em;
+		cursor: pointer;
+	}
+	.fc-run-think-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+	}
+	.fc-run-think-h:hover {
+		color: var(--fg-dim);
+	}
+	.fc-run-think.running .fc-run-think-h {
+		color: var(--ai);
+		border-color: var(--ai-border);
+	}
+	.fc-run-think-label {
+		font-weight: var(--weight-display);
+	}
+	.fc-run-think-meta {
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+	}
+	.fc-run-think-toggle {
+		margin-left: auto;
+		color: var(--fg-dim);
+		text-transform: none;
+		letter-spacing: 0;
+	}
+	.fc-run-think-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		margin-left: var(--s-1);
+		padding-left: var(--s-2-5);
+		border-left: 2px solid var(--border);
+	}
+
+	/* Storyboard table artifact (Timestamp / Content). */
+	.fc-sbtable {
+		align-self: stretch;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		padding: var(--s-2-5) var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-sbtable-h {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-sbtable table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: var(--type-label-size);
+	}
+	.fc-sbtable th {
+		text-align: left;
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		padding: var(--s-1) var(--s-2) var(--s-1-5) 0;
+		border-bottom: 1px solid var(--border);
+		font-size: var(--type-micro-size);
+	}
+	.fc-sbrow {
+		border-bottom: 1px solid var(--border);
+		cursor: pointer;
+		transition: background var(--d-fast);
+	}
+	.fc-sbrow:hover {
+		background: var(--surface-tint);
+	}
+	.fc-sbrow-t {
+		padding: var(--s-1-5) var(--s-2) var(--s-1-5) 0;
+		white-space: nowrap;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--fg-dim);
+		vertical-align: top;
+	}
+	.fc-sbrow-c {
+		padding: var(--s-1-5) 0;
+		color: var(--fg);
+		line-height: 1.45;
+	}
+	.fc-sbrow.voiceover .fc-sbrow-c {
+		font-style: italic;
+		color: var(--fg-dim);
+	}
+	.fc-sbrow.effect .fc-sbrow-c,
+	.fc-sbrow.text .fc-sbrow-c {
+		color: var(--fg-dim);
+	}
+
+	.fc-artifact {
+		align-self: flex-start;
+		max-width: 92%;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--bg);
+		padding: var(--s-2-5);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-artifact-media {
+		width: 100%;
+		max-height: 160px;
+		border-radius: var(--r-1);
+		object-fit: cover;
+		background: var(--media-bg);
+	}
+
+	.fc-chat-foot {
+		border-top: 1px solid var(--border);
+		padding: var(--s-2-5);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+	.fc-quick {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+	}
+	/* `.fc-quickchip` is retired. Its state chips are `.pill.interactive` in
+   app/styles/controls.css; its prose-labelled actions are `.btn-sm`, which is
+   what a bordered control with a sentence on it was. See `chip.tsx` for the
+   split and why the recorded merge was corrected. */
+	.fc-engage {
+		padding-bottom: var(--s-1-5);
+		border-bottom: 1px dashed var(--border);
+	}
+}

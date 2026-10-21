@@ -1,0 +1,671 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The preview stage and everything drawn over it: the docked clip panel, the
+   positioned clip boxes and their selection box, alignment guides, the
+   placement and effects panels, and the waveform and length badges a clip
+   shows while it is being edited. Viewport composition is in stage-layout.css. */
+
+	/* ── Preview stage ── */
+	/* Every editor surface with a playhead reads the same colour: the stage, the
+   Motion Studio, and the template preview, which now draws its own. */
+	.tl2-stage,
+	.tl2-studio,
+	.tl2-template-editor {
+		--tl2-playhead: #ff4d4d;
+		--tl2-hoverhead: #3b82f6;
+	}
+	.tl2-stage {
+		position: relative;
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+	}
+	/* Top row: preview (flex) + docked clip panel. Timeline spans full width below. */
+	/* Main editor top row: preview grows, docked clip panel fixed at the right. */
+	.tl2-stage-top {
+		flex: 1;
+		display: flex;
+		flex-direction: row;
+		min-height: 0;
+		min-width: 0;
+	}
+	.tl2-stage-top .tl2-preview {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+	/* Timeline height is user-resizable via the splitter (--tl2-tl-h). */
+	.tl2-timeline {
+		flex: 0 0 var(--tl2-tl-h, 392px);
+	}
+
+	/* ── Docked clip panel ── */
+	/* Fills whichever housing it is in — the workspace's inspector slot on desktop,
+   a bottom sheet on the phone — rather than carrying a width of its own. The
+   desktop width belongs to the slot, which is a grid track; see the shell rules
+   at the end of this file. */
+	.tl2-clippanel {
+		display: flex;
+		width: 100%;
+		height: 100%;
+		min-width: 0;
+		min-height: 0;
+		background: var(--surface);
+		overflow: hidden;
+	}
+
+	.tl2-clip-content {
+		flex: 1;
+		min-width: 0;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+	/* The inspector's header is PanelHeader; this keeps its tinted ground. */
+	.tl2-clip-head {
+		background: color-mix(in oklab, var(--surface) 88%, var(--surface-tint));
+	}
+	.tl2-clippanel .tl2-acc,
+.tl2-clippanel .tl2-dsec,
+/* `.field` is not in this list, and its absence is the point: it carries
+   `min-width: 0` itself now, and as a column child of this panel it already
+   stretches. Naming it here would also put a shared primitive's class in a
+   cluster sheet, which is the leak the census counts. */
+.tl2-clippanel .alpha-color,
+.tl2-clippanel .alpha-color-trigger,
+.tl2-clippanel :is([data-slot="input"], [data-slot="textarea"]),
+.tl2-clippanel [data-slot="native-select"],
+.tl2-clippanel [data-slot="native-select"] {
+		width: 100%;
+		min-width: 0;
+	}
+	.tl2-clip-panel-body {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+	/* Embedded edit host: single column, no bulky preview pane. */
+	.fc-em-body.fc-em-embedded {
+		display: block;
+		padding: 0;
+		max-height: none;
+		overflow: visible;
+	}
+	.fc-em-body.fc-em-embedded .fc-em-main {
+		min-width: 0;
+	}
+	.tl2-preview {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--s-3);
+		min-height: 0;
+		background: var(--surface);
+	}
+	.tl2-canvas {
+		position: relative;
+		max-height: 100%;
+		max-width: 100%;
+		height: 100%;
+		border-radius: 0;
+		overflow: visible;
+		background: #0a0a0c;
+		box-shadow: none;
+	}
+	.tl2-remotion-stage {
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+		display: block;
+		padding: 0;
+		background: #000;
+		overflow: hidden;
+	}
+	.tl2-canvas-gen {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		z-index: 55;
+		transform: translate(-50%, -50%);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		padding: var(--s-2-5) var(--s-4);
+		border-radius: var(--r-pill);
+		border: none;
+		background: var(--ai);
+		color: #fff;
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		cursor: pointer;
+		box-shadow: 0 4px 18px rgba(106, 90, 242, 0.5);
+		transition: filter var(--d-fast);
+	}
+	.tl2-canvas-gen:hover {
+		filter: brightness(1.08);
+	}
+
+	/* The Project Materials control: the editor entry point to the generation
+   context. Was "Project refs", which named one of the four things that steer a
+   generation after the storage it lived in. */
+	.tl2-projectrefs {
+		position: absolute;
+		top: 12px;
+		left: 12px;
+		z-index: 110;
+	}
+	.tl2-projectrefs-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		height: 34px;
+		padding: 0 var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: color-mix(in oklab, var(--surface) 94%, transparent);
+		color: var(--fg);
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		cursor: pointer;
+		backdrop-filter: blur(10px);
+		transition:
+			border-color var(--d-fast),
+			color var(--d-fast),
+			background var(--d-fast);
+	}
+	.tl2-projectrefs-btn svg {
+		color: var(--ai);
+	}
+	.tl2-projectrefs-btn:hover,
+	.tl2-projectrefs-btn.on {
+		border-color: var(--ai-border);
+		color: var(--ai);
+		background: var(--ai-bg);
+	}
+	.tl2-projectrefs-btn em {
+		min-width: 18px;
+		height: 18px;
+		padding: 0 var(--s-1);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: var(--r-pill);
+		background: var(--surface);
+		color: var(--muted);
+		font-family: var(--font-body);
+		font-style: normal;
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+	}
+
+	/* Positioned clip base + selection bounding box (clip-first placement). */
+	.tl2-clipbox {
+		position: absolute;
+		z-index: 50;
+		cursor: move;
+		border: 1.5px solid var(--ai);
+		border-radius: 3px;
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+		touch-action: none;
+	}
+	.tl2-clipbox-h {
+		position: absolute;
+		width: 24px;
+		height: 24px;
+		z-index: 51;
+		padding: 0;
+		display: grid;
+		place-items: center;
+		color: var(--fg);
+		background: transparent;
+		border: 0;
+		border-radius: var(--r-1);
+		touch-action: none;
+	}
+	.tl2-clipbox-h:not(.rotate)::after {
+		content: "";
+		width: 12px;
+		height: 12px;
+		background: var(--surface);
+		border: 1.5px solid var(--ai);
+		border-radius: var(--r-1);
+	}
+	.tl2-clipbox-h.nw {
+		left: 0;
+		top: 0;
+		cursor: nwse-resize;
+	}
+	.tl2-clipbox-h.ne {
+		right: 0;
+		top: 0;
+		cursor: nesw-resize;
+	}
+	.tl2-clipbox-h.sw {
+		left: 0;
+		bottom: 0;
+		cursor: nesw-resize;
+	}
+	.tl2-clipbox-h.se {
+		right: 0;
+		bottom: 0;
+		cursor: nwse-resize;
+	}
+	.tl2-clipbox-h.rotate {
+		left: calc(50% - 12px);
+		top: 0;
+		cursor: grab;
+		background: var(--surface);
+		border: 1.5px solid var(--ai);
+	}
+	.tl2-clipbox[data-local-box] .tl2-clipbox-h.rotate {
+		left: 100%;
+		top: calc(50% - 12px);
+	}
+	.tl2-clipbox-move {
+		position: absolute;
+		inset: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: move;
+		touch-action: none;
+	}
+	.tl2-clipbox button:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: -2px;
+	}
+	@media (pointer: coarse) {
+		.tl2-clipbox-h {
+			width: 44px;
+			height: 44px;
+		}
+		.tl2-clipbox-h.nw {
+			left: -44px;
+			top: -44px;
+		}
+		.tl2-clipbox-h.ne {
+			right: -44px;
+			top: -44px;
+		}
+		.tl2-clipbox-h.sw {
+			left: -44px;
+			bottom: -44px;
+		}
+		.tl2-clipbox-h.se {
+			right: -44px;
+			bottom: -44px;
+		}
+		.tl2-clipbox-h.rotate {
+			left: calc(50% - 22px);
+		}
+		.tl2-clipbox[data-local-box] .tl2-clipbox-h.rotate {
+			left: 100%;
+			top: calc(50% - 22px);
+		}
+	}
+
+	/* Click-to-select hit boxes for overlays live at the playhead. Transparent until
+   hovered, then a faint outline hints the element is pickable on the canvas. */
+	.tl2-canvas-hit {
+		position: absolute;
+		z-index: 40;
+		padding: 0;
+		border: 1.5px solid transparent;
+		border-radius: 3px;
+		background: transparent;
+		cursor: pointer;
+		touch-action: none;
+		transition:
+			border-color var(--d-fast),
+			background var(--d-fast);
+	}
+	.tl2-canvas-hit.scene {
+		inset: 0;
+		z-index: 35;
+	}
+	.tl2-canvas-hit:hover {
+		border-color: color-mix(in oklab, var(--ai) 70%, transparent);
+		background: color-mix(in oklab, var(--ai) 10%, transparent);
+	}
+	/* Alignment guides shown while dragging a ClipBox (center / edge snap). */
+	.tl2-snapguides {
+		position: absolute;
+		inset: 0;
+		z-index: 52;
+		pointer-events: none;
+	}
+	.tl2-snapguide {
+		position: absolute;
+		background: var(--ai);
+		box-shadow: 0 0 0 0.5px rgba(0, 0, 0, 0.4);
+	}
+	.tl2-snapguide.v {
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		transform: translateX(-0.5px);
+	}
+	.tl2-snapguide.h {
+		left: 0;
+		right: 0;
+		height: 1px;
+		transform: translateY(-0.5px);
+	}
+
+	/* The placement controls are PropertyRows now (design-system/patterns/inspector);
+ * the `tl2-ctl-*` rules that drew them are gone. */
+	/* Active timeline effect overlay (fade/zoom) on the preview. */
+
+	/* Effects panel (add at playhead). */
+	.tl2-fxlist {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		margin-top: var(--s-2-5);
+	}
+	.tl2-fxbtn {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+		text-align: left;
+		padding: var(--s-3) var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.tl2-fxbtn:hover {
+		border-color: var(--ai);
+		background: var(--ai-bg);
+	}
+	.tl2-fxbtn b {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.tl2-fxbtn em {
+		font-style: normal;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+
+	/* Effect clip pill on the timeline. */
+	.tl2-clip.tl2-clip-effect {
+		background: var(--clip-effect);
+		border-color: color-mix(in oklch, var(--clip-effect) 72%, black);
+		color: #fff;
+	}
+	.tl2-clip-fxbody {
+		gap: var(--s-1);
+	}
+	.tl2-clip-effect .tl2-clip-ic {
+		color: oklch(0.55 0.16 300);
+	}
+	.tl2-clip-del {
+		position: absolute;
+		top: 2px;
+		right: 2px;
+		display: inline-flex;
+		padding: var(--s-0-5);
+		border: none;
+		background: rgba(0, 0, 0, 0.25);
+		color: #fff;
+		border-radius: var(--r-1);
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity var(--d-fast);
+	}
+	.tl2-clip-effect:hover .tl2-clip-del {
+		opacity: 1;
+	}
+	.tl2-clip-textbody .tl2-clip-ic {
+		color: oklch(0.52 0.13 75);
+	}
+	.tl2-clip-audiobody .tl2-clip-ic {
+		color: var(--ai);
+	}
+	.tl2-clip-audiobody {
+		padding: 0 var(--s-1-5);
+		width: 100%;
+		height: 100%;
+		align-self: stretch;
+		display: flex;
+		align-items: center;
+	}
+
+	/* Audio waveform bars on the timeline clip. The clip centers its children, so the
+   body must stretch and the wave needs a real height for the bars to be visible. */
+	/* The waveform is MIRRORED about a horizontal centerline: each bar is centered
+   in the strip, so it grows equally up and down from the middle. That is what
+   makes the mark read as audio. Bars grown from the baseline would be the shape
+   of a histogram — and the insights strip directly above draws a real density
+   histogram, which would then be indistinguishable from a waveform. Do not
+   change `align-self` here to `flex-end` without reading that sentence again. */
+	/* A canvas, not a bar per sample — see audio-waveform.tsx. `color` rather than
+   `background` because the bars are painted with it: the component reads the
+   computed colour, so these rules still decide what the waveform looks like. */
+	.tl2-wave {
+		display: block;
+		width: 100%;
+		height: 70%;
+		min-height: 18px;
+		color: var(--ai);
+		opacity: 0.6;
+	}
+	.tl2-clip.on .tl2-wave {
+		opacity: 0.95;
+	}
+	.tl2-wave-fallback {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.tl2-wave-fallback b {
+		font-weight: var(--weight-strong);
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.tl2-wave-fallback svg {
+		color: var(--ai);
+		flex-shrink: 0;
+	}
+
+	/* Length-percent badge shown while resizing a clip. */
+	.tl2-clip-pct {
+		position: absolute;
+		right: 2px;
+		top: -18px;
+		z-index: 6;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		padding: var(--s-0-5) var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--fg);
+		color: var(--bg);
+		white-space: nowrap;
+		box-shadow: var(--shadow-1);
+	}
+	.tl2-clip-pct.over {
+		background: var(--err, oklch(0.6 0.2 25));
+		color: #fff;
+	}
+
+	/* ── Project Materials drawer ──
+	   Compact first: the drawer opens on a scan view of four rows, each summarising
+	   its group and where the value came from. Prompt inputs mount only for the
+	   opened group — the surfaces this replaces showed every textarea at once, which
+	   is why nothing in them could be found. */
+	.tl2-materials {
+		position: absolute;
+		top: 42px;
+		left: 0;
+		z-index: 120;
+		width: min(420px, calc(100vw - 32px));
+		max-height: min(560px, calc(100svh - 140px));
+		overflow: auto;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: color-mix(in oklab, var(--surface) 97%, transparent);
+		backdrop-filter: blur(14px);
+		box-shadow: 0 18px 48px -12px rgb(0 0 0 / 0.42);
+	}
+	.tl2-materials-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+		padding: var(--s-2-5) var(--s-3);
+		border-bottom: 1px solid var(--border);
+	}
+	.tl2-materials-title {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+		color: var(--fg);
+	}
+	.tl2-materials-title svg {
+		color: var(--ai);
+	}
+	.tl2-materials-x {
+		display: inline-flex;
+		padding: var(--s-1);
+		border: none;
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+	}
+	.tl2-materials-x:hover {
+		color: var(--fg);
+	}
+	.tl2-materials-err {
+		margin: 0;
+		padding: var(--s-2) var(--s-3);
+		color: var(--err);
+		font-size: var(--type-label-size);
+	}
+
+	.tl2-materials-rows {
+		display: flex;
+		flex-direction: column;
+	}
+	.tl2-materials-row {
+		border-bottom: 1px solid var(--border);
+	}
+	.tl2-materials-row:last-child {
+		border-bottom: none;
+	}
+	.tl2-materials-row-btn {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		padding: var(--s-2-5) var(--s-3);
+		border: none;
+		background: none;
+		color: var(--fg);
+		font-family: inherit;
+		font-size: var(--type-control-size);
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-materials-row-btn:hover {
+		background: var(--ai-bg);
+	}
+	.tl2-materials-row-name {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-weight: var(--weight-display);
+		flex-shrink: 0;
+	}
+	.tl2-materials-row-name svg {
+		color: var(--ai);
+	}
+	.tl2-materials-row-sum {
+		flex: 1;
+		min-width: 0;
+		color: var(--fg-dim);
+		font-size: var(--type-label-size);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-row.on .tl2-materials-row-sum {
+		display: none;
+	}
+
+	.tl2-materials-detail {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding: var(--s-0-5) var(--s-3) var(--s-3);
+	}
+	.tl2-materials-settings {
+		margin: 0;
+		padding: var(--s-1-5) var(--s-2);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--muted);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+	}
+	.tl2-materials-body {
+		width: 100%;
+		min-height: 96px;
+		resize: vertical;
+		padding: var(--s-2) var(--s-2-5);
+		font-family: inherit;
+		font-size: var(--type-caption-size);
+		line-height: 1.5;
+	}
+	.tl2-materials-bible {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		padding-top: var(--s-1);
+		border-top: 1px dashed var(--border);
+	}
+	.tl2-materials-bible-head {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-materials-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2-5);
+		flex-wrap: wrap;
+	}
+	.tl2-materials-source {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.tl2-materials-source [data-slot="native-select"] {
+		max-width: 180px;
+	}
+}

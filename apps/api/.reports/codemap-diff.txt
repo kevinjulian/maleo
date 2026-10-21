@@ -1,0 +1,16 @@
+Codemap Scan 2026-05-13
+======================
+Files scanned: 46 (.ts/.tsx under src/)
+New files: docs/CODEMAPS/{architecture,backend,frontend,data,dependencies}.md
+Removed: none
+Modified: none (initial generation)
+
+Recent architecture changes detected:
+- New route POST /:name/voice-rewrite (voice-rewrite.ts added)
+- New route POST /:name/refresh-metrics (maleo-cli refreshMetrics wrapper)
+- New route GET  /:name/threads-quota (persona-db getThreadsQuotaWindow)
+- Pagination envelope rolled out across persona list endpoints + affiliate + video proxies
+- New lib: src/server/lib/pagination.ts
+- DB migration v10 add_threads_api_quota (maleo side)
+
+Staleness: none flagged (initial generation).

@@ -1,0 +1,18 @@
+node_modules
+out
+.remotion
+# Generated render caches (per-scene images, placeholders, voiceover audio)
+public/images
+public/scene-images
+public/voiceover
+bun.lockb
+*.log
+.DS_Store
+.env
+.env.local
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+build/

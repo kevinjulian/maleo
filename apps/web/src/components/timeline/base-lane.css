@@ -1,0 +1,78 @@
+/* The base track's own marks: the gap between two scenes, and the transition
+   edge between two that touch.
+
+   Cascade layer: feature. Declared in src/app/index.html, which fixes the order
+   once — a rule's winner no longer depends on which file it lives in.
+
+   Split out of tracks.css alongside `timeline-base-lane.tsx`: these style marks
+   that only the base track draws, and a stylesheet describing the whole lane
+   region had no reason to carry them. */
+@layer feature {
+	/* Gap marker on the base track — diagonal hatch over the empty (black-render)
+	   span between two scenes, click to close it. */
+	.tl2-gap {
+		position: absolute;
+		top: 7px;
+		bottom: 7px;
+		border: 1px dashed var(--warn);
+		border-radius: var(--r-1);
+		background: repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 5px,
+			color-mix(in oklch, var(--warn) 22%, transparent) 5px,
+			color-mix(in oklch, var(--warn) 22%, transparent) 10px
+		);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		overflow: hidden;
+		padding: 0;
+		z-index: 2;
+		transition: background var(--d-fast);
+	}
+	.tl2-gap:hover {
+		background: color-mix(in oklch, var(--warn) 18%, transparent);
+	}
+	.tl2-gap-label {
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--warn);
+		white-space: nowrap;
+		pointer-events: none;
+	}
+
+	.tl2-trans {
+		position: absolute;
+		top: 4px;
+		bottom: 4px;
+		transform: translateX(-50%);
+		width: 26px;
+		z-index: 5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid color-mix(in oklch, var(--ai) 34%, transparent);
+		background: color-mix(in oklch, var(--surface) 82%, transparent);
+		cursor: pointer;
+		color: var(--muted);
+		border-radius: var(--r-pill);
+		transition: all var(--d-fast);
+	}
+	.tl2-trans:hover {
+		background: var(--ai);
+		color: #fff;
+		box-shadow: var(--shadow-1);
+	}
+	.tl2-trans.set {
+		color: var(--ai);
+	}
+	.tl2-trans.on {
+		box-shadow:
+			0 0 0 2px oklch(0.62 0.16 150),
+			var(--shadow-1);
+		border-radius: 6px;
+	}
+}

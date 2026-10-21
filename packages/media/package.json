@@ -1,0 +1,37 @@
+{
+	"name": "@maleo/media",
+	"version": "0.1.0",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"main": "./src/index.ts",
+	"types": "./src/index.ts",
+	"exports": {
+		".": "./src/index.ts",
+		"./api": "./src/api/client.ts",
+		"./prompt-definitions": "./src/prompt-definitions.ts",
+		"./providers": "./src/providers/index.ts",
+		"./worker": "./src/worker.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test": "vp test run --root ../.. --project media",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+	},
+	"dependencies": {
+		"@hono/node-server": "^2.0.2",
+		"@huggingface/inference": "^4.13.26",
+		"@maleo/inngest": "workspace:*",
+		"@maleo/shared": "workspace:*",
+		"@maleo/storage": "workspace:*",
+		"@remotion/captions": "4.0.462",
+		"@remotion/install-whisper-cpp": "4.0.462",
+		"hono": "^4.6.0",
+		"inngest": "^4.21.0",
+		"sharp": "^0.34.5",
+		"zod": "^3.23.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0"
+	}
+}

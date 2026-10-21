@@ -1,0 +1,236 @@
+{
+	"scope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": true
+						},
+						"revision": 1,
+						"groupId": "g",
+						"status": "current",
+						"style": {
+							"fontSize": 48
+						}
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 1,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"command": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "style",
+			"ids": ["caption:1"],
+			"style": null
+		}
+	},
+	"expectedScope": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": false
+						},
+						"revision": 2,
+						"groupId": "g",
+						"status": "current"
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 2,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedInverse": {
+		"type": "caption.edit",
+		"edit": {
+			"action": "restore",
+			"ids": ["caption:1"],
+			"entries": [
+				{
+					"index": 0,
+					"clip": {
+						"id": "caption:1",
+						"type": "caption",
+						"startSec": 1,
+						"durationSec": 2,
+						"track": 1,
+						"caption": {
+							"text": "Hello\nworld!",
+							"words": [
+								{
+									"text": "Hello",
+									"startSec": 0,
+									"endSec": 0.8
+								},
+								{
+									"text": "world!",
+									"startSec": 1,
+									"endSec": 2
+								}
+							],
+							"provenance": {
+								"origin": "recognized",
+								"wordTimingOrigin": "recognized"
+							},
+							"sources": [],
+							"protection": {
+								"text": false,
+								"timing": false,
+								"segmentation": false,
+								"style": true
+							},
+							"revision": 1,
+							"groupId": "g",
+							"status": "current",
+							"style": {
+								"fontSize": 48
+							}
+						}
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 1,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	},
+	"expectedRestored": {
+		"mediaAssets": [],
+		"slides": [],
+		"posts": [],
+		"doc": {
+			"schemaVersion": 2,
+			"markers": [],
+			"clips": [
+				{
+					"id": "caption:1",
+					"type": "caption",
+					"startSec": 1,
+					"durationSec": 2,
+					"track": 1,
+					"caption": {
+						"text": "Hello\nworld!",
+						"words": [
+							{
+								"text": "Hello",
+								"startSec": 0,
+								"endSec": 0.8
+							},
+							{
+								"text": "world!",
+								"startSec": 1,
+								"endSec": 2
+							}
+						],
+						"provenance": {
+							"origin": "recognized",
+							"wordTimingOrigin": "recognized"
+						},
+						"sources": [],
+						"protection": {
+							"text": false,
+							"timing": false,
+							"segmentation": false,
+							"style": true
+						},
+						"revision": 1,
+						"groupId": "g",
+						"status": "current",
+						"style": {
+							"fontSize": 48
+						}
+					}
+				}
+			],
+			"captionSet": {
+				"initialized": true,
+				"language": "auto",
+				"revision": 1,
+				"deletedRanges": [],
+				"appliedRunIds": []
+			}
+		}
+	}
+}

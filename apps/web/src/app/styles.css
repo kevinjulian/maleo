@@ -1,0 +1,56 @@
+/* The stylesheet entry.
+ *
+ * Bun inlines these at build time in source order into one asset, so the
+ * cascade is exactly what a single file produced. Separate <link> tags do NOT
+ * guarantee that: loading tokens and components as two links resolved
+ * --page-pad to the base 28px instead of the desktop 32px override.
+ *
+ * The line below is what makes order stop being load-bearing. Each sheet
+ * declares its layer and this fixes the precedence between them once, so a rule
+ * can move between files — which is what splitting the chrome sheets per
+ * feature requires — without changing which rule wins.
+ *
+ * `theme` only holds utility definitions. `reset` holds what Tailwind's `base`
+ * layer used to: element defaults, now vendored in styles/reset.css. Same position in the
+ * order, so the same rules still win. Tailwind's theme and utilities return
+ * for shadcn recipes; Preflight stays omitted because reset.css owns defaults.
+ *
+ * `tokens.css` is not wrapped: it declares custom properties on `:root` and
+ * `.dark`, not rules that need a layer.
+ *
+ * The feature sheets are NOT imported here — they are imported from the modules
+ * that own them, so the bundler decides where they land. That is exactly the
+ * kind of order this declaration makes irrelevant.
+ *
+ * One rule to keep: anything unlayered beats everything layered. A new sheet
+ * that forgets its `@layer` wrapper outranks the whole cascade, and its order
+ * against other unlayered sheets differs between development (one file per
+ * sheet) and production (one chunk); styles/cascade-layers.test.ts fails on it.
+ * Within one layer the same is true across sheets, so a class that overrides
+ * another sheet's class at equal specificity names both (`.base.modifier`).
+ *
+ * The chrome sheets below replaced one 2005-line components.css. They are
+ * imported in the order the rules were written in, because several selectors
+ * are defined twice and the second one wins; a pair split across two sheets
+ * would swap. The other thing that file taught: a banner comment missing its
+ * closing star-slash swallows every rule under it until the next comment, and
+ * nothing but a screenshot notices. Five of them had. */
+@layer theme, reset, workspace, app-base, chrome, feature, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+@import "../design-system/tokens/tokens.css";
+@import "./styles/shadcn.css";
+@import "./styles/reset.css";
+
+@import "./styles/base.css";
+@import "./styles/typography.css";
+@import "./styles/shell.css";
+@import "./styles/controls.css";
+@import "./styles/panels.css";
+@import "./styles/palette.css";
+/* Renders instead of the shell, so it shares nothing with the sheets above. */
+@import "./styles/sign-in.css";
+@import "./styles/workspace-manage.css";
+/* Last, and deliberately unlayered — it has to outrank the feature sheets to
+   do its job. See the header of touch.css before moving or wrapping it. */
+@import "./styles/touch.css";

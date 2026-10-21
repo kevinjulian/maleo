@@ -1,0 +1,43 @@
+title: "[Question] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask about setup, providers, or how something is meant to work.
+
+        Also use this for behavior you cannot reproduce. Once you can reproduce
+        it reliably, open a bug issue instead.
+
+        Check `README.md` and `CONTRIBUTING.md` first.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: What are you trying to do?
+      description: The goal, not only the step that is failing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Commands run, configuration set, and what happened.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >
+        Maleo version or commit, operating system, Bun version, and the
+        providers configured. Redact credentials.
+      placeholder: |
+        Version/commit:
+        OS:
+        Bun:
+        Providers:
+    validations:
+      required: false

@@ -1,0 +1,438 @@
+/* Cascade layer: feature. Declared in src/app/index.html. */
+@layer feature {
+	/* The project chat as a workspace.
+
+   Hierarchy comes from type and spacing, not from stacked surfaces: a run has
+   no container, and a turn holds at most one bordered surface — the output a
+   run made (`.fc-output`). Colour means state only: the accent for running
+   work, selection and focus; warning and error for their states. Nothing is
+   coloured for being done or for what kind of artifact it is. */
+
+	.fc-sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/* ── Turns ── */
+	.fc-turn {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding-top: var(--s-3);
+		border-top: 1px solid var(--border);
+	}
+	.fc-turn:first-of-type {
+		padding-top: 0;
+		border-top: 0;
+	}
+
+	/* The instruction's submitted scope, closed by default. */
+	.fc-sent-context {
+		align-self: flex-end;
+		max-width: 88%;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-sent-context summary {
+		cursor: pointer;
+		text-align: right;
+	}
+	.fc-sent-context > span {
+		display: block;
+		padding-top: var(--s-0-5);
+		color: var(--fg-dim);
+		overflow-wrap: anywhere;
+	}
+
+	/* ── Run: a status line, then what it made ── */
+	.fc-run {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+	}
+
+	.fc-run-note {
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+		color: var(--muted);
+	}
+
+	/* Activity: plain rows under one disclosure, never a card per row. */
+	.fc-run .fc-run-think-h {
+		flex-direction: row;
+		align-items: center;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--muted);
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		letter-spacing: 0;
+	}
+	.fc-run .fc-run-think-h:hover {
+		color: var(--fg);
+	}
+	.fc-run .fc-run-think-row {
+		width: auto;
+	}
+	.fc-run .fc-run-think-label {
+		font-weight: var(--weight-strong);
+	}
+	.fc-run .fc-run-think-toggle {
+		margin-left: 0;
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	.fc-run .fc-run-think-meta {
+		margin-left: var(--s-2);
+	}
+	.fc-run .fc-run-think-body {
+		gap: var(--s-1-5);
+	}
+	.fc-run .fc-note,
+	.fc-run .fc-workflow {
+		max-width: 100%;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: none;
+		box-shadow: none;
+	}
+	.fc-run .fc-workflow-row {
+		border: 0;
+		background: none;
+	}
+
+	/* ── Outputs: the one bordered surface a turn may hold ── */
+	.fc-output {
+		align-self: stretch;
+		display: grid;
+		gap: var(--s-1-5);
+		padding: var(--s-2-5) var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+	}
+	.fc-output-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.fc-output-verdict {
+		margin-left: auto;
+		text-transform: none;
+		letter-spacing: 0;
+	}
+	.fc-output-verdict.warn,
+	.fc-output-finding.warn {
+		color: var(--warn);
+	}
+	.fc-output-verdict.err,
+	.fc-output-finding.err {
+		color: var(--err);
+	}
+	.fc-output-row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--s-1) var(--s-2);
+		align-items: start;
+		padding-top: var(--s-1-5);
+		border-top: 1px solid var(--border);
+		font-size: var(--type-caption-size);
+	}
+	.fc-output-full {
+		grid-column: 1 / -1;
+	}
+	.fc-output-muted {
+		font-size: var(--type-label-size);
+		line-height: 1.5;
+		color: var(--fg-dim);
+	}
+	.fc-output-finding {
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+	}
+	.fc-output-link {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		white-space: nowrap;
+	}
+	.fc-output-disclose {
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--fg);
+		font: inherit;
+		font-weight: var(--weight-strong);
+		text-align: left;
+		cursor: pointer;
+	}
+	.fc-output-disclose:hover {
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+	.fc-sbrow {
+		cursor: default;
+	}
+	.fc-sbrow.seekable {
+		cursor: pointer;
+	}
+	.fc-crit-row {
+		border: 0;
+		background: none;
+		font: inherit;
+		text-align: left;
+		width: 100%;
+	}
+
+	/* Story plan summary: review material behind one closed disclosure, as rows. */
+	.fc-plan-summary > button {
+		justify-self: start;
+	}
+	.fc-plan-details {
+		display: grid;
+		gap: var(--s-1-5);
+	}
+	.fc-plan-details > summary {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		cursor: pointer;
+	}
+	.fc-plan-details[open] > summary {
+		margin-bottom: var(--s-0-5);
+	}
+	.fc-plan-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: var(--s-1-5);
+	}
+	.fc-plan-row {
+		display: grid;
+		gap: var(--s-0-5);
+		padding-top: var(--s-1-5);
+		border-top: 1px solid var(--border);
+		font-size: var(--type-caption-size);
+	}
+	.fc-plan-row-h {
+		display: flex;
+		justify-content: space-between;
+		gap: var(--s-2);
+	}
+	.fc-plan-row-meta {
+		flex: none;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+
+	/* ── Results: a line, not a box ── */
+	.fc-result {
+		display: grid;
+		gap: var(--s-0-5);
+	}
+	.fc-result-h {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.fc-result-body {
+		font-size: var(--type-label-size);
+		line-height: 1.45;
+		color: var(--fg-dim);
+		overflow-wrap: anywhere;
+	}
+	.fc-result-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+		padding-top: var(--s-0-5);
+	}
+
+	/* ── Composer foot: only live content ── */
+	.fc-composer {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+	}
+	.fc-queued,
+	.fc-replying {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		min-width: 0;
+	}
+	.fc-queued-label {
+		flex: none;
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.fc-queued-text {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.fc-queued-actions {
+		flex: none;
+		display: flex;
+		gap: var(--s-1);
+	}
+	.fc-replying {
+		justify-content: space-between;
+	}
+	.fc-replying > span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.fc-replying b {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+	}
+
+	/* The context line: what the next instruction is about, in muted text. */
+	.fc-context {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--s-0-5) var(--s-2);
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		min-width: 0;
+	}
+	.fc-context-k {
+		color: var(--muted);
+	}
+	.fc-context-item {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-0-5);
+		max-width: 100%;
+	}
+	.fc-context-more {
+		color: var(--muted);
+	}
+	.fc-context-warn {
+		color: var(--warn);
+	}
+	/* The remove glyph is IconButton size="micro"; the chat only decides when it
+   shows: hidden until its row is hovered, focused or being replied to. */
+	.fc-context-x {
+		opacity: 0;
+	}
+	.fc-context-item:hover .fc-context-x,
+	.fc-context-x:focus-visible,
+	.fc-replying .fc-context-x {
+		opacity: 1;
+	}
+
+	/* The pinned decision: question, choices and Stop in one compact block. */
+	.fc-pinned {
+		max-height: 42vh;
+		overflow-y: auto;
+	}
+	.fc-pinned.fc-ask {
+		gap: var(--s-1-5);
+		padding: var(--s-2) var(--s-2-5);
+	}
+	.fc-pinned-actions {
+		display: flex;
+		justify-content: flex-end;
+	}
+	.fc-ask-stop {
+		margin-left: auto;
+	}
+	.fc-ask-opt[aria-pressed="true"] {
+		border-color: var(--ai);
+	}
+
+	/* ── Jump to latest ── */
+	.fc-jump {
+		position: sticky;
+		bottom: 4px;
+		align-self: center;
+		flex: none;
+		z-index: 2;
+		padding: var(--s-1) var(--s-3);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		border: 1px solid var(--border);
+		border-radius: var(--r-pill);
+		background: var(--bg);
+		color: var(--fg);
+		box-shadow: var(--shadow-2);
+		cursor: pointer;
+	}
+
+	.fc-run button:focus-visible,
+	.fc-composer button:focus-visible,
+	.fc-pinned button:focus-visible,
+	.fc-jump:focus-visible,
+	.fc-pane-resize:focus-visible,
+	.fc-sent-context summary:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+
+	/* ── Resizable desktop pane ── */
+	.fc-pane-resize {
+		touch-action: none;
+		position: absolute;
+		top: 0;
+		right: -4px;
+		bottom: 0;
+		width: 8px;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		cursor: col-resize;
+		z-index: 3;
+	}
+	.fc-pane-resize::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 3px;
+		width: 2px;
+		background: transparent;
+		transition: background var(--d-fast);
+	}
+	.fc-pane-resize:hover::after,
+	.fc-pane-resize:focus-visible::after {
+		background: var(--ai);
+	}
+	body.fc-pane-resizing,
+	body.fc-pane-resizing * {
+		cursor: col-resize !important;
+		user-select: none !important;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fc-pane-resize::after,
+		.fc-ask-opt {
+			transition: none;
+		}
+		.fc-run .cv-spin {
+			animation: none;
+		}
+	}
+}

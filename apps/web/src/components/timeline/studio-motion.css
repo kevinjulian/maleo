@@ -1,0 +1,382 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* The motion tools: the A/B hook takes popover, the focal point picker, the keyframe motion editor, Motion Studio, and the custom clip template menus. */
+
+	/* A/B hook takes popover — save/swap first-scene snapshots from the toolbar. */
+	.tl2-ab {
+		position: relative;
+		display: inline-flex;
+	}
+	.tl2-ab-pop {
+		position: absolute;
+		bottom: calc(100% + 8px);
+		left: 0;
+		z-index: 30;
+		width: 300px;
+		display: grid;
+		gap: var(--s-2);
+		padding: var(--s-3);
+		background: var(--surface);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-3);
+	}
+	.tl2-ab-h {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-ab-note {
+		margin: 0;
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		line-height: 1.45;
+	}
+	.tl2-ab-row {
+		display: grid;
+		grid-template-columns: auto 1fr auto auto;
+		gap: var(--s-2);
+		align-items: center;
+	}
+	.tl2-ab-label {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--ai);
+		font-weight: var(--weight-display);
+		white-space: nowrap;
+	}
+	.tl2-ab-vo {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	/* Focal point picker — click the thumbnail to anchor camera zoom/pan. */
+	.tl2-focal {
+		position: relative;
+		width: 100%;
+		border-radius: var(--r-2);
+		overflow: hidden;
+		cursor: crosshair;
+		border: 1px solid var(--border);
+	}
+	.tl2-focal img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		display: block;
+		user-select: none;
+	}
+	.tl2-focal-dot {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		border-radius: 50%;
+		border: 2px solid var(--ai);
+		background: transparent;
+		box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.45);
+		translate: -50% -50%;
+		pointer-events: none;
+	}
+
+	/* Keyframe motion editor — custom per-clip camera motion. */
+	.tl2-motion-empty {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--s-2);
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+	.tl2-motion {
+		display: grid;
+		gap: var(--s-2);
+	}
+	.tl2-motion-preview {
+		position: relative;
+		width: 100%;
+		border-radius: var(--r-2);
+		overflow: hidden;
+		border: 1px solid var(--border);
+		background: #000;
+	}
+	.tl2-motion-preview img {
+		display: block;
+	}
+	.tl2-motion-noimg {
+		display: grid;
+		place-items: center;
+		width: 100%;
+		height: 100%;
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+	.tl2-motion-scrub {
+		width: 100%;
+	}
+	/* `pan-x`, not `none`. These surfaces set `none` so a mouse drag was not stolen
+   by the browser's own scrolling — but on a touch device `none` means the
+   browser does nothing at all, and this change ships no gesture handlers to
+   replace what it suppressed. The literal result was a timeline rendered
+   correctly and impossible to move with a finger. Reserving only the axis a
+   future drag handler will own leaves native horizontal panning working in the
+   meantime. Pointer-drag on a mouse is unaffected. */
+	.tl2-motion-track {
+		position: relative;
+		height: 30px;
+		border-radius: var(--r-1);
+		border: 1px solid var(--border);
+		background: var(--surface-tint, rgba(127, 127, 127, 0.08));
+		cursor: copy;
+		touch-action: pan-x;
+	}
+	.tl2-motion-playhead {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: var(--ai);
+		opacity: 0.6;
+		pointer-events: none;
+	}
+	.tl2-motion-dot {
+		position: absolute;
+		top: 50%;
+		width: 13px;
+		height: 13px;
+		padding: 0;
+		border-radius: 50%;
+		border: 2px solid var(--ai);
+		background: var(--bg, #111);
+		translate: -50% -50%;
+		cursor: grab;
+	}
+	.tl2-motion-dot:hover {
+		background: var(--ai);
+	}
+	.tl2-motion-dot.is-sel {
+		background: var(--ai);
+		box-shadow: 0 0 0 3px rgba(106, 90, 242, 0.28);
+	}
+	.tl2-motion-dot:active {
+		cursor: grabbing;
+	}
+	.tl2-motion-insp {
+		display: grid;
+		gap: var(--s-2);
+		padding: var(--s-2);
+		border-radius: var(--r-2);
+		border: 1px solid var(--border);
+	}
+	.tl2-motion-insp-h {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+	}
+	.tl2-motion-reset {
+		justify-self: start;
+	}
+	.tl2-motion-save {
+		display: flex;
+		gap: var(--s-1-5);
+		align-items: center;
+	}
+	.tl2-motion-save :is([data-slot="input"], [data-slot="textarea"]) {
+		flex: 1;
+	}
+	.tl2-motion-presets {
+		display: grid;
+		gap: var(--s-1);
+		padding: var(--s-2);
+		border-radius: var(--r-2);
+		border: 1px solid var(--border);
+	}
+	.tl2-motion-presets-h {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+	}
+	.tl2-motion-preset-row {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	.tl2-motion-preset-del {
+		flex-shrink: 0;
+		width: 24px;
+		height: 24px;
+		border-radius: var(--r-1);
+		border: 1px solid var(--border);
+		background: transparent;
+		color: var(--muted);
+		cursor: pointer;
+		font-size: var(--type-body-size);
+		line-height: 1;
+	}
+	.tl2-motion-preset-del:hover {
+		color: var(--err);
+		border-color: var(--err);
+	}
+
+	/* Save-as-motion heading and Motion Studio easing control. */
+	.tl2-anim-h {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		display: flex;
+		align-items: baseline;
+		gap: var(--s-2);
+	}
+	.tl2-anim-h small {
+		font-weight: var(--weight-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.tl2-anim-easing {
+		font-size: var(--type-caption-size);
+	}
+
+	/* Motion Studio domain decoration. VUI owns workspace and timeline structure. */
+	.tl2-studio-actions {
+		flex: 0 0 auto;
+		padding: var(--s-3) var(--s-3);
+		background: var(--surface);
+	}
+	.tl2-studio-stage {
+		max-width: 100%;
+		max-height: 100%;
+		overflow: hidden;
+		background: var(--media-bg);
+	}
+	.tl2-studio-insp-head {
+		padding: 0 0 var(--s-0-5);
+	}
+	.tl2-studio-insp-title {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-studio-grid4 {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: var(--s-1-5);
+	}
+	.tl2-studio-grid4 label {
+		display: grid;
+		gap: var(--s-0-5);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-studio-subclip {
+		border-style: dashed;
+		background: var(--surface-tint, rgba(127, 127, 127, 0.05));
+		color: var(--ai);
+	}
+	.tl2-studio-curve {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		opacity: 0.85;
+		pointer-events: none;
+	}
+	/* Motion keyframe inspector; timeline markers use the shared project style. */
+	.tl2-studio-markbar {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		padding: var(--s-1-5) var(--s-2);
+		border-radius: var(--r-2);
+		border: 1px solid var(--ai);
+		font-size: var(--type-caption-size);
+	}
+	.tl2-studio-markbar > span:first-child {
+		color: var(--ai);
+		font-weight: var(--weight-strong);
+		flex: 1;
+	}
+	.tl2-studio-lockable.is-locked {
+		opacity: 0.45;
+		pointer-events: none;
+	}
+	.tl2-studio-grid4 label.is-mark-focus :is([data-slot="input"], [data-slot="textarea"]) {
+		border-color: var(--ai);
+	}
+	.tl2-studio-grid4 label.is-mark-focus span {
+		color: var(--ai);
+	}
+	.tl2-studio-bar:active {
+		cursor: grabbing;
+	}
+
+	/* VUI inspector rail (shared: studios get the Main Editor's category rail). */
+
+	/* Custom clip templates (Motion / Text / Data menus). */
+	.tl2-savemotion {
+		display: grid;
+		gap: var(--s-1-5);
+		padding: var(--s-2);
+		border-radius: var(--r-2);
+		border: 1px solid var(--border);
+	}
+	.tl2-savemotion-row {
+		display: flex;
+		gap: var(--s-1-5);
+	}
+	.tl2-savemotion-row :is([data-slot="input"], [data-slot="textarea"]) {
+		flex: 1;
+	}
+	.tl2-savemotion-note {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-ct {
+		display: grid;
+		gap: var(--s-1-5);
+	}
+	/* `.tl2-ct-slot` was here. Its only renderer was `InfographicsPanel`'s
+ * `customBlock` slot, and that panel was deleted for being rendered by nothing —
+ * so the rule went from styling a surface nobody could see to styling nothing at
+ * all. `check:layers` named it on the first run after the deletion, which is the
+ * direction of that check that finds dead weight rather than a live defect. */
+	.tl2-ct-err {
+		font-size: var(--type-caption-size);
+		color: var(--err);
+	}
+	.tl2-ct-modal-scrim {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		display: grid;
+		place-items: center;
+		z-index: var(--z-dialog);
+	}
+	.tl2-ct-modal {
+		width: min(520px, 92vw);
+		max-height: 88vh;
+		overflow: auto;
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-3);
+	}
+	.tl2-ct-modal-body {
+		padding: var(--s-3);
+		display: grid;
+		gap: var(--s-2-5);
+	}
+	.tl2-ct-fields {
+		display: grid;
+		gap: var(--s-2);
+		padding-top: var(--s-1);
+		border-top: 1px solid var(--border);
+	}
+	.tl2-ct-modal-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: var(--s-2);
+		margin-top: var(--s-1);
+	}
+}

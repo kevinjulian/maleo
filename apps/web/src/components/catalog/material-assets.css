@@ -1,0 +1,531 @@
+/* Reference chips and the pool picker, shared by the Library material editor
+ * and the editor's Project Materials drawer.
+ *
+ * Co-located with the component rather than left in the timeline's stylesheet:
+ * the Library page does not load the timeline CSS, so the picker rendered there
+ * would be unstyled. Layered like every other feature stylesheet — an unlayered
+ * rule outranks the whole design system regardless of specificity. */
+@layer feature {
+	/* ── Project Materials: visual reference assets ──
+	   Visual is the only material group that exposes image references in the UI.
+	   The pool opens on demand so the scan view stays compact. */
+	.tl2-materials-group-select {
+		position: relative;
+		display: grid;
+		gap: var(--s-1-5);
+	}
+	.tl2-materials-group-card,
+	.tl2-materials-group-menu button {
+		display: grid;
+		grid-template-columns: 30px minmax(0, 1fr) 16px;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		min-height: 58px;
+		padding: var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-materials-group-card:hover,
+	.tl2-materials-group-menu button:hover,
+	.tl2-materials-group-menu button.on {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.tl2-materials-group-card-icon {
+		width: 30px;
+		height: 30px;
+		border-radius: var(--r-1);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-materials-group-card span:nth-child(2),
+	.tl2-materials-group-menu button span:nth-child(2) {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.tl2-materials-group-card strong,
+	.tl2-materials-group-menu strong {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-materials-group-card small,
+	.tl2-materials-group-menu small {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		color: var(--fg-dim);
+		font-size: var(--type-label-size);
+	}
+	.tl2-materials-group-menu {
+		position: absolute;
+		inset-inline: 0;
+		top: calc(100% + 4px);
+		z-index: 20;
+		display: grid;
+		gap: var(--s-1);
+		padding: var(--s-1);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		box-shadow: var(--shadow-3);
+	}
+	.tl2-materials-group-menu button {
+		min-height: 52px;
+		border-color: transparent;
+	}
+	.tl2-materials-assets {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		padding-top: var(--s-1-5);
+		border-top: 1px dashed var(--border);
+	}
+	.tl2-materials-assets-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-materials-assets-empty {
+		margin: 0;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+	.tl2-materials-ref-cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+		gap: var(--s-1-5);
+	}
+	.tl2-materials-ref-card,
+	.tl2-materials-add-card {
+		display: grid;
+		min-width: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-materials-ref-card {
+		grid-template-columns: 42px minmax(0, 1fr);
+		align-items: center;
+		gap: var(--s-2);
+		min-height: 64px;
+		padding: var(--s-1-5);
+	}
+	.tl2-materials-ref-card:hover,
+	.tl2-materials-add-card:hover {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.tl2-materials-ref-card > img,
+	.tl2-materials-ref-card > .tl2-ref-chip-empty {
+		width: 42px;
+		height: 42px;
+		border-radius: var(--r-1);
+		object-fit: cover;
+	}
+	.tl2-materials-ref-card-copy {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.tl2-materials-ref-card-copy strong,
+	.tl2-materials-ref-card-copy small {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-ref-card-copy strong {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-materials-ref-card-copy small {
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.tl2-materials-ref-card-copy span {
+		display: flex;
+		gap: var(--s-1);
+		min-width: 0;
+		flex-wrap: wrap;
+	}
+	.tl2-materials-ref-card-copy b,
+	.tl2-materials-ref-card-copy i,
+	.tl2-materials-ref-card-copy em {
+		max-width: 92px;
+		padding: var(--s-0-5) var(--s-1);
+		border: 1px solid var(--border);
+		border-radius: var(--r-pill);
+		color: var(--fg-dim);
+		font-size: var(--type-micro-size);
+		font-style: normal;
+		font-weight: var(--weight-display);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-add-card {
+		grid-template-columns: 28px minmax(0, 1fr);
+		grid-template-rows: auto auto;
+		align-items: center;
+		column-gap: var(--s-2);
+		min-height: 58px;
+		padding: var(--s-2);
+		border-style: dashed;
+		color: var(--muted);
+	}
+	.tl2-materials-add-card > span {
+		grid-row: 1 / 3;
+		width: 28px;
+		height: 28px;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-materials-add-card strong {
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-materials-add-card small {
+		min-width: 0;
+		color: var(--fg-dim);
+		font-size: var(--type-micro-size);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	/* The reference add/edit panel is a Modal's body. It was the second copy of a
+	   hand-rolled overlay — fixed container at z-index 80, own scrim, own
+	   `role="dialog"`, own head — with no focus trap, no Escape, no focus restore
+	   and no place in the overlay stack, so at z-index 80 it also painted UNDER
+	   the editor topbar at 500. Rendering through `Modal` fixes all of that at
+	   once, and the phone treatment becomes the Modal's dock rather than a third
+	   bottom-sheet declared at yet another breakpoint. */
+	.tl2-materials-sheet-body {
+		display: grid;
+		gap: var(--s-3);
+	}
+	.tl2-materials-edit {
+		display: grid;
+		gap: var(--s-2);
+	}
+	.tl2-materials-edit > img,
+	.tl2-materials-edit > .tl2-ref-chip-empty {
+		width: 100%;
+		max-height: 220px;
+		border-radius: var(--r-1);
+		object-fit: contain;
+		background: var(--surface-tint);
+	}
+	.tl2-materials-field {
+		display: grid;
+		gap: var(--s-1);
+		min-width: 0;
+	}
+	.tl2-materials-field > span {
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-materials-field select,
+	.tl2-materials-field input,
+	.tl2-materials-field textarea,
+	.tl2-materials-edit select {
+		width: 100%;
+		height: 30px;
+		min-width: 0;
+		padding: 0 var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		font: inherit;
+		font-size: var(--type-label-size);
+	}
+	.tl2-materials-field input[type="file"] {
+		height: auto;
+		min-height: 30px;
+		padding-block: var(--s-1);
+	}
+	.tl2-materials-danger {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1-5);
+		min-height: 30px;
+		padding: 0 var(--s-2-5);
+		border: 1px solid color-mix(in oklab, var(--err) 46%, var(--border));
+		border-radius: var(--r-1);
+		background: color-mix(in oklab, var(--err) 8%, transparent);
+		color: var(--err);
+		font: inherit;
+		font-size: var(--type-label-size);
+		cursor: pointer;
+	}
+	.tl2-materials-create {
+		display: grid;
+		gap: var(--s-2-5);
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+	}
+	.tl2-materials-create-line {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 132px;
+		gap: var(--s-1-5);
+	}
+	.tl2-materials-create-line select,
+	.tl2-materials-create-input {
+		width: 100%;
+		min-width: 0;
+		min-height: 28px;
+		padding: 0 var(--s-2);
+		font: inherit;
+		font-size: var(--type-label-size);
+	}
+	textarea.tl2-materials-create-input {
+		min-height: 58px;
+		padding-top: var(--s-1-5);
+		resize: vertical;
+		line-height: 1.35;
+	}
+	.tl2-materials-create-tabs {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: var(--s-1);
+	}
+	.tl2-materials-create-tabs button {
+		height: 26px;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: transparent;
+		color: var(--muted);
+		font: inherit;
+		font-size: var(--type-label-size);
+		cursor: pointer;
+	}
+	.tl2-materials-create-tabs button.on {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-materials-create-actions {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+		min-height: 24px;
+	}
+	.tl2-materials-create-actions span {
+		min-width: 0;
+		color: var(--err);
+		font-size: var(--type-label-size);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-ref-uses {
+		display: grid;
+		gap: var(--s-1);
+	}
+	.tl2-materials-ref-use {
+		display: grid;
+		grid-template-columns: minmax(72px, 1fr) 78px 62px 122px minmax(110px, 1fr);
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+	}
+	.tl2-materials-ref-use span,
+	.tl2-materials-ref-use b,
+	.tl2-materials-ref-use em {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-ref-use b {
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		color: var(--fg-dim);
+	}
+	.tl2-materials-ref-use em {
+		font-style: normal;
+		font-size: var(--type-micro-size);
+		color: var(--fg-dim);
+	}
+	.tl2-materials-ref-use select,
+	.tl2-materials-ref-use input {
+		width: 100%;
+		height: 28px;
+		min-width: 0;
+		padding: 0 var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		font: inherit;
+	}
+	@media (max-width: 560px) {
+		.tl2-materials-create-line {
+			grid-template-columns: 1fr;
+		}
+		.tl2-materials-ref-use {
+			grid-template-columns: minmax(0, 1fr) 112px;
+		}
+		.tl2-materials-ref-use b {
+			display: none;
+		}
+		.tl2-materials-ref-use input {
+			grid-column: 1 / -1;
+		}
+	}
+	.tl2-ref-chip-x {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--s-0-5);
+		border: none;
+		background: none;
+		color: var(--muted);
+		cursor: pointer;
+	}
+	.tl2-ref-chip-x:hover {
+		color: var(--err);
+	}
+	.tl2-materials-pool {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+		gap: var(--s-1-5);
+		max-height: 260px;
+		overflow: auto;
+		padding: 0;
+		border: 0;
+		border-radius: 0;
+		background: transparent;
+	}
+	.tl2-materials-pool-role {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+		gap: var(--s-1-5);
+	}
+	.tl2-materials-pool-role-h {
+		grid-column: 1 / -1;
+		padding-top: var(--s-0-5);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-display);
+		color: var(--muted);
+	}
+	.tl2-materials-pool-item {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		min-width: 0;
+		padding: var(--s-1) var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: transparent;
+		color: var(--fg);
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-materials-pool-item:hover {
+		border-color: var(--ai-border);
+	}
+	.tl2-materials-pool-item.on {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.tl2-materials-pool-item img {
+		width: 20px;
+		height: 20px;
+		border-radius: var(--r-1);
+		object-fit: cover;
+		flex-shrink: 0;
+	}
+	.tl2-materials-pool-item span {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-select-card {
+		display: grid;
+		grid-template-columns: 44px minmax(0, 1fr) 16px;
+		align-items: center;
+		gap: var(--s-2);
+		min-height: 60px;
+		min-width: 0;
+		padding: var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+	.tl2-materials-select-card:hover,
+	.tl2-materials-select-card.on {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.tl2-materials-select-card.attached:not(.on) {
+		border-style: dashed;
+	}
+	.tl2-materials-select-card > img,
+	.tl2-materials-select-card > .tl2-ref-chip-empty {
+		width: 44px;
+		height: 44px;
+		border-radius: var(--r-1);
+		object-fit: cover;
+		background: var(--surface-tint);
+	}
+	.tl2-materials-select-card > span {
+		display: grid;
+		gap: var(--s-0-5);
+		min-width: 0;
+	}
+	.tl2-materials-select-card strong,
+	.tl2-materials-select-card small {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.tl2-materials-select-card strong {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-display);
+	}
+	.tl2-materials-select-card small {
+		color: var(--fg-dim);
+		font-size: var(--type-micro-size);
+	}
+}

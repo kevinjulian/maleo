@@ -1,0 +1,66 @@
+/* Cascade layer: chrome. The hover preview a media cell raises.
+ *
+ * Portalled to <body>, so it sits outside the panel's scroll container and is
+ * positioned in viewport coordinates by the component. Everything here is
+ * inert to the pointer: it floats under the cursor over the cell it describes,
+ * and taking the pointer would swallow the drag that starts there. */
+@layer chrome {
+	.fc-hoverprev {
+		position: fixed;
+		z-index: 60;
+		pointer-events: none;
+		padding: var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		box-shadow: var(--shadow-3);
+		animation: fc-hoverprev-in var(--d-fast) var(--ease) both;
+	}
+
+	/* Rises from the cell rather than appearing: the movement is what tells the
+   operator this belongs to the thing under the cursor. */
+	@keyframes fc-hoverprev-in {
+		from {
+			opacity: 0;
+			transform: scale(0.97);
+		}
+		to {
+			opacity: 1;
+			transform: scale(1);
+		}
+	}
+
+	.fc-hoverprev-media {
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+	}
+
+	/* `contain`, not `cover`. The cell already crops to fill its tile; the point of
+   enlarging is to see the whole frame, so this must not crop again. The box is
+   sized to the media's measured aspect, so once loaded there is nothing to
+   letterbox — `contain` only matters for the frame before that. */
+	.fc-hoverprev-media video,
+	.fc-hoverprev-media img {
+		display: block;
+		width: 100%;
+		aspect-ratio: var(--fc-asp, 0.5625);
+		object-fit: contain;
+		background: #0a0a0c;
+	}
+
+	.fc-hoverprev-cap {
+		padding: var(--s-1-5) var(--s-1) var(--s-0-5);
+		font-size: var(--type-label-size);
+		line-height: 1.35;
+		color: var(--fg-dim);
+		overflow-wrap: anywhere;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.fc-hoverprev {
+			animation: none;
+		}
+	}
+}

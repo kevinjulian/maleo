@@ -1,0 +1,27 @@
+# Rust workspace for the shared editor core (OpenSpec: migrate-editor-to-shared-rust-core).
+# Bun remains the toolchain for every TypeScript workspace; Cargo builds only crates/.
+[workspace]
+resolver = "3"
+members = ["crates/editor-core", "crates/editor-wasm"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+publish = false
+
+# The WASM engine ships to browsers: optimise for size, and keep panics from
+# pulling in unwinding machinery.
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+# Symbol names were most of the module: porting the structural commands took it
+# from 410,640 B to 673,921 B raw unstripped, and stripping brought it to
+# 426,324 B. The next growth was serde's derived Deserialize for the internally
+# tagged command enum; decoding commands by hand (`command.rs`) took the 29-type
+# build from 473,361 B to 325,302 B raw; all 30 types are 352,009 B raw
+# (123,059 B gzip) against the original budget. Caption command ownership needs
+# `z`: the measured command build drops from 554,857 B / 186,301 B gzip to
+# 489,369 B / 167,149 B gzip; edit latency remains enforced by engine budget tests.
+strip = true

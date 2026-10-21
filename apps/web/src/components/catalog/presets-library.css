@@ -1,0 +1,95 @@
+/* Project Presets library.
+ *
+ * Was 40 inline style objects and three file-local `CSSProperties` constants —
+ * CARD, INPUT and H2 — which are unnamed classes by another name. Every rule
+ * below is exactly what those objects set, so nothing moves on screen; the point
+ * is that the dead-rule check, the token check and the prefix check can now see
+ * this surface at all.
+ *
+ * `.pl-input` is worth noticing rather than tidying away: it is a FOURTH input
+ * spelling, 9px/12px padding at 13.5px against `.cv-input`'s 10px/12px at 13px.
+ * Close enough to look like the same control and different enough to be one that
+ * is slightly wrong. Reconciling them changes pixels, so it belongs to
+ * `converge-web-design-system`.
+ *
+ * `.pl-field` is `display: flex; flex-direction: column; gap: 6px` — which is
+ * `.tl2-field` and `.fc-cap-field` verbatim, making it a fifth spelling of the
+ * labelled field this change spent section 3 consolidating. It could not be
+ * folded in there because it was an inline object rather than a class.
+ */
+@layer feature {
+	/* `.pl-form` is `.form`: same column, at the shared gap and measure. */
+	.pl-textarea {
+		padding: var(--s-2) var(--s-3);
+		font-family: inherit;
+		font-size: var(--type-body-size);
+		resize: vertical;
+		min-height: 56px;
+	}
+	/* Restores a focus indicator removed by `outline: none`. See task 3.2. */
+	.pl-section {
+		margin-bottom: var(--s-5);
+	}
+	.pl-lead {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		margin: 0 0 var(--s-3);
+		max-width: 420px;
+	}
+	/* What is left of `.pl-card` once the card itself is `.collection-card`: the
+   measure and padding this one surface gives a single standing card. */
+	.pl-card {
+		max-width: 420px;
+		padding: var(--s-4);
+	}
+	.pl-stack {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2-5);
+	}
+	.pl-note {
+		font-size: var(--type-caption-size);
+		color: var(--fg-dim);
+		margin: 0px;
+	}
+	.pl-narrow {
+		max-width: 420px;
+	}
+	.pl-pick {
+		justify-content: space-between;
+		text-align: left;
+	}
+	.pl-pick-text {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-0-5);
+	}
+	.pl-strong {
+		font-weight: var(--weight-strong);
+	}
+	.pl-sub {
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+	}
+	/* `.pl-empty` was `EmptyState`'s inline style object as a class, 13.5px and
+   all. Both are `.collection-empty`. */
+	/* `.collection-rows` is `.collection-rows`. */
+	/* `.pl-row` was `.collection-card` + `.collection-card-row` rule for rule. Both are
+   the collection pattern now. */
+	.pl-row-sub {
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+		margin-top: var(--s-0-5);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.pl-gap {
+		margin-left: var(--s-2);
+	}
+	.pl-h2 {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-display);
+		margin: 0 0 var(--s-2);
+	}
+}

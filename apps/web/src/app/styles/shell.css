@@ -1,0 +1,419 @@
+/* Cascade layer: chrome. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer chrome {
+	/* The app shell: the frame every screen renders inside.
+
+   Sidebar and its collapsed state, the top bar (every width), the bottom tab
+   bar, the slide-in drawer and its scrim, and the page and main wrappers those
+   position. Nothing here belongs to a feature — a feature
+   rule goes in that feature's sheet. */
+	.shell {
+		display: flex;
+		min-height: 100dvh;
+	}
+	.sidebar {
+		display: none;
+		width: var(--sidebar-w);
+		flex-shrink: 0;
+		border-right: 1px solid var(--border);
+		background: var(--surface);
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 20;
+		overflow-y: auto;
+		flex-direction: column;
+	}
+	.shell-main > main {
+		padding-bottom: 72px;
+	}
+	@media (min-width: 1024px) {
+		.sidebar {
+			display: flex;
+		}
+		.shell-main {
+			margin-left: var(--sidebar-w);
+		}
+		.bottomnav {
+			display: none !important;
+		}
+		.shell-main > main {
+			padding-bottom: 0;
+		}
+		/* The desktop value of --page-pad used to be redefined here.
+	   It lives in tokens.css now, next to the base value it overrides: this
+	   sheet is layered and tokens.css is not, so a token set here would lose. */
+	}
+
+	.app-nav-item:focus-visible,
+	.crumb-link:focus-visible,
+	.ws-current:focus-visible,
+	.ws-option:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+
+	/* ─── Sidebar collapse (desktop) ─── */
+	.sidebar.collapsed {
+		width: 48px;
+	}
+	@media (min-width: 1024px) {
+		.sidebar.collapsed ~ .shell-main {
+			margin-left: var(--s-12);
+		}
+	}
+
+	/* App Shell — mobile first */
+
+	/* App Nav — bottom tabs (mobile) */
+	.app-nav {
+		display: flex;
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		background: var(--surface);
+		border-top: 1px solid var(--border);
+		z-index: var(--z-nav);
+		padding: var(--s-1) 0;
+		padding-bottom: max(var(--s-1), env(safe-area-inset-bottom));
+	}
+	.app-nav-item {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--s-0-5);
+		padding: var(--s-1-5) var(--s-1);
+		border: none;
+		background: none;
+		cursor: pointer;
+		color: var(--muted);
+		font-family: inherit;
+		transition: color var(--d-fast);
+	}
+	.app-nav-item.app-nav-active {
+		color: var(--fg);
+	}
+	.app-nav-icon {
+		position: relative;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 28px;
+	}
+	.app-nav-label {
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-medium);
+		letter-spacing: 0.02em;
+	}
+
+	/* Personas list page */
+
+	/* Legacy nav items (kept for backward compat in sub-components) */
+	.nav-item {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		padding: var(--s-2) var(--s-3);
+		border-radius: var(--r-1);
+		font-size: var(--type-body-size);
+		color: var(--fg);
+		text-decoration: none;
+		transition: background var(--d-fast);
+		background: none;
+		border: none;
+		width: 100%;
+		text-align: left;
+		cursor: pointer;
+		font-family: inherit;
+	}
+	.nav-item:hover {
+		background: var(--surface-tint);
+	}
+	.nav-item.active {
+		background: var(--dark);
+		color: var(--dark-fg);
+	}
+	.nav-item .dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
+	}
+	.nav-item .count {
+		margin-left: auto;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+	.nav-item.active .count {
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	.main {
+		min-width: 0;
+	}
+
+	/* `.page` and `.page-header` are gone. They were one of two page-heading idioms,
+   and the one with a single live caller — settings. Every surface now uses `.pg`
+   and the PageHeader component in design-system/components/page.{tsx,css}. The generic
+   `.eyebrow` utility stays in typography.css; only the page-level use of it went. */
+
+	/* ─── Standalone .dot + .count (was .nav-item .dot only — broken in utility-class buttons) ─── */
+	.dot {
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		flex-shrink: 0;
+		display: inline-block;
+	}
+	.count {
+		margin-left: auto;
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		font-variant-numeric: tabular-nums;
+	}
+	/* Active button keeps count visible on dark bg */
+	.nav-item.active .count {
+		color: rgba(255, 255, 255, 0.6);
+	}
+
+	/* Page wrapper general safety — `.pg` carries its own min-width: 0 */
+	/* overflow-x: clip prevents horizontal scrollbars WITHOUT establishing
+   a scroll-container, so position: sticky on descendants still works.
+   overflow-x: hidden would break any sticky child of main. */
+	.main {
+		min-width: 0;
+		overflow-x: clip;
+	}
+
+	/* =====================================================================
+   Mobile nav: hamburger + breadcrumb header, slide-in left drawer
+   ===================================================================== */
+
+	/* ─── Hamburger button in the mobile topbar ─── */
+	/* ─── Breadcrumb (replaces .topbar-crumb on mobile) ─── */
+
+	/* The breadcrumb, rendered inside the top bar at every width. */
+	.crumbs {
+		flex: 1;
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		min-width: 0;
+	}
+
+	.crumb {
+		color: var(--muted);
+	}
+	.crumb-cur {
+		color: var(--fg);
+		font-weight: var(--weight-strong);
+		height: 36px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+	}
+	.crumb-sep {
+		display: flex;
+		align-items: center;
+		color: var(--muted);
+		opacity: 0.55;
+		flex-shrink: 0;
+	}
+	.crumb-link {
+		background: none;
+		border: none;
+		padding: 0;
+		font: inherit;
+		text-transform: inherit;
+		letter-spacing: inherit;
+		color: var(--muted);
+		cursor: pointer;
+		white-space: nowrap;
+		flex-shrink: 0;
+		transition: color var(--d-fast);
+	}
+	.crumb-link:hover {
+		color: var(--fg);
+	}
+	.crumb-static {
+		color: var(--muted);
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	/* ─── Workspace switcher ───────────────────────────────────────────────
+   The active workspace sits between the wordmark and the nav it scopes: it is
+   the answer to "why does my content list look different", and putting it under
+   the list or in the footer buries the explanation. */
+	.ws-row {
+		padding: var(--s-2) var(--s-3);
+		border-bottom: 1px solid var(--border);
+	}
+	.ws-root {
+		position: relative;
+		flex-shrink: 0;
+	}
+	.ws-current {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		padding: var(--s-1);
+		border: none;
+		background: none;
+		border-radius: var(--r-1);
+		cursor: pointer;
+		font-family: inherit;
+		text-align: left;
+		color: var(--fg);
+		transition: background var(--d-fast);
+	}
+	.ws-current:hover {
+		background: var(--surface-hover);
+	}
+	.ws-current:active {
+		background: var(--surface-strong);
+	}
+	.ws-current-text {
+		display: grid;
+		min-width: 0;
+	}
+	.ws-current-name {
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ws-current-sub {
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--muted);
+		min-height: 1lh;
+	}
+	.ws-caret {
+		margin-left: auto;
+		display: flex;
+		color: var(--muted);
+	}
+	.ws-root.collapsed .ws-current {
+		justify-content: center;
+		padding: var(--s-1) 0;
+	}
+
+	/* The panel is the shared Popover: its surface, placement, collision handling
+   and stacking are that component's. These rules lay out what is inside. */
+	.ws-panel {
+		width: 240px;
+		max-width: calc(100vw - var(--s-4));
+		display: grid;
+		gap: var(--s-1);
+	}
+	.ws-option {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		padding: var(--s-1) var(--s-2);
+		min-height: var(--control-h-sm);
+		border: none;
+		background: none;
+		border-radius: var(--r-1);
+		cursor: pointer;
+		font-family: inherit;
+		text-align: left;
+		color: var(--fg-dim);
+		transition:
+			background var(--d-fast),
+			color var(--d-fast);
+	}
+	.ws-option:hover {
+		background: var(--surface-hover);
+		color: var(--fg);
+	}
+	.ws-option:active {
+		background: var(--surface-strong);
+	}
+	/* The selection role: the accent wash and ink, as every pressed control. */
+	.ws-option[aria-pressed="true"] {
+		background: var(--ai-bg);
+		color: var(--ai);
+	}
+	.ws-option-text {
+		display: grid;
+		min-width: 0;
+	}
+	.ws-option-name {
+		font-size: var(--type-control-size);
+		font-weight: var(--weight-medium);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ws-option-sub {
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--muted);
+	}
+	.ws-option-check {
+		margin-left: auto;
+		display: flex;
+	}
+	.ws-option-icon {
+		display: flex;
+		width: var(--s-6);
+		justify-content: center;
+		color: var(--muted);
+	}
+	.ws-note {
+		padding: var(--s-1) var(--s-2);
+	}
+	.ws-manage {
+		display: grid;
+		gap: var(--s-1);
+		padding-top: var(--s-1);
+		border-top: 1px solid var(--border-subtle);
+	}
+	.ws-create-open {
+		justify-content: flex-start;
+		width: 100%;
+	}
+	.ws-create {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: var(--s-2);
+		padding-top: var(--s-2);
+		border-top: 1px solid var(--border-subtle);
+	}
+	.ws-create-error {
+		grid-column: 1 / -1;
+	}
+	@media (pointer: coarse) {
+		.ws-option {
+			min-height: var(--control-h-touch);
+		}
+	}
+
+	/* Fullscreen create/editor: the chip shares a flex row with the crumbs, which
+   would otherwise squeeze it. Popover positioning uses its trigger. */
+
+	/* The image lab fills its pane. This is a shell layout rule -- it paints
+ * .shell-main > main -- and lived in image-lab.css, where the cluster sheet
+ * reached up into the shell. */
+	.shell-main > main:has(.imagelab-chat) {
+		padding-bottom: 0;
+	}
+}

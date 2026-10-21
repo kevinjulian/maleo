@@ -1,0 +1,67 @@
+/* PromptComposer. One box for the text, its send control and its options, so
+ * focus is shown once — on the box — rather than a ring inside a ring. */
+@layer chrome {
+	.ui-prompt {
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1-5);
+		min-width: 0;
+	}
+	.ui-prompt-box {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+		transition:
+			border-color var(--d-fast),
+			box-shadow var(--d-fast);
+	}
+	.ui-prompt[data-elevated="true"] .ui-prompt-box {
+		box-shadow: var(--shadow-3);
+	}
+	.ui-prompt-box:focus-within {
+		border-color: var(--ai-border);
+		box-shadow: 0 0 0 3px var(--ai-bg);
+	}
+	.ui-prompt[data-elevated="true"] .ui-prompt-box:focus-within {
+		box-shadow:
+			0 0 0 3px var(--ai-bg),
+			var(--shadow-3);
+	}
+	.ui-prompt-row {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--s-2);
+		padding: var(--s-2);
+	}
+	.ui-prompt-input {
+		flex: 1 1 auto;
+		min-width: 0;
+		max-height: 120px;
+		padding: var(--s-1);
+		border: 0;
+		outline: none;
+		resize: none;
+		background: transparent;
+		color: var(--fg);
+		font-family: var(--font-body);
+		font-size: var(--type-body-size);
+		line-height: 1.45;
+	}
+	.ui-prompt-input::placeholder {
+		color: var(--muted);
+	}
+	.ui-prompt-input:disabled {
+		cursor: not-allowed;
+	}
+	.ui-prompt-tools {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-2);
+		padding: 0 var(--s-2) var(--s-2);
+	}
+}

@@ -1,0 +1,639 @@
+/* Cascade layer: feature. Declared in src/app/index.html, which fixes the
+ * order once — a rule's winner no longer depends on which file it lives in. */
+@layer feature {
+	/* What acts on a clip: the edit and context menus, trim handles, touch targets, locked and hidden tracks, drag ghosts, the playhead and hoverhead, and the phone toolbar. */
+
+	/* Selected-clip actions, outside the preview at the stage top-right. */
+
+	/* Compact, clip-specific Controls popover, anchored top-right of preview. */
+	/* Transparent click-away backdrop shared by the Controls + Edit popovers. */
+
+	/* The Edit Timeline Item shell.
+ *
+ * Named `tl2-ctlpop-*` until now, which claimed kinship with `tl2-ctl` — a
+ * labelled control — on the strength of four shared characters and nothing else.
+ * They are unrelated, and prefix similarity is what does the grouping in this
+ * repository, so the name was actively misleading.
+ *
+ * The base `.tl2-ctlpop` rule is deleted rather than renamed. It described a
+ * popover box — absolute, 340px, its own background, border, radius and shadow —
+ * and NOTHING has ever carried the class: `edit-item-modal.tsx` renders the
+ * header and body as siblings in a fragment, so the container that would have
+ * worn it is supplied by whatever hosts the modal. Checked in the running
+ * editor, that host is a VUI accordion (`vui-accordion-body`), so the box those
+ * declarations describe has never rendered anywhere. The census reported the
+ * class at zero call sites; this is why.
+ */
+	.tl2-edititem-body {
+		padding: var(--s-3) var(--s-3);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+		max-height: 72vh;
+		overflow-y: auto;
+		overflow-x: hidden;
+	}
+
+	/* Right-click clip context menu (NLE actions). */
+	.tl2-ctxscrim {
+		position: fixed;
+		inset: 0;
+		z-index: 400;
+		background: none;
+		border: none;
+		cursor: default;
+	}
+	.tl2-ctxmenu {
+		position: fixed;
+		z-index: 401;
+		min-width: 188px;
+		padding: var(--s-1);
+		background: var(--surface);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		box-shadow: var(--shadow-2);
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+	}
+	.tl2-ctxmenu button {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		padding: var(--s-1-5) var(--s-2);
+		border: none;
+		background: none;
+		cursor: pointer;
+		font-size: var(--type-control-size);
+		color: var(--fg);
+		border-radius: var(--r-1);
+		text-align: left;
+	}
+	.tl2-ctxmenu button kbd {
+		margin-left: auto;
+		font-size: var(--type-label-size);
+		color: var(--fg-dim);
+		font-family: inherit;
+	}
+	.tl2-ctxmenu button:hover:not(:disabled) {
+		background: var(--surface-hover);
+	}
+	.tl2-ctxmenu button:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+	.tl2-ctxmenu button.danger:hover:not(:disabled) {
+		background: var(--err-bg);
+		color: var(--err);
+	}
+	.tl2-ctxsep {
+		height: 1px;
+		margin: var(--s-0-5) var(--s-0-5);
+		background: var(--border);
+	}
+	/* Add-clip menu header: the resolved (snapped) insert time. */
+	.tl2-ctxhead {
+		padding: var(--s-1) var(--s-2) var(--s-1-5);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg-dim);
+	}
+
+	/* Inline on-canvas text overlay editor (double-click a text clip). */
+
+	/* B-roll composited over the preview base frame */
+	/* The wrapper `ClipRange` puts around whatever a clip family draws.
+   It has to FILL the clip, not shrink-wrap its contents: the waveform canvas
+   below it is `width: 100%`, and a shrink-wrapped parent made that resolve
+   against the label's width instead of the clip's — so zooming widened the clip
+   and left the waveform drawn at the old resolution. The clip is already a flex
+   row with its own padding, so this is one flexible child of it. */
+	.tl2-clip-body-wrap {
+		flex: 1 1 auto;
+		min-width: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		overflow: hidden;
+		height: 100%;
+	}
+	.tl2-clip-body {
+		display: flex;
+		flex-direction: column;
+		gap: 1px;
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+	.tl2-clip-body b {
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.tl2-clip-body em {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-style: normal;
+		color: var(--muted);
+		white-space: nowrap;
+	}
+	.tl2-clip-textbody {
+		background: oklch(0.64 0.13 255 / 0.16);
+	}
+	.tl2-clip-databody {
+		width: 100%;
+		height: 100%;
+		justify-content: center;
+		background: linear-gradient(90deg, oklch(0.72 0.15 82 / 0.22), oklch(0.72 0.12 110 / 0.12));
+	}
+	.tl2-clip-databody .tl2-clip-ic {
+		display: none;
+	}
+	.tl2-clip-audio .tl2-clip-ic {
+		display: flex;
+		flex-shrink: 0;
+		color: oklch(0.64 0.16 58);
+	}
+	.tl2-clip.editing {
+		outline: 2px solid var(--ai);
+		outline-offset: 1px;
+	}
+	/* The trim handle's APPEARANCE. Its box belongs to `@maleo/vui`, which anchors
+   one handle to each of the range's own edges and sizes them from the two tokens
+   set below — inward, so a handle never overhangs the neighbouring clip. This
+   span fills that box; the positioning it used to do itself is gone with it. */
+	/* The trim handles' own geometry, which the timeline now owns.
+   It came from the previous VUI stylesheet, and the migration is what makes
+   that visible: `.tl2-clip-resize` is `inset: 0`, so without a sized wrapper it
+   covered the whole clip and every press on the body resolved to a trim. The
+   handle anchors to its edge and grows INWARD, so widening it for a finger
+   never reaches over the neighbouring clip, and it is capped so two handles can
+   never cover the body and leave the clip unpressable. */
+	.tl2-clip {
+		--tl2-handle-w: 16px;
+		--tl2-handle-touch-w: 44px;
+	}
+	.tl2-clip-handle {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		z-index: 4;
+		width: var(--tl2-handle-w);
+		cursor: ew-resize;
+	}
+	.tl2-clip-handle.l {
+		left: 0;
+	}
+	.tl2-clip-handle:not(.l) {
+		right: 0;
+	}
+	@media (pointer: coarse) {
+		.tl2-clip-handle {
+			width: min(var(--tl2-handle-touch-w), 40%);
+		}
+	}
+	.tl2-clip-resize {
+		position: absolute;
+		inset: 0;
+		cursor: ew-resize;
+	}
+	.tl2-clip-resize::after {
+		content: "";
+		position: absolute;
+		top: 8px;
+		bottom: 8px;
+		right: 4px;
+		width: 3px;
+		border-radius: 2px;
+		background: color-mix(in oklch, var(--fg) 70%, transparent);
+		opacity: 0;
+		transition:
+			opacity var(--d-fast),
+			background var(--d-fast);
+	}
+	.tl2-clip-video:hover .tl2-clip-resize::after,
+	.tl2-clip-text:hover .tl2-clip-resize::after,
+	.tl2-clip-caption:hover .tl2-clip-resize::after {
+		opacity: 1;
+	}
+	/* Left trim handle (in-point) — mirror of the right handle. Revealed on any clip. */
+	.tl2-clip-resize.l::after {
+		right: auto;
+		left: 3px;
+	}
+	.tl2-clip:hover .tl2-clip-resize::after {
+		opacity: 1;
+		background: var(--ai);
+	}
+
+	/* Locked / hidden tracks: clips read as non-interactive. */
+	.tl2-clip.locked {
+		cursor: default;
+	}
+	.tl2-clip.locked .tl2-clip-resize,
+	.tl2-clip.locked .tl2-clip-del {
+		display: none;
+	}
+	.tl2-clip.hidden {
+		opacity: 0.4;
+	}
+
+	/* ─────────────────────────────────────────────────────────────────────
+   Clips under a finger.
+
+   Keyed on `pointer: coarse`, not on width — the same split the density rules
+   above use, and for the same reason: a touch laptop needs this and a narrow
+   desktop window does not.
+   ───────────────────────────────────────────────────────────────────── */
+	@media (pointer: coarse) {
+		/* ── `touch-action`, narrowed per surface ──
+
+	   The layout work set `pan-x` on the drag rails because nothing handled
+	   touch, and recorded that the next phase would narrow the scope rather than
+	   reverse it. This is that narrowing, and the rule it follows is: a surface
+	   declares no more than the axes its own handlers actually implement.
+
+	   Both errors here are silent. Too much `none` and the timeline stops
+	   scrolling — which is exactly what `pan-x` was introduced to fix. Too
+	   little and the browser claims a gesture mid-drag, so the clip stops
+	   tracking the finger and springs back on release.
+
+	   The SCROLLER keeps `pan-x`: the browser still owns horizontal panning
+	   here, and that is the whole of "the lane area pans". It is not `auto`,
+	   because giving up pinch-zoom is what lets both pointers of a pinch reach
+	   the zoom handler instead of scaling a page that disables user scaling
+	   anyway. And it is not `none`, which would leave the timeline unscrollable.
+
+	   The RULER takes `none`: its handler owns the horizontal drag (scrub, and
+	   the range it marks out) and there is no vertical scrolling to preserve. */
+		.tl2-tlscroll {
+			touch-action: pan-x;
+		}
+		.tl2-ruler {
+			touch-action: none;
+		}
+
+		/* The pan/move split, declared rather than arbitrated.
+
+	   An UNSELECTED clip keeps the horizontal axis for the browser, so pressing
+	   one and moving scrolls the timeline exactly as pressing empty lane space
+	   does. That is what makes "selection is a mode" true at the platform level
+	   and not merely in the handler — a handler that declined the drag while the
+	   element still declared `touch-action: none` would produce a clip that
+	   cannot be dragged AND cannot be scrolled past.
+
+	   A SELECTED clip declares `none`, because its handler now owns both axes.
+	   This is also the whole of "the timeline does not pan under a drag": the
+	   browser never claims the gesture, so there is no scroll to suppress
+	   mid-drag — which could not have been done anyway, since `touch-action` is
+	   read when the gesture starts and ignored after. */
+		.tl2-clip {
+			touch-action: pan-x;
+		}
+		.tl2-clip.on {
+			touch-action: none;
+		}
+
+		/* Trim handles appear on the selected clip and nowhere else, and on a clip
+	   wide enough to hold two of them plus a body to grab. Neither is a CSS rule
+	   any more: `contentRangeCapabilities` declines the capability and VUI renders
+	   no handle at all, because a handle hidden with `display: none` still owns
+	   its hit box and would take the press meant for the body.
+	   Always drawn, never on hover: there is no hover here, and a grip that only
+	   appears on a state the device cannot produce is invisible. */
+		.tl2-clip.on .tl2-clip-resize::after {
+			opacity: 1;
+			background: var(--ai);
+		}
+
+		/* Drawn wider than its duration so it can be tapped at all.
+
+	   The hatch is the point. Padding the target breaks the timeline's promise
+	   that width means time, and the honest response is to show where that
+	   promise is suspended rather than to let the operator read a false
+	   duration off a clip that looks like every other one. */
+		.tl2-clip.padded::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			pointer-events: none;
+			border-radius: inherit;
+			background-image: repeating-linear-gradient(
+				45deg,
+				transparent 0 3px,
+				color-mix(in oklab, var(--fg) 20%, transparent) 3px 5px
+			);
+		}
+
+		/* Touch targets WITHOUT breaking row alignment. The first attempt gave these
+	 * rows `height: auto; min-height: 44px`, which reintroduced the drift this
+	 * file warns about twice — a gutter row taller than its lane pushes every row
+	 * below it out of step. So the row keeps `--tl2-row-h` and the controls widen
+	 * instead of growing. The cost, stated: the vertical tap target is the lane's
+	 * height, not 44px, and it cannot be while the row must match a 26px lane. */
+		.tl2-track-tg {
+			width: 44px;
+			height: 100%;
+			border-radius: var(--r-2);
+		}
+		/*.tl2-gutter { width: 168px; }*/
+		.tl2-gutter-row {
+			padding: 0 var(--s-1);
+			gap: var(--s-1-5);
+		}
+		.tl2-track-ic {
+			padding: 0 var(--s-2);
+		}
+		/*.tl2-track-ic { flex: 0 0 auto; }*/
+	}
+	/* Locked track: diagonal hatch on the lane + a lock chip so the state is obvious
+   at a glance, not just the header toggle. Clips stay visible but non-editable. */
+	.tl2-lane.locked {
+		background-image: repeating-linear-gradient(
+			45deg,
+			transparent,
+			transparent 7px,
+			color-mix(in oklab, var(--fg) 6%, transparent) 7px,
+			color-mix(in oklab, var(--fg) 6%, transparent) 8px
+		);
+	}
+	.tl2-lane.locked .tl2-clip {
+		cursor: default;
+	}
+	.tl2-gutter-row.locked {
+		box-shadow: inset 2px 0 0 var(--muted);
+	}
+	.tl2-gutter-row.locked .tl2-track-tg.on {
+		color: var(--ai);
+	}
+	/* ClipBox over a locked clip: dashed, muted, no grab handles (set inline). */
+	.tl2-clipbox.locked {
+		cursor: default;
+		border-style: dashed;
+		border-color: var(--muted);
+		opacity: 0.75;
+	}
+
+	/* The lane's group mark, tinted with the hue its clips wear (set inline from
+   `laneGroupHue`, which names the same `--clip-*` properties the clips use). */
+	.tl2-track-ic {
+		padding: 0 var(--s-2);
+		/*flex: 1; min-width: 0; display: inline-flex; align-items: center;*/
+		color: var(--muted);
+	}
+	.tl2-track-tg {
+		width: 20px;
+		height: 20px;
+		border-radius: 5px;
+		flex-shrink: 0;
+		border: none;
+		background: none;
+		color: var(--muted);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.tl2-track-tg:hover {
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	.tl2-track-tg.on {
+		color: var(--ai);
+	}
+
+	/* Playhead spans the lanes, starting just under the ruler. */
+	/* Collision warning: the DRAGGED clip fills red while it overlaps another clip
+   on its row. On drop it relocates to the next row (or a freshly inserted row
+   right below the collision); Alt-drop keeps the overlap. */
+	.tl2-clip.collide {
+		outline: 2px solid var(--tl2-playhead);
+		outline-offset: -1px;
+		box-shadow: inset 0 0 0 100vmax color-mix(in srgb, var(--tl2-playhead) 30%, transparent);
+	}
+	/* Drop-position ghost for external (All Media) drags — dashed outline of where
+   the item will land; positioned imperatively like the hoverhead. */
+	.tl2-dropghost {
+		position: absolute;
+		height: var(--tl2-row-h, var(--tl2-lane-h));
+		border-radius: var(--tl2-clip-r);
+		border: 2px dashed var(--tl2-hoverhead);
+		background: color-mix(in srgb, var(--tl2-hoverhead) 16%, transparent);
+		pointer-events: none;
+		z-index: 7;
+		padding: var(--s-1);
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+	}
+	.tl2-dropghost[data-invalid="true"] {
+		border-color: var(--err);
+		background: var(--surface);
+	}
+	.tl2-lane[data-media-drop="valid"] {
+		outline: 2px solid var(--ai);
+		outline-offset: -2px;
+	}
+	.tl2-lane[data-media-drop="invalid"] {
+		outline: 2px solid var(--err);
+		outline-offset: -2px;
+	}
+	.tl2-media-drag-ghost {
+		position: fixed;
+		top: -1000px;
+		left: 0;
+		width: 180px;
+		padding: var(--s-2);
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		border: 1px solid var(--border-strong);
+		border-radius: var(--r-2);
+		background: var(--surface-overlay);
+		color: var(--fg);
+		font-size: var(--type-caption-size);
+		pointer-events: none;
+	}
+	.tl2-media-drag-ghost img {
+		width: 44px;
+		height: 44px;
+		object-fit: cover;
+		border-radius: var(--r-1);
+	}
+	.tl2-media-drag-ghost span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	/* Global drag state (set while a clip drag is live): consistent cursor + no
+   accidental text selection mid-drag. */
+	/* Anchored at zero and moved by transform: the position used to arrive as an
+   inline `left`, which meant a React render per frame of playback. */
+	.tl2-playhead {
+		position: absolute;
+		left: 0;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		background: var(--tl2-playhead);
+		z-index: 9;
+		cursor: ew-resize;
+		box-shadow:
+			0 0 0 1px rgba(255, 77, 77, 0.18),
+			0 0 12px rgba(255, 77, 77, 0.22);
+	}
+	/* Focusable as a slider: ←/→ step one frame. */
+	.tl2-playhead:focus-visible {
+		outline: 2px solid var(--ai);
+		outline-offset: 2px;
+	}
+	.tl2-playhead-grip {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: 10px;
+		height: 14px;
+		border-radius: var(--r-1) var(--r-1) 10px 10px;
+		background: var(--tl2-playhead);
+		box-shadow: 0 1px 4px rgba(255, 77, 77, 0.5);
+	}
+	/* Hoverhead: thin blue cursor-position ghost, purely visual (no pointer events).
+   Position is driven imperatively (style.left) to avoid re-rendering per move. */
+	.tl2-hoverhead {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: var(--tl2-hoverhead);
+		opacity: 0.7;
+		z-index: 8;
+		pointer-events: none;
+	}
+	.tl2-hoverhead::after {
+		content: attr(data-time);
+		position: absolute;
+		top: -16px;
+		left: 4px;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--tl2-hoverhead);
+		background: var(--surface);
+		padding: 0 var(--s-1);
+		border-radius: 3px;
+		white-space: nowrap;
+	}
+
+	/* Preview "edit scene" affordance + flow status chip */
+	.tl2-flow {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		letter-spacing: 0.02em;
+		white-space: nowrap;
+	}
+
+	/* ── Phone: the toolbar is two rows, not three columns ──
+   Must agree with PHONE_MAX_WIDTH in hooks/editor/use-phone-layout.ts.
+
+   The desktop grid is `minmax(180px, 1fr) auto minmax(360px, 1fr)` with a
+   320px minimum on the centre group. With gaps and padding that is a ~912px
+   floor, so on a 393px phone the bar ran more than twice the viewport and cut
+   off mid-timecode — the transport was visible but the timecode, aspect and
+   insight controls were simply off-screen with nothing to scroll.
+
+   Transport takes its own full-width row and stays put, because play/pause and
+   the playhead are what you reach for constantly and a control that scrolls
+   away is worse than one that is small. The two tool clusters share the second
+   row and scroll on the x axis, which keeps every tool reachable without
+   choosing a subset that then drifts from desktop. */
+	@media (max-width: 860px) {
+		.tl2-tlbar {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--s-1) var(--s-2);
+			padding: var(--s-1-5) var(--s-2);
+		}
+		/* `order: -1` rather than reordering the markup: the DOM order is
+	   left / centre / right and it is correct for a screen reader and for the
+	   desktop grid. Only the visual row changes here. */
+		.tl2-tlbar-c {
+			order: -1;
+			flex: 1 0 100%;
+			min-width: 0;
+			justify-content: space-between;
+		}
+		.tl2-tlbar-l,
+		.tl2-tlbar-r {
+			flex: 1 1 auto;
+			min-width: 0;
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+		/* The scenes count is a label, not an action — first thing worth losing. */
+		.tl2-tlbar-r .tl2-flow {
+			display: none;
+		}
+
+		/* Only Undo, Redo and Play/pause stay as buttons; the timecode stays
+	   because it is a readout. Everything else moves behind More, which is a
+	   height decision as much as a tidiness one: the three-row wrap this
+	   replaces cost ~110px of a 659px viewport, and the timeline it competes
+	   with had only 126-190px. */
+		.tl2-tlbar {
+			flex-wrap: nowrap;
+			align-items: center;
+		}
+		.tl2-tlbar-c {
+			order: 0;
+			flex: 1 1 auto;
+			justify-content: center;
+			gap: var(--s-2);
+		}
+		.tl2-tlbar-l,
+		.tl2-tlbar-r {
+			flex: 0 0 auto;
+			overflow: visible;
+		}
+
+		/* The sheet's own body. The controls inside keep their desktop classes, so
+	   they only need laying out, not restyling. */
+		.tl2-more-sheet .tl2-more-body {
+			display: flex;
+			flex-direction: column;
+			gap: var(--s-2-5);
+			padding: var(--s-3) var(--s-3);
+			overflow-y: auto;
+		}
+		.tl2-more-sheet .tl2-more-row {
+			display: flex;
+			align-items: center;
+			flex-wrap: wrap;
+			gap: var(--s-2);
+		}
+		/* The zoom slider is the one control that wants the full width it never
+	   gets in a toolbar. */
+		.tl2-more-sheet .tl2-zoom {
+			flex: 1 0 100%;
+		}
+		.tl2-more-sheet .tl2-zoom-slider {
+			flex: 1;
+		}
+		/* Popovers inside the sheet anchor to the sheet, not the bar. */
+		.tl2-more-sheet .tl2-ab-pop {
+			position: static;
+			width: 100%;
+			box-shadow: none;
+		}
+	}
+}

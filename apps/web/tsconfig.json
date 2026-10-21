@@ -1,0 +1,37 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"paths": {
+			"@app/*": ["./src/app/*"],
+			"@pages/*": ["./src/pages/*"],
+			"@components/*": ["./src/components/*"],
+			"@design-system/*": ["./src/design-system/*"],
+			"@hooks/*": ["./src/hooks/*"],
+			"@stores/*": ["./src/stores/*"],
+			"@api/*": ["./src/api/*"],
+			"@controllers/*": ["./src/controllers/*"],
+			"@services/*": ["./src/services/*"],
+			"@models/*": ["./src/models/*"]
+		},
+		"jsx": "react-jsx",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"types": ["bun-types"],
+		"lib": ["ES2022", "DOM", "DOM.Iterable"]
+	},
+	"include": [
+		"src/**/*",
+		"stories/**/*",
+		".storybook/**/*",
+		"./visual/**/*",
+		"./perf/**/*",
+		"./scripts/**/*",
+		"playwright.config.ts"
+	]
+}

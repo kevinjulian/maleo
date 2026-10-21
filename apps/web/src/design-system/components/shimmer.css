@@ -1,0 +1,34 @@
+/* Cascade layer: feature, the layer these rules were written in.
+ *
+ * The generating sweep over a Frame. It lived in the editor's create-content.css
+ * while Shimmer lived here, so it rendered only where the editor sheet was in
+ * the bundle. Moved verbatim, same layer: nothing on screen changes. */
+@layer feature {
+	.cv-shimmer {
+		background: linear-gradient(
+			100deg,
+			transparent 20%,
+			rgba(255, 255, 255, 0.55) 50%,
+			transparent 80%
+		);
+		background-size: 220% 100%;
+		animation: cvShim 1.1s linear infinite;
+	}
+	.dark .cv-shimmer {
+		background: linear-gradient(
+			100deg,
+			transparent 20%,
+			rgba(255, 255, 255, 0.14) 50%,
+			transparent 80%
+		);
+		background-size: 220% 100%;
+	}
+	@keyframes cvShim {
+		0% {
+			background-position: 180% 0;
+		}
+		100% {
+			background-position: -80% 0;
+		}
+	}
+}

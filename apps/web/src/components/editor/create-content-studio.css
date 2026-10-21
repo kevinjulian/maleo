@@ -1,0 +1,487 @@
+/* The three-panel Scene Studio: its catalogue, tabs, rows and scene-reference cards. */
+/* Cascade layer: feature. Declared in src/styles.css, which fixes the order
+ * once — a rule's winner no longer depends on which file it lives in or
+ * when the bundler injected it. */
+@layer feature {
+	/* ═══ 3-panel Scene Studio: catalogue (full height) | [ scenes header / refs | content ] ═══ */
+	.cv-studio {
+		height: calc(100dvh - var(--cv-top));
+		display: flex;
+		flex-direction: row;
+		min-height: 0;
+	}
+	.cv-studio-right {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
+	}
+	.cv-strip {
+		display: flex;
+		align-items: center;
+		gap: var(--s-4);
+		padding: var(--s-2-5) var(--s-4);
+		border-bottom: 1px solid var(--border);
+		background: var(--surface);
+		flex-shrink: 0;
+	}
+	.cv-strip-scenes {
+		display: flex;
+		gap: var(--s-2);
+		overflow-x: auto;
+		flex: 1;
+		padding-bottom: var(--s-0-5);
+	}
+	.cv-stripcard {
+		position: relative;
+		flex-shrink: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--bg);
+		padding: var(--s-1);
+		cursor: pointer;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		transition: all var(--d-fast);
+	}
+	.cv-stripcard:hover {
+		border-color: var(--border-strong);
+	}
+	.cv-stripcard.on {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected);
+	}
+	.cv-striplbl {
+		font-size: var(--type-micro-size);
+		color: var(--fg-dim);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: center;
+	}
+	.cv-stripadd {
+		flex-shrink: 0;
+		border: 1px dashed var(--border-strong);
+		border-radius: var(--r-1);
+		background: transparent;
+		color: var(--muted);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1);
+		cursor: pointer;
+		font-family: inherit;
+		font-size: var(--type-micro-size);
+		transition: all var(--d-fast);
+		align-self: stretch;
+		min-height: 60px;
+	}
+	.cv-stripadd:hover {
+		background: var(--surface-tint);
+		color: var(--ai);
+		border-color: var(--ai-border);
+	}
+	.cv-strip-left {
+		display: flex;
+		align-items: center;
+		gap: var(--s-3);
+		min-width: 0;
+		flex: 1;
+	}
+	.cv-strip-scenes {
+		flex: 0 1 auto;
+	}
+	.cv-viewseg {
+		flex-shrink: 0;
+	}
+
+	.cv-studio-rcols {
+		flex: 1;
+		min-height: 0;
+		display: grid;
+		grid-template-columns: 300px 1fr;
+	}
+	.cv-cat {
+		width: 286px;
+		flex-shrink: 0;
+	}
+	.cv-cat,
+	.cv-mid,
+	.cv-right {
+		height: 100%;
+		overflow-y: auto;
+		padding: var(--s-4);
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-3);
+	}
+	.cv-cat,
+	.cv-mid {
+		border-right: 1px solid var(--border);
+	}
+	.cv-cat {
+		background: var(--bg);
+	}
+	.cv-mid {
+		background: var(--bg);
+	}
+	.cv-right {
+		background: var(--surface);
+	}
+
+	.cv-panel-h {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		font-family: var(--font-display);
+		font-weight: var(--weight-strong);
+		font-size: var(--type-body-size);
+	}
+	.cv-panel-h.sm {
+		font-size: var(--type-caption-size);
+	}
+	.cv-panel-h svg {
+		color: var(--muted);
+	}
+
+	.cv-cat-filters {
+		display: flex;
+		gap: var(--s-1);
+		flex-wrap: wrap;
+	}
+	.cv-cat-filters button {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-1) var(--s-2);
+		border-radius: var(--r-pill);
+		border: 1px solid var(--border);
+		background: var(--surface);
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+		color: var(--muted);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-cat-filters button span {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		opacity: 0.6;
+	}
+	.cv-cat-filters button:hover {
+		border-color: var(--border-strong);
+		color: var(--fg);
+	}
+	.cv-cat-filters button.on {
+		background: var(--dark);
+		color: var(--dark-fg);
+		border-color: var(--dark);
+	}
+
+	.cv-deftoggle {
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		width: 100%;
+		padding: var(--s-2) var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		font-family: inherit;
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-medium);
+		color: var(--fg-dim);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-deftoggle:hover {
+		border-color: var(--border-strong);
+	}
+	.cv-deftoggle.on {
+		border-color: var(--dark);
+		background: var(--accent-bg);
+		color: var(--fg);
+	}
+	.cv-deftoggle-box {
+		width: 18px;
+		height: 18px;
+		border-radius: 5px;
+		border: 1.5px solid var(--border-strong);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: #fff;
+		flex-shrink: 0;
+		transition: all var(--d-fast);
+	}
+	.cv-deftoggle.on .cv-deftoggle-box {
+		background: var(--dark);
+		border-color: var(--dark);
+		color: var(--dark-fg);
+	}
+	.cv-deftoggle-txt {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+	}
+	.cv-durrow {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-2);
+	}
+	.cv-durstep {
+		width: 28px;
+		height: 32px;
+		border-radius: var(--r-1);
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--fg-dim);
+		font-size: var(--type-subsection-size);
+		line-height: 1;
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-durstep:hover {
+		border-color: var(--border-strong);
+		color: var(--fg);
+	}
+	.cv-durinput {
+		width: 74px;
+		text-align: center;
+		font-family: var(--font-body);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* Generated reference: big image left, data right */
+
+	.cv-cat-empty {
+		grid-column: 1/-1;
+		padding: var(--s-4);
+		text-align: center;
+		font-size: var(--type-caption-size);
+		color: var(--muted);
+	}
+
+	/* Catalogue category tabs */
+	.cv-catcat {
+		display: flex;
+		gap: var(--s-0-5);
+		padding: var(--s-0-5);
+		background: var(--surface-tint);
+		border-radius: var(--r-1);
+	}
+	.cv-catcat button {
+		flex: 1;
+		min-width: 0;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--s-1);
+		padding: var(--s-1-5) var(--s-0-5);
+		border-radius: 5px;
+		border: none;
+		background: transparent;
+		font-family: inherit;
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+		color: var(--muted);
+		cursor: pointer;
+		transition: all var(--d-fast);
+		white-space: nowrap;
+		overflow: hidden;
+	}
+	.cv-catcat button svg {
+		color: var(--muted);
+		flex-shrink: 0;
+	}
+	.cv-catcat button.on {
+		background: var(--surface);
+		color: var(--fg);
+		box-shadow: var(--shadow-1);
+	}
+	.cv-catcat button.on svg {
+		color: var(--ai);
+	}
+
+	/* Catalogue rows (voices / notes) */
+	.cv-catrow {
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		padding-right: var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		transition: all var(--d-fast);
+	}
+	.cv-catrow:hover {
+		border-color: var(--border-strong);
+	}
+	.cv-catrow.sel {
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.cv-catrow-lbl {
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.cv-catrow-sub {
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+		line-height: 1.4;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.cv-catrow.note .cv-catrow-sub {
+		white-space: normal;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+	}
+	.cv-notetags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+		margin-top: var(--s-1);
+	}
+	.cv-notetag {
+		display: inline-flex;
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		padding: 1px var(--s-1-5);
+		border-radius: var(--r-pill);
+		background: var(--surface-strong);
+		color: var(--fg-dim);
+		vertical-align: middle;
+		letter-spacing: 0.02em;
+	}
+	.cv-notetags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+		margin-top: var(--s-1);
+	}
+	.cv-tagsugs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1);
+	}
+	.cv-tagsug {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-medium);
+		padding: var(--s-0-5) var(--s-2);
+		border-radius: var(--r-pill);
+		border: 1px dashed var(--border-strong);
+		background: transparent;
+		color: var(--muted);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-tagsug:hover {
+		color: var(--ai);
+		border-color: var(--ai-border);
+		background: var(--ai-bg);
+	}
+	.cv-presetgrid {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+	}
+	.cv-presetbtn {
+		border: 1px solid var(--border);
+		background: var(--surface);
+		color: var(--fg);
+		border-radius: var(--r-pill);
+		padding: var(--s-1-5) var(--s-2-5);
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		font-weight: var(--weight-strong);
+		cursor: pointer;
+		transition: all var(--d-fast);
+	}
+	.cv-presetbtn:hover {
+		border-color: var(--ai-border);
+		color: var(--ai);
+		background: var(--ai-bg);
+	}
+
+	/* Middle: notes group */
+
+	/* Board read-only name + list open chevron */
+	.cv-boardname-ro {
+		font-family: var(--font-display);
+		font-size: var(--type-body-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.cv-lc-open {
+		color: var(--muted);
+		display: inline-flex;
+	}
+
+	/* Unified scene-reference card state: pin badge (always) / remove (hover) */
+
+	.cv-mid-sub {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		line-height: 1.5;
+	}
+
+	.cv-right-pos {
+		font-family: var(--font-body);
+		font-size: var(--type-micro-size);
+		color: var(--muted);
+	}
+	.cv-right-tools {
+		margin-left: auto;
+		display: flex;
+		gap: 1px;
+	}
+	.cv-right-frame {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-3);
+		align-items: stretch;
+	}
+	/* A basis, so the column drops under the frames instead of being squeezed to
+ * a strip that clips its own button. */
+	.cv-right-frameside {
+		flex: 1 1 220px;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--s-2);
+		justify-content: center;
+	}
+	.cv-right-refcount {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		font-size: var(--type-caption-size);
+		font-weight: var(--weight-strong);
+		color: var(--fg-dim);
+	}
+	.cv-right-refcount svg {
+		color: var(--ai);
+	}
+	.cv-right-frametip {
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		line-height: 1.5;
+	}
+}

@@ -1,0 +1,124 @@
+{
+	"workspace": null,
+	"main": {
+		"x": 121,
+		"y": 101,
+		"w": 1198,
+		"h": 708
+	},
+	"preview": {
+		"x": 129,
+		"y": 109,
+		"w": 819,
+		"h": 342
+	},
+	"preview-stage": {
+		"x": 130,
+		"y": 110,
+		"w": 817,
+		"h": 278
+	},
+	"preview-frame": null,
+	"transport": null,
+	"timecode": null,
+	"timeline": {
+		"x": 129,
+		"y": 459,
+		"w": 1182,
+		"h": 342
+	},
+	"timeline-toolbar": {
+		"x": 130,
+		"y": 460,
+		"w": 1180,
+		"h": 45
+	},
+	"ruler": {
+		"x": 250,
+		"y": 505,
+		"w": 762,
+		"h": 24
+	},
+	"markers": null,
+	"timeline-scroller": {
+		"x": 250,
+		"y": 505,
+		"w": 1060,
+		"h": 295
+	},
+	"timeline-grid": {
+		"x": 130,
+		"y": 505,
+		"w": 1180,
+		"h": 295
+	},
+	"rows": null,
+	"row": {
+		"x": 250,
+		"y": 529,
+		"w": 1060,
+		"h": 36
+	},
+	"gutter": {
+		"x": 130,
+		"y": 505,
+		"w": 120,
+		"h": 295
+	},
+	"gutter-row": {
+		"x": 130,
+		"y": 529,
+		"w": 119,
+		"h": 36
+	},
+	"item": {
+		"x": 250,
+		"y": 531,
+		"w": 340,
+		"h": 31
+	},
+	"trim-start": {
+		"x": 583,
+		"y": 676,
+		"w": 16,
+		"h": 29
+	},
+	"trim-end": {
+		"x": 614,
+		"y": 532,
+		"w": 16,
+		"h": 29
+	},
+	"playhead": {
+		"x": 250,
+		"y": 505,
+		"w": 2,
+		"h": 384
+	},
+	"inspector": {
+		"x": 956,
+		"y": 109,
+		"w": 355,
+		"h": 342
+	},
+	"inspector-rail": {
+		"x": 957,
+		"y": 110,
+		"w": 353,
+		"h": 340
+	},
+	"inspector-panel": null,
+	"category-rail": {
+		"x": 957,
+		"y": 110,
+		"w": 41,
+		"h": 340
+	},
+	"accordion-header": {
+		"x": 998,
+		"y": 110,
+		"w": 312,
+		"h": 44
+	},
+	"mobile-actions": null
+}

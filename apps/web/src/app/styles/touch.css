@@ -1,0 +1,94 @@
+/* Cascade layer: NONE. This sheet is deliberately unlayered.
+ *
+ * styles.css warns that "a new sheet that forgets its @layer wrapper silently
+ * outranks the whole cascade". This one has not forgotten — outranking the
+ * whole cascade is the requirement, and the comment is here so the next reader
+ * can tell the two cases apart.
+ *
+ * Why it has to be: the cascade compares layer before specificity, and every
+ * real input font-size in this client lives in the `feature` layer, which is
+ * the highest one declared — `.cv-input` at 13px, `.fc-input-field` at 13px,
+ * `.cv-search input` at 12.5px. A bare `input` rule placed in `app-base` loses
+ * to all three, so the fix would appear in the diff, pass review, and do
+ * nothing on a device. Unlayered author styles beat every author layer no
+ * matter the specificity, which is the only placement that holds here without
+ * chasing each feature sheet with !important.
+ *
+ * Keep this sheet to the platform floor below. It is not a general escape
+ * hatch for winning a specificity fight. */
+
+/* ─── The iOS focus-zoom floor ───
+ *
+ * Mobile Safari zooms the viewport whenever focus lands on a control whose
+ * font size is under 16px, and does not zoom back out when focus leaves. This
+ * client's controls are 10-14px throughout, so the first tap into any field
+ * displaces the layout for the rest of the session.
+ *
+ * The selector is `pointer: coarse`, not a width breakpoint, because the
+ * trigger is the input device: a touch laptop at 1400px auto-zooms, and a
+ * desktop browser dragged down to 390px does not. Gating on width would fix
+ * the wrong machines and — because the visual suite runs desktop widths on a
+ * fine pointer — would look identical in CI either way.
+ *
+ * 16px is the platform's threshold, not a design choice. Below it the zoom
+ * happens; at or above it, it does not. */
+@media (pointer: coarse) {
+	input,
+	textarea,
+	select {
+		font-size: var(--type-subsection-size);
+	}
+}
+
+/* ─── The hit-target floor ───
+ *
+ * The other half of what a coarse pointer needs, and it was missing entirely:
+ * this sheet raised font-size against iOS focus-zoom and said nothing about
+ * size, so the editor's small icon buttons were 26px squares under a finger.
+ * Task 1.3 recorded that as a gap rather than papering over it with a token
+ * nothing read; this is the rule that makes `--control-h-touch` real.
+ *
+ * `min-height`/`min-width` rather than `height`: the control keeps its own
+ * geometry and grows only if it is under the floor, so nothing re-lays-out on a
+ * mouse and a wide button does not become a square.
+ *
+ * Unlayered for the same reason as the rule above — every control size in this
+ * client is declared in the `feature` layer, which beats any layered rule here
+ * regardless of specificity. */
+@media (pointer: coarse) {
+	/* A text button sits on the baseline of a sentence; giving it a 44px box
+	   would push the line it lives in apart. It gets the floor as padding
+	   instead, which is hittable without being visible. */
+	.cv-textbtn {
+		padding-block: calc((var(--control-h-touch) - 1lh) / 2);
+	}
+}
+
+/* ─── Hit area without a bigger box ───
+ *
+ * A transition marker sits BETWEEN two clips on the timeline and is 26px wide;
+ * it cannot grow to 44px without covering the clips it sits between. It is
+ * already `position: absolute`, so a centred pseudo-element gives the finger
+ * 44px to land on while the drawn marker keeps the width the timeline needs.
+ * `pointer-events` is inherited from the button, so the expanded area is the
+ * button's.
+ *
+ * `.tl2-clip-del` was in this rule and came back out, which is the interesting
+ * half. It is a 14px delete affordance in the CORNER OF a clip, so a 44px hit
+ * area extends over the clip itself — and on a phone, where a clip can be
+ * narrower than 88px, "select this clip" and "delete this clip" became the same
+ * tap. The phone suite caught it immediately: the contextual bar stopped opening
+ * because the tap that should have selected a clip was landing on its delete
+ * button. A destructive control is the one place where a bigger target is worse
+ * than a small one, and it stays 14px deliberately. */
+@media (pointer: coarse) {
+	.tl2-trans::after {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		translate: -50% -50%;
+		width: var(--control-h-touch);
+		height: var(--control-h-touch);
+	}
+}

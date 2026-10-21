@@ -1,0 +1,89 @@
+/* Cascade layer: chrome. The PanelHeader pattern (panel-header.tsx).
+ *
+ * `panel` sits on `--topbar-h`, so a rail panel's header and the top bar beside
+ * it share a line. `compact` sits on `--control-h`. Padding, type and the rule
+ * under it all read foundation roles. */
+@layer chrome {
+	.ui-phead {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+		min-height: var(--topbar-h);
+		padding: var(--s-2) var(--s-3) var(--s-2) var(--s-4);
+		border-bottom: 1px solid var(--border);
+	}
+	.ui-phead[data-density="compact"] {
+		min-height: var(--control-h);
+		padding: var(--s-2) var(--s-2) var(--s-2) var(--s-3);
+	}
+
+	.ui-phead-text {
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+	}
+
+	.ui-phead-title {
+		min-width: 0;
+		margin: 0;
+		display: flex;
+		align-items: center;
+		gap: var(--s-2);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-family: var(--font-display);
+		font-size: var(--type-subsection-size);
+		line-height: var(--type-subsection-lh);
+		letter-spacing: var(--type-subsection-track);
+		font-weight: var(--weight-strong);
+		color: var(--fg);
+	}
+	.ui-phead[data-density="compact"] .ui-phead-title {
+		font-family: var(--font-body);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		letter-spacing: 0;
+	}
+	.ui-phead-title svg {
+		flex-shrink: 0;
+		color: var(--muted);
+	}
+
+	.ui-phead-sub {
+		min-width: 0;
+		margin: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font-size: var(--type-label-size);
+		line-height: var(--type-label-lh);
+		color: var(--muted);
+	}
+
+	.ui-phead-actions {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		gap: var(--s-1);
+	}
+
+	/* Tool panels keep sheet identity on phones; desktop chrome yields to content. */
+	@media (min-width: 861px) {
+		.ui-phead[data-density="tool"] {
+			min-height: var(--control-h-touch);
+			padding: var(--s-1) var(--s-2) var(--s-1) var(--s-3);
+		}
+		.ui-phead[data-density="tool"] .ui-phead-title {
+			font-family: var(--font-body);
+			font-size: var(--type-body-size);
+			line-height: var(--type-body-lh);
+			letter-spacing: 0;
+			font-weight: var(--weight-body);
+			color: var(--fg-dim);
+		}
+	}
+}

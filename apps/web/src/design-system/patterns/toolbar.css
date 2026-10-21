@@ -1,0 +1,32 @@
+/* Toolbar pattern.
+ *
+ * The layout is layered and has zero specificity (`:where`), so any surface
+ * that owns its own arrangement keeps it: a stacked collection strip, the
+ * timeline's three-track bar. Unlayered, it outranked every layered sheet and
+ * centred the Library's stacked search field. */
+@layer chrome {
+	:where(.ui-tbar) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--s-1);
+	}
+	.ui-tbar {
+		min-width: 0;
+		padding-bottom: 12;
+	}
+	/* A group does not shrink: squeezed, its actions slide over the next group's. */
+	:where(.ui-tbar-group) {
+		display: inline-flex;
+		flex: none;
+		align-items: center;
+		gap: var(--s-0-5);
+	}
+	/* One rule between groups, never between buttons. Drawn by the group, so no
+	 * caller places a divider element and none can be left dangling at an edge. */
+	.ui-tbar-group + .ui-tbar-group {
+		margin-left: var(--s-1);
+		padding-left: var(--s-2);
+		border-left: 1px solid var(--border);
+	}
+}

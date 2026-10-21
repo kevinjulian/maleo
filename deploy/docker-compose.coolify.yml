@@ -1,0 +1,595 @@
+# The maleo core stack, as one Coolify Docker Compose resource.
+#
+# Coolify's twin of docker-compose.yml. The services are identical; this file
+# adds only the SERVICE_FQDN_* declarations Coolify routes domains through, and
+# leaves ports unpublished because Coolify's proxy fronts web, api and rustfs.
+# `bun run check:deploy` fails when the two files drift.
+#
+# Web, API, media worker, render worker, and durable execution server are deployed together
+# because Inngest is push-based: the server invokes functions over HTTP, so it
+# must reach `api` and `media-worker` by name, and they must reach it.
+#
+# Deploy: see docs/coolify.md. Base directory /deploy, compose location
+# /docker-compose.coolify.yml; every Dockerfile builds from the repository root.
+#
+# `${VAR:?}` means the stack refuses to start when that variable is unset;
+# docs/self-hosting.md lists every one. Coolify's compose parser rejects a
+# message after the `:?`, so the names carry the explanation instead.
+#
+# Exposure: `web`, `api`, and `rustfs` get domains. `api` is deployed WITHOUT a
+# proxy fence — it authenticates its own callers and refuses anonymous requests.
+# Every other service, `inngest` above all, stays internal.
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    # One image serves all four processes — the command names this one.
+    command: ["bun", "--config=apps/web/bunfig.toml", "apps/web/src/app/serve.ts"]
+    environment:
+      # Coolify routes a domain to a compose service through this declaration;
+      # a value set only in the platform generates no proxy label, and the
+      # hostname answers 503.
+      SERVICE_FQDN_WEB_3030: ${SERVICE_FQDN_WEB_3030:-}
+      MALEO_WEB_HOST: 0.0.0.0
+      MALEO_WEB_PORT: 3030
+      # Internal name, not the public domain: the SPA's /api/* and /uploads/*
+      # proxy hop never leaves the network.
+      MALEO_API_URL: http://api:8090
+    expose:
+      - "3030"
+    depends_on:
+      api:
+        condition: service_healthy
+    # Asserts the SPA shell, not merely a 200: the bundler answers 200 with an
+    # EMPTY body when it cannot resolve an import, which is a blank page that
+    # `res.ok` cannot see. It cost a deployment once.
+    healthcheck:
+      test:
+        - "CMD"
+        - "bun"
+        - "-e"
+        - "const r = await fetch('http://127.0.0.1:3030/'); const b = await r.text(); process.exit(r.ok && b.includes('<!doctype html') && b.length > 500 ? 0 : 1)"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    # One image serves all four processes — the command names this one.
+    command: ["bun", "apps/api/src/index.ts"]
+    environment:
+      SERVICE_FQDN_API_8090: ${SERVICE_FQDN_API_8090:-}
+      MALEO_API_PORT: 8090
+      MALEO_API_HOST: 0.0.0.0
+      MALEO_DATA_DIR: /data
+      # The runtime database. Off-host connections must be encrypted, so the
+      # stack's own Postgres serves TLS (see maleo-postgres).
+      MALEO_DATABASE_URL: postgres://maleo:${MALEO_PG_PASSWORD:?}@maleo-postgres:5432/maleo?sslmode=require
+      # The API refuses to start in production without this: the media worker
+      # authenticates to /internal/* with it.
+      MALEO_SERVICE_TOKEN: ${MALEO_SERVICE_TOKEN:?}
+      # Guards every stored provider credential. Losing it loses them all.
+      MALEO_MASTER_KEY: ${MALEO_MASTER_KEY:?}
+      # Signs operator sessions. better-auth refuses to start in production on
+      # its default value, so this is required rather than merely advisable.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+      # The API's own public address, and the origins allowed to carry a session
+      # and to read a media response. Under the proxy deployment the browser's
+      # Origin is the WEB domain, not this one, so both are needed and they
+      # differ. Production trusts nothing it was not told.
+      MALEO_API_PUBLIC_URL: ${MALEO_API_PUBLIC_URL:?}
+      MALEO_API_CORS_ORIGINS: ${MALEO_WEB_PUBLIC_URL:?}
+      MALEO_MEDIA_CORS_ORIGIN: ${MALEO_WEB_PUBLIC_URL:?}
+      INNGEST_BASE_URL: ${INNGEST_BASE_URL:-http://inngest:8288}
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?}
+      INNGEST_APP_ID: maleo
+      MALEO_GEN_WORKER_URL: http://media-worker:7071
+      MALEO_VIDEO_URL: http://render-worker:8091
+      MALEO_VIDEO_TOKEN: ${MALEO_VIDEO_TOKEN:?}
+      # Object storage for generated media — the worker is stateless, so both
+      # processes read the same store.
+      MALEO_MEDIA_STORAGE_BACKEND: s3
+      MALEO_MEDIA_S3_ENDPOINT: http://rustfs:9000
+      MALEO_MEDIA_S3_PUBLIC_ENDPOINT: ${MALEO_MEDIA_S3_PUBLIC_ENDPOINT:?}
+      MALEO_MEDIA_S3_BUCKET: ${MALEO_MEDIA_S3_BUCKET:?}
+      MALEO_MEDIA_S3_ACCESS_KEY_ID: ${MALEO_MEDIA_S3_ACCESS_KEY_ID:?}
+      MALEO_MEDIA_S3_SECRET_ACCESS_KEY: ${MALEO_MEDIA_S3_SECRET_ACCESS_KEY:?}
+      MALEO_MEDIA_S3_REGION: ${MALEO_MEDIA_S3_REGION:-us-east-1}
+    volumes:
+      # Regenerable caches, and the pre-Postgres SQLite file kept for rollback.
+      # The runtime database is maleo-postgres.
+      - maleo-data:/data
+    expose:
+      - "8090"
+    depends_on:
+      render-worker:
+        condition: service_healthy
+      maleo-postgres:
+        condition: service_healthy
+      # Never serve an empty database in place of one still being carried over:
+      # an empty one would offer its owner account to whoever signs up first.
+      db-carry:
+        condition: service_completed_successfully
+      inngest:
+        condition: service_healthy
+      rustfs-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "process.exit((await fetch('http://127.0.0.1:8090/health')).ok ? 0 : 1)",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # The one-time move from the SQLite database into maleo-postgres. Runs on
+  # every deploy and does nothing once /data/.postgres-carried exists; a fresh
+  # install with no SQLite file writes the marker and carries nothing. A run
+  # that fails leaves no marker and the API does not start — fix the named
+  # table, row or file and redeploy; the carry resumes without duplicating.
+  # The marker is what stops a later deploy from copying rows deleted since
+  # back in from the stale file.
+  db-carry:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      MALEO_DATA_DIR: /data
+      MALEO_DB_PATH: ${MALEO_DB_PATH:-/data/maleo.db}
+      MALEO_DATABASE_URL: postgres://maleo:${MALEO_PG_PASSWORD:?}@maleo-postgres:5432/maleo?sslmode=require
+      MALEO_MASTER_KEY: ${MALEO_MASTER_KEY:?}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?}
+      MALEO_API_PUBLIC_URL: ${MALEO_API_PUBLIC_URL:?}
+      MALEO_API_CORS_ORIGINS: ${MALEO_WEB_PUBLIC_URL:?}
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -e
+        MARKER=/data/.postgres-carried
+        if [ -e "$$MARKER" ]; then echo "carried $$(cat "$$MARKER"); nothing to do"; exit 0; fi
+        if [ ! -e "$$MALEO_DB_PATH" ]; then
+          echo "no SQLite database at $$MALEO_DB_PATH; nothing to carry"
+          date -u +%FT%TZ > "$$MARKER"; exit 0
+        fi
+        bun scripts/migrate-to-postgres.ts
+        date -u +%FT%TZ > "$$MARKER"
+    volumes:
+      - maleo-data:/data
+    depends_on:
+      maleo-postgres:
+        condition: service_healthy
+    restart: "no"
+
+  render-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    working_dir: /app/apps/render-worker
+    command: ["bun", "src/index.ts"]
+    environment:
+      MALEO_VIDEO_PORT: 8091
+      MALEO_VIDEO_TOKEN: ${MALEO_VIDEO_TOKEN:?}
+      MALEO_VIDEO_DB: /app/apps/render-worker/data/jobs.db
+      MALEO_VIDEO_CONCURRENCY: 1
+      MALEO_VIDEO_PUBLIC_BASE: http://127.0.0.1:8091/public
+      MALEO_API_URL: http://api:8090
+      MALEO_SERVICE_TOKEN: ${MALEO_SERVICE_TOKEN:?}
+      MALEO_MEDIA_STORAGE_BACKEND: s3
+      MALEO_MEDIA_S3_ENDPOINT: http://rustfs:9000
+      MALEO_MEDIA_S3_PUBLIC_ENDPOINT: ${MALEO_MEDIA_S3_PUBLIC_ENDPOINT:?}
+      MALEO_MEDIA_S3_BUCKET: ${MALEO_MEDIA_S3_BUCKET:?}
+      MALEO_MEDIA_S3_ACCESS_KEY_ID: ${MALEO_MEDIA_S3_ACCESS_KEY_ID:?}
+      MALEO_MEDIA_S3_SECRET_ACCESS_KEY: ${MALEO_MEDIA_S3_SECRET_ACCESS_KEY:?}
+      MALEO_MEDIA_S3_REGION: ${MALEO_MEDIA_S3_REGION:-us-east-1}
+    volumes:
+      - maleo-render-data:/app/apps/render-worker/data
+      - maleo-render-out:/app/apps/render-worker/out
+      - maleo-render-public:/app/apps/render-worker/public
+    expose:
+      - "8091"
+    # One SQLite queue owner. Bound Chrome so exports cannot consume the host.
+    cpus: 2.0
+    mem_limit: 4g
+    shm_size: 1g
+    depends_on:
+      rustfs-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "process.exit((await fetch('http://127.0.0.1:8091/health')).ok ? 0 : 1)",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  media-worker:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    # One image serves all four processes — the command names this one.
+    command: ["bun", "apps/media-worker/src/index.ts"]
+    environment:
+      MALEO_MEDIA_WORKER_PORT: 7071
+      MALEO_DATA_DIR: /data
+      GEN_WORKER_DB: /data/media-worker/gen-worker.sqlite
+      CACHE_DIR: /tmp/maleo-media-worker
+      MALEO_WHISPER_CPP_DIR: /data/media-worker/whisper.cpp
+      MALEO_CAPTION_CACHE_DIR: /data/media-worker/caption-cache
+      MALEO_WHISPER_MODEL: ${MALEO_WHISPER_MODEL:-base}
+      MALEO_CAPTION_TRANSCRIBE: ${MALEO_CAPTION_TRANSCRIBE:-0}
+      # Deployment configuration, deliberately not inherited from the package
+      # script: this entrypoint runs src/index.ts directly, so without this the
+      # worker registers as "maleo" and its sync replaces the API's. The
+      # displaced functions then have no handler and their events trigger
+      # nothing, in silence. scripts/check-deploy.ts fails when it is absent.
+      INNGEST_APP_ID: maleo-media
+      INNGEST_BASE_URL: ${INNGEST_BASE_URL:-http://inngest:8288}
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?}
+      MALEO_API_URL: http://api:8090
+      MALEO_SERVICE_TOKEN: ${MALEO_SERVICE_TOKEN:?}
+      MALEO_MEDIA_STORAGE_BACKEND: s3
+      MALEO_MEDIA_S3_ENDPOINT: http://rustfs:9000
+      MALEO_MEDIA_S3_PUBLIC_ENDPOINT: ${MALEO_MEDIA_S3_PUBLIC_ENDPOINT:?}
+      MALEO_MEDIA_S3_BUCKET: ${MALEO_MEDIA_S3_BUCKET:?}
+      MALEO_MEDIA_S3_ACCESS_KEY_ID: ${MALEO_MEDIA_S3_ACCESS_KEY_ID:?}
+      MALEO_MEDIA_S3_SECRET_ACCESS_KEY: ${MALEO_MEDIA_S3_SECRET_ACCESS_KEY:?}
+      MALEO_MEDIA_S3_REGION: ${MALEO_MEDIA_S3_REGION:-us-east-1}
+      # Browser-session providers cannot run in a container; an HTTP provider
+      # has no browser to serialise, so the default of 1 is worth raising.
+      MALEO_GENERATION_CONCURRENCY_PER_KIND: ${MALEO_GENERATION_CONCURRENCY_PER_KIND:-3}
+    volumes:
+      - maleo-media-worker:/data/media-worker
+    expose:
+      - "7071"
+    depends_on:
+      inngest:
+        condition: service_healthy
+      rustfs-init:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "bun",
+          "-e",
+          "process.exit((await fetch('http://127.0.0.1:7071/health')).ok ? 0 : 1)",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # The media store lives in this stack rather than in a resource of its own.
+  # A separate resource is only reachable by its public hostname, and a CDN in
+  # front of an S3 API breaks writes: CreateBucket through Cloudflare fails with
+  # MissingContentLength, and so would every upload. Internally the API and the
+  # worker reach it at http://rustfs:9000, and the public hostname is used only
+  # for the presigned GETs a browser follows.
+  rustfs:
+    image: rustfs/rustfs:1.0.0
+    restart: unless-stopped
+    environment:
+      # The domain a browser reaches presigned URLs at; set per service in the
+      # Coolify UI. See docs/coolify.md.
+      SERVICE_FQDN_RUSTFS_9000: ${SERVICE_FQDN_RUSTFS_9000:-}
+      # One key pair. RustFS 1.0 has no policy engine, so these credentials
+      # administer the server as well as the bucket — see docs/self-hosting.md.
+      RUSTFS_ACCESS_KEY: ${MALEO_MEDIA_S3_ACCESS_KEY_ID:?}
+      RUSTFS_SECRET_KEY: ${MALEO_MEDIA_S3_SECRET_ACCESS_KEY:?}
+    volumes:
+      - rustfs-data:/data
+    expose:
+      - "9000"
+    # 403 is the healthy answer: the port is open and the S3 layer is refusing
+    # an unsigned request. wget is busybox's; there is no curl in the image.
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - "wget -S -q -O /dev/null http://127.0.0.1:9000/ 2>&1 | grep -q 'HTTP/1.1 403'"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+
+  # Creates the private bucket and its CORS rule, idempotently, on every deploy.
+  # `service_completed_successfully` on the API and the worker is the load
+  # bearing part: a silently failed initialization would otherwise leave them
+  # refusing to start with NoSuchBucket and nothing pointing at the cause.
+  rustfs-init:
+    image: amazon/aws-cli:2.27.49
+    restart: "no"
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${MALEO_MEDIA_S3_ACCESS_KEY_ID:?}
+      AWS_SECRET_ACCESS_KEY: ${MALEO_MEDIA_S3_SECRET_ACCESS_KEY:?}
+      AWS_DEFAULT_REGION: ${MALEO_MEDIA_S3_REGION:-us-east-1}
+      MALEO_MEDIA_S3_BUCKET: ${MALEO_MEDIA_S3_BUCKET:?}
+      MALEO_MEDIA_CORS_ORIGIN: ${MALEO_MEDIA_CORS_ORIGIN:?}
+    # Inlined rather than mounted: Coolify rewrites a compose-relative bind
+    # mount into its own per-application directory without putting the file
+    # there, so the container mounts an empty directory and exits 126 — which
+    # is how the bucket silently failed to exist through three deployments.
+    # $$ escapes compose interpolation so the shell sees the variable.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        set -eu
+        case "$$MALEO_MEDIA_S3_BUCKET" in
+          *[!a-z0-9.-]*|'') echo "invalid bucket name" >&2; exit 1 ;;
+        esac
+        aws="aws --endpoint-url http://rustfs:9000"
+        # Reach the server before deciding anything. Its healthcheck has already
+        # passed, so a failure here is DNS or a wrong endpoint, not a slow boot.
+        if ! $$aws s3 ls > /dev/null 2>&1; then
+          echo "cannot reach the object store at http://rustfs:9000" >&2
+          $$aws s3 ls >&2 || true
+          exit 1
+        fi
+        # `mb` on an existing bucket is an error, not a no-op, so ask first.
+        if ! $$aws s3api head-bucket --bucket "$$MALEO_MEDIA_S3_BUCKET" 2>/dev/null; then
+          $$aws s3 mb "s3://$$MALEO_MEDIA_S3_BUCKET"
+        fi
+        # Range headers are exposed because the player seeks: without
+        # Content-Range and Accept-Ranges readable, a cross-origin seek silently
+        # restarts from the beginning.
+        cat > /tmp/cors.json <<JSON
+        {"CORSRules":[{
+          "AllowedOrigins":["$$MALEO_MEDIA_CORS_ORIGIN"],
+          "AllowedMethods":["GET","HEAD"],
+          "AllowedHeaders":["*"],
+          "ExposeHeaders":["Content-Length","Content-Type","Content-Range","Accept-Ranges","ETag"],
+          "MaxAgeSeconds":3000
+        }]}
+        JSON
+        $$aws s3api put-bucket-cors --bucket "$$MALEO_MEDIA_S3_BUCKET" --cors-configuration file:///tmp/cors.json
+        # Prove it rather than announce it.
+        $$aws s3api head-bucket --bucket "$$MALEO_MEDIA_S3_BUCKET"
+        echo "bucket ready: $$MALEO_MEDIA_S3_BUCKET, origin $$MALEO_MEDIA_CORS_ORIGIN"
+
+  inngest:
+    # Pinned to the version the repository already pins for development: the
+    # root lockfile holds inngest-cli 1.45.1, so the deployed server and the one
+    # developers run are the same build. A moving tag on durable-state
+    # infrastructure moves schema under live workflows.
+    #
+    # Self-hosted here. It is SSPL-1.0, which attaches obligations to offering
+    # the program's functionality to third parties as a service — a hosted
+    # offering points INNGEST_BASE_URL and the keys at Inngest Cloud instead and
+    # deletes nothing else. No function code differs between the two.
+    image: inngest/inngest:v1.45.1
+    command: ["inngest", "start"]
+    environment:
+      INNGEST_POSTGRES_URI: postgres://inngest:${INNGEST_PG_PASSWORD:?}@inngest-postgres:5432/inngest
+      INNGEST_REDIS_URI: redis://inngest-redis:6379
+      INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY:?}
+      INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY:?}
+    # NOT published. 8288 serves the dashboard and the event API from one port
+    # and the server ships no authentication of its own, so publishing the
+    # dashboard publishes the event API with it. Reach the dashboard through an
+    # SSH tunnel to the host — see docs/self-hosting.md.
+    expose:
+      - "8288"
+    depends_on:
+      inngest-postgres:
+        condition: service_healthy
+      inngest-redis:
+        condition: service_healthy
+    # Exercises the durable state backend, not the socket: the GraphQL app query
+    # reads through Postgres, so an unreachable database fails the check instead
+    # of reporting healthy while every run stalls. perl is in the image; curl and
+    # wget are not.
+    healthcheck:
+      test:
+        - "CMD"
+        - "perl"
+        - "-MIO::Socket::INET"
+        - "-e"
+        - 'my $$b = q({"query":"{functions{id}}"}); my $$s = IO::Socket::INET->new(PeerAddr => "127.0.0.1:8288", Timeout => 5) or exit 1; print $$s "POST /v0/gql HTTP/1.0\r\nContent-Type: application/json\r\nContent-Length: " . length($$b) . "\r\n\r\n$$b"; local $$/; my $$r = <$$s>; exit(($$r =~ /"data"/ && $$r !~ /"errors"/) ? 0 : 1);'
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # Registration. The self-hosted server does not discover apps: a function host
+  # syncs by taking a PUT on its own serve endpoint, and until it does, the
+  # server holds no functions and every event triggers nothing. This runs once
+  # per deploy, after both hosts are healthy, so a redeploy re-registers whatever
+  # the new images serve.
+  inngest-sync:
+    image: curlimages/curl:8.11.1
+    restart: "no"
+    depends_on:
+      api:
+        condition: service_healthy
+      media-worker:
+        condition: service_healthy
+    entrypoint:
+      - "sh"
+      - "-c"
+      - "curl -fsS -X PUT http://api:8090/api/inngest && curl -fsS -X PUT http://media-worker:7071/api/inngest"
+
+  # Retention. The server never deletes its own rows and its documentation says
+  # the growth degrades performance, so the bound has to come from outside it.
+  # Thirty days: long enough to investigate a failed run weeks later, short
+  # enough that the tables stay small on a single node. Only FINISHED runs are
+  # removed — see prune-history.sql.
+  inngest-prune:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    # Coolify reports the WORST container as the resource status, so a service
+    # without a healthcheck holds the whole stack at "running (unknown)". The
+    # loop answers no requests; what it needs is its database, so that is what
+    # it checks. (Coolify's own `exclude_from_hc` key would do it too, but plain
+    # docker compose rejects it, and this file runs locally as well.)
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h inngest-postgres -U inngest -d inngest"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      inngest-postgres:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${INNGEST_PG_PASSWORD:?}
+      RETENTION_DAYS: ${INNGEST_RETENTION_DAYS:-30}
+    # Inlined for the same reason as the bucket initialization: the platform
+    # does not materialize a mounted file, and a mount that silently becomes an
+    # empty directory takes the job with it.
+    #
+    # Only FINISHED runs are removed — an in-flight or suspended run is never
+    # touched however old it is, because resuming it is the entire point of
+    # durable execution. Traces and spans are the observability copy of the same
+    # history; events outlive the runs they triggered and are the largest table.
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        CUTOFF="now() - make_interval(days => $$RETENTION_DAYS::int)"
+        SQL="BEGIN;
+          CREATE TEMP TABLE prunable_runs ON COMMIT DROP AS
+            SELECT run_id FROM function_finishes WHERE created_at < $$CUTOFF;
+          DELETE FROM history WHERE run_id IN (SELECT run_id FROM prunable_runs);
+          DELETE FROM function_runs WHERE run_id IN (SELECT run_id FROM prunable_runs);
+          DELETE FROM function_finishes WHERE run_id IN (SELECT run_id FROM prunable_runs);
+          DELETE FROM traces WHERE timestamp < $$CUTOFF;
+          DELETE FROM spans WHERE end_time < $$CUTOFF;
+          DELETE FROM trace_runs WHERE ended_at > 0
+            AND to_timestamp(ended_at / 1000.0) AT TIME ZONE 'UTC' < $$CUTOFF;
+          DELETE FROM event_batches WHERE executed_at < $$CUTOFF;
+          DELETE FROM events WHERE received_at < $$CUTOFF;
+          COMMIT;"
+        while true; do
+          psql -h inngest-postgres -U inngest -d inngest -v ON_ERROR_STOP=1 -c "$$SQL" \
+            || echo 'prune failed; retrying tomorrow'
+          sleep 86400
+        done
+
+  # The runtime database. TLS with the image's self-signed certificate: the API
+  # refuses a plaintext connection to any host but its own, and sslmode=require
+  # encrypts without verifying, which is what a private compose network needs.
+  maleo-postgres:
+    image: postgres:18
+    command:
+      - postgres
+      - -c
+      - ssl=on
+      - -c
+      - ssl_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+      - -c
+      - ssl_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+    environment:
+      POSTGRES_USER: maleo
+      POSTGRES_PASSWORD: ${MALEO_PG_PASSWORD:?}
+      POSTGRES_DB: maleo
+    volumes:
+      # Postgres 18 images keep PGDATA in a versioned directory under this path.
+      - maleo-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maleo -d maleo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # A consistent daily dump of the runtime database, fourteen kept. A copy of
+  # the data directory taken while Postgres runs is not a backup; pg_dump is.
+  # Restore: pg_restore --clean --if-exists -d maleo <file>. The dumps share a
+  # host with the database, so copy them off it for disaster recovery.
+  maleo-db-backup:
+    image: postgres:18
+    environment:
+      PGPASSWORD: ${MALEO_PG_PASSWORD:?}
+      PGSSLMODE: require
+    volumes:
+      - maleo-pgbackups:/backups
+    # After the carry-over, or the first dump of a new deployment is of an empty
+    # database — which is what the first production cutover produced.
+    depends_on:
+      maleo-postgres:
+        condition: service_healthy
+      db-carry:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h maleo-postgres -U maleo -d maleo"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        while true; do
+          FILE=/backups/maleo-$$(date -u +%Y%m%dT%H%M%SZ).dump
+          if pg_dump -h maleo-postgres -U maleo -d maleo -Fc -f "$$FILE.part"; then
+            mv "$$FILE.part" "$$FILE"; echo "backup $$FILE"
+            ls -1t /backups/maleo-*.dump | tail -n +15 | xargs -r rm --
+          else
+            rm -f "$$FILE.part"; echo 'backup failed; retrying in an hour'; sleep 3600; continue
+          fi
+          sleep 86400
+        done
+    restart: unless-stopped
+
+  inngest-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: inngest
+      POSTGRES_PASSWORD: ${INNGEST_PG_PASSWORD:?}
+      POSTGRES_DB: inngest
+    volumes:
+      - inngest-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U inngest -d inngest"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  inngest-redis:
+    image: redis:7-alpine
+    volumes:
+      - inngest-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  maleo-render-data:
+  maleo-render-out:
+  maleo-render-public:
+  maleo-media-worker:
+  maleo-data:
+  maleo-pgdata:
+  maleo-pgbackups:
+  rustfs-data:
+  inngest-pgdata:
+  inngest-redisdata:

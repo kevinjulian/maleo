@@ -1,0 +1,42 @@
+{
+	"date": "2026-10-20",
+	"supportedApplications": [
+		{
+			"name": "maleo-core",
+			"repository": "kevinjulian/maleo",
+			"status": "running:healthy",
+			"baseDirectory": "/deploy"
+		},
+		{
+			"name": "maleo-crawl4ai",
+			"repository": "kevinjulian/maleo",
+			"status": "running:healthy",
+			"baseDirectory": "/infra/crawl4ai"
+		},
+		{
+			"name": "maleo-kokoro-tts",
+			"repository": "kevinjulian/maleo",
+			"status": "running:healthy",
+			"baseDirectory": "/infra/kokoro-tts"
+		},
+		{
+			"name": "maleo-pocket-tts-id",
+			"repository": "kevinjulian/maleo",
+			"status": "running:healthy",
+			"baseDirectory": "/infra/pocket-tts-id"
+		},
+		{
+			"name": "maleo-searxng",
+			"repository": "kevinjulian/maleo",
+			"status": "running:healthy",
+			"baseDirectory": "/infra/searxng"
+		}
+	],
+	"coreAutoDeploy": false,
+	"coreDomainsUnchanged": true,
+	"coreEnvironmentMetadataUnchanged": true,
+	"legacyResourcesUnchanged": 2,
+	"deploymentPerformed": false,
+	"newRepositoryHasRefs": false,
+	"identifiers": "Installation-specific identifiers omitted from publication."
+}

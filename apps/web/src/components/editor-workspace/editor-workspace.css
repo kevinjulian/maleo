@@ -1,0 +1,562 @@
+/* Cascade layer: workspace. Declared in src/app/index.html and app/styles.css,
+   in the position the former @maleo/vui stylesheet held, so every app layer
+   above it still wins. The editor workspace's structure: pane grid, preview,
+   inspector rail, accordion, overlay and sheet geometry. Colours resolve to the
+   app's tokens through the scoped --vui-* bridge below. Moved here from
+   @maleo/vui by migrate-editor-to-shared-rust-core task 3.5. */
+@layer workspace {
+	[data-vui-root] {
+		/* The workspace's surface tokens, resolved to the app's palette here and
+		   only here. `--vui-bg` (the preview letterbox) and `--vui-surface-raised`
+		   have no app token, so they keep their values. `--vui-accent` reads
+		   `--ai`, not `--accent`: it fills a selected outline, a focus ring and the
+		   active rail button, so it must be chromatic and follow the theme, and
+		   `--accent` is a near-black the app uses for quiet emphasis. Until task 3.5
+		   these mappings lived in app/styles.css over package defaults. */
+		--vui-bg: #17191f;
+		--vui-surface: var(--surface);
+		--vui-surface-raised: #292d37;
+		--vui-border: var(--border);
+		--vui-fg: var(--fg);
+		--vui-muted: var(--muted);
+		--vui-accent: var(--ai);
+		--vui-space: var(--s-2);
+		--vui-radius: var(--r-1);
+		--vui-header-height: 48px;
+		--vui-footer-height: 44px;
+		--vui-z-overlay: 1000;
+		--vui-z-sheet: 1020;
+		/* The action region's measured height, republished onto each sheet from
+		   the workspace. Declared here so the token exists whether or not a
+		   consumer supplies one: zero means the sheet reaches the bottom edge,
+		   which is what a workspace with no action region wants. */
+		--vui-mobile-actions-height: 0px;
+		/* The accordion's own metrics. Tokens rather than literals because the
+		   contract tells consumers to override tokens before slots, and a
+		   component that hardcodes its spacing makes that untrue — an override
+		   resolves against nothing and the consumer is left with the private
+		   class names the same contract forbids. */
+		--vui-sheet-body-padding: var(--vui-space);
+		--vui-accordion-header-height: var(--control-h-touch);
+		--vui-accordion-padding-inline: var(--s-3);
+		--vui-accordion-gap: var(--s-2-5);
+		--vui-accordion-body-padding-bottom: var(--s-4);
+		container-type: inline-size;
+		color: var(--vui-fg);
+		font-family: var(--font-body);
+	}
+
+	[data-vui-root].vui-workspace {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		min-height: 0;
+		height: 100%;
+		overflow: hidden;
+		background: var(--bg);
+		border: 0;
+		border-radius: 0;
+	}
+	[data-vui-root].vui-workspace {
+		width: 100%;
+	}
+
+	[data-vui-root] .vui-workspace-main {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(220px, 30%);
+		grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+		min-width: 0;
+		min-height: 0;
+		flex: 1;
+	}
+
+	/* No inspector and no tools means no column for them.
+	 *
+	 * The component already renders nothing for an omitted slot; this is the half
+	 * of that agreement that lives in CSS, and without it the grid keeps the
+	 * track anyway. A consumer that passes neither got a band of background up to
+	 * 30% of the workspace wide sitting beside a preview that had been squeezed to
+	 * make room for it — an empty layout track, which is the thing the contract
+	 * says an optional region must not leave behind.
+	 *
+	 * Matched on the published `data-vui-slot` names rather than the private class
+	 * names, so a consumer reading this rule is reading the contract. */
+	[data-vui-root]
+		.vui-workspace-main:not(:has(> [data-vui-slot="inspector"], > [data-vui-slot="tools"])) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	[data-vui-root] .vui-workspace-preview,
+	[data-vui-root] .vui-workspace-inspector,
+	[data-vui-root] .vui-workspace-tools,
+	[data-vui-root] .vui-workspace-timeline {
+		min-width: 0;
+		min-height: 0;
+	}
+
+	[data-vui-root] .vui-workspace-preview {
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: flex-start;
+		overflow: auto;
+		background: transparent;
+	}
+
+	[data-vui-root] .vui-workspace-inspector,
+	[data-vui-root] .vui-workspace-tools {
+		overflow: hidden;
+	}
+
+	[data-vui-root] .vui-workspace-timeline {
+		grid-column: 1 / -1;
+		grid-row: 2;
+		display: block;
+		flex: 0 0 220px;
+		overflow: hidden;
+	}
+
+	[data-vui-root] .vui-workspace-header,
+	[data-vui-root] .vui-workspace-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex: 0 0 var(--vui-header-height);
+		min-height: 0;
+		padding: 0 var(--vui-space);
+		border-bottom: 1px solid var(--vui-border);
+	}
+
+	[data-vui-root] .vui-workspace-footer {
+		flex-basis: var(--vui-footer-height);
+		border-top: 1px solid var(--vui-border);
+		border-bottom: 0;
+	}
+
+	[data-vui-root] .vui-workspace-actions {
+		display: flex;
+		gap: var(--vui-space);
+	}
+	/* The resident action region. It scrolls rather than compressing its controls
+	   below a thumb's width, and it clears the home indicator because it is the
+	   lowest thing on screen. `pan-x` because the strip at the bottom edge must
+	   not also be able to scroll the page vertically. */
+	/* The host the region is portalled onto. It sits at the bottom edge above the
+	   sheet, because the sheet's scrim stops at the region's own height and the
+	   region has to be the thing in that gap. */
+	[data-vui-root].vui-workspace-actions-host {
+		/* The same safe-area declarations an overlay makes. The region is the
+		   lowest thing on screen and has to clear the home indicator, and once it
+		   is portalled out of the workspace it inherits nothing from it — so it
+		   states them itself, and an inset injected for a test or a device reaches
+		   it the same way it reaches a dialog. */
+		--vui-safe-area-top: env(safe-area-inset-top, 0px);
+		--vui-safe-area-right: env(safe-area-inset-right, 0px);
+		--vui-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+		--vui-safe-area-left: env(safe-area-inset-left, 0px);
+		position: fixed;
+		inset: auto 0 0;
+		z-index: var(--vui-z-sheet);
+	}
+	[data-vui-root] .vui-workspace-mobile-actions,
+	[data-vui-root].vui-workspace-actions-host > .vui-workspace-mobile-actions {
+		display: flex;
+		align-items: center;
+		gap: var(--vui-space);
+		flex: 0 0 auto;
+		min-height: 0;
+		padding: 6px var(--vui-space);
+		padding-bottom: max(6px, var(--vui-safe-area-bottom, env(safe-area-inset-bottom, 0px)));
+		background: var(--vui-surface);
+		border-top: 1px solid var(--vui-border);
+		/* The region does not scroll. Which of a consumer's controls must stay
+		   reachable is the consumer's knowledge — an exit and a commit are not
+		   the same as a destination — so a strip that scrolls as one can carry
+		   the wrong thing off screen. A consumer with more controls than fit
+		   scrolls the group that may move. */
+		overflow: visible;
+	}
+	[data-vui-root] .vui-sheet-header button {
+		min-width: 36px;
+		min-height: 36px;
+		color: inherit;
+		background: transparent;
+		border: 0;
+		font-size: 20px;
+	}
+	[data-vui-root] .vui-workspace-transport {
+		position: absolute;
+		inset: auto 0 0;
+	}
+	[data-vui-root] .vui-workspace-preview {
+		position: relative;
+	}
+	[data-vui-root] .vui-preview-stage {
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: 0;
+		display: grid;
+		place-items: center;
+		padding: var(--s-3);
+		overflow: hidden;
+		container-type: size;
+	}
+	[data-vui-root] .vui-transport {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--vui-space);
+		padding: var(--vui-space);
+		color: var(--vui-muted);
+	}
+	[data-vui-root] .vui-transport button {
+		min-height: 32px;
+		padding: 0 10px;
+		color: inherit;
+		background: transparent;
+		border: 1px solid var(--vui-border);
+		border-radius: var(--vui-radius);
+	}
+	[data-vui-root] .vui-transport .vui-play {
+		width: 34px;
+		padding: 0;
+		color: var(--vui-fg);
+	}
+	[data-vui-root] .vui-transport output {
+		font-variant-numeric: tabular-nums;
+	}
+
+	[data-vui-root] .vui-inspector-rail {
+		display: flex;
+		height: 100%;
+		min-height: 0;
+		overflow: hidden;
+	}
+	[data-vui-root] .vui-category-rail {
+		width: var(--tl2-rail-w, 41px);
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--s-1);
+		padding: var(--s-2) 0;
+		background: var(--surface);
+		border-right: 1px solid var(--vui-border);
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+	[data-vui-root] .vui-category-rail button {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		padding: 0;
+		color: var(--vui-muted);
+		background: transparent;
+		border: 1px solid transparent;
+		border-radius: var(--vui-radius);
+		cursor: pointer;
+	}
+	[data-vui-root] .vui-category-rail button svg {
+		width: 17px;
+		height: 17px;
+	}
+	[data-vui-root] .vui-category-rail button:hover {
+		background: var(--surface-tint);
+		color: var(--fg);
+	}
+	[data-vui-root] .vui-category-rail button.is-active {
+		color: var(--ai);
+		background: var(--ai-bg);
+		border-color: var(--ai-border);
+	}
+	[data-vui-root] .vui-category-rail button:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: calc(-1 * var(--focus-w));
+	}
+	[data-vui-root] .vui-inspector-body {
+		flex: 1;
+		min-width: 0;
+		min-height: 0;
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+	[data-vui-root] .vui-inspector-body * {
+		scrollbar-width: none;
+	}
+	[data-vui-root] .vui-inspector-body label {
+		color: var(--fg-dim);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-medium);
+	}
+	[data-vui-root] .vui-accordion {
+		flex: 0 0 auto;
+		border-bottom: 1px solid var(--vui-border);
+		border-radius: 0;
+		overflow: hidden;
+	}
+	[data-vui-root] .vui-accordion > button {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+		width: 100%;
+		min-height: var(--vui-accordion-header-height);
+		padding: 0 var(--vui-accordion-padding-inline);
+		font: inherit;
+		font-weight: var(--weight-strong);
+		font-size: var(--type-caption-size);
+		color: var(--fg);
+		background: transparent;
+		border: 0;
+		text-align: left;
+		cursor: pointer;
+	}
+	[data-vui-root] [data-vui-slot="accordion-label"] {
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	[data-vui-root] [data-vui-slot="accordion-tools"] {
+		display: flex;
+		align-items: center;
+		gap: var(--s-1-5);
+		flex-shrink: 0;
+		color: var(--muted);
+	}
+	[data-vui-root] .vui-accordion-body {
+		display: flex;
+		flex-direction: column;
+		gap: var(--vui-accordion-gap);
+		padding: var(--vui-accordion-gap) var(--vui-accordion-padding-inline)
+			var(--vui-accordion-body-padding-bottom);
+	}
+
+	[data-vui-root].vui-overlay {
+		--vui-safe-area-top: env(safe-area-inset-top, 0px);
+		--vui-safe-area-right: env(safe-area-inset-right, 0px);
+		--vui-safe-area-bottom: env(safe-area-inset-bottom, 0px);
+		--vui-safe-area-left: env(safe-area-inset-left, 0px);
+		position: fixed;
+		inset: 0;
+		z-index: var(--vui-z-overlay);
+		display: grid;
+		place-items: center;
+		box-sizing: border-box;
+		padding: var(--vui-safe-area-top) var(--vui-safe-area-right) var(--vui-safe-area-bottom)
+			var(--vui-safe-area-left);
+		background: rgb(0 0 0 / 56%);
+	}
+	[data-vui-root] .vui-overlay-dialog {
+		display: flex;
+		min-width: 0;
+		min-height: 0;
+		max-width: 100%;
+		max-height: 100%;
+		box-sizing: border-box;
+		outline: none;
+	}
+	[data-vui-root].vui-workspace-fullscreen {
+		padding: var(--vui-safe-area-top) var(--vui-safe-area-right) var(--vui-safe-area-bottom)
+			var(--vui-safe-area-left);
+		background: transparent;
+	}
+	/* The overlay already subtracts the safe-area insets through its own padding
+	   and `border-box`, so the dialog fills that CONTENT box. Sizing it to
+	   `100dvw`/`100dvh` instead measured the whole viewport and ignored the
+	   insets: a top inset pushed the dialog down without shortening it, and the
+	   action footer ended up below the fold. With no insets the content box IS
+	   the viewport, so the fullscreen bounds are unchanged. */
+	[data-vui-root].vui-workspace-fullscreen .vui-overlay-dialog {
+		width: 100%;
+		height: 100%;
+	}
+	[data-vui-root].vui-workspace-fullscreen .vui-workspace {
+		width: 100%;
+		height: 100%;
+		border: 0;
+		border-radius: 0;
+	}
+	[data-vui-root].vui-workspace-modal .vui-overlay-dialog {
+		width: min(1200px, calc(100vw - 32px));
+		height: min(850px, calc(100dvh - 32px));
+	}
+	[data-vui-root].vui-workspace-embedded {
+		position: relative;
+		inset: auto;
+	}
+	[data-vui-root].vui-workspace-modal .vui-workspace-header,
+	[data-vui-root].vui-workspace-modal .vui-workspace-footer {
+		flex-shrink: 0;
+	}
+	/* The sheet stops where the action region starts.
+	 *
+	 * `inset` rather than padding, because this element IS the scrim: padding
+	 * would lift the sheet clear of the bar while the dimming still painted over
+	 * it, and a bar that is visible through a scrim but not clickable is worse
+	 * than one that is plainly covered. Shortening the overlay leaves the bar
+	 * both visible and hittable, which is what makes it the way back out of a
+	 * sheet. Zero when there is no action region, which is the default. */
+	[data-vui-root].vui-sheet-overlay {
+		inset: 0 0 var(--vui-mobile-actions-height, 0px);
+		align-items: end;
+		justify-items: stretch;
+		padding: 0;
+		background: rgb(0 0 0 / 40%);
+		z-index: var(--vui-z-sheet);
+	}
+	[data-vui-root] .vui-sheet {
+		width: 100%;
+		max-height: 78dvh;
+		background: var(--vui-surface);
+		border-top: 1px solid var(--vui-border);
+		box-shadow: 0 -8px 30px rgb(0 0 0 / 53%);
+	}
+	[data-vui-root] .vui-sheet-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		min-height: var(--vui-header-height);
+		padding: 0 var(--vui-space);
+		border-bottom: 1px solid var(--vui-border);
+	}
+	/* Padded, from a token. It declared overflow and a height and nothing else, so
+	   every field in every mobile inspector met the sheet's wall with no gap. The
+	   remedy is a custom property rather than a rule in each consumer, because
+	   `.vui-*` names are private and this package's own contract says consumers
+	   are not to fork its CSS — an unpaddable sheet body is a gap here, not
+	   something for three editors to work around. */
+	[data-vui-root] .vui-sheet-body {
+		max-height: calc(78dvh - var(--vui-header-height));
+		overflow: auto;
+		padding: var(--vui-sheet-body-padding, var(--vui-space));
+	}
+	[data-vui-root].vui-sheet-left,
+	[data-vui-root].vui-sheet-right {
+		align-items: stretch;
+	}
+	[data-vui-root].vui-sheet-left {
+		justify-items: start;
+	}
+	[data-vui-root].vui-sheet-right {
+		justify-items: end;
+	}
+	[data-vui-root].vui-sheet-left .vui-overlay-dialog,
+	[data-vui-root].vui-sheet-right .vui-overlay-dialog {
+		width: min(420px, 92vw);
+	}
+	[data-vui-root].vui-sheet-left .vui-sheet,
+	[data-vui-root].vui-sheet-right .vui-sheet {
+		height: 100%;
+		max-height: none;
+	}
+	[data-vui-root].vui-sheet-fullscreen .vui-overlay-dialog,
+	[data-vui-root].vui-sheet-fullscreen .vui-sheet {
+		width: 100%;
+		height: 100%;
+		max-height: none;
+	}
+
+	[data-vui-root]:focus-visible,
+	[data-vui-root] button:focus-visible,
+	[data-vui-root] [tabindex]:focus-visible {
+		outline: 2px solid var(--vui-accent);
+		outline-offset: 2px;
+	}
+	[data-vui-root] .vui-keyboard-scope {
+		min-width: 0;
+		min-height: 0;
+	}
+	[data-vui-root] .vui-sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	@container (max-width: 700px) {
+		[data-vui-root].vui-workspace {
+			overflow: hidden;
+		}
+		[data-vui-root] .vui-workspace-main {
+			grid-template-columns: 1fr;
+			grid-template-rows: minmax(180px, 1fr) minmax(150px, 35dvh);
+			flex: 1 1 0;
+			overflow: hidden;
+		}
+		[data-vui-root] .vui-workspace-inspector,
+		[data-vui-root] .vui-workspace-tools {
+			display: none;
+		}
+		[data-vui-root] .vui-workspace-timeline {
+			flex: 0 0 190px;
+		}
+	}
+
+	@container (min-width: 701px) and (max-width: 999px) {
+		[data-vui-root] .vui-workspace-main {
+			grid-template-columns: minmax(0, 1fr) minmax(220px, 35%);
+		}
+	}
+
+	/* Timeline editor appearance is the default for every desktop workspace. */
+	@media (min-width: 861px) {
+		@container (min-width: 701px) {
+			[data-vui-root] .vui-workspace-main {
+				gap: var(--s-2);
+				padding: var(--s-2);
+			}
+			[data-vui-root] .vui-workspace-preview,
+			[data-vui-root] .vui-workspace-inspector,
+			[data-vui-root] .vui-workspace-tools,
+			[data-vui-root] .vui-workspace-timeline {
+				border: 1px solid var(--border);
+				border-radius: var(--r-2);
+				background: var(--surface);
+			}
+		}
+	}
+
+	@container (min-width: 1000px) {
+		[data-vui-root] .vui-workspace-main {
+			grid-template-columns: minmax(0, 1fr) minmax(260px, 30%);
+		}
+	}
+
+	@media (max-height: 500px) and (pointer: coarse) {
+		[data-vui-root].vui-workspace {
+			overflow: hidden;
+		}
+		[data-vui-root] .vui-workspace-main {
+			grid-template-columns: 1fr;
+			grid-template-rows: minmax(140px, 1fr) minmax(150px, 35dvh);
+			flex: 1 1 0;
+			overflow: hidden;
+		}
+		[data-vui-root] .vui-workspace-inspector,
+		[data-vui-root] .vui-workspace-tools {
+			display: none;
+		}
+		[data-vui-root] .vui-workspace-timeline {
+			flex: 0 0 190px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-vui-root] *,
+		[data-vui-root] *::before,
+		[data-vui-root] *::after {
+			scroll-behavior: auto !important;
+			animation-duration: 0.001ms !important;
+			transition-duration: 0.001ms !important;
+		}
+	}
+}

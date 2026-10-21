@@ -1,0 +1,400 @@
+{
+	"events": [
+		{
+			"kind": "tool_call_started",
+			"tool": "plan_story",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"targetDurationSec": 90
+			}
+		},
+		{
+			"kind": "thinking_note",
+			"title": "Planning",
+			"body": "Drafting the story plan for ~2 min (~234 words)…",
+			"elapsedSec": "<volatile>"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "generate_style",
+			"args": {
+				"brief": "why compound interest is counter-intuitive"
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "generate_style",
+			"note": "Locked visual style: test style bible",
+			"effect": "asset"
+		},
+		{
+			"kind": "tool_call_started",
+			"tool": "author_story_bible",
+			"args": {
+				"brief": "why compound interest is counter-intuitive",
+				"plannedReferences": 0
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "author_story_bible",
+			"note": "Story bible: 1 subject(s), 1 location(s), palette p.",
+			"effect": "asset"
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:0>",
+				"kind": "story_plan",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:1>"
+				},
+				"projectId": "<id:2>",
+				"revision": 1,
+				"inputRefs": [
+					{
+						"id": "<id:3>",
+						"kind": "research_bundle",
+						"schemaVersion": 1,
+						"contentHash": "<volatile>"
+					}
+				],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"planningBrief": "why compound interest is counter-intuitive",
+					"factual": true,
+					"visualStyle": "test style bible",
+					"bible": {
+						"subjects": [
+							{
+								"id": "s",
+								"label": "subject",
+								"aliases": [],
+								"descriptors": [],
+								"mustAvoid": []
+							}
+						],
+						"locations": [
+							{
+								"id": "l",
+								"label": "place",
+								"descriptors": []
+							}
+						],
+						"medium": "m",
+						"palette": "p",
+						"negatives": [
+							"n"
+						],
+						"summary": "test style bible"
+					},
+					"structure": "narration_section",
+					"directionFingerprint": "<volatile>",
+					"directionInputs": {
+						"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+						"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+					},
+					"clarification": {
+						"stage": "pre_research",
+						"status": "bypassed",
+						"bypass": "unavailable",
+						"decisions": []
+					},
+					"generationState": {
+						"planId": "<id:4>",
+						"draft": {
+							"revisionId": "<id:5>",
+							"sections": [
+								{
+									"id": "sec-1",
+									"title": "Opening",
+									"beats": [
+										{
+											"id": "<id:6>",
+											"title": "Opening",
+											"narration": "A concise opening about compounding.",
+											"visualPrompt": "A ledger filling with numbers",
+											"visualPrompts": [
+												"A ledger filling with numbers"
+											],
+											"factual": true,
+											"sourceEvidence": [],
+											"sourceUrls": [],
+											"citationStatus": "unsupported",
+											"status": "draft",
+											"estimatedDurationSec": 1.9
+										}
+									],
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": true,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "unsupported",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							]
+						}
+					},
+					"targetSec": 90,
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": true,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "unsupported",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					],
+					"unverified": true,
+					"verificationStatus": "unverified",
+					"citationCoverage": {
+						"verified": 0,
+						"total": 1
+					},
+					"researchKey": "why compound interest is counter-intuitive",
+					"planKind": "story"
+				}
+			}
+		},
+		{
+			"kind": "artifact",
+			"artifact": {
+				"id": "<id:7>",
+				"kind": "storyboard_table",
+				"schemaVersion": 1,
+				"status": "in_progress",
+				"producer": {
+					"type": "stage",
+					"stage": "plan",
+					"runId": "<id:1>"
+				},
+				"projectId": "<id:2>",
+				"revision": 1,
+				"inputRefs": [],
+				"context": [
+					{
+						"key": "brief",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.story",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.voice",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "materials.rules",
+						"hash": "<volatile>"
+					},
+					{
+						"key": "styleLock",
+						"hash": "<volatile>"
+					}
+				],
+				"contentHash": "<volatile>",
+				"createdAt": "<volatile>",
+				"payload": {
+					"title": "Story plan · 1 sections · ~2 min",
+					"rows": [
+						{
+							"startSec": 0,
+							"endSec": 1.9,
+							"content": "Opening — A concise opening about compounding.",
+							"kind": "scene"
+						}
+					]
+				}
+			}
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "plan_story",
+			"note": "Planned 1 sections (~234 words). UNVERIFIED: 1 source(s), 0/1 factual sections citation-verified. Review the story plan, then approve to generate voiceover + images.",
+			"effect": "patch"
+		},
+		{
+			"kind": "storyboard_patch"
+		},
+		{
+			"kind": "final",
+			"text": "Plan ready."
+		}
+	],
+	"planningCalls": {
+		"frames": 1,
+		"searches": 0,
+		"drafts": [
+			"why compound interest is counter-intuitive"
+		]
+	},
+	"run": {
+		"status": "done",
+		"plan": {
+			"planningBrief": "why compound interest is counter-intuitive",
+			"factual": true,
+			"visualStyle": "test style bible",
+			"bible": {
+				"subjects": [
+					{
+						"id": "s",
+						"label": "subject",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "l",
+						"label": "place",
+						"descriptors": []
+					}
+				],
+				"medium": "m",
+				"palette": "p",
+				"negatives": [
+					"n"
+				],
+				"summary": "test style bible"
+			},
+			"structure": "narration_section",
+			"directionFingerprint": "<volatile>",
+			"directionInputs": {
+				"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+				"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+			},
+			"clarification": {
+				"stage": "pre_research",
+				"status": "bypassed",
+				"bypass": "unavailable",
+				"decisions": []
+			},
+			"generationState": {
+				"planId": "<id:4>",
+				"draft": {
+					"revisionId": "<id:5>",
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"beats": [
+								{
+									"id": "<id:6>",
+									"title": "Opening",
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": true,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "unsupported",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							],
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": true,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "unsupported",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					]
+				}
+			},
+			"targetSec": 90,
+			"sections": [
+				{
+					"id": "sec-1",
+					"title": "Opening",
+					"narration": "A concise opening about compounding.",
+					"visualPrompt": "A ledger filling with numbers",
+					"visualPrompts": [
+						"A ledger filling with numbers"
+					],
+					"factual": true,
+					"sourceEvidence": [],
+					"sourceUrls": [],
+					"citationStatus": "unsupported",
+					"status": "draft",
+					"estimatedDurationSec": 1.9
+				}
+			],
+			"unverified": true,
+			"verificationStatus": "unverified",
+			"citationCoverage": {
+				"verified": 0,
+				"total": 1
+			},
+			"researchKey": "why compound interest is counter-intuitive",
+			"planKind": "story"
+		},
+		"direction": null,
+		"targetDurationSec": 90,
+		"storyClarification": {
+			"status": "bypassed",
+			"provenance": {
+				"stage": "pre_research",
+				"status": "bypassed",
+				"bypass": "unavailable",
+				"decisions": []
+			}
+		},
+		"postResearchClarification": null,
+		"pendingQuestion": null,
+		"approveAll": false,
+		"scenes": 0
+	}
+}

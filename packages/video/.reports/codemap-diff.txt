@@ -1,0 +1,38 @@
+Codemap scan — 2026-05-13
+=========================
+
+Mode: initial (no prior codemaps)
+Files scanned: 26 src/ + 5 scripts/ = 31 TS/TSX files (~1896 LOC)
+
+Generated codemaps:
+  docs/CODEMAPS/architecture.md   (~650 tok)
+  docs/CODEMAPS/backend.md        (~550 tok)
+  docs/CODEMAPS/frontend.md       (~600 tok)
+  docs/CODEMAPS/data.md           (~450 tok)
+  docs/CODEMAPS/dependencies.md   (~400 tok)
+  Total: ~2650 tok
+
+Detected architecture:
+  - Bun + Hono HTTP API (src/server/)
+  - Remotion compositions (React 19, src/Root.tsx + scenes/components)
+  - SQLite job queue (bun:sqlite) with single-flight worker loop
+  - CLI scripts: ingest, prep, render-all, lambda deploy/render
+
+External integrations:
+  - ElevenLabs (TTS)
+  - OpenAI Whisper (caption timing)
+  - remove.bg (image prep)
+  - AWS Lambda + S3 (Remotion Lambda)
+  - maleo-affiliate (sibling SQLite, read-only)
+
+Routes discovered: 7
+  GET /health, /presets, /templates, /render/:id, /render/:id/file, /jobs
+  POST /render
+
+Compositions registered: 3 (ProductReel, ProductSquare, ProductWide)
+Templates: 4 (classic, split-screen, before-after, testimonial)
+Platform presets: 5 (tiktok, reels, shorts, ig-feed, yt-long)
+
+Staleness warnings: none (initial scan)
+No migrations directory — flag if schema mutates.
+No tests directory found.

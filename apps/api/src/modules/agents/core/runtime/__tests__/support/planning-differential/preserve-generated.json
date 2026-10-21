@@ -1,0 +1,139 @@
+{
+	"events": [
+		{
+			"kind": "tool_call_started",
+			"tool": "plan_story",
+			"args": {
+				"brief": "why compound interest is counter-intuitive"
+			}
+		},
+		{
+			"kind": "tool_call_completed",
+			"tool": "plan_story",
+			"note": "Story plan already in progress (1 sections, 1 ready, 0 failed) — not re-planning, which would discard generated work. Use generate_story_assets to resume (it retries the failed/missing sections), or regenerate_section to redo one. To start over, clear the plan first.",
+			"effect": "patch"
+		},
+		{
+			"kind": "final",
+			"text": "Kept."
+		}
+	],
+	"planningCalls": {
+		"frames": 1,
+		"searches": 0,
+		"drafts": [
+			"why compound interest is counter-intuitive"
+		]
+	},
+	"run": {
+		"status": "done",
+		"plan": {
+			"planningBrief": "why compound interest is counter-intuitive",
+			"factual": false,
+			"visualStyle": "test style bible",
+			"bible": {
+				"subjects": [
+					{
+						"id": "s",
+						"label": "subject",
+						"aliases": [],
+						"descriptors": [],
+						"mustAvoid": []
+					}
+				],
+				"locations": [
+					{
+						"id": "l",
+						"label": "place",
+						"descriptors": []
+					}
+				],
+				"medium": "m",
+				"palette": "p",
+				"negatives": [
+					"n"
+				],
+				"summary": "test style bible"
+			},
+			"structure": "narration_section",
+			"directionFingerprint": "<volatile>",
+			"directionInputs": {
+				"materials": "{\"visual\":\"\",\"rules\":\"\"}",
+				"templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+			},
+			"clarification": {
+				"stage": "pre_research",
+				"status": "bypassed",
+				"bypass": "unavailable",
+				"decisions": []
+			},
+			"generationState": {
+				"planId": "<id:0>",
+				"draft": {
+					"revisionId": "<id:1>",
+					"sections": [
+						{
+							"id": "sec-1",
+							"title": "Opening",
+							"beats": [
+								{
+									"id": "<id:2>",
+									"title": "Opening",
+									"narration": "A concise opening about compounding.",
+									"visualPrompt": "A ledger filling with numbers",
+									"visualPrompts": [
+										"A ledger filling with numbers"
+									],
+									"factual": false,
+									"sourceEvidence": [],
+									"sourceUrls": [],
+									"citationStatus": "not_required",
+									"status": "draft",
+									"estimatedDurationSec": 1.9
+								}
+							],
+							"narration": "A concise opening about compounding.",
+							"visualPrompt": "A ledger filling with numbers",
+							"visualPrompts": [
+								"A ledger filling with numbers"
+							],
+							"factual": false,
+							"sourceEvidence": [],
+							"sourceUrls": [],
+							"citationStatus": "not_required",
+							"status": "draft",
+							"estimatedDurationSec": 1.9
+						}
+					]
+				}
+			},
+			"targetSec": 90,
+			"sections": [
+				{
+					"id": "sec-1",
+					"title": "Opening",
+					"narration": "A concise opening about compounding.",
+					"visualPrompt": "A ledger filling with numbers",
+					"visualPrompts": [
+						"A ledger filling with numbers"
+					],
+					"factual": false,
+					"sourceEvidence": [],
+					"sourceUrls": [],
+					"citationStatus": "not_required",
+					"status": "ready",
+					"estimatedDurationSec": 1.9
+				}
+			],
+			"unverified": false,
+			"planKind": "story"
+		},
+		"direction": null,
+		"targetDurationSec": 60,
+		"storyClarification": null,
+		"postResearchClarification": null,
+		"pendingQuestion": null,
+		"approveAll": false,
+		"scenes": 0
+	}
+}

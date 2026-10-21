@@ -1,0 +1,92 @@
+name: Bug report
+description: Report a bug you have reproduced yourself
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form only for a bug you have personally reproduced.
+
+        Feature requests, ideas, questions, and design proposals belong in
+        [Discussions](../../discussions). If you cannot reproduce the behavior,
+        open a Discussion instead.
+
+        Please search open and closed issues first.
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: What actually happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Shortest reproduction
+      description: >
+        The fewest exact steps that trigger the bug, starting from a fresh
+        `bun run dev`. Include the request or the click path.
+      placeholder: |
+        1. bun run dev
+        2. Open http://localhost:3030
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: What this blocks or breaks in your work.
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >
+        Maleo version or commit, operating system, Bun version
+        (`bun --version`), and the relevant providers configured.
+      placeholder: |
+        Version/commit:
+        OS:
+        Bun:
+        Providers:
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log excerpt
+      description: >
+        The smallest useful excerpt. Redact API keys, tokens, and workspace
+        data before pasting.
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: confirms
+    attributes:
+      label: Before submitting
+      options:
+        - label: I reproduced this myself on the version stated above.
+          required: true
+        - label: I searched open and closed issues for a duplicate.
+          required: true
+        - label: >
+            I have not pasted any API key, token, or credential into this
+            report.
+          required: true

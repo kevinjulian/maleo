@@ -1,0 +1,340 @@
+@layer feature {
+	.sb-author-view {
+		flex: 1;
+		min-height: 0;
+		overflow: auto;
+		padding: var(--s-5);
+		background: var(--bg);
+	}
+	.sb-author-state {
+		flex: 1;
+		display: grid;
+		place-content: center;
+		justify-items: center;
+		gap: var(--s-3);
+		padding: var(--s-6);
+		text-align: center;
+		background: var(--bg);
+	}
+	.sb-author-state h2,
+	.sb-author-state p,
+	.sb-author-toolbar h1,
+	.sb-author-toolbar p {
+		margin: 0;
+	}
+	.sb-author-state p,
+	.sb-author-toolbar p,
+	.sb-author-muted {
+		color: var(--muted);
+	}
+	.sb-author-toolbar {
+		display: flex;
+		justify-content: space-between;
+		align-items: end;
+		gap: var(--s-5);
+		max-width: 1180px;
+		margin: 0 auto var(--s-4);
+	}
+	/* The toolbar's title is `PageTitle level="sub"` now — it was a bare `h1` at
+     25px, a fourth size for the one role. `sub` rather than the full page title
+     because this header sits inside the editor beside its approval controls:
+     the page-title role at desktop width pushed `Approve draft` onto a second
+     row, which is the toolbar telling you the title is too big for where it is.
+     Only the zero margin above still applies. */
+	.sb-author-eyebrow,
+	.sb-author-order {
+		display: block;
+		color: var(--muted);
+		font: 700 var(--type-label-size)/var(--type-label-lh) var(--font-body);
+	}
+	.sb-author-approval,
+	.sb-author-actions,
+	.sb-author-assist,
+	.sb-author-tags,
+	.sb-author-ref-row {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+	}
+	.sb-author-banner {
+		max-width: 1180px;
+		margin: 0 auto var(--s-3);
+		padding: var(--s-2-5) var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		font-size: var(--type-caption-size);
+	}
+	.sb-author-banner.conflict {
+		border-color: var(--err);
+		color: var(--err);
+	}
+	.sb-author-sections {
+		max-width: 1180px;
+		margin: 0 auto;
+		display: grid;
+		gap: var(--s-4);
+	}
+	.sb-author-section {
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+		overflow: hidden;
+	}
+	.sb-author-section-head {
+		display: flex;
+		align-items: end;
+		justify-content: space-between;
+		gap: var(--s-3);
+		padding: var(--s-3);
+		border-bottom: 1px solid var(--border);
+	}
+	.sb-author-section-head > label {
+		display: grid;
+		gap: var(--s-1);
+		flex: 1;
+		max-width: 440px;
+		color: var(--muted);
+		font: 700 var(--type-label-size)/var(--type-label-lh) var(--font-body);
+	}
+	.sb-author-beats {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr));
+		gap: var(--s-3);
+		padding: var(--s-3);
+		align-items: start;
+	}
+	.sb-author-beat {
+		display: grid;
+		gap: var(--s-3);
+		padding: var(--s-3);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface-tint);
+		outline: none;
+	}
+	.sb-author-beat.selected {
+		border-color: var(--ai);
+		box-shadow: var(--ring-selected);
+	}
+	.sb-author-beat:focus-visible {
+		box-shadow: var(--focus-ring);
+	}
+	.sb-author-beat-head {
+		display: flex;
+		align-items: start;
+		justify-content: space-between;
+		gap: var(--s-2-5);
+	}
+	.sb-author-beat-head strong {
+		display: block;
+		margin-top: var(--s-0-5);
+	}
+	.sb-author-field {
+		display: grid;
+		gap: var(--s-1);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+	}
+	.sb-author-field textarea {
+		resize: vertical;
+	}
+	.sb-author-editorial {
+		padding: var(--s-2-5);
+		border-radius: var(--r-1);
+		background: var(--surface-tint);
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--s-2);
+	}
+	.sb-author-editorial > strong,
+	.sb-author-editorial-selects {
+		grid-column: 1 / -1;
+	}
+	.sb-author-editorial > label,
+	.sb-author-editorial-selects label {
+		display: grid;
+		gap: var(--s-1);
+		min-width: 0;
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+	}
+	.sb-author-editorial-selects {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: var(--s-2);
+	}
+	.sb-author-editorial select {
+		min-height: 34px;
+		padding: 0 var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+		color: var(--fg);
+		text-transform: capitalize;
+	}
+	.sb-author-editorial > span {
+		grid-column: 1 / -1;
+		color: var(--muted);
+		font-size: var(--type-label-size);
+		font-weight: var(--weight-strong);
+	}
+	.sb-author-shots {
+		display: grid;
+		gap: var(--s-2);
+		padding: var(--s-2-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+		background: var(--surface);
+	}
+	.sb-author-shots > header,
+	.sb-author-shot-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--s-2);
+	}
+	.sb-author-shots > header > span,
+	.sb-author-shot-head > span {
+		color: var(--muted);
+		font: 700 var(--type-label-size)/var(--type-label-lh) var(--font-body);
+	}
+	.sb-author-shot {
+		display: grid;
+		gap: var(--s-1-5);
+		padding: var(--s-2);
+		border-left: 2px solid var(--ai);
+		background: var(--surface-tint);
+	}
+	.sb-author-shot p {
+		margin: 0;
+		font-size: var(--type-caption-size);
+		line-height: 1.45;
+	}
+	.sb-author-reference-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--s-1-5);
+	}
+	.sb-author-reference {
+		display: grid;
+		gap: 1px;
+		min-width: 0;
+		padding: var(--s-1) var(--s-1-5);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		background: var(--surface);
+	}
+	.sb-author-reference.planned {
+		border-style: dashed;
+	}
+	.sb-author-reference b {
+		overflow: hidden;
+		font-size: var(--type-label-size);
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.sb-author-reference small,
+	.sb-author-rationale {
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+	}
+	.sb-author-rationale {
+		padding-top: var(--s-1-5);
+		border-top: 1px solid var(--border);
+	}
+	.sb-author-intent {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--s-1-5);
+	}
+	.sb-author-intent span {
+		display: grid;
+		gap: var(--s-0-5);
+		padding: var(--s-2);
+		border: 1px solid var(--border);
+		border-radius: var(--r-1);
+		color: var(--muted);
+		font-size: var(--type-label-size);
+	}
+	.sb-author-intent b {
+		color: var(--fg);
+		font-size: var(--type-micro-size);
+	}
+	.sb-author-details summary {
+		cursor: pointer;
+		color: var(--fg-dim);
+		font-size: var(--type-caption-size);
+	}
+	.sb-author-details[open] summary {
+		margin-bottom: var(--s-2-5);
+	}
+	.sb-author-ref-row :is([data-slot="input"], [data-slot="textarea"]) {
+		min-width: 0;
+		flex: 1;
+	}
+	.sb-author-outputs {
+		display: grid;
+		gap: var(--s-2);
+		margin-top: var(--s-2-5);
+	}
+	.sb-author-outputs figure {
+		margin: 0;
+		display: grid;
+		gap: var(--s-1);
+	}
+	.sb-author-outputs img {
+		width: 100%;
+		max-height: 190px;
+		object-fit: contain;
+		border-radius: var(--r-1);
+		background: var(--bg);
+	}
+	.sb-author-outputs figcaption,
+	.sb-author-voice > span {
+		color: var(--muted);
+		font-size: var(--type-micro-size);
+	}
+	.sb-author-voice {
+		display: grid;
+		gap: var(--s-1);
+	}
+	.sb-author-error {
+		margin: var(--s-2) 0 0;
+		color: var(--err);
+		font-size: var(--type-label-size);
+	}
+	.sb-author-assist {
+		padding-top: var(--s-2-5);
+		border-top: 1px solid var(--border);
+	}
+
+	@media (max-width: 760px) {
+		.sb-author-view {
+			padding: var(--s-3);
+		}
+		.sb-author-toolbar,
+		.sb-author-section-head {
+			align-items: stretch;
+			flex-direction: column;
+		}
+		.sb-author-approval {
+			display: grid;
+			grid-template-columns: 1fr;
+		}
+		.sb-author-beats {
+			grid-template-columns: 1fr;
+		}
+		.sb-author-intent,
+		.sb-author-editorial,
+		.sb-author-editorial-selects {
+			grid-template-columns: 1fr;
+		}
+		.sb-author-editorial > label {
+			grid-column: 1;
+		}
+	}
+}

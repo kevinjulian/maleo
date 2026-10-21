@@ -1,0 +1,169 @@
+{
+	"schemaVersion": 2,
+	"clips": [
+		{
+			"id": "text:1",
+			"type": "text",
+			"startSec": 0,
+			"durationSec": 2.71,
+			"track": 0,
+			"text": {
+				"id": 1,
+				"content": "Offsets and pivot",
+				"start": 0,
+				"dur": 2.71,
+				"preset": "title",
+				"track": 0,
+				"layout": { "xPct": 10, "yPct": 70, "widthPct": 80 },
+				"style": { "fontSize": 64, "fill": "#ffffff" },
+				"anim": {
+					"tracks": {
+						"x": [
+							{ "t": 0, "v": 0 },
+							{ "t": 1, "v": 20, "easing": "in-out" }
+						],
+						"y": [
+							{ "t": 0, "v": -5 },
+							{ "t": 0.4, "v": 5, "easing": "out" },
+							{ "t": 1, "v": 0 }
+						],
+						"opacity": [
+							{ "t": 0, "v": 0 },
+							{ "t": 0.25, "v": 1, "easing": "in" }
+						],
+						"scale": [
+							{ "t": 0, "v": 0.8 },
+							{ "t": 1, "v": 1.2, "easing": "bezier" }
+						],
+						"rotate": [
+							{ "t": 0.5, "v": 0 },
+							{ "t": 1, "v": 15 }
+						],
+						"blur": [
+							{ "t": 0, "v": 8 },
+							{ "t": 0.3, "v": 0 }
+						]
+					}
+				}
+			}
+		},
+		{
+			"id": "text:2",
+			"type": "text",
+			"startSec": 3,
+			"durationSec": 3.333,
+			"track": 1,
+			"text": {
+				"id": 2,
+				"content": "Size, style and colour",
+				"start": 3,
+				"dur": 3.333,
+				"preset": "title",
+				"track": 1,
+				"layout": { "xPct": 5, "yPct": 10, "widthPct": 60, "heightPct": 20 },
+				"style": {
+					"fontSize": 48,
+					"letterSpacing": 0,
+					"lineHeight": 1.1,
+					"bgOpacity": 0,
+					"fill": "#ffffff",
+					"accent": "#7C66FF",
+					"background": "#000000"
+				},
+				"anim": {
+					"tracks": {
+						"width": [
+							{ "t": 0, "v": 60 },
+							{ "t": 0.6, "v": 90, "easing": "out" }
+						],
+						"height": [
+							{ "t": 0.2, "v": 20 },
+							{ "t": 0.9, "v": 30 }
+						],
+						"bgOpacity": [
+							{ "t": 0, "v": 0 },
+							{ "t": 1, "v": 0.8, "easing": "in" }
+						],
+						"fontSize": [
+							{ "t": 0, "v": 48 },
+							{ "t": 0.5, "v": 72, "easing": "in-out" }
+						],
+						"letterSpacing": [
+							{ "t": 0, "v": 0 },
+							{ "t": 1, "v": 4 }
+						],
+						"lineHeight": [
+							{ "t": 0, "v": 1.1 },
+							{ "t": 1, "v": 1.4 }
+						]
+					},
+					"colorTracks": {
+						"fill": [
+							{ "t": 0, "v": "#ffffff" },
+							{ "t": 1, "v": "#ff0000", "easing": "in-out" }
+						],
+						"background": [
+							{ "t": 0.3, "v": "#000000" },
+							{ "t": 0.7, "v": "#3366ff" }
+						],
+						"accent": [
+							{ "t": 0, "v": "red" },
+							{ "t": 1, "v": "blue" }
+						]
+					}
+				}
+			}
+		},
+		{
+			"id": "text:3",
+			"type": "text",
+			"startSec": 7,
+			"durationSec": 1,
+			"track": 0,
+			"text": {
+				"id": 3,
+				"content": "Single key",
+				"start": 7,
+				"dur": 1,
+				"preset": "title",
+				"track": 0,
+				"layout": { "xPct": 20, "yPct": 40, "widthPct": 60 },
+				"anim": { "tracks": { "opacity": [{ "t": 0.5, "v": 0.5 }] } }
+			}
+		},
+		{
+			"id": "image:1",
+			"type": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"track": 2,
+			"video": {
+				"id": 1,
+				"kind": "image",
+				"url": "https://example.com/a.jpg",
+				"start": 0,
+				"dur": 4,
+				"track": 2,
+				"layout": {
+					"xPct": 0,
+					"yPct": 0,
+					"widthPct": 50,
+					"animation": {
+						"tracks": {
+							"xPct": [
+								{ "t": 0, "v": 0 },
+								{ "t": 1.5, "v": 25, "easing": "in-out" }
+							],
+							"opacity": [
+								{ "t": 2, "v": 1 },
+								{ "t": 3.9, "v": 0.2, "easing": "out" }
+							]
+						}
+					}
+				}
+			}
+		}
+	],
+	"markers": [],
+	"sceneTextClipMigrationVersion": 5
+}

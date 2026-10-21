@@ -1,0 +1,144 @@
+{
+	"page": 1,
+	"per_page": 2,
+	"videos": [
+		{
+			"id": 31264406,
+			"width": 2160,
+			"height": 3840,
+			"duration": 12,
+			"full_res": null,
+			"tags": [],
+			"url": "https://www.pexels.com/video/close-up-of-espresso-brewing-into-elegant-cup-31264406/",
+			"image": "https://images.pexels.com/videos/31264406/breafast-coffee-coffee-making-coffee-making-31264406.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=1200&w=630",
+			"avg_color": null,
+			"user": {
+				"id": 2147500545,
+				"name": "İsa Kılavuzoğlu",
+				"url": "https://www.pexels.com/@i-sa-kilavuzoglu-2147500545"
+			},
+			"video_files": [
+				{
+					"id": 13351822,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 360,
+					"height": 640,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351822_360_640_25fps.mp4",
+					"size": 236931
+				},
+				{
+					"id": 13351823,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 540,
+					"height": 960,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351823_540_960_25fps.mp4",
+					"size": 457679
+				},
+				{
+					"id": 13351824,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 720,
+					"height": 1280,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351824_720_1280_25fps.mp4",
+					"size": 760658
+				},
+				{
+					"id": 13351825,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 1080,
+					"height": 1920,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351825_1080_1920_25fps.mp4",
+					"size": 1682522
+				},
+				{
+					"id": 13351826,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 1440,
+					"height": 2560,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351826_1440_2560_25fps.mp4",
+					"size": 2759284
+				},
+				{
+					"id": 13351827,
+					"quality": null,
+					"file_type": "video/mp4",
+					"width": 2160,
+					"height": 3840,
+					"fps": 25,
+					"link": "https://videos.pexels.com/video-files/31264406/13351827_2160_3840_25fps.mp4",
+					"size": 6614761
+				}
+			],
+			"video_pictures": [
+				{
+					"id": 25629448,
+					"nr": 0,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-0.jpg"
+				},
+				{
+					"id": 25629449,
+					"nr": 1,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-1.jpg"
+				},
+				{
+					"id": 25629450,
+					"nr": 2,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-2.jpg"
+				},
+				{
+					"id": 25629451,
+					"nr": 3,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-3.jpg"
+				},
+				{
+					"id": 25629452,
+					"nr": 4,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-4.jpg"
+				},
+				{
+					"id": 25629453,
+					"nr": 5,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-5.jpg"
+				},
+				{
+					"id": 25629454,
+					"nr": 6,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-6.jpg"
+				},
+				{
+					"id": 25629455,
+					"nr": 7,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-7.jpg"
+				},
+				{
+					"id": 25629456,
+					"nr": 8,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-8.jpg"
+				},
+				{
+					"id": 25629457,
+					"nr": 9,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-9.jpg"
+				},
+				{
+					"id": 25629458,
+					"nr": 10,
+					"picture": "https://images.pexels.com/videos/31264406/pictures/preview-10.jpg"
+				}
+			]
+		}
+	],
+	"total_results": 8000,
+	"next_page": "https://api.pexels.com/v1/v1/videos/search?page=2&per_page=2&query=coffee",
+	"url": "https://api.pexels.com/search/videos/coffee/"
+}

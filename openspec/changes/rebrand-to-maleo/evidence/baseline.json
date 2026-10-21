@@ -1,0 +1,26 @@
+{
+	"migrations": {
+		"0001_initial.sql": "211d3783f9726c058ce34bea4412f815e05e5e5e626dee16aebbb9f27dd18186",
+		"0002_workspace_config.sql": "e07da18bcc8c422b6df0d0882081e5ea62a5e95bc32a6d50ec63d25ec6b7c0c6",
+		"0003_admin_audit.sql": "0dcf4cfb726d4cc30c40a8c1a18082da652a5300ae06847d05153f32f61d5c89",
+		"0004_generation_identity.sql": "feef91ca6bb544729cd7dacc335cca0b0d057f84eabc87da5e0bf61da84a0518",
+		"0005_mcp_servers.sql": "8342244cd34590e698208f1171c3f31c6b580ded7597beceb9630536ecf4123e",
+		"0006_project_media_imports.sql": "e8420dfc8276c1fac1d1880b46871d66a0fb58fd21932ba6416be4755033c58b",
+		"0007_project_media_imports_pending_index.sql": "8ecf42876e0ee044cc7e5495d8e4fa9b2263a7171657ece5159bb3414ad2be95",
+		"0008_remove_image_text_agent_history.sql": "4bbc31e1cad80e0dce0cbe2cf8b8e284662a85178dd8e8f985215e9fa6f3176d"
+	},
+	"workspaces": {
+		"apps/api/package.json": "@aincer/api",
+		"apps/media-worker/package.json": "@aincer/media-worker",
+		"apps/render-worker/package.json": "@aincer/render-worker",
+		"apps/web/package.json": "@aincer/web",
+		"packages/auth/package.json": "@aincer/auth",
+		"packages/db/package.json": "@aincer/db",
+		"packages/inngest/package.json": "@aincer/inngest",
+		"packages/media/package.json": "@aincer/media",
+		"packages/shared/package.json": "@aincer/shared",
+		"packages/stock/package.json": "@aincer/stock",
+		"packages/storage/package.json": "@aincer/storage",
+		"packages/video/package.json": "@aincer/video"
+	}
+}

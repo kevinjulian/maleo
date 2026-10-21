@@ -1,0 +1,42 @@
+@layer chrome {
+	.ui-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+	.ui-table th {
+		white-space: nowrap;
+		text-align: left;
+		padding: var(--s-3);
+		font-family: var(--font-body);
+		font-size: var(--type-label-size);
+		color: var(--muted);
+		border-bottom: 1px solid var(--border);
+		font-weight: var(--weight-medium);
+	}
+	.ui-table td {
+		padding: var(--s-3);
+		border-bottom: 1px solid var(--border);
+		font-size: var(--type-body-size);
+		vertical-align: top;
+	}
+	.ui-table tbody tr[data-selected="true"] {
+		background: var(--ai-bg);
+	}
+	.ui-table-scroll {
+		min-width: 0;
+		overflow-wrap: normal;
+		overflow-x: auto;
+		border: 1px solid var(--border);
+		border-radius: var(--r-2);
+	}
+	.ui-table-scroll:focus-visible {
+		outline: var(--focus-w) solid var(--focus-color);
+		outline-offset: var(--focus-offset);
+	}
+	.ui-table-scroll > .ui-table {
+		min-width: var(--measure-table);
+	}
+	.ui-table-scroll p {
+		margin: 0;
+	}
+}

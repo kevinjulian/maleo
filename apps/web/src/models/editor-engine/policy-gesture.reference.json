@@ -1,0 +1,1156 @@
+{
+	"about": "VUI kernel results for policy-gesture.test.ts, frozen 2026-10-09 when the kernel was retired (task 4.10)",
+	"samples": [
+		{
+			"deltaTicks": 3000,
+			"yPx": 10
+		},
+		{
+			"deltaTicks": -2000,
+			"yPx": 55
+		},
+		{
+			"deltaTicks": 9000,
+			"yPx": 90
+		},
+		{
+			"deltaTicks": 500,
+			"yPx": 130
+		}
+	],
+	"moves": [
+		{
+			"id": "v1",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 3000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "audio",
+							"startTicks": 3000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 0,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "audio",
+							"startTicks": 0,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video",
+					"rowRefused": true
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "audio",
+							"startTicks": 9000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "audio",
+							"startTicks": 9000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"startTicks": 500,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "audio",
+							"startTicks": 500,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "v1",
+							"from": {
+								"startTicks": 0,
+								"rowId": "video"
+							},
+							"to": {
+								"startTicks": 500,
+								"rowId": "video"
+							}
+						},
+						{
+							"id": "a1",
+							"from": {
+								"startTicks": 0,
+								"rowId": "audio"
+							},
+							"to": {
+								"startTicks": 500,
+								"rowId": "audio"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "v2",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "v2",
+							"rowId": "video",
+							"startTicks": 123000,
+							"durationTicks": 90000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "v2",
+							"rowId": "video",
+							"startTicks": 118000,
+							"durationTicks": 90000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video",
+					"rowRefused": true
+				},
+				{
+					"items": [
+						{
+							"id": "v2",
+							"rowId": "audio",
+							"startTicks": 129000,
+							"durationTicks": 90000
+						}
+					],
+					"valid": true,
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "v2",
+							"startTicks": 120500,
+							"durationTicks": 90000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "v2",
+							"from": {
+								"startTicks": 120000,
+								"rowId": "video"
+							},
+							"to": {
+								"startTicks": 120500,
+								"rowId": "video"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t1",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "video",
+							"startTicks": 33000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "overlay",
+							"startTicks": 153000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "video",
+							"startTicks": 28000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "overlay",
+							"startTicks": 148000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video",
+					"rowRefused": true
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "audio",
+							"startTicks": 39000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "overlay",
+							"startTicks": 159000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": false,
+					"reason": "@maleo/vui: this row does not permit overlap, and this position overlaps a1",
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"startTicks": 30500,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "overlay",
+							"startTicks": 150500,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "t1",
+							"from": {
+								"startTicks": 30000,
+								"rowId": "overlay"
+							},
+							"to": {
+								"startTicks": 30500,
+								"rowId": "overlay"
+							}
+						},
+						{
+							"id": "t2",
+							"from": {
+								"startTicks": 150000,
+								"rowId": "overlay"
+							},
+							"to": {
+								"startTicks": 150500,
+								"rowId": "overlay"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t2",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "overlay",
+							"startTicks": 33000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "video",
+							"startTicks": 153000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "overlay",
+							"startTicks": 28000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "video",
+							"startTicks": 148000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video",
+					"rowRefused": true
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "overlay",
+							"startTicks": 39000,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"rowId": "audio",
+							"startTicks": 159000,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true,
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "t1",
+							"rowId": "overlay",
+							"startTicks": 30500,
+							"durationTicks": 45000
+						},
+						{
+							"id": "t2",
+							"startTicks": 150500,
+							"durationTicks": 45000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "t1",
+							"from": {
+								"startTicks": 30000,
+								"rowId": "overlay"
+							},
+							"to": {
+								"startTicks": 30500,
+								"rowId": "overlay"
+							}
+						},
+						{
+							"id": "t2",
+							"from": {
+								"startTicks": 150000,
+								"rowId": "overlay"
+							},
+							"to": {
+								"startTicks": 150500,
+								"rowId": "overlay"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "locked",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "locked",
+							"rowId": "video",
+							"startTicks": 3000,
+							"durationTicks": 210000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "locked",
+							"rowId": "video",
+							"startTicks": 0,
+							"durationTicks": 210000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video",
+					"rowRefused": true
+				},
+				{
+					"items": [
+						{
+							"id": "locked",
+							"rowId": "audio",
+							"startTicks": 9000,
+							"durationTicks": 210000
+						}
+					],
+					"valid": false,
+					"reason": "@maleo/vui: this row does not permit overlap, and this position overlaps a1",
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "locked",
+							"startTicks": 500,
+							"durationTicks": 210000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "locked",
+							"from": {
+								"startTicks": 0,
+								"rowId": "overlay"
+							},
+							"to": {
+								"startTicks": 500,
+								"rowId": "overlay"
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "a1",
+			"projections": [
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 3000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "video",
+							"startTicks": 3000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "video"
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 0,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "overlay",
+							"startTicks": 0,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "overlay"
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 9000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"rowId": "audio",
+							"startTicks": 9000,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true,
+					"destinationRow": "audio"
+				},
+				{
+					"items": [
+						{
+							"id": "v1",
+							"rowId": "video",
+							"startTicks": 500,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						},
+						{
+							"id": "a1",
+							"startTicks": 500,
+							"durationTicks": 120000,
+							"sourceInTicks": 30000
+						}
+					],
+					"valid": true
+				}
+			],
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "move",
+					"entries": [
+						{
+							"id": "v1",
+							"from": {
+								"startTicks": 0,
+								"rowId": "video"
+							},
+							"to": {
+								"startTicks": 500,
+								"rowId": "video"
+							}
+						},
+						{
+							"id": "a1",
+							"from": {
+								"startTicks": 0,
+								"rowId": "audio"
+							},
+							"to": {
+								"startTicks": 500,
+								"rowId": "audio"
+							}
+						}
+					]
+				}
+			}
+		}
+	],
+	"trims": [
+		{
+			"id": "v1",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "v1",
+						"rowId": "video",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					},
+					{
+						"id": "a1",
+						"rowId": "audio",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "v1",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 120000,
+								"sourceInTicks": 30000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 116000,
+								"sourceInTicks": 30000
+							}
+						},
+						{
+							"id": "a1",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 120000,
+								"sourceInTicks": 30000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 116000,
+								"sourceInTicks": 30000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "v1",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "v1",
+						"rowId": "video",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					},
+					{
+						"id": "v2",
+						"rowId": "video",
+						"startTicks": 116000,
+						"durationTicks": 90000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "composite",
+					"operations": [
+						{
+							"type": "reshape",
+							"entries": [
+								{
+									"id": "v1",
+									"from": {
+										"startTicks": 0,
+										"durationTicks": 120000,
+										"sourceInTicks": 30000
+									},
+									"to": {
+										"startTicks": 0,
+										"durationTicks": 116000,
+										"sourceInTicks": 30000
+									}
+								}
+							]
+						},
+						{
+							"type": "move",
+							"entries": [
+								{
+									"id": "v2",
+									"from": {
+										"startTicks": 120000,
+										"rowId": "video"
+									},
+									"to": {
+										"startTicks": 116000,
+										"rowId": "video"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "v2",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "v2",
+						"rowId": "video",
+						"startTicks": 120000,
+						"durationTicks": 86000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "v2",
+							"from": {
+								"startTicks": 120000,
+								"durationTicks": 90000
+							},
+							"to": {
+								"startTicks": 120000,
+								"durationTicks": 86000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "v2",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "v2",
+						"rowId": "video",
+						"startTicks": 120000,
+						"durationTicks": 86000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "v2",
+							"from": {
+								"startTicks": 120000,
+								"durationTicks": 90000
+							},
+							"to": {
+								"startTicks": 120000,
+								"durationTicks": 86000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t1",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "t1",
+						"rowId": "overlay",
+						"startTicks": 30000,
+						"durationTicks": 41000
+					},
+					{
+						"id": "t2",
+						"rowId": "overlay",
+						"startTicks": 150000,
+						"durationTicks": 41000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "t1",
+							"from": {
+								"startTicks": 30000,
+								"durationTicks": 45000
+							},
+							"to": {
+								"startTicks": 30000,
+								"durationTicks": 41000
+							}
+						},
+						{
+							"id": "t2",
+							"from": {
+								"startTicks": 150000,
+								"durationTicks": 45000
+							},
+							"to": {
+								"startTicks": 150000,
+								"durationTicks": 41000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t1",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "t1",
+						"rowId": "overlay",
+						"startTicks": 30000,
+						"durationTicks": 41000
+					},
+					{
+						"id": "t2",
+						"rowId": "overlay",
+						"startTicks": 146000,
+						"durationTicks": 45000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "composite",
+					"operations": [
+						{
+							"type": "reshape",
+							"entries": [
+								{
+									"id": "t1",
+									"from": {
+										"startTicks": 30000,
+										"durationTicks": 45000
+									},
+									"to": {
+										"startTicks": 30000,
+										"durationTicks": 41000
+									}
+								}
+							]
+						},
+						{
+							"type": "move",
+							"entries": [
+								{
+									"id": "t2",
+									"from": {
+										"startTicks": 150000,
+										"rowId": "overlay"
+									},
+									"to": {
+										"startTicks": 146000,
+										"rowId": "overlay"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t2",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "t1",
+						"rowId": "overlay",
+						"startTicks": 30000,
+						"durationTicks": 41000
+					},
+					{
+						"id": "t2",
+						"rowId": "overlay",
+						"startTicks": 150000,
+						"durationTicks": 41000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "t1",
+							"from": {
+								"startTicks": 30000,
+								"durationTicks": 45000
+							},
+							"to": {
+								"startTicks": 30000,
+								"durationTicks": 41000
+							}
+						},
+						{
+							"id": "t2",
+							"from": {
+								"startTicks": 150000,
+								"durationTicks": 45000
+							},
+							"to": {
+								"startTicks": 150000,
+								"durationTicks": 41000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "t2",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "t2",
+						"rowId": "overlay",
+						"startTicks": 150000,
+						"durationTicks": 41000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "t2",
+							"from": {
+								"startTicks": 150000,
+								"durationTicks": 45000
+							},
+							"to": {
+								"startTicks": 150000,
+								"durationTicks": 41000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "locked",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "locked",
+						"rowId": "overlay",
+						"startTicks": 0,
+						"durationTicks": 206000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "locked",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 210000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 206000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "locked",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "locked",
+						"rowId": "overlay",
+						"startTicks": 0,
+						"durationTicks": 206000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "locked",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 210000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 206000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "a1",
+			"kind": "trim",
+			"projection": {
+				"items": [
+					{
+						"id": "v1",
+						"rowId": "video",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					},
+					{
+						"id": "a1",
+						"rowId": "audio",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "v1",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 120000,
+								"sourceInTicks": 30000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 116000,
+								"sourceInTicks": 30000
+							}
+						},
+						{
+							"id": "a1",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 120000,
+								"sourceInTicks": 30000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 116000,
+								"sourceInTicks": 30000
+							}
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "a1",
+			"kind": "ripple",
+			"projection": {
+				"items": [
+					{
+						"id": "a1",
+						"rowId": "audio",
+						"startTicks": 0,
+						"durationTicks": 116000,
+						"sourceInTicks": 30000
+					}
+				],
+				"valid": true
+			},
+			"terminal": {
+				"ok": true,
+				"operation": {
+					"type": "reshape",
+					"entries": [
+						{
+							"id": "a1",
+							"from": {
+								"startTicks": 0,
+								"durationTicks": 120000,
+								"sourceInTicks": 30000
+							},
+							"to": {
+								"startTicks": 0,
+								"durationTicks": 116000,
+								"sourceInTicks": 30000
+							}
+						}
+					]
+				}
+			}
+		}
+	]
+}

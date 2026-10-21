@@ -1,0 +1,8 @@
+# Pinned for crates/ (rustup reads this; Homebrew's cargo ignores it and has no
+# wasm32 standard library, so WASM builds go through rustup — see
+# scripts/build-editor-wasm.ts).
+[toolchain]
+channel = "1.98.1"
+targets = ["wasm32-unknown-unknown"]
+components = ["clippy", "rustfmt"]
+profile = "minimal"

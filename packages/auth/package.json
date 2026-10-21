@@ -1,0 +1,25 @@
+{
+	"name": "@maleo/auth",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Operator identity: better-auth config, sessions, API keys, registration policy, request perimeter",
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		"./*": "./src/*.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit",
+		"test": "vp test run --root ../.. --project auth",
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+	},
+	"dependencies": {
+		"@better-auth/api-key": "1.7.4",
+		"@maleo/db": "workspace:*",
+		"@maleo/shared": "workspace:*",
+		"better-auth": "^1.7.4"
+	},
+	"devDependencies": {
+		"typescript": "^5.6.0"
+	}
+}
