@@ -26,6 +26,14 @@ Set every variable listed under [Environment](self-hosting.md#environment)
 except `MALEO_BIND_ADDRESS`, which only the self-host file reads. The compose
 file refuses to start on a missing one rather than defaulting it.
 
+Keep **Build time** and **Runtime** enabled for variables referenced by
+`${...}` in this Git-based Compose application. Coolify must supply their values
+while it renders Compose during the build. A saved runtime-only value does not
+satisfy that interpolation and can still cause a missing-variable failure.
+Verify Compose with the saved build-visible values before declaring the
+environment ready. `MALEO_MEDIA_S3_ENDPOINT` is fixed inside this Compose file,
+so its separate saved entry does not need build availability.
+
 Existing resources must add `MALEO_VIDEO_TOKEN` before deploying video export
 support. API and render worker receive this same token from Compose. Keep
 render worker internal; it needs no domain. Check host headroom for its 2 CPU,

@@ -145,3 +145,53 @@ test("retimed and reversed audio use existing bounded source processor", async (
 		await rm(directory, { recursive: true, force: true });
 	}
 });
+
+test.each([1, 2])(
+	"rounded TTS duration remains captionable at %sx playback",
+	async (playbackRate) => {
+		const directory = await mkdtemp(join(tmpdir(), "caption-rounded-proof-"));
+		try {
+			const path = join(directory, "input.wav");
+			execFileSync("ffmpeg", [
+				"-v",
+				"error",
+				"-f",
+				"lavfi",
+				"-i",
+				"sine=frequency=440:sample_rate=24000:duration=1.3367916667",
+				path,
+			]);
+			const item = source({
+				timelineStartSec: 0,
+				durationSec: 1.337 / playbackRate,
+				sourceDurationSec: 1.337,
+				playbackRate,
+				volume: 1,
+			});
+			item.binding = { ...item.binding, sourceStartSec: 0, sourceEndSec: 1.337 };
+			const manifest = CaptionSourceManifestSchema.parse({
+				version: 1,
+				startSec: 0,
+				endSec: item.durationSec,
+				sources: [item],
+			});
+			const mix = await readFile(
+				await prepareCaptionAudio(manifest, [path], directory, AbortSignal.timeout(10_000)),
+			);
+			expect(mix.length).toBe(44 + Math.ceil(item.durationSec * 16000) * 2);
+			expect(rms(mix, 0.1, 0.3)).toBeGreaterThan(0.05);
+			item.binding.sourceEndSec = 1.437;
+			item.durationSec = 1.437 / playbackRate;
+			await expect(
+				prepareCaptionAudio(
+					{ ...manifest, endSec: item.durationSec, sources: [item] },
+					[path],
+					directory,
+					AbortSignal.timeout(10_000),
+				),
+			).rejects.toThrow("Caption source has no audio or selected interval changed");
+		} finally {
+			await rm(directory, { recursive: true, force: true });
+		}
+	},
+);

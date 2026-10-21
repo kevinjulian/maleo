@@ -17,6 +17,8 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Changed
 
+- Caption generation accepts rounded TTS clip durations while decoding only available source audio. Clips whose selected interval exceeds the source by more than 50 ms still fail validation.
+
 - Silent Motion Studio previews no longer wait for audio-device initialization before playback.
 
 - Rebranded application and repository references to Maleo, including supplied logo, README, browser icons and PWA installation assets.

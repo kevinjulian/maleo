@@ -65,9 +65,13 @@ export async function prepareCaptionAudio(
 		if (
 			!metadata.hasAudio ||
 			!metadata.duration ||
-			source.binding.sourceEndSec > metadata.duration + 1e-6
+			source.binding.sourceStartSec >= metadata.duration ||
+			// Match API admission tolerance for rounded browser and generated-audio durations.
+			source.binding.sourceEndSec > metadata.duration + 0.05
 		)
 			throw new Error("Caption source has no audio or selected interval changed");
+		const sourceDuration =
+			Math.min(source.binding.sourceEndSec, metadata.duration) - source.binding.sourceStartSec;
 		const retimed = source.playbackRate !== 1 || source.reverse;
 		let selected = input;
 		if (retimed) {
@@ -79,7 +83,7 @@ export async function prepareCaptionAudio(
 				{
 					type: "audio",
 					startSec: source.binding.sourceStartSec,
-					durationSec: source.binding.sourceEndSec - source.binding.sourceStartSec,
+					durationSec: sourceDuration,
 					playbackRate: source.playbackRate,
 					preservePitch: source.preservePitch,
 					reverse: source.reverse,
@@ -88,9 +92,7 @@ export async function prepareCaptionAudio(
 				signal,
 			);
 		}
-		const decodeDuration = source.loop
-			? source.binding.sourceEndSec - source.binding.sourceStartSec
-			: source.durationSec;
+		const decodeDuration = source.loop ? sourceDuration : source.durationSec;
 		await runMediaCommand(
 			"ffmpeg",
 			[

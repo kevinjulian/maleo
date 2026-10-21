@@ -15,7 +15,13 @@ functions stay with their domains.
 
 ## Deployment state
 
-Saved Coolify metadata was verified on 2026-10-20: the project and five supported application labels use Maleo, and all five source repositories point to `kevinjulian/maleo` on `main`. Resource UUIDs, domains and build paths were preserved. Core auto-deploy is paused until the production cutover in `docs/self-hosting.md` is complete. Running services remain healthy on the prior deployment; environment, database, volume and durable-registration conversion has not run. Service and registration names below describe the target deployment.
+Saved Coolify metadata was verified on 2026-10-20: the project and five supported application labels use Maleo, and all five source repositories point to `kevinjulian/maleo` on `main`. Resource UUIDs, domains and build paths were preserved.
+
+Production environment staging was verified on 2026-10-21: Maleo variables are filled, obsolete production keys are removed, and existing credentials are preserved. Public URLs match the configured service domains. Storage credentials passed a read-only check against the existing bucket. The bucket and legacy SQLite path retain their existing values until data migration. Disabled preview configuration remains unchanged.
+
+The initial runtime-only flags caused Compose build interpolation to fail. Build availability is now enabled for all 16 referenced Maleo variables, with values unchanged. Compose validation passed using the saved build-visible values. See `docs/coolify.md` for the required scope settings. A full remote build was not retried during this correction.
+
+The operator subsequently deployed Maleo revision `5a40a45` on 2026-10-21. Live media import passed through storage and processing, with a decoded preview after reload. Live Kokoro TTS also returned stored, decodable audio after the speech service recovered. Core reports `running:healthy`; auto-deploy remains paused. Database, volume, persisted-setting and durable-registration conversion completion has not been verified. Saved environment changes alone do not prove that cutover is complete.
 
 |                           |                                                                                                                                                                                                                                                                                                                                                |
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
