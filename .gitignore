@@ -55,6 +55,7 @@ test-results/
 /.kvin/
 /CLAUDE.md
 /openspec/changes/archive/
+/spikes/native-bindings/
 /.planning/
 /editor.md
 /.dolt/
