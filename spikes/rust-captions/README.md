@@ -3,7 +3,7 @@
 Question: can Rust draw maleo's caption styles close enough to Remotion that
 the renderer migration is safe?
 
-Design: `openspec/changes/platform-p0-foundations/design.md`, decision D4.
+Design: OpenSpec change `platform-p0-foundations` (archived 2026-10-22), decision D4.
 
 ## Pass criteria
 

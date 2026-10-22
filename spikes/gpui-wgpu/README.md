@@ -3,7 +3,7 @@
 Question: can a gpui window show a wgpu-rendered frame at playback rate, with
 the editor panes around it, on macOS?
 
-Design: `openspec/changes/platform-p0-foundations/design.md`, decision D2.
+Design: OpenSpec change `platform-p0-foundations` (archived 2026-10-22), decision D2.
 
 ## Pass criteria
 

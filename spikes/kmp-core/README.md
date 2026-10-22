@@ -3,7 +3,7 @@
 Question: can one shared Kotlin module call `maleo-editor-core` on Android and
 on iOS?
 
-Design: `openspec/changes/platform-p0-foundations/design.md`, decision D3.
+Design: OpenSpec change `platform-p0-foundations` (archived 2026-10-22), decision D3.
 
 ## Pass criteria
 
