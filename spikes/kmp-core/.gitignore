@@ -1,0 +1,6 @@
+# Build output of rust/build.sh and Gradle.
+/build/
+/.gradle/
+/.kotlin/
+/local.properties
+/src/androidMain/jniLibs/

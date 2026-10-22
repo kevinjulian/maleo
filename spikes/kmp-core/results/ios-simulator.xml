@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="iosSimulatorArm64Test.dev.maleo.spike.core.EngineSpikeTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-22T12:40:49.702Z" hostname="kvnjln" time="2.304">
+  <properties/>
+  <testcase name="fixturesMatchTheHostRunByteForByte[iosSimulatorArm64]" classname="iosSimulatorArm64Test.dev.maleo.spike.core.EngineSpikeTest" time="0.001"/>
+  <testcase name="oneEditRoundTripIsFastAndTenThousandCallsDoNotGrow[iosSimulatorArm64]" classname="iosSimulatorArm64Test.dev.maleo.spike.core.EngineSpikeTest" time="2.303"/>
+  <system-out><![CDATA[SPIKE[ios-simulator] fixtures=60 bytes=175655 digest=3a170358ef391934 host=3a170358ef391934 firstMismatchLine=-1
+SPIKE[ios-simulator] calls=10000 p50=0.206917ms p95=0.24975ms max=10.404292ms
+SPIKE[ios-simulator] scopeBytes=17432 liveGrowth=0 processGrowth=-425984 processBefore=87114736
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<testsuites tests="2" failures="0" errors="0" skipped="0" time="0.000" timestamp="2026-10-22T12:40:40" hostname="localhost">
+  <testsuite name="dev.maleo.spike.core.EngineSpikeTest" tests="2" failures="0" errors="0" skipped="0" time="1.897" timestamp="2026-10-22T12:40:40" hostname="localhost">
+    <properties>
+      <property name="device" value="emulator-5554" />
+    </properties>
+    <testcase name="fixturesMatchTheHostRunByteForByte" classname="dev.maleo.spike.core.EngineSpikeTest" time="0.375" />
+    <testcase name="oneEditRoundTripIsFastAndTenThousandCallsDoNotGrow" classname="dev.maleo.spike.core.EngineSpikeTest" time="1.522" />
+  </testsuite>
+</testsuites>

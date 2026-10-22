@@ -1,0 +1,6 @@
+/target/
+/fonts/
+/out/
+# Full-frame stills; remotion/render.ts reproduces them.
+/reference/
+/reference-linux/

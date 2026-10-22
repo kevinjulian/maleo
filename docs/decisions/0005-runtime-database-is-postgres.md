@@ -1,6 +1,6 @@
 # ADR 0005: The runtime database is Postgres in every environment, changed only by versioned migrations
 
-- Status: Accepted
+- Status: Accepted; client stores scoped by 0007
 - Date: 2026-09-26
 - Deciders: Kevin Julian
 - Related: OpenSpec `migrate-to-postgres`

@@ -62,7 +62,7 @@ Three external products informed this design:
 |                                                                    |
 |  app-core: view-models, selection, undo, playback clock            |
 +----------+------------------------+-------------------------+------+
-           | WASM                   | native crate            | bindings
+           | WASM                   | native crate            | C ABI
            v                        v                         v
     +-------------+          +-------------+           +---------------+
     | web         |          | desktop     |           | mobile (KMP)  |
@@ -127,18 +127,22 @@ logic live in Rust. Each UI renders that state and sends input events back.
 ### D4. Mobile is Kotlin Multiplatform with Compose Multiplatform
 
 One UI codebase serves Android and iOS. The Rust core reaches Kotlin through
-generated bindings.
+the hand-written C ABI of D5: `cinterop` on iOS, a thin JNI shim on Android,
+behind one `expect`/`actual` engine (ADR 0010).
 
 - Why: one mobile UI instead of two.
-- Risk: official UniFFI generates Kotlin for the JVM and Android only. iOS
-  needs Kotlin/Native. Candidates: the community UniFFI Kotlin Multiplatform
-  generator, or a hand-written C ABI with cinterop. A P0 spike picks one.
+- P0 spike B (adjust): the raw C ABI passed every criterion on an Android
+  emulator and an iOS simulator, so no binding generator is used. Rejected:
+  UniFFI and its community Kotlin Multiplatform generator.
 
-### D5. The core reaches each platform through one export layer
+### D5. The core reaches each platform through one calling convention
 
-Each core crate marks its public API once. A WASM build generates
-`wasm-bindgen` exports. A native build links the crate directly. A mobile
-build generates the Kotlin bindings. OpenCut uses this pattern.
+Each core crate exposes its public API once, through the calling convention
+of `crates/editor-wasm`: UTF-8 JSON in `(ptr, len)` buffers, results in an
+output buffer, documents behind handles. A WASM build exports it as WASM
+imports. A native build exports it as a C ABI, which Kotlin reaches through
+`cinterop` and JNI. Desktop Rust links the crate directly. No `wasm-bindgen`
+or generated bindings (ADR 0010).
 
 ### D6. Clients store data in SQLite, the server stays on Postgres
 
@@ -315,8 +319,8 @@ on mobile.
 - [gpui API churn, because it follows Zed] → Pin a gpui version. Keep UI code
   thin through `app-core`, so an upgrade or a move to egui touches only the
   shell.
-- [No official UniFFI target for iOS] → P0 spike. Fallback is a C ABI with
-  cinterop.
+- [No official UniFFI target for iOS] → Resolved in P0: the hand-written C
+  ABI with cinterop passed spike B, so no generator is needed.
 - [Three UIs cost three times the work] → `app-core` keeps logic shared.
   Platform UIs only draw. Web stays the reference UI.
 - [Browser evicts OPFS data] → Request persistent storage. Never hold the only

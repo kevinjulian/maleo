@@ -15,6 +15,10 @@ entry here. See `CONTRIBUTING.md`.
 
 ## [Unreleased]
 
+### Added
+
+- `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
+
 ### Changed
 
 - Caption generation accepts rounded TTS clip durations while decoding only available source audio. Clips whose selected interval exceeds the source by more than 50 ms still fail validation.

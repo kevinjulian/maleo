@@ -1,0 +1,28 @@
+[package]
+name = "maleo-kmp-core"
+version = "0.0.0"
+edition = "2024"
+publish = false
+description = "Spike B: the editor-wasm calling convention exported as a native C ABI, plus a JNI shim"
+
+# Not a member of the root workspace: P0 proof code, outside CI.
+[workspace]
+
+[lib]
+# staticlib for iOS (cinterop links it), cdylib for Android (JNI loads it),
+# rlib for the host runner.
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[dependencies]
+maleo-editor-wasm = { path = "../../../crates/editor-wasm" }
+serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = { version = "=0.21.1", default-features = false }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

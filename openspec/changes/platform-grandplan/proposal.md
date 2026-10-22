@@ -17,7 +17,7 @@ becomes its own OpenSpec change. This change adds no requirements by itself.
   - web: the React UI plus the Rust core compiled to WASM.
   - desktop: a native gpui UI that links the Rust core directly.
   - mobile: one Kotlin Multiplatform UI (Compose Multiplatform) for Android and
-    iOS that calls the Rust core through generated bindings.
+    iOS that calls the Rust core through its hand-written C ABI.
 - The Rust engine owns editing and rendering. A wgpu compositor in Rust
   replaces Remotion for preview and export. Templates and compositions become
   data that the engine reads, not React code.
@@ -105,7 +105,7 @@ capabilities:
 - `packages/storage`: content hash, multipart upload through presigned parts.
 - `packages/video`, `apps/render-worker`: replaced by the Rust renderer and a
   headless core at P6.
-- New dependencies: wgpu, gpui, a text shaping stack, SQLite, UniFFI or an
-  equivalent binding generator, and FFmpeg (LGPL, dynamic link) on desktop.
+- New dependencies: wgpu, gpui, a text shaping stack, SQLite, and FFmpeg
+  (LGPL, dynamic link) on desktop.
 - Removed dependencies at P6: Remotion and headless Chromium.
 - New ADRs: client store engine, sync model, renderer ownership.

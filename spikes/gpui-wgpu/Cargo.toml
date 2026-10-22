@@ -1,0 +1,19 @@
+[package]
+name = "spike-gpui-wgpu"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# Not a member of the root workspace: P0 proof code, outside CI.
+[workspace]
+
+[dependencies]
+gpui = "=0.2.2"
+wgpu = "=30.0.1"
+pollster = "0.4"
+image = { version = "0.25", default-features = false }
+objc = "=0.2.7"
+raw-window-handle = "=0.6.2"
+
+[profile.release]
+debug = false

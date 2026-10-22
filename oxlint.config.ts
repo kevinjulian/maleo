@@ -40,6 +40,9 @@ export default {
 		// Archived OpenSpec evidence: one-off measurement scripts kept as the record
 		// of a closed change, run once against the tree as it was then.
 		"openspec/changes/archive/**",
+		// P0 spikes: throwaway proof code outside the workspaces and CI
+		// (platform-p0-foundations D1); the phase change that replaces each deletes it.
+		"spikes/**",
 	],
 	jsPlugins: [{ name: "anti-slop", specifier: "./tools/oxlint/anti-slop/index.ts" }],
 	/* Upstream families selected under `migrate-to-vite-plus` from samples recorded

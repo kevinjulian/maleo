@@ -1,0 +1,3 @@
+headers = engine.h
+package = dev.maleo.spike.core.native
+staticLibraries = libmaleo_kmp_core.a

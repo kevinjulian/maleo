@@ -1,0 +1,11 @@
+adapter: Apple M1 Pro (Metal)
+--- spike A result (path 1: offscreen render + readback) ---
+target: 30 fps for 60 s after 0.5 s warm-up, frame budget 33.33 ms
+frames produced: 1800
+dropped frames: 0 at (s, count): []
+frame time (upload+composite+readback+image): n=1800 p50=2.74ms p95=5.22ms max=12.12ms
+  upload: n=1800 p50=1.34ms p95=3.01ms max=7.39ms
+  composite+readback: n=1800 p50=1.38ms p95=2.16ms max=5.18ms
+UI frame (render start to paint end, incl. atlas upload): n=3601 p50=0.71ms p95=6.91ms max=17.27ms
+produced-frame interval: n=1800 p50=33.33ms p95=34.31ms max=49.00ms
+gpui render interval: n=3601 p50=16.67ms p95=17.63ms max=20.73ms

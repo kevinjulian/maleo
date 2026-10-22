@@ -86,6 +86,7 @@ the change into private historical record.
 | `packages/storage`    | `@maleo/storage`       | media object storage: local filesystem or S3-compatible store                                                               |
 | `deploy`              | —                      | compose stack for the deployed core: web, api, media worker, Postgres, media store, Inngest                                 |
 | `crates/editor-core`  | `maleo-editor-core`    | Rust editor command engine shared by every controller (web editing and API agent commands execute through its WASM binding) |
+| `spikes`              | —                      | throwaway P0 proof code (gpui + wgpu, Kotlin Multiplatform bindings, Rust captions); outside the Cargo workspace and CI     |
 
 `apps/` holds deployables built from maleo source; `infra/` holds deployables
 that only configure third-party software (a Dockerfile over an upstream image, a
