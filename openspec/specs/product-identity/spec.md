@@ -1,10 +1,10 @@
-# Product Identity Delta
+# product-identity Specification
 
 ## Purpose
 
 Define the Maleo identity across the application, contributor interfaces, and deployment configuration while preserving user data during cutover.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Maleo is the active product identity
 
@@ -24,7 +24,7 @@ The application SHALL identify itself as Maleo. Active UI, accessibility labels,
 
 ### Requirement: Technical identity uses only the Maleo namespace
 
-First-party package names SHALL use `@maleo/*`. Branded Rust crates, build outputs, service identities, browser storage keys, and new API keys SHALL use Maleo names. The runtime SHALL read `MALEO_*` variables instead of `AINCER_*`. Old names SHALL NOT be exported, accepted as aliases, or read as fallbacks. Unbranded third-party configuration names SHALL remain unchanged.
+First-party package names SHALL use `@maleo/*`. Branded Rust crates, build outputs, service identities, browser storage keys, and new API keys SHALL use Maleo names. The runtime SHALL read `MALEO_*` variables instead of the former first-party environment namespace. Old names SHALL NOT be exported, accepted as aliases, or read as fallbacks. Unbranded third-party configuration names SHALL remain unchanged.
 
 #### Scenario: Fresh checkout is installed and built
 
@@ -36,7 +36,7 @@ First-party package names SHALL use `@maleo/*`. Branded Rust crates, build outpu
 
 - **WHEN** configuration is supplied under `MALEO_*` names
 - **THEN** each service uses those values through documented configuration paths
-- **AND** values supplied only under `AINCER_*` names are not used as configuration
+- **AND** values supplied only under former first-party environment names are not used as configuration
 
 #### Scenario: Third-party configuration is retained
 
