@@ -1,4 +1,4 @@
-# Spec Delta
+# preview-media-readiness Specification
 
 ## Purpose
 
@@ -6,7 +6,7 @@ Keeps editor preview playback moving across clip boundaries: media loads before
 its clip starts, a stalled frame clock recovers, and the stall at a clip start
 has a measured budget.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Video media loads before its clip starts
 

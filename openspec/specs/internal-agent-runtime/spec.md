@@ -29,7 +29,7 @@ The internal project-chat agent SHALL use one Mastra agent to choose and call to
 
 ### Requirement: Fixed production pipelines run as workflows
 
-Video planning and story asset generation SHALL run as Mastra workflows exposed to the agent as tools; they are the only fixed production pipelines, and the agent SHALL be offered them only for video projects. The agent SHALL decide whether a pipeline runs; the workflow SHALL decide its stage order. A pause inside a pipeline SHALL suspend the workflow step that needs input, and resume SHALL continue that step without re-running completed stages or re-routing the request.
+Video planning and story asset generation SHALL run as workflows exposed to the agent as tools; they are the only fixed production pipelines, and the agent SHALL be offered them only for video projects. Video planning SHALL run as a workflow definition on the workflow engine inside the agent's tool call; story asset generation SHALL run as a Mastra workflow until it is ported to a definition. The agent SHALL decide whether a pipeline runs; the workflow SHALL decide its stage order. A pause inside a pipeline SHALL suspend the agent tool call at the node or step that needs input, and resume SHALL continue at that node or step without re-running completed work or re-routing the request.
 
 #### Scenario: Agent starts a pipeline
 
@@ -39,9 +39,9 @@ Video planning and story asset generation SHALL run as Mastra workflows exposed 
 
 #### Scenario: Pipeline pauses for clarification
 
-- **WHEN** a video planning stage needs clarification after research
-- **THEN** the workflow step suspends with a pending action tied to the run
-- **AND** an answer resumes that step without repeating the frame or research stages
+- **WHEN** video planning needs clarification after research
+- **THEN** the planning workflow suspends at its question node with a pending action tied to the run
+- **AND** an answer resumes that node without repeating the frame or research nodes
 
 #### Scenario: Pipeline pauses for plan approval
 
@@ -117,7 +117,7 @@ Every Mastra tool call SHALL pass the existing tool input validation, project sc
 
 ### Requirement: Agent runs survive interruptions and human input
 
-An active run SHALL survive API restart or redeploy without losing its durable progress or replaying settled tool effects, including when suspended inside a workflow step called as an agent tool. A pending question/approval SHALL remain tied to its run and action id. Runs SHALL preserve existing cancellation, input timeout, retry, and one-active-run-per-project behavior.
+An active run SHALL survive API restart or redeploy without losing its durable progress or replaying settled tool effects, including when suspended inside a workflow called as an agent tool. A pending question/approval SHALL remain tied to its run and action id. Runs SHALL preserve existing cancellation, input timeout, retry, and one-active-run-per-project behavior. Runs suspended under a workflow runtime or checkpoint format that a deploy removed are not supported: an answer to such a run SHALL end it in an error state or leave it to the input timeout, and SHALL NOT be translated into the new runtime.
 
 #### Scenario: Backend restarts mid-run
 
@@ -127,9 +127,9 @@ An active run SHALL survive API restart or redeploy without losing its durable p
 
 #### Scenario: Backend restarts during a nested suspension
 
-- **WHEN** the API process restarts while a workflow step called by the agent is suspended
-- **THEN** an answer resumes that same step in the same run
-- **AND** stages completed before the suspension are not repeated
+- **WHEN** the API process restarts while a workflow called by the agent is suspended
+- **THEN** an answer resumes that same workflow node or step in the same run
+- **AND** work completed before the suspension is not repeated
 
 #### Scenario: Second run for the same project
 
@@ -150,6 +150,12 @@ An active run SHALL survive API restart or redeploy without losing its durable p
 
 - **WHEN** a run is cancelled or its pending-input window expires
 - **THEN** it reaches the corresponding terminal state and later input cannot revive it
+
+#### Scenario: Run suspended under a removed runtime
+
+- **WHEN** a run that suspended before a deploy removed its workflow runtime receives an answer
+- **THEN** the run ends in an error state or times out
+- **AND** no planning or generation work is executed for it
 
 ### Requirement: Selected provider remains authoritative
 

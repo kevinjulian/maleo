@@ -12,6 +12,8 @@ The system SHALL make each voice in the TTS catalogue auditionable from every su
 
 Voices that share a language SHALL speak identical words, so any two of them are compared on the same sentence. Voices of different languages SHALL NOT be forced onto one sentence: a language-locked voice given words outside its language is not an audition of that voice.
 
+A cloned voice SHALL be auditioned through the reference audio it was created from, not through a baked sample. The sample bake is an ahead-of-time pass over the voices declared in the repository and cannot contain a voice created after it ran; the reference audio is also the more faithful preview, being the recording the model imitates. A clone therefore SHALL NOT be treated as missing its audition merely because no baked clip exists for it, and SHALL NOT be compared against declared voices on the fixed sentence, because it does not speak one.
+
 A surface whose purpose is to present the voice catalogue SHALL offer the play control. A surface that receives a voice's sample location and lists that voice without a play control is a defect, not a lesser presentation: the location is already carried in the payload it fetched.
 
 #### Scenario: Operator auditions a voice from the scene voice picker
@@ -53,6 +55,21 @@ A surface whose purpose is to present the voice catalogue SHALL offer the play c
 
 - **WHEN** a voice's language carries no sample text of its own
 - **THEN** the default sample text is used rather than skipping the voice, so it is still auditionable
+
+#### Scenario: Operator auditions a cloned voice
+
+- **WHEN** the operator plays the audition for a cloned voice
+- **THEN** the reference audio that clone was created from is played, on the same play control as every other voice
+
+#### Scenario: A clone is not reported as missing its audition
+
+- **WHEN** a surface lists a cloned voice for which no baked sample exists
+- **THEN** it offers the play control rather than degrading to a name-only entry
+
+#### Scenario: The sample bake does not attempt clones
+
+- **WHEN** the sample bake runs
+- **THEN** it bakes the voices declared in the repository and does not attempt to bake clones, which may be created after it has run
 
 ### Requirement: A sample is baked ahead of time, never synthesized on demand
 

@@ -1,4 +1,10 @@
-## ADDED Requirements
+# voice-cloning Specification
+
+## Purpose
+
+Lets an operator create a cloned voice from supplied reference audio as an identified, workspace-owned record bound to the provider that can speak it, with reference recordings handled as personal data and past spend kept attributable after removal.
+
+## Requirements
 
 ### Requirement: A cloned voice is an identified record, not an audio file passed around
 

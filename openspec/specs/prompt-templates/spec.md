@@ -1,10 +1,10 @@
-# Spec Delta
+# prompt-templates Specification
 
 ## Purpose
 
 Defines application prompts as plain-data templates rendered by one compiler, so the prompt the explorer shows is the text production sends and prompts can later be edited without code changes.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Prompts are data templates rendered by one compiler
 

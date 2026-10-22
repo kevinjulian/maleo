@@ -1,4 +1,10 @@
-## ADDED Requirements
+# media-provider-pocket-tts-id Specification
+
+## Purpose
+
+Defines the Pocket TTS Indonesian provider: a pinned, self-contained deployed service reached through a configured URL, which speaks Indonesian and narrates in a reference voice sent with each request, registered without displacing any existing default.
+
+## Requirements
 
 ### Requirement: The provider is registered without displacing any existing default
 

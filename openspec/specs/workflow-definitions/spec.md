@@ -1,10 +1,10 @@
-# Spec Delta
+# workflow-definitions Specification
 
 ## Purpose
 
 Runs AI video workflows from validated plain-data definitions through one engine, so the definition the explorer shows is the definition the run executes, and so definitions can later be edited, versioned and pinned without code changes.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Workflows are validated data run by one engine
 

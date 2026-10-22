@@ -29,7 +29,7 @@ The Maleo backend SHALL provide a read-only template catalog at `GET /api/admin/
 
 ### Requirement: Catalog distinguishes executable workflows and stage profiles
 
-The catalog SHALL expose all deployed built-in agent workflows and stage profiles with stable identities and their runtime associations. A workflow SHALL describe its actual executable entry point and step order. A stage profile SHALL be identified as a profile, not presented as an independently callable workflow when none exists. Runtime-generated framework tool names and internal tool names SHALL be distinguished. Retired carousel and thread workflows, tools, profiles and agent instructions SHALL NOT appear.
+The catalog SHALL expose all deployed built-in agent workflows and stage profiles with stable identities and their runtime associations. A workflow SHALL describe its actual executable entry point and step order. A workflow that runs as a definition SHALL be projected from that definition — its nodes, conditions, operation, prompt and tool references, suspensions and calls — and its prompts from their templates, with no separately maintained metadata or source-derived structure. A stage profile SHALL be identified as a profile, not presented as an independently callable workflow when none exists. Runtime-generated framework tool names and internal tool names SHALL be distinguished. Retired carousel and thread workflows, tools, profiles and agent instructions SHALL NOT appear.
 
 #### Scenario: Inspect video planning and generation
 
@@ -37,6 +37,17 @@ The catalog SHALL expose all deployed built-in agent workflows and stage profile
 - **THEN** planning and asset generation appear as separate executable workflows
 - **AND** planning shows its guards, direction routing, clarification, and planning steps
 - **AND** the associated plan and generation stage profiles are inspectable without implying planning immediately generates media
+
+#### Scenario: Planning definition changes
+
+- **WHEN** a developer changes a node, condition or prompt reference in the planning definition
+- **THEN** the catalog's planning structure and its revision change on the next read
+- **AND** no catalog-only file is edited
+
+#### Scenario: Shared planning core
+
+- **WHEN** an owner inspects the planning tool and the one-shot build tool
+- **THEN** both reference the same planning core definition
 
 #### Scenario: Inspect edit profile
 
