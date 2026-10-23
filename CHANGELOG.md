@@ -20,6 +20,7 @@ entry here. See `CONTRIBUTING.md`.
 - Imported media gets its final identity at import. The client mints a UUIDv7 media ID, the document holds `/api/media/<id>` from the start, and the server publishes the finished import under that ID. While the import runs, the media route answers `409 media_pending`. A media ID that is already in use gets `409 media_id_conflict`.
 - `GET /api/operations/projects/:id/asset-manifest` lists the media a project references, with identity, origin, kind, size, SHA-256 and state (`ready`, `pending`, `failed`, `external`). Export preflight uses it.
 - An agent run treats a clip on a minted media ID whose import has not finished as still uploading, as it treats a `pending:` reference: the agent cannot edit it.
+- `crates/app-core` is the shared Rust home for editor state rules: the undo ledger, the selection rules and a queue of pending local commands that rebases over commands the server accepted. The web editor's undo history and selection transitions now run in it through new editor-engine WASM calls. A pending command that no longer applies after a rebase is dropped and reported. An undo step whose inverse no longer applies is dropped, not kept on the stack. The engine's gzip size budget is now 188 KB.
 - `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
 
 ### Changed

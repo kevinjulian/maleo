@@ -1,4 +1,5 @@
 import type { ClipSource } from "@maleo/shared";
+import { editorEngine } from "@maleo/shared/editor";
 
 /* What the timeline editor has selected.
  *
@@ -8,7 +9,12 @@ import type { ClipSource } from "@maleo/shared";
  * the rule existed only inside click handlers in a 2,300-line component.
  *
  * The model is pure: it decides what is selected, and the component keeps the
- * side effects (seeking the playhead, opening a drawer) that a selection causes. */
+ * side effects (seeking the playhead, opening a drawer) that a selection causes.
+ *
+ * The transitions are the shared core's (`crates/app-core`, OpenSpec
+ * `p1-app-core`): each one is an action the engine applies. The reads below
+ * them (primary key, membership, equality) stay here, because a clip asks them
+ * on every render and they decide nothing. */
 
 /** Clip families that can be selected on the timeline. `scene` and `effect` are
  *  toggle-only — a scene is selected through `selectScene`.
@@ -59,22 +65,33 @@ export function clipKey(source: ClipSource, refId: number): string {
 	return `${source}:${refId}`;
 }
 
+type SelectionAction =
+	| { type: "selectScene"; sceneId: number }
+	| { type: "selectClip"; source: PrimaryClipSource; refId: number }
+	| { type: "toggleClip"; source: ClipSource; refId: number }
+	| { type: "selectTransition"; transitionId: number }
+	| { type: "clear" }
+	| { type: "openSceneEditor"; sceneId: number };
+
+/** Apply one action in the shared core. Every transition returns a new selection. */
+function applyAction(current: Selection, action: SelectionAction): Selection {
+	const result = editorEngine().selectionApply(
+		JSON.stringify({ selection: { ...current, freeIds: [...current.freeIds] }, action }),
+	);
+	if (!result.ok) throw new Error(`${result.error.kind}: ${result.error.message}`);
+	// SAFETY: the selection shape `selection::Selection::to_value` writes, with `freeIds` as an array.
+	const next = JSON.parse(result.value) as Omit<Selection, "freeIds"> & { freeIds: string[] };
+	return { sceneId: undefined, editorSceneId: undefined, ...next, freeIds: new Set(next.freeIds) };
+}
+
 /** Select a scene. Clears every clip selection and closes the drawer. */
 export function selectScene(sceneId: number): Selection {
-	return { ...EMPTY_SELECTION, sceneId };
+	return applyAction(EMPTY_SELECTION, { type: "selectScene", sceneId });
 }
 
 /** Select one clip as primary, replacing whatever was selected. */
 export function selectClip(source: PrimaryClipSource, refId: number): Selection {
-	return {
-		...EMPTY_SELECTION,
-		overlayId: source === "text" ? refId : null,
-		infographicId: source === "infographic" ? refId : null,
-		audioId: source === "audio" ? refId : null,
-		videoOverlayId: source === "video" ? refId : null,
-		effectId: source === "effect" ? refId : null,
-		freeIds: new Set([clipKey(source, refId)]),
-	};
+	return applyAction(EMPTY_SELECTION, { type: "selectClip", source, refId });
 }
 
 /** Shift-click: add or remove a clip in the multi-select set, and make it primary.
@@ -86,36 +103,22 @@ export function selectClip(source: PrimaryClipSource, refId: number): Selection 
  *  changes what the inspector shows after a shift-click, so it is recorded here
  *  and left alone rather than quietly altered during a refactor. */
 export function toggleClip(current: Selection, source: ClipSource, refId: number): Selection {
-	const key = clipKey(source, refId);
-	const freeIds = new Set(current.freeIds);
-	if (freeIds.has(key)) freeIds.delete(key);
-	else freeIds.add(key);
-	return {
-		...current,
-		sceneId: undefined,
-		editorSceneId: undefined,
-		overlayId: source === "text" ? refId : null,
-		audioId: source === "audio" ? refId : null,
-		videoOverlayId: source === "video" ? refId : null,
-		effectId: source === "effect" ? refId : null,
-		transitionId: null,
-		freeIds,
-	};
+	return applyAction(current, { type: "toggleClip", source, refId });
 }
 
 /** Select a transition between two clips. */
 export function selectTransition(transitionId: number): Selection {
-	return { ...EMPTY_SELECTION, transitionId };
+	return applyAction(EMPTY_SELECTION, { type: "selectTransition", transitionId });
 }
 
 /** Click on empty space, or Escape. */
 export function clearSelection(): Selection {
-	return { ...EMPTY_SELECTION, freeIds: new Set() };
+	return applyAction(EMPTY_SELECTION, { type: "clear" });
 }
 
 /** Open a scene's editor drawer. The scene becomes the selection. */
 export function openSceneEditor(sceneId: number): Selection {
-	return { ...selectScene(sceneId), editorSceneId: sceneId };
+	return applyAction(EMPTY_SELECTION, { type: "openSceneEditor", sceneId });
 }
 
 /** The primary clip key, or null when the selection is a scene, a transition or

@@ -9,21 +9,27 @@ import { engineExecutor, type CommandExecutor } from "./engine-executor.ts";
 import type { EditScope } from "./scope.ts";
 
 let source: (() => Engine) | undefined;
+let loaded: Engine | undefined;
 let executor: CommandExecutor | undefined;
 
 /** Provide the engine, or a function that loads it on first use. */
 export function provideEditorEngine(engine: Engine | (() => Engine)): void {
 	source = typeof engine === "function" ? engine : () => engine;
+	loaded = undefined;
 	executor = undefined;
+}
+
+/** The provided engine, for shared code that calls it directly (`p1-app-core`). */
+export function editorEngine(): Engine {
+	if (!source) throw new Error("no editor engine provided: call provideEditorEngine first");
+	loaded ??= source();
+	return loaded;
 }
 
 /** Execute `command` against `scope` in the provided engine. Throws
  *  `EngineCommandError` when the engine refuses it; `scope` is then unchanged. */
 export function execute(scope: EditScope, command: EditorCommand): Execution {
-	if (!executor) {
-		if (!source) throw new Error("no editor engine provided: call provideEditorEngine first");
-		executor = engineExecutor(source());
-	}
+	executor ??= engineExecutor(editorEngine());
 	return executor.execute(scope, command);
 }
 

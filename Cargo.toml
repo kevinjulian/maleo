@@ -2,7 +2,7 @@
 # Bun remains the toolchain for every TypeScript workspace; Cargo builds only crates/.
 [workspace]
 resolver = "3"
-members = ["crates/editor-core", "crates/editor-wasm"]
+members = ["crates/app-core", "crates/editor-core", "crates/editor-wasm"]
 
 [workspace.package]
 edition = "2024"

@@ -10,6 +10,8 @@ Keep editing behavior and portable projects consistent across every controller o
 
 The system SHALL execute admitted editor commands through one authoritative engine for web and server controllers, and any later controller SHALL bind the same engine. Identical compatible documents and commands SHALL produce equivalent documents, inverse commands and validation results. Platform presentation and IO SHALL NOT implement a second set of editing rules.
 
+Undo and redo bookkeeping, selection rules and the queue of pending local commands SHALL also live in the shared core. A controller SHALL hold only presentation, input handling and IO for them. Identical sequences of commands and selection actions SHALL produce identical undo stacks, selections and pending queues on every controller.
+
 #### Scenario: An edit crosses clients
 
 - **WHEN** each controller applies the same move or trim command to the same admitted fixture
@@ -19,6 +21,16 @@ The system SHALL execute admitted editor commands through one authoritative engi
 
 - **WHEN** a binding rejects incompatible data, encounters an execution error or is cancelled before commit
 - **THEN** it returns a diagnosable failure without partially committing the document or leaking subscriptions or owned resources
+
+#### Scenario: Undo history crosses clients
+
+- **WHEN** two controllers record the same commands, then undo twice and redo once
+- **THEN** both hold the same undo and redo stacks with the same step identities in the same order
+
+#### Scenario: A selection rule is applied
+
+- **WHEN** a controller selects a text clip while a video clip is selected
+- **THEN** the resulting selection is the one the shared core defines, with no controller-specific rule
 
 ### Requirement: Migration phases have evidence gates
 
@@ -104,3 +116,39 @@ Relocated web presentation SHALL use current timeline/editor/inspector patterns,
 
 - **WHEN** an editor surface ceases importing VUI default styles
 - **THEN** its preview, timeline and inspector retain usable geometry, controls and focus behavior at desktop, 320px and coarse-pointer landscape sizes
+
+### Requirement: Pending local commands rebase over accepted commands
+
+The shared core SHALL keep each local command that the server has not accepted
+in a pending queue, in the order the user made them, each with a client
+command identity. When the server accepts a pending command, the core SHALL
+remove it from the queue by that identity. When the server delivers commands
+the client did not make, the core SHALL undo the pending commands in reverse
+order, apply the delivered commands, then re-apply the pending commands in
+order. A pending command that no longer applies SHALL be dropped from the
+queue and reported to the controller with its command type and the engine's
+reason. The document SHALL never hold a partial command.
+
+After a rebase, a redo stack SHALL be cleared. An undo step SHALL execute its
+inverse as a new command. If that inverse no longer applies, the core SHALL
+drop the step and report that it cannot be undone.
+
+#### Scenario: Remote commands arrive while local edits wait
+
+- **WHEN** two local commands are pending and the server delivers one command from another device
+- **THEN** the document equals the remote command followed by the two local commands, and the queue still holds the two local commands
+
+#### Scenario: A pending command no longer applies
+
+- **WHEN** a pending command moves a clip that a delivered command deleted
+- **THEN** the pending command is dropped, the controller receives its type and reason, and the document holds the delivered deletion
+
+#### Scenario: The server accepts a pending command
+
+- **WHEN** the server acknowledges a client command identity
+- **THEN** that command leaves the queue and the document is unchanged
+
+#### Scenario: Undo after a remote change
+
+- **WHEN** the user undoes a step whose target a delivered command removed
+- **THEN** the step is dropped, the user is told it cannot be undone, and the document is unchanged

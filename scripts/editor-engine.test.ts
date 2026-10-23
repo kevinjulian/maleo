@@ -23,7 +23,11 @@ import { buildEditorWasm, loadParityInputs } from "./editor-engine.mts";
  * that would each ship serde_json. */
 /* 176 KB gzip since task 4.10 (2026-10-09): the execution delta, timecode
  * formatting and media-drop snapping joined the module (171,054 B gzip). */
-const MAX_GZIP_BYTES = 176 * 1024;
+/* 188 KB gzip since `p1-app-core` task 3.2 (2026-10-23): the undo ledger,
+ * pending queue and selection rules joined the module, 175,917 B -> 191,023 B
+ * gzip and 470,213 B -> 513,616 B raw (+8.6% / +9.2%, under that change's 10%
+ * stop line). */
+const MAX_GZIP_BYTES = 188 * 1024;
 const MAX_RAW_BYTES = 512 * 1024;
 const MAX_EDIT_TRANSFER_BYTES = 4 * 1024;
 const MAX_EDIT_MEDIAN_MS_AT_2000_CLIPS = 0.5;

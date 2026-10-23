@@ -52,6 +52,34 @@ export interface Engine {
 	): EngineResult<string>;
 	/** Snap outside a gesture: `{ticks, candidates, thresholdPx, scale, bypass?, moving?}` → `{ticks, candidate}`. */
 	snap(requestJson: string): EngineResult<string>;
+	/* App-core (`p1-app-core` D2): undo ledgers and pending queues have their own
+	 * handles; a call that touches the document also names the document handle. */
+	/** Open an undo ledger holding at most `limit` steps; returns its handle. */
+	ledgerOpen(limit: number): number;
+	ledgerClose(ledger: number): EngineResult<void>;
+	/** Record the document handle's last execution; `optionsJson` is `{"gesture"?}`. Returns the step id. */
+	ledgerRecord(ledger: number, doc: number, optionsJson: string): EngineResult<string>;
+	/** Record a change the host applied itself: `{command, inverse, before, after, gesture?}`. Returns the step id. */
+	ledgerRecordApplied(ledger: number, json: string): EngineResult<string>;
+	/** Undo on the document handle: `null`, or `{"delta"}`. A refused inverse drops the step (`UndoRefused`). */
+	ledgerUndo(ledger: number, doc: number): EngineResult<string>;
+	/** Redo on the document handle: `null`, or `{"delta"}`. */
+	ledgerRedo(ledger: number, doc: number): EngineResult<string>;
+	/** `{"undo": [ids], "redo": [ids]}`, oldest first. */
+	ledgerState(ledger: number): EngineResult<string>;
+	/** Open a queue of local commands the server has not accepted; returns its handle. */
+	pendingOpen(): number;
+	pendingClose(queue: number): EngineResult<void>;
+	/** `{id, command, inverse}`, in the order the user made them. */
+	pendingEnqueue(queue: number, json: string): EngineResult<void>;
+	/** The server accepted `id`; true when it was pending. */
+	pendingAck(queue: number, id: string): EngineResult<boolean>;
+	/** `{delivered: [commands]}` → `{delta, dropped: [{id, type, kind, message}]}`. */
+	pendingRebase(queue: number, ledger: number, doc: number, json: string): EngineResult<string>;
+	/** `[{id, type}]` in queue order. */
+	pendingState(queue: number): EngineResult<string>;
+	/** `{selection, action}` → the next selection. */
+	selectionApply(json: string): EngineResult<string>;
 }
 
 interface Exports {
@@ -86,6 +114,20 @@ interface Exports {
 		dropFrame: number,
 	): number;
 	policy_snap(ptr: number, len: number): number;
+	ledger_open(limit: number): number;
+	ledger_close(ledger: number): number;
+	ledger_record(ledger: number, doc: number, ptr: number, len: number): number;
+	ledger_record_applied(ledger: number, ptr: number, len: number): number;
+	ledger_undo(ledger: number, doc: number): number;
+	ledger_redo(ledger: number, doc: number): number;
+	ledger_state(ledger: number): number;
+	pending_open(): number;
+	pending_close(queue: number): number;
+	pending_enqueue(queue: number, ptr: number, len: number): number;
+	pending_ack(queue: number, ptr: number, len: number): number;
+	pending_rebase(queue: number, ledger: number, doc: number, ptr: number, len: number): number;
+	pending_state(queue: number): number;
+	selection_apply(ptr: number, len: number): number;
 }
 
 /* Every export, checked to exist with the right kind, so a stale or foreign
@@ -121,6 +163,20 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 		policy_open_count: call("policy_open_count"),
 		time_format_timecode: call("time_format_timecode"),
 		policy_snap: call("policy_snap"),
+		ledger_open: call("ledger_open"),
+		ledger_close: call("ledger_close"),
+		ledger_record: call("ledger_record"),
+		ledger_record_applied: call("ledger_record_applied"),
+		ledger_undo: call("ledger_undo"),
+		ledger_redo: call("ledger_redo"),
+		ledger_state: call("ledger_state"),
+		pending_open: call("pending_open"),
+		pending_close: call("pending_close"),
+		pending_enqueue: call("pending_enqueue"),
+		pending_ack: call("pending_ack"),
+		pending_rebase: call("pending_rebase"),
+		pending_state: call("pending_state"),
+		selection_apply: call("selection_apply"),
 	};
 }
 
@@ -166,6 +222,8 @@ function engineOf(wasm: Exports): Engine {
 	};
 	const result = (status: number): EngineResult<string> =>
 		status === 0 ? { ok: true, value: output() } : { ok: false, error: parseError(output()) };
+	const done = (status: EngineResult<string>): EngineResult<void> =>
+		status.ok ? { ok: true, value: undefined } : status;
 
 	return {
 		open(scopeJson) {
@@ -216,5 +274,25 @@ function engineOf(wasm: Exports): Engine {
 				),
 			),
 		snap: (requestJson) => result(wasm.policy_snap(...write(requestJson))),
+		ledgerOpen: (limit) => wasm.ledger_open(limit),
+		ledgerClose: (ledger) => done(result(wasm.ledger_close(ledger))),
+		ledgerRecord: (ledger, doc, optionsJson) =>
+			result(wasm.ledger_record(ledger, doc, ...write(optionsJson))),
+		ledgerRecordApplied: (ledger, json) =>
+			result(wasm.ledger_record_applied(ledger, ...write(json))),
+		ledgerUndo: (ledger, doc) => result(wasm.ledger_undo(ledger, doc)),
+		ledgerRedo: (ledger, doc) => result(wasm.ledger_redo(ledger, doc)),
+		ledgerState: (ledger) => result(wasm.ledger_state(ledger)),
+		pendingOpen: () => wasm.pending_open(),
+		pendingClose: (queue) => done(result(wasm.pending_close(queue))),
+		pendingEnqueue: (queue, json) => done(result(wasm.pending_enqueue(queue, ...write(json)))),
+		pendingAck(queue, id) {
+			const acked = result(wasm.pending_ack(queue, ...write(id)));
+			return acked.ok ? { ok: true, value: acked.value === "true" } : acked;
+		},
+		pendingRebase: (queue, ledger, doc, json) =>
+			result(wasm.pending_rebase(queue, ledger, doc, ...write(json))),
+		pendingState: (queue) => result(wasm.pending_state(queue)),
+		selectionApply: (json) => result(wasm.selection_apply(...write(json))),
 	};
 }

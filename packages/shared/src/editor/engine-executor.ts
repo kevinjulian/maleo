@@ -34,7 +34,7 @@ interface PassthroughChange {
 }
 
 /** `maleo_editor_core::delta`: every key absent when that part is unchanged. */
-interface ScopeDelta {
+export interface ScopeDelta {
 	mediaAssets?: EditScope["mediaAssets"];
 	slides?: EditScope["slides"];
 	posts?: EditScope["posts"];
@@ -108,26 +108,52 @@ const sameParts = (a: EditScope, b: EditScope): boolean =>
 	a.posts === b.posts &&
 	a.mediaAssets === b.mediaAssets;
 
+/** The engine executor, with the document handle it keeps, for app-core calls
+ *  that act on that handle (`p1-app-core` D2). */
+export interface EngineExecutor extends CommandExecutor {
+	readonly engine: Engine;
+	/** The document handle holding `scope`, reopened from it when it holds another. */
+	handleFor(scope: EditScope): number;
+	/** The last execution and its handle, while the handle still holds its result. */
+	last(): { handle: number; execution: Execution } | undefined;
+	/** Another call (an undo, a redo, a rebase) left the handle holding `scope`. */
+	adopt(scope: EditScope): void;
+}
+
+export const isEngineExecutor = (executor: CommandExecutor): executor is EngineExecutor =>
+	"engine" in executor && "handleFor" in executor;
+
 /** The engine as the executor. One handle, reopened whenever the scope it
  *  holds is not the one the caller passes. */
-export function engineExecutor(engine: Engine): CommandExecutor {
+export function engineExecutor(engine: Engine): EngineExecutor {
 	let handle: number | undefined;
 	let held: EditScope | undefined;
+	let lastExecution: Execution | undefined;
 	const reopen = (scope: EditScope): number => {
 		if (handle !== undefined) engine.close(handle);
 		handle = undefined;
+		lastExecution = undefined;
 		const opened = engine.open(JSON.stringify(scope));
 		if (!opened.ok) throw new EngineCommandError(opened.error.kind, opened.error.message);
 		handle = opened.value;
 		held = scope;
 		return handle;
 	};
+	const handleFor = (scope: EditScope): number =>
+		handle !== undefined && held !== undefined && sameParts(held, scope) ? handle : reopen(scope);
 	return {
+		engine,
+		handleFor,
+		last: () =>
+			handle !== undefined && lastExecution !== undefined
+				? { handle, execution: lastExecution }
+				: undefined,
+		adopt(scope) {
+			held = scope;
+			lastExecution = undefined;
+		},
 		execute(before, command) {
-			const current =
-				handle !== undefined && held !== undefined && sameParts(held, before)
-					? handle
-					: reopen(before);
+			const current = handleFor(before);
 			const result = engine.executeDelta(current, JSON.stringify(command));
 			if (!result.ok) throw new EngineCommandError(result.error.kind, result.error.message);
 			// SAFETY: `{inverse, delta}` as `Documents::execute_delta` writes it; the inverse is a command the engine just produced.
@@ -137,7 +163,8 @@ export function engineExecutor(engine: Engine): CommandExecutor {
 			const scope =
 				command.type === "scope.replace" ? command.scope : applyDelta(before, out.delta);
 			held = scope;
-			return { scope, inverse: out.inverse };
+			lastExecution = { scope, inverse: out.inverse };
+			return lastExecution;
 		},
 	};
 }

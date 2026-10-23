@@ -352,3 +352,18 @@ fn files_with_ext(dir: &Path, ext: &str) -> Vec<PathBuf> {
         .filter(|path| path.extension().is_some_and(|found| found == ext))
         .collect()
 }
+
+#[test]
+fn every_command_names_its_own_wire_type() {
+    let mut named = std::collections::BTreeSet::new();
+    for kind in EXECUTED {
+        for path in json_files(&editor_dir().join("fixtures").join(kind)) {
+            let fixture: Value = serde_json::from_str(&read(&path)).expect("fixture parses");
+            let command = admit_command(&fixture["command"].to_string()).expect("command admits");
+            assert_eq!(command.kind(), kind, "{}", path.display());
+            assert_eq!(as_value(&command)["type"], kind, "{}", path.display());
+            named.insert(kind);
+        }
+    }
+    assert_eq!(named.len(), EXECUTED.len(), "every type has a fixture");
+}

@@ -111,10 +111,17 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   `models/timeline/command-edit.ts`). Whole-document writers go through
   `diffScopeToCommand`, which picks the narrowest command and falls back to
   `scope.replace` when its result would not reproduce the document.
-- `use-command-stack.ts` + `models/chat/command-ledger.ts` hold the undo
-  history as data: entries `{ id, command, inverse }`; `run` returns the step
+- The undo history, the selection rules and the queue of pending local
+  commands live in the shared Rust core `crates/app-core`, reached through the
+  editor engine's WASM calls (`ledger_*`, `selection_apply`, `pending_*`).
+  Entries are `{ id, command, inverse }`; a gesture collapses into one
+  `scope.replace` step back to where it began.
+- `use-command-stack.ts` keeps the React side: effects, the slides/posts
+  watcher and key bindings. `models/chat/command-ledger.ts` opens an engine
+  ledger over the executor `engineExecutor` returns; `run` returns the step
   id, `isLatest(id)` answers whether an agent result can still be undone.
-  A gesture collapses into one `scope.replace` step back to where it began.
+  `models/timeline/selection-model.ts` sends each selection transition to the
+  core and keeps the per-render reads in TypeScript.
 - Command behavior is pinned by the golden fixtures in
   `packages/shared/src/editor/fixtures/<type>/`; any other implementation of
   `execute` must pass the same files.

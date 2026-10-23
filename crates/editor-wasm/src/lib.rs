@@ -18,6 +18,8 @@
 //! - Status `0` means the output is the result; `1` means it is an error
 //!   object `{"kind": …, "message": …}`.
 
+pub mod app;
+
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
@@ -51,26 +53,62 @@ fn unknown_handle(handle: u32) -> String {
 #[derive(Default)]
 pub struct Documents {
     next: u32,
-    scopes: BTreeMap<u32, EditScope>,
+    scopes: BTreeMap<u32, Held>,
+}
+
+/// A document and, while its scope is still that execution's result, its last
+/// execution, so a ledger records an edit without the host sending it back.
+struct Held {
+    scope: EditScope,
+    last: Option<LastExecution>,
+}
+
+/// An execution a handle's current scope is the result of.
+pub struct LastExecution {
+    pub before: EditScope,
+    pub command: maleo_editor_core::EditorCommand,
+    pub inverse: maleo_editor_core::EditorCommand,
 }
 
 impl Documents {
     pub fn open(&mut self, scope_json: &str) -> Result<u32, String> {
         let scope = admit_scope(scope_json).map_err(|error| error_json(&error))?;
         self.next += 1;
-        self.scopes.insert(self.next, scope);
+        self.scopes.insert(self.next, Held { scope, last: None });
         Ok(self.next)
+    }
+
+    fn held(&mut self, handle: u32) -> Result<&mut Held, String> {
+        self.scopes.get_mut(&handle).ok_or_else(|| unknown_handle(handle))
     }
 
     /// Execute against the handle's scope; on success the handle holds the new
     /// scope and the inverse is returned. On failure the scope is unchanged.
     pub fn execute(&mut self, handle: u32, command_json: &str) -> Result<String, String> {
-        let scope = self.scopes.get(&handle).ok_or_else(|| unknown_handle(handle))?;
+        let held = self.held(handle)?;
         let command = admit_command(command_json).map_err(|error| error_json(&error))?;
-        let executed = execute(scope, &command).map_err(|error| error_json(&error))?;
+        let executed = execute(&held.scope, &command).map_err(|error| error_json(&error))?;
         let inverse = to_js_string(&executed.inverse).map_err(|message| error_json(&EngineError::InvalidInput(message)))?;
-        self.scopes.insert(handle, executed.scope);
+        held.commit(command, executed);
         Ok(inverse)
+    }
+
+    /// The scope a handle holds.
+    pub fn scope(&self, handle: u32) -> Result<&EditScope, String> {
+        self.scopes.get(&handle).map(|held| &held.scope).ok_or_else(|| unknown_handle(handle))
+    }
+
+    /// Replace the handle's scope with one written outside an execution.
+    pub fn replace(&mut self, handle: u32, scope: EditScope) -> Result<(), String> {
+        *self.held(handle)? = Held { scope, last: None };
+        Ok(())
+    }
+
+    /// Take the handle's last execution and its result.
+    pub fn take_last(&mut self, handle: u32) -> Result<(LastExecution, EditScope), String> {
+        let held = self.held(handle)?;
+        let last = held.last.take().ok_or_else(|| invalid(format!("document {handle} has no execution to record")))?;
+        Ok((last, held.scope.clone()))
     }
 
     /// Execute like `execute`, returning `{"inverse": …, "delta": …}`: the delta
@@ -78,19 +116,17 @@ impl Documents {
     /// (`maleo_editor_core::delta`), so a host keeping its own copy rebuilds it
     /// without reading the whole document back.
     pub fn execute_delta(&mut self, handle: u32, command_json: &str) -> Result<String, String> {
-        let scope = self.scopes.get(&handle).ok_or_else(|| unknown_handle(handle))?;
+        let held = self.held(handle)?;
         let command = admit_command(command_json).map_err(|error| error_json(&error))?;
-        let executed = execute(scope, &command).map_err(|error| error_json(&error))?;
-        let delta = maleo_editor_core::delta::delta(scope, &executed.scope).map_err(invalid)?;
+        let executed = execute(&held.scope, &command).map_err(|error| error_json(&error))?;
+        let delta = maleo_editor_core::delta::delta(&held.scope, &executed.scope).map_err(invalid)?;
         let inverse = to_js_string(&executed.inverse).map_err(invalid)?;
-        let out = format!("{{\"inverse\":{inverse},\"delta\":{delta}}}");
-        self.scopes.insert(handle, executed.scope);
-        Ok(out)
+        held.commit(command, executed);
+        Ok(format!("{{\"inverse\":{inverse},\"delta\":{delta}}}"))
     }
 
     pub fn read(&self, handle: u32) -> Result<String, String> {
-        let scope = self.scopes.get(&handle).ok_or_else(|| unknown_handle(handle))?;
-        to_js_string(scope).map_err(|message| error_json(&EngineError::InvalidInput(message)))
+        to_js_string(self.scope(handle)?).map_err(|message| error_json(&EngineError::InvalidInput(message)))
     }
 
     pub fn close(&mut self, handle: u32) -> Result<(), String> {
@@ -99,6 +135,13 @@ impl Documents {
 
     pub fn open_count(&self) -> usize {
         self.scopes.len()
+    }
+}
+
+impl Held {
+    fn commit(&mut self, command: maleo_editor_core::EditorCommand, executed: maleo_editor_core::Executed) {
+        let before = std::mem::replace(&mut self.scope, executed.scope);
+        self.last = Some(LastExecution { before, command, inverse: executed.inverse });
     }
 }
 
@@ -111,7 +154,7 @@ pub struct Gestures {
     open: BTreeMap<u32, Transaction>,
 }
 
-fn invalid(message: impl Into<String>) -> String {
+pub fn invalid(message: impl Into<String>) -> String {
     error_json(&EngineError::InvalidInput(message.into()))
 }
 
@@ -361,6 +404,89 @@ mod abi {
     #[unsafe(no_mangle)]
     pub extern "C" fn policy_open_count() -> u32 {
         GESTURES.with(|gestures| gestures.borrow().open_count() as u32)
+    }
+
+    thread_local! {
+        static APP: RefCell<super::app::AppState> = RefCell::new(super::app::AppState::default());
+    }
+
+    /// Run `call` with the document registry and the app-core state.
+    fn with_app<T>(call: impl FnOnce(&mut super::app::AppState, &mut Documents) -> T) -> T {
+        APP.with(|app| DOCUMENTS.with(|documents| call(&mut app.borrow_mut(), &mut documents.borrow_mut())))
+    }
+
+    fn unit(result: Result<(), String>) -> u32 {
+        status(result.map(|()| String::new()))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_open(limit: u32) -> u32 {
+        with_app(|app, _| app.ledger_open(limit))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_close(ledger: u32) -> u32 {
+        unit(with_app(|app, _| app.ledger_close(ledger)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_record(ledger: u32, doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_app(|app, documents| app.ledger_record(documents, ledger, doc, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_record_applied(ledger: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_app(|app, _| app.ledger_record_applied(ledger, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_undo(ledger: u32, doc: u32) -> u32 {
+        status(with_app(|app, documents| app.ledger_undo(documents, ledger, doc)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_redo(ledger: u32, doc: u32) -> u32 {
+        status(with_app(|app, documents| app.ledger_redo(documents, ledger, doc)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn ledger_state(ledger: u32) -> u32 {
+        status(with_app(|app, _| app.ledger_state(ledger)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_open() -> u32 {
+        with_app(|app, _| app.pending_open())
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_close(queue: u32) -> u32 {
+        unit(with_app(|app, _| app.pending_close(queue)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_enqueue(queue: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_app(|app, _| app.pending_enqueue(queue, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_ack(queue: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|id| with_app(|app, _| app.pending_ack(queue, &id))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_rebase(queue: u32, ledger: u32, doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_app(|app, documents| app.pending_rebase(documents, queue, ledger, doc, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn pending_state(queue: u32) -> u32 {
+        status(with_app(|app, _| app.pending_state(queue)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn selection_apply(ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| super::app::selection_apply(&json)))
     }
 }
 

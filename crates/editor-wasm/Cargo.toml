@@ -10,5 +10,6 @@ description = "WebAssembly boundary for maleo-editor-core: a raw ABI over a docu
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+maleo-app-core = { path = "../app-core" }
 maleo-editor-core = { path = "../editor-core" }
 serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }

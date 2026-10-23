@@ -220,6 +220,45 @@ pub enum EditorCommand {
     Noop,
 }
 
+impl EditorCommand {
+    /// The wire `type`.
+    pub fn kind(&self) -> &'static str {
+        match self {
+            Self::CaptionEdit { .. } => "caption.edit",
+            Self::MediaUpdate { .. } => "media.update",
+            Self::MediaAdmit { .. } => "media.admit",
+            Self::ClipReplace { .. } => "clip.replace",
+            Self::ClipTrimBefore { .. } => "clip.trim-before",
+            Self::ClipTrimAfter { .. } => "clip.trim-after",
+            Self::ClipInsert { .. } => "clip.insert",
+            Self::ClipRemove { .. } => "clip.remove",
+            Self::ClipUpdate { .. } => "clip.update",
+            Self::ClipResize { .. } => "clip.resize",
+            Self::ClipSetKeys { .. } => "clip.setKeys",
+            Self::ClipMove { .. } => "clip.move",
+            Self::MarkerUpsert { .. } => "marker.upsert",
+            Self::MarkerRemove { .. } => "marker.remove",
+            Self::MarkerUpdate { .. } => "marker.update",
+            Self::BookmarkSet { .. } => "bookmark.set",
+            Self::BookmarkUpsert { .. } => "bookmark.upsert",
+            Self::BookmarkRemove { .. } => "bookmark.remove",
+            Self::DocSetCaptions { .. } => "doc.setCaptions",
+            Self::DocSetProjectReferences { .. } => "doc.setProjectReferences",
+            Self::DocSetMaterials { .. } => "doc.setMaterials",
+            Self::DocSetTrackFlags { .. } => "doc.setTrackFlags",
+            Self::SlideInsert { .. } => "slide.insert",
+            Self::SlideRemove { .. } => "slide.remove",
+            Self::SlideUpdate { .. } => "slide.update",
+            Self::PostInsert { .. } => "post.insert",
+            Self::PostRemove { .. } => "post.remove",
+            Self::PostUpdate { .. } => "post.update",
+            Self::Batch { .. } => "batch",
+            Self::ScopeReplace { .. } => "scope.replace",
+            Self::Noop => "noop",
+        }
+    }
+}
+
 /// The fields each executed type defines, besides `type`.
 fn fields_of(kind: &str) -> Option<&'static [&'static str]> {
     match kind {

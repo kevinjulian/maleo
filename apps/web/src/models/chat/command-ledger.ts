@@ -1,60 +1,31 @@
-/* Pure undo/redo bookkeeping for the command stack (D2), framework-agnostic so it
- * can be unit-tested without a DOM. The React hook (use-command-stack) owns effects,
- * debouncing, and committing scope back to state; this ledger owns only the two
- * stacks and their invariants: undo inverts the last command, redo re-applies it,
- * and any newly recorded command clears the redo stack. */
+/* Undo/redo for the command stack (D2). The stacks and their invariants live in
+ * the shared core (`crates/app-core`, OpenSpec `p1-app-core`): undo inverts the
+ * last command, redo re-applies it, and any newly recorded command clears the
+ * redo stack. This module keeps the editor's API over the engine's ledger
+ * calls; the React hook (use-command-stack) owns effects, debouncing, and
+ * committing scope back to state. */
 import {
-	commandLabel,
-	replaceScope,
+	applyDelta,
+	editorEngine,
+	EngineCommandError,
+	engineExecutor,
+	isEngineExecutor,
 	type CommandExecutor,
 	type EditorCommand,
 	type EditScope,
+	type EngineResult,
 	type Execution,
+	type ScopeDelta,
 } from "@maleo/shared/editor";
-import { deepEqual } from "@maleo/shared/editor";
 
-interface Entry {
-	/** This step's own identity. Two steps recording equal command data are still
-	 *  two steps, so "is this still the latest" is answered by id, never by
-	 *  comparing commands. */
-	id: string;
-	command: EditorCommand;
-	inverse: EditorCommand;
-	/** The scope this entry undoes back to. Kept so a gesture that records again
-	 *  can re-invert against where the gesture STARTED, not against the frame
-	 *  before it. */
-	before: EditScope;
-	/** The gesture this entry belongs to, when it belongs to one. */
-	gesture?: string;
-	/** Only assets changed by this action belong to its undo/redo. */
-	mediaIds: Set<string>;
+function unwrap<T>(result: EngineResult<T>): T {
+	if (!result.ok) throw new EngineCommandError(result.error.kind, result.error.message);
+	return result.value;
 }
 
-function changedMedia(before: EditScope, after: EditScope): Set<string> {
-	const old = new Map(before.mediaAssets.map((asset) => [asset.id, asset]));
-	const next = new Map(after.mediaAssets.map((asset) => [asset.id, asset]));
-	return new Set(
-		[...new Set([...old.keys(), ...next.keys()])].filter(
-			(id) => !deepEqual(old.get(id), next.get(id)),
-		),
-	);
-}
-
-/** Background staging is separate from document edits, so retain untouched assets. */
-function retainUnrelatedMedia(current: EditScope, result: EditScope, ids: Set<string>): EditScope {
-	const live = new Map(current.mediaAssets.map((asset) => [asset.id, asset]));
-	const restoredIds = new Set(result.mediaAssets.map((asset) => asset.id));
-	const restored = result.mediaAssets.flatMap((asset) =>
-		ids.has(asset.id) ? [asset] : live.has(asset.id) ? [live.get(asset.id)!] : [],
-	);
-	return {
-		...result,
-		mediaAssets: [
-			...current.mediaAssets.filter((asset) => !ids.has(asset.id) && !restoredIds.has(asset.id)),
-			...restored,
-		],
-	};
-}
+/* A ledger's steps hold scopes inside the engine; its handle is closed when the
+ * ledger object is collected, so an unmounted editor does not keep them. */
+const closing = new FinalizationRegistry<() => void>((close) => close());
 
 export interface CommandLedger {
 	/** Record a command already applied to `before` (clears the redo stack).
@@ -87,80 +58,68 @@ export interface CommandLedger {
 	depths: () => { undo: number; redo: number };
 }
 
-/** `executor` runs undo and redo, and any recorded command whose execution the
- *  caller did not pass; the editor passes the Rust engine's. */
+/** `executor` runs any recorded command whose execution the caller did not
+ *  pass. The editor passes the executor `engineExecutor` returns, and the
+ *  ledger then records the execution it last ran by handle. Any other executor
+ *  gets an engine session of the ledger's own, from the provided engine, and
+ *  each record sends both scopes. */
 export function createCommandLedger(executor: CommandExecutor, limit = 60): CommandLedger {
-	let undoStack: Entry[] = [];
-	let redoStack: Entry[] = [];
-	let steps = 0;
-	const nextId = (): string => `step-${++steps}`;
+	const session = isEngineExecutor(executor) ? executor : engineExecutor(editorEngine());
+	const { engine } = session;
+	const handle = engine.ledgerOpen(limit);
+	const state = (): { undo: string[]; redo: string[] } =>
+		JSON.parse(unwrap(engine.ledgerState(handle)));
 
-	return {
-		record(command, before, gesture, executed = executor.execute(before, command)) {
-			const top = undoStack[undoStack.length - 1];
-			if (gesture !== undefined && top?.gesture === gesture) {
-				/* A gesture collapses to the two scopes that bracket it, not to its
-				 * newest command.
-				 *
-				 * It used to keep the command's inverse against `top.before`. That is exact for the
-				 * case this collapse was written for — a drag emitting a command per
-				 * frame, every frame moving the same clip — because inverting the last
-				 * frame against the gesture's start restores that clip completely. It
-				 * loses everything else: a gesture spanning three clips undid one and
-				 * left two where the gesture put them, and seven batched operations
-				 * were in that category.
-				 *
-				 * Both directions need it. Redo re-applies `entry.command`, so a
-				 * collapsed entry that kept only the newest command redid one clip. */
-				const after = executed.scope;
-				const entry: Entry = {
-					id: nextId(),
-					command: replaceScope(after, commandLabel(command)),
-					inverse: replaceScope(top.before, commandLabel(command)),
-					before: top.before,
-					gesture,
-					mediaIds: changedMedia(top.before, after),
-				};
-				undoStack = [...undoStack.slice(0, -1), entry];
-				redoStack = [];
-				return entry.id;
-			}
-			const id = nextId();
-			undoStack = [
-				...undoStack,
-				{
-					id,
-					command,
-					inverse: executed.inverse,
-					before,
-					gesture,
-					mediaIds: changedMedia(before, executed.scope),
-				},
-			];
-			if (undoStack.length > limit) undoStack = undoStack.slice(-limit);
-			redoStack = [];
-			return id;
-		},
-		undo(current) {
-			const entry = undoStack[undoStack.length - 1];
-			if (!entry) return null;
-			// Executed first: a refused inverse leaves both stacks as they were.
-			const undone = executor.execute(current, entry.inverse).scope;
-			undoStack = undoStack.slice(0, -1);
-			redoStack = [...redoStack, entry];
-			return retainUnrelatedMedia(current, undone, entry.mediaIds);
-		},
-		redo(current) {
-			const entry = redoStack[redoStack.length - 1];
-			if (!entry) return null;
-			const redone = executor.execute(current, entry.command).scope;
-			redoStack = redoStack.slice(0, -1);
-			undoStack = [...undoStack, entry];
-			return retainUnrelatedMedia(current, redone, entry.mediaIds);
-		},
-		canUndo: () => undoStack.length > 0,
-		latestStep: () => undoStack[undoStack.length - 1]?.id ?? null,
-		canRedo: () => redoStack.length > 0,
-		depths: () => ({ undo: undoStack.length, redo: redoStack.length }),
+	/* Undo and redo run on the engine's document handle and answer with a delta;
+	 * the executor is told the handle now holds the rebuilt scope. */
+	const step = (
+		current: EditScope,
+		run: (doc: number) => EngineResult<string>,
+	): EditScope | null => {
+		const out = unwrap(run(session.handleFor(current)));
+		if (out === "null") return null;
+		// SAFETY: `{"delta"}` as `AppState::ledger_undo` / `ledger_redo` write it.
+		const { delta } = JSON.parse(out) as { delta: ScopeDelta };
+		const scope = applyDelta(current, delta);
+		session.adopt(scope);
+		return scope;
 	};
+
+	const ledger: CommandLedger = {
+		record(command: EditorCommand, before: EditScope, gesture?: string, executed?: Execution) {
+			const ran = executed ?? executor.execute(before, command);
+			const options = gesture === undefined ? {} : { gesture };
+			const last = session.last();
+			/* An execution the executor just ran is already in the engine, so only
+			 * the gesture crosses. A change the host applied itself (the
+			 * slides/posts watcher) sends both scopes. */
+			return unwrap(
+				last?.execution === ran
+					? engine.ledgerRecord(handle, last.handle, JSON.stringify(options))
+					: engine.ledgerRecordApplied(
+							handle,
+							JSON.stringify({
+								command,
+								inverse: ran.inverse,
+								before,
+								after: ran.scope,
+								...options,
+							}),
+						),
+			);
+		},
+		undo: (current) =>
+			state().undo.length ? step(current, (doc) => engine.ledgerUndo(handle, doc)) : null,
+		redo: (current) =>
+			state().redo.length ? step(current, (doc) => engine.ledgerRedo(handle, doc)) : null,
+		canUndo: () => state().undo.length > 0,
+		canRedo: () => state().redo.length > 0,
+		latestStep: () => state().undo.at(-1) ?? null,
+		depths: () => {
+			const { undo, redo } = state();
+			return { undo: undo.length, redo: redo.length };
+		},
+	};
+	closing.register(ledger, () => engine.ledgerClose(handle));
+	return ledger;
 }
