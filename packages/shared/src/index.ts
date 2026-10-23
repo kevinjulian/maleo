@@ -5,6 +5,8 @@ export * from "./channel-activations.ts";
 export * from "./content-behavior.ts";
 export * from "./image-policy.ts";
 export * from "./media-import.ts";
+export * from "./media-id.ts";
+export * from "./asset-manifest.ts";
 export * from "./pending-media.ts";
 export * from "./source-interval.ts";
 export * from "./keyframe-evaluation.ts";

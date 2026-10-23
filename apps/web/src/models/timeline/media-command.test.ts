@@ -1,6 +1,7 @@
 import { expect, test } from "vite-plus/test";
 import { placeProjectMedia, removeUnusedProjectMedia } from "./media-library.ts";
 import { admitMediaCommand } from "./media-admission.ts";
+import { mediaUrl, mintMediaId } from "@maleo/shared";
 import { pendingMediaAsset } from "./pending-media-asset.ts";
 import {
 	commandLabel,
@@ -162,8 +163,9 @@ test("mixed media places in displayed order with one undo; used removal protects
 	expect(scope.doc.clips).toEqual([]);
 });
 
-test("a pending asset is admitted and placed as one undo step under its request identity", () => {
-	const pending = pendingMediaAsset("k1", new File(["abcd"], "beach.mov"), "video", {
+test("a pending asset is admitted and placed as one undo step under its minted identity", () => {
+	const id = mintMediaId();
+	const pending = pendingMediaAsset(id, new File(["abcd"], "beach.mov"), "video", {
 		duration: 4,
 		decodable: true,
 	});
@@ -192,7 +194,7 @@ test("a pending asset is admitted and placed as one undo step under its request 
 	const ledger = createCommandLedger(editorExecutor);
 	const after = applyCommand(before, command);
 	ledger.record(command, before);
-	expect(after.mediaAssets.map((a) => [a.id, a.url])).toEqual([["k1", "pending:k1"]]);
-	expect(after.doc.clips[0]!.video!.url).toBe("pending:k1");
+	expect(after.mediaAssets.map((a) => [a.id, a.url])).toEqual([[id, mediaUrl(id)]]);
+	expect(after.doc.clips[0]!.video!.url).toBe(mediaUrl(id));
 	expect(ledger.undo(after)).toEqual(before);
 });

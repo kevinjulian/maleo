@@ -1,4 +1,4 @@
-import { resolveMediaUrl } from "./pending-media-sources.ts";
+import { pendingSourceKey, resolveMediaUrl } from "./pending-media-sources.ts";
 
 // Resolving a path against the api origin is not a request. It is string work
 // that pure modules do too, so it lives outside the fetch client.
@@ -17,9 +17,9 @@ export const API_BASE = (envApiUrl ?? "").replace(/\/+$/, "");
 // and data URIs pass through untouched.
 export function apiUrl(path: string): string {
 	// A file still importing loads from wherever the session holds it (see pending-media-sources.ts).
-	if (path.startsWith("pending:")) {
+	if (pendingSourceKey(path)) {
 		const resolved = resolveMediaUrl(path);
-		return resolved && apiUrl(resolved);
+		if (resolved !== path) return resolved && apiUrl(resolved);
 	}
 	if (/^([a-z]+:)?\/\//i.test(path) || path.startsWith("data:") || path.startsWith("blob:")) {
 		return path;

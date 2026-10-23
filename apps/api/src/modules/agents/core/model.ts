@@ -183,6 +183,10 @@ export interface AgentJob {
 	// of re-deriving from the stale saved storyboard — closing the autosave race for
 	// effects/transitions too. Undefined = fall back to prev-saved.
 	clientClips?: Clip[];
+	/** Minted media identities whose import had not finished when the run started.
+	 *  A clip on one is the editor's alone. A finish
+	 *  during the run still reads as pending, which only refuses an edit. */
+	pendingMediaIds?: string[];
 	clientCaptionSet?: CaptionSet;
 	/** Fresh synthesis only; never reconstructed from historical audio words. */
 	generatedCaptionSources?: import("@maleo/shared").GeneratedCaptionSources;

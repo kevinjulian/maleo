@@ -1,28 +1,24 @@
 /* A file chosen for import, as a project asset before its upload finishes
- * (`use-media-while-uploading` D1, D3). Its id is the import request key and its
- * URL the stable `pending:` reference, so clips placed now keep pointing at it
- * once the import is ready. */
-import {
-	isPendingMediaUrl,
-	mediaCompatibilityReason,
-	pendingMediaUrl,
-	type ImportedMediaKind,
-} from "@maleo/shared";
+ * (`use-media-while-uploading` D1, D3). Its id is the client-minted media id, which
+ * is also the import request key, and its URL the final `/api/media/<id>`
+ * (`p1-asset-identity`), so clips placed now never change when the import is ready. */
+import { mediaCompatibilityReason, mediaUrl, type ImportedMediaKind } from "@maleo/shared";
+import { awaitsImport } from "@models/core/pending-media-sources.ts";
 import type { LocalMediaProbe } from "@models/analysis/local-media-probe.ts";
 import type { MediaAsset } from "./editor-media.ts";
 
 export const PREVIEW_AFTER_PROCESSING = "Preview after processing";
 
 export function pendingMediaAsset(
-	requestKey: string,
+	mediaId: string,
 	file: File,
 	kind: ImportedMediaKind,
 	probe: LocalMediaProbe,
 ): MediaAsset {
 	return {
-		id: requestKey,
+		id: mediaId,
 		label: file.name,
-		url: pendingMediaUrl(requestKey),
+		url: mediaUrl(mediaId),
 		kind,
 		source: "upload",
 		...(probe.duration ? { dur: probe.duration } : {}),
@@ -50,9 +46,10 @@ export function pendingMediaAsset(
  *  undecodable one still places, and previews after processing); any other asset
  *  needs both compatibility paths. */
 export function mediaUseReason(
-	asset: Pick<MediaAsset, "url" | "kind" | "dur" | "compatibility">,
+	asset: Pick<MediaAsset, "url" | "kind" | "dur" | "compatibility"> &
+		Partial<Pick<MediaAsset, "source" | "importedSource">>,
 ): string | undefined {
-	if (isPendingMediaUrl(asset.url))
+	if (awaitsImport(asset))
 		return asset.kind !== "image" && !asset.dur
 			? "Length unknown until processing finishes"
 			: undefined;

@@ -18,7 +18,7 @@ import { closeMaleoDb } from "@maleo/db/connection";
 import { upsertContentAsset } from "@maleo/db/assets";
 import { createContentProject, getContentProject } from "@maleo/db/project-detail";
 import { scaffoldWorkspace } from "../../lib/workspace/scaffold.ts";
-import { workspaceScope } from "../../lib/active-workspace.ts";
+import { projectWorkspaceScope, workspaceScope } from "../../lib/active-workspace.ts";
 import { registerAssetRoutes } from "./assets.ts";
 import { registerProjectRoutes } from "./projects.ts";
 import { installTestCaller } from "../../middleware/auth-testing.ts";
@@ -33,6 +33,8 @@ function app(): Hono {
 	const instance = new Hono();
 	instance.use("*", installTestCaller());
 	instance.use("*", workspaceScope());
+	instance.use("/projects/:id/*", projectWorkspaceScope());
+	instance.use("/projects/:id", projectWorkspaceScope());
 	registerProjectRoutes(instance);
 	registerAssetRoutes(instance);
 	return instance;
@@ -180,5 +182,33 @@ describe("an unregistered workspace never reaches an accessor", () => {
 		const res = await app().request("/content/feed?workspace=veronikaa");
 
 		expect(res.status).toBe(400);
+	});
+});
+
+describe("a project is reachable only from its own workspace", () => {
+	test("read, edit and editor-state writes from another workspace find nothing", async () => {
+		const theirs = (await createContentProject({ title: "Kunti's", workspace: "kunti" }))!;
+		const id = theirs.project.id;
+		const refused = { error: "project_not_found" };
+		const read = await app().request(`/projects/${id}?workspace=veronika`);
+		expect(read.status).toBe(404);
+		expect(await read.json()).toEqual(refused);
+		const edit = await app().request(`/projects/${id}?workspace=veronika`, {
+			method: "PUT",
+			headers: json,
+			body: JSON.stringify({ title: "Taken" }),
+		});
+		expect(edit.status).toBe(404);
+		const state = await app().request(`/projects/${id}/editor-state?workspace=veronika`, {
+			method: "PUT",
+			headers: json,
+			body: JSON.stringify({ editor_state: { media_assets: [] } }),
+		});
+		expect(state.status).toBe(404);
+		const after = (await getContentProject(id))!.project;
+		expect(after.title).toBe("Kunti's");
+		expect(after.editor_state_json).toBeNull();
+		// Its own workspace still reads it.
+		expect((await app().request(`/projects/${id}?workspace=kunti`)).status).toBe(200);
 	});
 });

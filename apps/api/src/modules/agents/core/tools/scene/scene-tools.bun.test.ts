@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { mediaUrl, mintMediaId } from "@maleo/shared";
 import { buildToolContext } from "../../tool-executor.ts";
 import { sceneEditCommand } from "@maleo/shared/editor";
 import { runDocument } from "../../edit-document.ts";
@@ -87,26 +88,23 @@ describe("update_scene", () => {
 		expect(note).toContain("#2 Longer 3.0-8.0s");
 	});
 
-	test("view_timeline says which clips are read-only while their file uploads", async () => {
-		const j = {
-			...job(),
-			videoOverlays: [
-				{
-					id: 5,
-					url: "pending:k1",
-					kind: "video" as const,
-					label: "b",
-					startSec: 0,
-					durationSec: 2,
-					track: 2,
-				},
-			],
+	test("view_timeline counts a clip on a minted identity still importing as read-only", async () => {
+		const mediaId = mintMediaId();
+		const overlay = {
+			id: 5,
+			url: mediaUrl(mediaId),
+			kind: "video" as const,
+			label: "b",
+			startSec: 0,
+			durationSec: 2,
+			track: 2,
 		};
-		const { note } = (await call(viewTimeline, j, {})) as { note: string };
-		expect(note).toContain(
-			"1 clip(s) use a file still uploading and are read-only until it finishes.",
+		const j = { ...job(), videoOverlays: [overlay], pendingMediaIds: [mediaId] };
+		expect(((await call(viewTimeline, j, {})) as { note: string }).note).toContain(
+			"1 clip(s) use a file still uploading",
 		);
-		expect(((await call(viewTimeline, job(), {})) as { note: string }).note).not.toContain(
+		const done = { ...job(), videoOverlays: [overlay], pendingMediaIds: [] };
+		expect(((await call(viewTimeline, done, {})) as { note: string }).note).not.toContain(
 			"uploading",
 		);
 	});

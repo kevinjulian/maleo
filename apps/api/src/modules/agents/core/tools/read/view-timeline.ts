@@ -1,4 +1,4 @@
-import { knowledgeArtifact, pendingMediaBlockers } from "@maleo/shared";
+import { knowledgeArtifact, referencesPendingMedia } from "@maleo/shared";
 import { jobArtifactsOfKind } from "../../artifact-store.ts";
 import { defineTool } from "../../types.ts";
 import { emptyArgs } from "../../helpers/schemas.ts";
@@ -24,7 +24,7 @@ export const viewTimeline = defineTool({
 		if (job.scenes.some((s) => !s.image)) missing.push("frames");
 		const uploading = [job.scenes, job.videoOverlays, job.audioOverlays, job.clientClips ?? []]
 			.flat()
-			.filter((item) => pendingMediaBlockers(item).length).length;
+			.filter((item) => referencesPendingMedia(item, job.pendingMediaIds)).length;
 		const pending = uploading
 			? ` ${uploading} clip(s) use a file still uploading and are read-only until it finishes.`
 			: "";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ImportedMediaKindSchema, MediaImportRequestKeySchema } from "@maleo/shared";
+import { ImportedMediaKindSchema, MediaIdSchema } from "@maleo/shared";
 
 export const ImportSourceScopeSchema = z.object({
 	workspace: z.string().min(1).max(160),
@@ -9,7 +9,8 @@ export const ImportSourceScopeSchema = z.object({
 export type ImportSourceScope = z.infer<typeof ImportSourceScopeSchema>;
 
 export const ImportUploadHeadersSchema = z.object({
-	requestKey: MediaImportRequestKeySchema,
+	/** The client-minted media identity the import publishes under. */
+	requestKey: MediaIdSchema,
 	filename: z.string().min(1).max(1024),
 	kind: ImportedMediaKindSchema,
 	batchSize: z.number().int().positive().max(50).default(1),

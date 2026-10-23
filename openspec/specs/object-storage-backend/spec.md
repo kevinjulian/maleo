@@ -262,3 +262,36 @@ server allowed.
 
 - **WHEN** an operator opens the object-store README
 - **THEN** it states that the configured credentials administer the server, and names hosted storage as the path to narrower scoping
+
+### Requirement: A project import carries a client-minted media identity
+
+A project import request SHALL carry a media identity minted by the client as
+its request key. The
+server SHALL accept it only when it is a well-formed UUIDv7 and no registry
+record or other import uses it, in any workspace. The server SHALL refuse any
+other value before it stores bytes, and the refusal SHALL NOT reveal which
+workspace uses a taken identity. When the import finishes, the registry SHALL
+publish the stored object under that identity.
+
+The identity SHALL NOT establish ownership. The owning workspace SHALL still
+come from the project's persisted workspace.
+
+#### Scenario: A client imports with a minted identity
+
+- **WHEN** a client starts a project import with a new UUIDv7 identity
+- **THEN** the finished media is registered under that identity in the project's workspace
+
+#### Scenario: A minted identity is already used
+
+- **WHEN** an import names an identity that a registry record or another import already uses
+- **THEN** the import is refused with a generic conflict before any bytes are stored
+
+#### Scenario: A malformed identity is sent
+
+- **WHEN** an import names an identity that is not a UUIDv7
+- **THEN** the import is refused as invalid before any bytes are stored
+
+#### Scenario: A retry repeats the same identity
+
+- **WHEN** a client retries an import with the same project and the same identity
+- **THEN** the server treats it as the same import, as it treats a repeated request key today

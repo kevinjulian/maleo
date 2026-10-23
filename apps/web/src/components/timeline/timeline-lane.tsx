@@ -21,7 +21,7 @@ import { usePhoneLayout } from "@hooks/editor/use-phone-layout.ts";
 import { usePendingMediaVersion } from "@hooks/editor/use-pending-media-version.ts";
 import { usePendingUpload } from "@hooks/editor/use-pending-upload.ts";
 import { ClipUploadBadge } from "@components/timeline/media/pending-upload.tsx";
-import { resolveMediaUrl } from "@models/core/pending-media-sources.ts";
+import { isPendingMedia, resolveMediaUrl } from "@models/core/pending-media-sources.ts";
 import { FreeClipRange, type ClipGeometry } from "./free-clip-range.tsx";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { Waveform } from "@components/timeline/audio/audio-waveform.tsx";
@@ -50,7 +50,7 @@ import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import type { EditorChrome } from "@stores/editor-chrome-store.ts";
 import { useClipSelected, useSelectionFact, type SelectionStore } from "@stores/selection-store.ts";
 import type { TimelineTracksOps } from "./timeline-tracks.tsx";
-import { isPendingMediaUrl, keysOf } from "@maleo/shared";
+import { keysOf } from "@maleo/shared";
 import { touchingBoundary } from "@maleo/shared";
 import type { TimelineDocumentStore } from "@stores/timeline-document-store.ts";
 import type { EditorChromeStore } from "@stores/editor-chrome-store.ts";
@@ -392,7 +392,7 @@ const MediaClipView = memo(function MediaClipView({
 	const env = useLaneEnv();
 	usePendingMediaVersion();
 	// A file still importing plays from the session's copy; its poster and length are not edits.
-	const pending = isPendingMediaUrl(c.url);
+	const pending = isPendingMedia(c.url);
 	const mediaUrl = c.url ? resolveMediaUrl(c.url) : c.url;
 	const upload = usePendingUpload(c.url);
 	const selected = useClipSelected(env.selection, c.id);

@@ -2,6 +2,9 @@
 import { afterEach, beforeEach, describe, expect, test } from "vite-plus/test";
 import {
 	DEFAULT_MEDIA_IMPORT_LIMITS,
+	isMediaId,
+	mediaUrl,
+	mintMediaId,
 	ProjectMediaImportResponseSchema,
 	type ProjectMediaImportPage,
 	type ReadyImportedMedia,
@@ -15,7 +18,7 @@ Reflect.set(globalThis, "IS_REACT_ACT_ENVIRONMENT", true);
 const { act, createElement } = await import("react");
 const { createRoot } = await import("react-dom/client");
 const { useMediaImport } = await import("./use-media-import.ts");
-const { resolveMediaUrl, clearPendingSources } =
+const { resolveMediaUrl, clearPendingSources, withReadyPending } =
 	await import("@models/core/pending-media-sources.ts");
 const realFetch = globalThis.fetch;
 const RealXHR = globalThis.XMLHttpRequest;
@@ -83,7 +86,8 @@ const admitted: Array<{ project: string; asset: ReadyImportedMedia }> = [];
 const json = (value: unknown, status = 200) =>
 	new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json" } });
 
-function response(filename: string) {
+/** A ready import; given its minted media id, the server publishes under it. */
+function response(filename: string, mediaId?: string) {
 	const id = crypto.randomUUID();
 	return ProjectMediaImportResponseSchema.parse({
 		id,
@@ -95,7 +99,7 @@ function response(filename: string) {
 			label: filename,
 			kind: "image",
 			source: "upload",
-			url: `/api/media/${crypto.randomUUID()}`,
+			url: `/api/media/${mediaId ?? crypto.randomUUID()}`,
 			metadata: { originalFilename: filename, kind: "image", byteSize: 1 },
 			compatibility: { preview: { status: "supported" }, render: { status: "supported" } },
 			importedSource: {
@@ -394,6 +398,18 @@ test("a gateway HTML error reads as a short message, and Delete dismisses a fail
 });
 
 describe("pending assets", () => {
+	/* Minted media identities for the uploads a reload finds, by name. */
+	const ID = {
+		done: mintMediaId(),
+		working: mintMediaId(),
+		gone: mintMediaId(),
+		failed: mintMediaId(),
+		expired: mintMediaId(),
+		never: mintMediaId(),
+		lost: mintMediaId(),
+		restored: mintMediaId(),
+	};
+	const ref = (name: keyof typeof ID) => mediaUrl(ID[name]);
 	const pendingAdmitted: MediaAsset[] = [];
 	const discarded: string[] = [];
 	/* Staging as a reload finds it: what an earlier tab left, keyed by request key. */
@@ -438,9 +454,11 @@ describe("pending assets", () => {
 		stub(async (url, init) => {
 			if (url.includes("readiness"))
 				return json({ available: true, limits: DEFAULT_MEDIA_IMPORT_LIMITS });
-			const name = decodeURIComponent(new Headers(init.headers).get("x-file-name")!);
+			const headers = new Headers(init.headers);
+			const name = decodeURIComponent(headers.get("x-file-name")!);
+			const mediaId = headers.get("x-upload-id")!;
 			return new Promise<Response>((resolve) =>
-				held.push(() => resolve(json(response(name), 202))),
+				held.push(() => resolve(json(response(name, mediaId), 202))),
 			);
 		});
 		return {
@@ -470,15 +488,16 @@ describe("pending assets", () => {
 		await act(async () => current().enqueue([new File(["x"], "clip.png")]));
 		await tick();
 		const key = current().rows[0]!.key;
+		expect(isMediaId(key)).toBe(true);
 		expect(pendingAdmitted).toEqual([
-			expect.objectContaining({ id: key, url: `pending:${key}`, kind: "image", source: "upload" }),
+			expect.objectContaining({ id: key, url: mediaUrl(key), kind: "image", source: "upload" }),
 		]);
 		expect(current().rows[0]!.status).toBe("uploading");
-		expect(resolveMediaUrl(`pending:${key}`)).toBe("blob:http://local/1");
+		expect(resolveMediaUrl(mediaUrl(key))).toBe("blob:http://local/1");
 		await uploads.release();
 		expect(current().rows[0]!.status).toBe("ready");
 		expect(admitted).toEqual([]);
-		expect(resolveMediaUrl(`pending:${key}`)).toMatch(/^\/api\/media\//);
+		expect(resolveMediaUrl(mediaUrl(key))).toBe(mediaUrl(key));
 	});
 
 	test("a drop places the pending asset at once and is not placed again when ready", async () => {
@@ -492,10 +511,15 @@ describe("pending assets", () => {
 			}),
 		);
 		await tick();
-		expect(placed.map((asset) => asset.url)).toEqual([`pending:${current().rows[0]!.key}`]);
+		const key = current().rows[0]!.key;
+		expect(placed.map((asset) => asset.url)).toEqual([mediaUrl(key)]);
 		expect(pendingAdmitted).toEqual([]);
 		await uploads.release();
+		// The import finishing changes no placed reference: the same URL now names the stored bytes.
 		expect(placed).toHaveLength(1);
+		expect(placed[0]!.url).toBe(mediaUrl(key));
+		expect(withReadyPending({ url: placed[0]!.url })).toEqual({ url: mediaUrl(key) });
+		expect(resolveMediaUrl(placed[0]!.url)).toBe(mediaUrl(key));
 		expect(admitted).toEqual([]);
 	});
 
@@ -517,41 +541,45 @@ describe("pending assets", () => {
 	});
 
 	test("a loaded document's pending references resolve to finished imports and follow unfinished ones", async () => {
-		const done = response("done.png"),
-			working = { ...response("working.png"), status: "processing" as const, asset: null };
+		const done = response("done.png", ID.done),
+			working = {
+				...response("working.png", ID.working),
+				status: "processing" as const,
+				asset: null,
+			};
 		let polled = false;
 		stub(async (url) => {
 			if (url.includes("readiness"))
 				return json({ available: true, limits: DEFAULT_MEDIA_IMPORT_LIMITS });
-			if (url.includes("/request/done")) return json(done);
-			if (url.includes("/request/working")) return json(working);
+			if (url.includes(`/request/${ID.done}`)) return json(done);
+			if (url.includes(`/request/${ID.working}`)) return json(working);
 			if (url.includes("/request/")) return json({ error: "not_found" }, 404);
 			if (url.includes(`/${working.id}`)) {
 				polled = true;
-				return json({ ...response("working.png"), id: working.id });
+				return json({ ...response("working.png", ID.working), id: working.id });
 			}
 			throw new Error(`unexpected ${url}`);
 		});
 		await mountPending();
 		pendingAdmitted.push({
-			id: "working",
-			url: "pending:working",
+			id: ID.working,
+			url: ref("working"),
 			label: "working.png",
 			kind: "image",
 			source: "upload",
 		});
 		await act(async () =>
 			current().resolve([
-				{ url: "pending:done", label: "done.png" },
-				{ url: "pending:working", label: "working.png" },
-				{ url: "pending:gone", label: "gone.png" },
+				{ url: ref("done"), label: "done.png" },
+				{ url: ref("working"), label: "working.png" },
+				{ url: ref("gone"), label: "gone.png" },
 				{ url: "/api/media/x", label: "managed" },
 			]),
 		);
 		await tick();
 		await tick();
-		expect(resolveMediaUrl("pending:done")).toBe(done.asset!.url);
-		expect(current().rows.find((row) => row.key === "gone")).toMatchObject({
+		expect(resolveMediaUrl(ref("done"))).toBe(done.asset!.url);
+		expect(current().rows.find((row) => row.key === ID.gone)).toMatchObject({
 			status: "failed",
 			filename: "gone.png",
 			error: "Upload interrupted. Choose the file again.",
@@ -560,8 +588,37 @@ describe("pending assets", () => {
 			await new Promise((resolve) => setTimeout(resolve, 1100));
 		});
 		expect(polled).toBe(true);
-		expect(resolveMediaUrl("pending:working")).toMatch(/^\/api\/media\//);
+		expect(resolveMediaUrl(ref("working"))).toMatch(/^\/api\/media\//);
 		// Resolution, not admission: the ready asset is not added a second time.
+		expect(admitted).toEqual([]);
+	});
+
+	test("a reloaded minted reference plays the staged copy while the server copy is pending, then the same URL", async () => {
+		const id = mintMediaId();
+		const ready = response("clip.png", id);
+		const working = { ...ready, status: "processing" as const, asset: null };
+		let finished = false;
+		const reads: string[] = [];
+		stub(async (url) => {
+			if (url.includes("readiness"))
+				return json({ available: true, limits: DEFAULT_MEDIA_IMPORT_LIMITS });
+			if (url.includes(`/request/${id}`)) return json(working);
+			if (url.includes(`/${ready.id}`)) return json(finished ? ready : working);
+			// The stable route answers an unfinished import with 409 media_pending.
+			reads.push(url);
+			return json({ error: "media_pending" }, 409);
+		});
+		staged.set(id, new File(["x"], "clip.png"));
+		await mountPending();
+		await act(async () => current().resolve([{ url: mediaUrl(id), label: "clip.png" }]));
+		for (let i = 0; i < 3; i++) await tick();
+		expect(resolveMediaUrl(mediaUrl(id))).toBe("blob:http://local/1");
+		finished = true;
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 1100));
+		});
+		expect(resolveMediaUrl(mediaUrl(id))).toBe(mediaUrl(id));
+		expect(reads).toEqual([]);
 		expect(admitted).toEqual([]);
 	});
 
@@ -576,24 +633,25 @@ describe("pending assets", () => {
 			current().dismiss(b!);
 		});
 		expect(discarded).toEqual([a, b]);
-		expect(resolveMediaUrl(`pending:${a}`)).toBe("");
+		// No session copy remains; the discarded asset takes its clips with it.
+		expect(resolveMediaUrl(mediaUrl(a!))).toBe(mediaUrl(a!));
 	});
 
 	test("reload resumes each pending upload by what the server and staging hold, under the same identity", async () => {
 		const uploads: string[] = [];
-		const done = response("done.png");
+		const done = response("done.png", ID.done);
 		stub(async (url, init) => {
 			if (url.includes("readiness"))
 				return json({ available: true, limits: DEFAULT_MEDIA_IMPORT_LIMITS });
-			if (url.includes("/request/done")) return json(done);
-			if (url.includes("/request/failed"))
+			if (url.includes(`/request/${ID.done}`)) return json(done);
+			if (url.includes(`/request/${ID.failed}`))
 				return json({
 					...response("failed.png"),
 					status: "failed",
 					asset: null,
 					error: "Upload failed; retry file",
 				});
-			if (url.includes("/request/expired"))
+			if (url.includes(`/request/${ID.expired}`))
 				return json({ ...response("expired.png"), status: "uploading", asset: null });
 			if (url.includes("/request/")) return json({ error: "not_found" }, 404);
 			if (init.method === "POST") {
@@ -603,15 +661,15 @@ describe("pending assets", () => {
 			}
 			throw new Error(`unexpected ${url}`);
 		});
-		staged.set("failed", new File(["x"], "failed.png"));
-		staged.set("expired", new File(["x"], "expired.png"));
-		staged.set("never", new File(["x"], "never.png"));
-		staged.set("done", new File(["x"], "done.png"));
+		staged.set(ID.failed, new File(["x"], "failed.png"));
+		staged.set(ID.expired, new File(["x"], "expired.png"));
+		staged.set(ID.never, new File(["x"], "never.png"));
+		staged.set(ID.done, new File(["x"], "done.png"));
 		await mountPending();
-		for (const key of ["done", "failed", "expired", "never", "lost"])
+		for (const key of ["done", "failed", "expired", "never", "lost"] as const)
 			pendingAdmitted.push({
-				id: key,
-				url: `pending:${key}`,
+				id: ID[key],
+				url: ref(key),
 				label: `${key}.png`,
 				kind: "image",
 				source: "upload",
@@ -620,12 +678,12 @@ describe("pending assets", () => {
 			current().resolve(pendingAdmitted.map(({ url, label }) => ({ url, label }))),
 		);
 		for (let i = 0; i < 4; i++) await tick();
-		expect(resolveMediaUrl("pending:done")).toBe(done.asset!.url);
-		expect(uploads.sort()).toEqual(["expired", "failed", "never"]);
-		for (const key of ["failed", "expired", "never"])
-			expect(resolveMediaUrl(`pending:${key}`)).toMatch(/^\/api\/media\//);
-		expect(removedStaged.sort()).toEqual(["done", "expired", "failed", "never"]);
-		expect(current().rows.find((row) => row.key === "lost")).toMatchObject({
+		expect(resolveMediaUrl(ref("done"))).toBe(done.asset!.url);
+		expect(uploads.sort()).toEqual([ID.expired, ID.failed, ID.never].sort());
+		for (const key of ["failed", "expired", "never"] as const)
+			expect(resolveMediaUrl(ref(key))).toMatch(/^\/api\/media\//);
+		expect(removedStaged.sort()).toEqual([ID.done, ID.expired, ID.failed, ID.never].sort());
+		expect(current().rows.find((row) => row.key === ID.lost)).toMatchObject({
 			status: "failed",
 			interrupted: true,
 			error: "Upload interrupted. Choose the file again.",
@@ -652,25 +710,25 @@ describe("pending assets", () => {
 		});
 		await mountPending();
 		pendingAdmitted.push({
-			id: "lost",
-			url: "pending:lost",
+			id: ID.lost,
+			url: ref("lost"),
 			label: "lost.png",
 			kind: "image",
 			source: "upload",
 		});
-		await act(async () => current().resolve([{ url: "pending:lost", label: "lost.png" }]));
+		await act(async () => current().resolve([{ url: ref("lost"), label: "lost.png" }]));
 		await tick();
 		await tick();
-		expect(current().rows[0]).toMatchObject({ key: "lost", interrupted: true });
-		await act(async () => current().chooseAgain("lost", new File(["x"], "wrong.mp4")));
+		expect(current().rows[0]).toMatchObject({ key: ID.lost, interrupted: true });
+		await act(async () => current().chooseAgain(ID.lost, new File(["x"], "wrong.mp4")));
 		await tick();
 		expect(current().rows[0]).toMatchObject({ status: "failed", error: "Choose an image file" });
 		expect(uploads).toEqual([]);
-		await act(async () => current().chooseAgain("lost", new File(["x"], "again.png")));
+		await act(async () => current().chooseAgain(ID.lost, new File(["x"], "again.png")));
 		await tick();
 		await tick();
-		expect(uploads).toEqual(["lost:again.png"]);
-		expect(resolveMediaUrl("pending:lost")).toMatch(/^\/api\/media\//);
+		expect(uploads).toEqual([`${ID.lost}:again.png`]);
+		expect(resolveMediaUrl(ref("lost"))).toMatch(/^\/api\/media\//);
 		expect([admitted, pendingAdmitted.length]).toEqual([[], 1]);
 	});
 
@@ -686,29 +744,29 @@ describe("pending assets", () => {
 			async (url, init) => {
 				if (url.includes("readiness"))
 					return json({ available: true, limits: DEFAULT_MEDIA_IMPORT_LIMITS });
-				if (url.includes("/request/restored")) return json(failed);
+				if (url.includes(`/request/${ID.restored}`)) return json(failed);
 				if (init.method === "POST") {
 					uploads.push(new Headers(init.headers).get("x-upload-id")!);
 					return json(response("restored.png"), 202);
 				}
 				throw new Error(`unexpected ${url}`);
 			},
-			[{ requestKey: "restored", import: failed }],
+			[{ requestKey: ID.restored, import: failed }],
 		);
-		staged.set("restored", new File(["x"], "restored.png"));
+		staged.set(ID.restored, new File(["x"], "restored.png"));
 		await mountPending();
-		expect(current().rows[0]).toMatchObject({ key: "restored", status: "failed" });
+		expect(current().rows[0]).toMatchObject({ key: ID.restored, status: "failed" });
 		pendingAdmitted.push({
-			id: "restored",
-			url: "pending:restored",
+			id: ID.restored,
+			url: ref("restored"),
 			label: "restored.png",
 			kind: "image",
 			source: "upload",
 		});
-		await act(async () => current().resolve([{ url: "pending:restored", label: "restored.png" }]));
+		await act(async () => current().resolve([{ url: ref("restored"), label: "restored.png" }]));
 		for (let i = 0; i < 3; i++) await tick();
-		expect(uploads).toEqual(["restored"]);
-		expect(resolveMediaUrl("pending:restored")).toMatch(/^\/api\/media\//);
+		expect(uploads).toEqual([ID.restored]);
+		expect(resolveMediaUrl(ref("restored"))).toMatch(/^\/api\/media\//);
 	});
 
 	test("a chosen file is staged and leaves staging once ready", async () => {

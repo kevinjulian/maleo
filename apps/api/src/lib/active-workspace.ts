@@ -24,6 +24,7 @@
  * routes/operations/generation.ts.
  */
 import type { Context, MiddlewareHandler } from "hono";
+import { openDb } from "@maleo/db/connection";
 import { getWorkspace } from "@maleo/db/workspaces";
 import { getWorkspaceMember, isWorkspaceMember } from "@maleo/db/workspace-members";
 import { DEFAULT_CONTENT_WORKSPACE } from "@maleo/db/schema";
@@ -163,4 +164,24 @@ export function activeWorkspace(c: Context): string {
 	if (typeof name !== "string" || !name)
 		throw new Error("activeWorkspace() read without workspaceScope() mounted");
 	return name;
+}
+
+/** Refuse a project id that belongs to another workspace, as one that does not exist.
+ *
+ *  Mounted on `/projects/:id` and below, after `workspaceScope()`, so no project
+ *  route has to remember the check. An id with no project passes through, so each
+ *  route keeps its own not-found answer. */
+export function projectWorkspaceScope(): MiddlewareHandler {
+	return async (c, next) => {
+		const id = c.req.param("id");
+		const project = id
+			? await openDb().get<{ workspace: string }>(
+					"SELECT workspace FROM content_projects WHERE id = ?",
+					[id],
+				)
+			: undefined;
+		if (project && project.workspace !== activeWorkspace(c))
+			return c.json({ error: "project_not_found" }, 404);
+		await next();
+	};
 }

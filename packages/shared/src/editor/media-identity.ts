@@ -2,9 +2,7 @@
  *
  * The asset id is the identity; a URL is where the bytes are at the moment. A
  * clip's `mediaAssetId` decides, even when the clip's URL is not the asset's:
- * after a relink the asset moved, and a clip placed while its file uploaded
- * still says `pending:<key>` while the session resolver plays the managed file.
- * Matching by URL is the legacy resolution, for a reference that names no id
+ * after a relink the asset moved. Matching by URL is the legacy resolution, for a reference that names no id
  * or an id this library does not hold. */
 import type { MediaAsset } from "./scope.ts";
 

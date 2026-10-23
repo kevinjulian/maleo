@@ -17,9 +17,14 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- Imported media gets its final identity at import. The client mints a UUIDv7 media ID, the document holds `/api/media/<id>` from the start, and the server publishes the finished import under that ID. While the import runs, the media route answers `409 media_pending`. A media ID that is already in use gets `409 media_id_conflict`.
+- `GET /api/operations/projects/:id/asset-manifest` lists the media a project references, with identity, origin, kind, size, SHA-256 and state (`ready`, `pending`, `failed`, `external`). Export preflight uses it.
+- An agent run treats a clip on a minted media ID whose import has not finished as still uploading, as it treats a `pending:` reference: the agent cannot edit it.
 - `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
 
 ### Changed
+
+- **Breaking:** a media import request key (`x-upload-id`) must be a client-minted UUIDv7 media ID; any other key gets `400`. Documents no longer use `pending:<requestKey>` references, and nothing resolves them.
 
 - Caption generation accepts rounded TTS clip durations while decoding only available source audio. Clips whose selected interval exceeds the source by more than 50 ms still fail validation.
 
@@ -399,6 +404,8 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Fixed
 
+- The API no longer exits when two media uploads stream at the same time. Bun 1.3.1 `pipeTo` left an unhandled rejection on that path; the upload now reads its body with a plain reader loop.
+- Project routes under `/api/operations/projects/:id` refuse a project that belongs to another workspace with `404 project_not_found`. Before, a member of any workspace could read or edit it by id.
 - **Keyed scene visuals stay visible.** A scene image or video with transform keyframes rendered through the keyed path, whose box had no height, so the preview and export showed an empty frame. Scene visuals now fill the frame height there, as the static path always did.
 - Locked tracks now block the Blending, Masks and Adjust inspector groups, not only Transform.
 - Prevent accidental text selection in timeline labels and controls while preserving text selection in editable fields.

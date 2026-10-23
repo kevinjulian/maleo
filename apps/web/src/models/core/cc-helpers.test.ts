@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
-import { toTimelineDoc } from "@maleo/shared";
+import { mediaUrl, mintMediaId, toTimelineDoc } from "@maleo/shared";
 import { buildRenderPreflight } from "./cc-helpers.ts";
+import { clearPendingSources, trackPendingSource } from "./pending-media-sources.ts";
 
 describe("render export preflight", () => {
 	it("discloses compositing draft omissions and refuses unsupported saved values", () => {
@@ -41,7 +42,7 @@ describe("render export preflight", () => {
 				{
 					id: 2,
 					kind: "video",
-					url: "pending:k1",
+					url: "/api/media/x",
 					mediaAssetId: "k1",
 					start: 0,
 					dur: 4.6,
@@ -81,14 +82,16 @@ describe("render export preflight", () => {
 		).not.toContain("beach.mov");
 	});
 	it("a file still uploading refuses only the server render and the draft says it uses the local copy", () => {
+		const id = mintMediaId();
+		trackPendingSource(id);
 		const doc = toTimelineDoc(
 			[],
-			[{ id: 2, kind: "video", url: "pending:k1", mediaAssetId: "k1", start: 0, dur: 2, track: 0 }],
+			[{ id: 2, kind: "video", url: mediaUrl(id), mediaAssetId: id, start: 0, dur: 2, track: 0 }],
 		);
 		const asset = {
-			id: "k1",
+			id,
 			label: "beach.mov",
-			url: "pending:k1",
+			url: mediaUrl(id),
 			kind: "video" as const,
 			source: "upload" as const,
 			dur: 2,
@@ -96,7 +99,7 @@ describe("render export preflight", () => {
 		};
 		const result = buildRenderPreflight({
 			scenes: [],
-			videoOverlays: [{ url: "pending:k1" }],
+			videoOverlays: [{ url: mediaUrl(id) }],
 			audioOverlays: [],
 			textOverlays: [],
 			infographicOverlays: [],
@@ -113,6 +116,7 @@ describe("render export preflight", () => {
 		expect(result.warnings[0]).toBe(
 			"Fast render uses this browser's copy of 1 file still uploading; the server render waits for it.",
 		);
+		clearPendingSources();
 	});
 	it("blocks pending and unresolved reverse processing without hiding other export checks", () => {
 		const result = buildRenderPreflight({

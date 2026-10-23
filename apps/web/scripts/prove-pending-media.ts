@@ -211,8 +211,12 @@ export async function pendingMediaFlow({
 		.poll(async () => (await saved(clip))?.layout?.animation?.tracks.xPct?.[0]?.v)
 		.toBe(7);
 	const pending = (await saved(clip))!;
-	assert.match(pending.url, /^pending:/, "An unfinished upload saves as its pending reference");
-	const key = pending.url.slice("pending:".length);
+	assert.match(
+		pending.url,
+		/^\/api\/media\/[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f-]{21}$/,
+		"An unfinished upload saves as its final minted media URL",
+	);
+	const key = pending.url.slice("/api/media/".length);
 	assert.equal(pending.mediaAssetId, key);
 	await expect(badge).toHaveAttribute("aria-label", /^Uploading \d+%$/);
 
@@ -294,7 +298,7 @@ export async function pendingMediaFlow({
 			.catch(() => {});
 	});
 	await page.unroute(importRoute);
-	await expect.poll(async () => (await saved(lost))?.url).toMatch(/^pending:/);
+	await expect.poll(async () => (await saved(lost))?.url).toMatch(/^\/api\/media\//);
 	await page.reload();
 	await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 	await expect(page.locator(`[data-clipid="${lost}"] .tl2-clip-upload`)).toHaveAttribute(

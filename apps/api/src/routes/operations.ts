@@ -1,10 +1,11 @@
 import { Hono } from "hono";
 import { tailActivity } from "../lib/activity-tail.ts";
-import { activeWorkspace, workspaceScope } from "../lib/active-workspace.ts";
+import { activeWorkspace, projectWorkspaceScope, workspaceScope } from "../lib/active-workspace.ts";
 import { summarizeActivity, type AuditEntry } from "./operations/audit.ts";
 import { effectiveVoiceCatalogue } from "../lib/voice-catalogue-source.ts";
 import { listDrafts } from "@maleo/db/drafts";
 import { registerAssetRoutes } from "./operations/assets.ts";
+import { registerAssetManifestRoutes } from "./operations/asset-manifest.ts";
 import { registerCampaignRoutes } from "./operations/campaigns.ts";
 import { registerEventRoutes } from "./operations/events.ts";
 import { registerGenerationRoutes } from "./operations/generation.ts";
@@ -34,6 +35,9 @@ export function operationsRoutes(): Hono {
 	// reads no workspace is unaffected; one that does cannot get an unregistered
 	// value or a silent `default`.
 	app.use("*", workspaceScope());
+	// A project in another workspace is refused as missing on every project route.
+	app.use("/projects/:id", projectWorkspaceScope());
+	app.use("/projects/:id/*", projectWorkspaceScope());
 	app.route("/projects", projectMediaImportRoutes());
 	app.route("/projects", projectMediaProcessingRoutes());
 
@@ -42,6 +46,7 @@ export function operationsRoutes(): Hono {
 	registerRunRoutes(app);
 	registerCampaignRoutes(app);
 	registerProjectRoutes(app);
+	registerAssetManifestRoutes(app);
 	registerStoryboardRoutes(app);
 	registerBlockerRoutes(app);
 	registerReferenceRoutes(app);

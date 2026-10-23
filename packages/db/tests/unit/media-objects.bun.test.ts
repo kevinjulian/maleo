@@ -8,6 +8,7 @@ import {
 } from "../../src/db/media-objects.ts";
 import { openTestDb } from "../../src/db/handle-testing.ts";
 import { addWorkspaceMember } from "../../src/db/workspace-members.ts";
+import { mintMediaId } from "@maleo/shared";
 
 const hash = "a".repeat(64);
 const key = (workspace: string, kind: string, name = "shot.png", project?: string) =>
@@ -102,4 +103,33 @@ test("each write is its own identity, and a key cannot claim another owner", asy
 		mediaId: null,
 	});
 	await t.close();
+});
+
+test("an import registers its playback object under the client-minted identity", async () => {
+	const t = await openTestDb("postgres");
+	try {
+		const id = mintMediaId();
+		const input = {
+			id,
+			workspace: "one",
+			kind: "video" as const,
+			hash,
+			storage_key: key("one", "video", "clip.mp4"),
+			content_type: "video/mp4",
+			size: 9,
+		};
+		expect((await registerMediaObject(input, t.db)).id).toBe(id);
+		// Re-registering the same key under the same identity is the same object.
+		expect((await registerMediaObject(input, t.db)).id).toBe(id);
+		// The identity cannot name a second object.
+		await expect(
+			registerMediaObject({ ...input, storage_key: key("one", "video", "other.mp4") }, t.db),
+		).rejects.toThrow();
+		// The same key cannot be republished under another identity.
+		await expect(registerMediaObject({ ...input, id: mintMediaId() }, t.db)).rejects.toThrow(
+			"media registry collision",
+		);
+	} finally {
+		await t.close();
+	}
 });

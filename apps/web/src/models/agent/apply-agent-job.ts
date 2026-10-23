@@ -15,7 +15,6 @@
  * produces the same document. */
 import {
 	applyDirector,
-	isPendingMediaUrl,
 	sourceAudioSettings,
 	trimMediaTiming,
 	EMOTIONS,
@@ -30,6 +29,7 @@ import {
 	sceneFrameHash,
 	sceneSpeechHash,
 } from "@maleo/shared";
+import { isPendingMedia } from "@models/core/pending-media-sources.ts";
 import { mergeAgentInfographicOverlays } from "@models/agent/merge-infographic-overlays.ts";
 import { preserveAgentSceneTimeline } from "@models/timeline/editor-media.ts";
 import type {
@@ -112,8 +112,7 @@ export function mergeAgentScenes(
 	const next = scenes.map((s, i): Scene => {
 		const before = prev[i];
 		// A frame still uploading is the editor's alone, and the agent cannot name one.
-		const image =
-			isPendingMediaUrl(before?.src) || isPendingMediaUrl(s.image) ? undefined : s.image;
+		const image = isPendingMedia(before?.src) || isPendingMedia(s.image) ? undefined : s.image;
 		const src = image ?? before?.src;
 		// Only admit the agent's own image: a carried-over `before.src` already
 		// carries whatever identity it was placed with.

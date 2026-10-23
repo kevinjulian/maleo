@@ -26,7 +26,7 @@ const doc = toTimelineDoc(
 			vo: "",
 			img: true,
 			dur: 4,
-			src: "pending:k1",
+			src: asset.url,
 			mediaAssetId: "k1",
 		},
 	],
@@ -34,7 +34,7 @@ const doc = toTimelineDoc(
 		{
 			id: 2,
 			kind: "video",
-			url: "pending:k1",
+			url: asset.url,
 			mediaAssetId: "k1",
 			start: 0,
 			dur: 4,

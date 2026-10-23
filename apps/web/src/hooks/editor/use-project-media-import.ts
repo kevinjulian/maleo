@@ -1,7 +1,7 @@
 /* The editor's media import: `useMediaImport` wired to the project's library and
  * document, so a chosen file is a pending asset at once (`use-media-while-uploading`). */
 import { useEffect } from "react";
-import { isPendingMediaUrl, pendingMediaRequestKey } from "@maleo/shared";
+import { awaitsImport, pendingSourceKey } from "@models/core/pending-media-sources.ts";
 import type { TimelineDocumentStore } from "@stores/timeline-document-store.ts";
 import type { DocumentWriters } from "@stores/document-writers.ts";
 import { removeUnusedProjectMedia } from "@models/timeline/media-library.ts";
@@ -20,8 +20,7 @@ export function useProjectMediaImport(
 		admit: (asset) => {
 			library.ensureMediaAsset(asset);
 		},
-		has: (key) =>
-			library.getMediaAssets().some((asset) => pendingMediaRequestKey(asset.url) === key),
+		has: (key) => library.getMediaAssets().some((asset) => pendingSourceKey(asset.url) === key),
 		// Unused, it simply leaves the library; used, it leaves with its clips as one undo step.
 		discard: (key) => {
 			if (!mediaUsages(key, store.deriveArrays()).length) {
@@ -49,7 +48,7 @@ export function useProjectMediaImport(
 	const { mediaAssets } = library,
 		{ resolve } = imports;
 	useEffect(() => {
-		resolve(mediaAssets.filter((asset) => isPendingMediaUrl(asset.url)));
+		resolve(mediaAssets.filter(awaitsImport));
 	}, [mediaAssets, resolve]);
 	return imports;
 }

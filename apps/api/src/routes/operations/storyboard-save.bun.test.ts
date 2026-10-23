@@ -410,7 +410,7 @@ test("saves refuse browser-local media URLs, naming the field, without appending
 						{
 							id: 2,
 							kind: "video",
-							url: "pending:k1",
+							url: "/api/media/11111111-1111-7111-8111-111111111111",
 							start: 0,
 							dur: 4,
 							thumb: "data:image/jpeg;base64,AAAA",
@@ -439,7 +439,13 @@ test("saves refuse browser-local media URLs, naming the field, without appending
 	]);
 	expect((await getContentProject(id))!.project.editor_state_json).toEqual(prior);
 	expect(
-		(await state({ media_assets: [{ id: "k1", url: "pending:k1", kind: "video" }] })).status,
+		(
+			await state({
+				media_assets: [
+					{ id: "k1", url: "/api/media/11111111-1111-7111-8111-111111111111", kind: "video" },
+				],
+			})
+		).status,
 	).toBe(200);
 });
 

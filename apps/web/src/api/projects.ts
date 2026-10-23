@@ -157,7 +157,7 @@ export async function saveStoryboard(
 ): Promise<SavedStoryboard & { references?: SavedStoryboardReferences }> {
 	const res = await post<{ storyboard: SavedStoryboard; references?: SavedStoryboardReferences }>(
 		`${BASE}/projects/${projectId}/storyboards`,
-		// Ready imports converge on their managed URLs; unfinished ones stay `pending:`.
+		// Ready imports take their server metadata; unfinished ones keep their minted URL.
 		{ storyboard_json: withReadyPending(storyboard), expectedCaptionState },
 	);
 	return { ...res.storyboard, references: res.references };

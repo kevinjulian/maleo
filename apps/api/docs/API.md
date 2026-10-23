@@ -71,8 +71,7 @@ Membership and project editing permission apply to submit, poll and cancel.
 API expands sources against admitted project media; callers cannot supply worker
 paths, URLs, storage keys, fingerprints or filters. Original bytes stay immutable.
 Finished project-owned imports also authorize sources before the editor's first
-library autosave. Saved `pending:` references resolve only through that project's
-ready import. Source revisions still have to match. Browser codec tails up to
+library autosave. Source revisions still have to match. Browser codec tails up to
 50 ms are clamped to measured source duration; larger overruns require trimming.
 Worker fetches service-authorized source bytes from the existing media-processing
 endpoint and verifies content hashes. Poll checks admission/revision again; stale

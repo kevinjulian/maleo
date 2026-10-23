@@ -1,14 +1,16 @@
 /* The session's sources for media still importing (`use-media-while-uploading` D2).
  *
- * A document references a file chosen for import as `pending:<requestKey>`. Until
- * its import is ready it plays from the browser's copy; once ready, from the managed
- * URL. Completion is resolution, not an edit: nothing here touches the document or
- * the undo ledger, so undoing into a state recorded while pending still plays the
- * managed media, and redo is never cleared by an upload finishing.
+ * A document references a file chosen for import by its client-minted media URL,
+ * `/api/media/<id>`, final from the moment of import (`p1-asset-identity`). Until
+ * its import is ready it plays from the browser's copy; once ready, from the
+ * server. Completion is resolution, not an edit: nothing
+ * here touches the document or the undo ledger, so undoing into a state recorded
+ * while pending still plays the managed media, and redo is never cleared by an
+ * upload finishing.
  *
  * Pure bookkeeping over strings. The import hook creates and revokes the object URLs;
  * this module only hands back the ones that stopped being needed. */
-import { isPendingMediaUrl, pendingMediaRequestKey, type ReadyImportedMedia } from "@maleo/shared";
+import { isMediaId, mediaUrlId, type ReadyImportedMedia } from "@maleo/shared";
 
 interface PendingSource {
 	local?: string;
@@ -34,6 +36,52 @@ export function subscribePendingSources(listener: () => void): () => void {
 /** Changes whenever any source does; a memo keyed on it re-resolves. */
 export function pendingSourcesVersion(): number {
 	return version;
+}
+
+/** The session key a media URL resolves through: its client-minted media id, which
+ *  is also its import's request key. */
+export function pendingSourceKey(url: unknown): string | undefined {
+	const id = mediaUrlId(url);
+	return isMediaId(id) ? id : undefined;
+}
+
+/** Whether a URL names a file whose import this session tracks and has not finished. */
+export function isPendingMedia(url: unknown): boolean {
+	const key = pendingSourceKey(url);
+	const source = key ? sources.get(key) : undefined;
+	return Boolean(source && !source.ready);
+}
+
+/** An upload asset the server has not confirmed: a minted URL saved without the
+ *  imported provenance a finished import records. */
+export function awaitsImport(asset: {
+	url: string;
+	source?: string;
+	importedSource?: unknown;
+}): boolean {
+	return asset.source === "upload" && !asset.importedSource && isMediaId(mediaUrlId(asset.url));
+}
+
+/** The distinct files still importing that `value` references anywhere. */
+export function pendingMediaKeys(value: unknown): Set<string> {
+	const keys = new Set<string>();
+	const visit = (item: unknown): void => {
+		if (typeof item === "string") {
+			const key = pendingSourceKey(item);
+			if (key && isPendingMedia(item)) keys.add(key);
+		} else if (Array.isArray(item)) item.forEach(visit);
+		else if (item && typeof item === "object") Object.values(item).forEach(visit);
+	};
+	visit(value);
+	return keys;
+}
+
+/** Hold a loaded document's unfinished import as pending before any local copy exists,
+ *  so the preview loads nothing rather than reading the server's `409 media_pending`. */
+export function trackPendingSource(key: string): void {
+	if (sources.has(key)) return;
+	sources.set(key, {});
+	changed();
 }
 
 export function setPendingLocalUrl(key: string, url: string): void {
@@ -69,17 +117,19 @@ export function clearPendingSources(): string[] {
 }
 
 export function readyPendingImport(url: unknown): ReadyImportedMedia | undefined {
-	const key = pendingMediaRequestKey(url);
+	const key = pendingSourceKey(url);
 	return key ? sources.get(key)?.ready : undefined;
 }
 
 /** Any media URL as the browser should load it: a pending reference becomes its
- *  ready URL, else its local copy, else empty (nothing to load yet). */
+ *  ready URL, else its local copy, else empty (nothing to load yet). A minted URL
+ *  this session does not track is ordinary stored media. */
 export function resolveMediaUrl(url: string): string {
-	const key = pendingMediaRequestKey(url);
+	const key = pendingSourceKey(url);
 	if (!key) return url;
 	const source = sources.get(key);
-	return source?.ready?.url ?? source?.local ?? "";
+	if (!source) return url;
+	return source.ready?.url ?? source.local ?? "";
 }
 
 /** A pending asset once its import is ready: same identity and label, the server's
@@ -100,7 +150,7 @@ export function resolvePendingAsset<T extends { url: string }>(asset: T): T {
 
 function substitute<T>(value: T, url: (pending: string) => string | undefined): T {
 	const visit = (item: unknown): unknown => {
-		if (typeof item === "string") return isPendingMediaUrl(item) ? (url(item) ?? item) : item;
+		if (typeof item === "string") return pendingSourceKey(item) ? (url(item) ?? item) : item;
 		if (Array.isArray(item)) return item.map(visit);
 		if (!item || typeof item !== "object") return item;
 		// An asset (it records its source) takes the ready metadata, not just the URL.
@@ -110,12 +160,12 @@ function substitute<T>(value: T, url: (pending: string) => string | undefined): 
 				: item;
 		return Object.fromEntries(Object.entries(base).map(([key, field]) => [key, visit(field)]));
 	};
-	// SAFETY: only `pending:` strings and pending assets' URL and metadata change; every other value keeps its shape.
+	// SAFETY: only pending media strings and pending assets' URL and metadata change; every other value keeps its shape.
 	return visit(value) as T;
 }
 
-/** What a save writes: ready references become managed URLs and metadata; the ones
- *  still pending stay `pending:` references, never a browser-local URL. */
+/** What a save writes: ready references take managed URLs and metadata; the ones
+ *  still pending keep their stable reference, never a browser-local URL. */
 export function withReadyPending<T>(value: T): T {
 	return substitute(value, (pending) => readyPendingImport(pending)?.url);
 }
@@ -167,7 +217,7 @@ export function setPendingUploadState(key: string, state: PendingUploadState | u
 
 /** The state of the pending asset a media URL references; stable until it changes. */
 export function pendingUploadStateOf(url: unknown): PendingUploadState | undefined {
-	const key = pendingMediaRequestKey(url);
+	const key = pendingSourceKey(url);
 	return key ? uploadStates.get(key) : undefined;
 }
 

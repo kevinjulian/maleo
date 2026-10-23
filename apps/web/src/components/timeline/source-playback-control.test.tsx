@@ -11,16 +11,18 @@ const { createRoot } = await import("react-dom/client");
 const { toTimelineDoc } = await import("@maleo/shared");
 const { createTimelineDocumentStore } = await import("@stores/timeline-document-store.ts");
 const { createDocumentWriters } = await import("@stores/document-writers.ts");
-const { clearPendingSources, setPendingReady, resolvePendingAsset } =
+const { clearPendingSources, setPendingReady, resolvePendingAsset, trackPendingSource } =
 	await import("@models/core/pending-media-sources.ts");
 const { SourcePlaybackControl, PENDING_SOURCE_REASON } =
 	await import("./source-playback-control.tsx");
 
-const managed = "/api/media/11111111-1111-4111-8111-111111111111";
+const { mediaUrl, mintMediaId } = await import("@maleo/shared");
+const k1 = mintMediaId();
+const managed = mediaUrl(k1);
 const asset: MediaAsset = {
-	id: "k1",
+	id: k1,
 	label: "clip.mp4",
-	url: "pending:k1",
+	url: managed,
 	kind: "video",
 	source: "upload",
 	dur: 4,
@@ -62,11 +64,9 @@ afterEach(() => {
 });
 
 function mount() {
+	trackPendingSource(k1);
 	const store = createTimelineDocumentStore(
-		toTimelineDoc(
-			[],
-			[{ id: 2, kind: "video", url: "pending:k1", mediaAssetId: "k1", start: 0, dur: 4 }],
-		),
+		toTimelineDoc([], [{ id: 2, kind: "video", url: managed, mediaAssetId: k1, start: 0, dur: 4 }]),
 	);
 	const writers = createDocumentWriters({ store, commit: (next) => store.setDoc(next) });
 	const host = document.createElement("div");
@@ -108,7 +108,7 @@ test("reverse, rate and extract audio wait for a pending upload and say why", ()
 test("once the import is ready the same clip can be processed", () => {
 	const { host, button, render } = mount();
 	act(() => {
-		setPendingReady("k1", ready);
+		setPendingReady(k1, ready);
 	});
 	render([resolvePendingAsset(asset)]);
 	expect(host.textContent).not.toContain(PENDING_SOURCE_REASON);

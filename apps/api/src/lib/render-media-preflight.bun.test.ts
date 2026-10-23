@@ -5,7 +5,8 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import { Hono } from "hono";
 import { putMedia, deleteMedia } from "@maleo/storage";
-import { toTimelineDoc } from "@maleo/shared";
+import { mintMediaId, toTimelineDoc } from "@maleo/shared";
+import { reserveProjectMediaImport } from "@maleo/db/media-imports";
 import { registerMediaObject, mediaObjectUrl } from "@maleo/db/media-objects";
 import { createContentProject } from "@maleo/db/project-detail";
 import { videoRoutes } from "../routes/video.ts";
@@ -67,19 +68,6 @@ test("preflight checks real source existence and owner; ignores unused incompati
 	expect(await renderMediaBlockers(input, "default", null)).toEqual([
 		"Source file unavailable. Restore storage or replace source before export.",
 	]);
-});
-
-test("preflight names pending uploads the render uses and ignores unplaced ones", async () => {
-	const editorState = {
-		media_assets: [
-			{ id: "k1", label: "Beach", url: "pending:k1", metadata: { originalFilename: "beach.mov" } },
-			{ id: "k2", label: "Unplaced", url: "pending:k2" },
-		],
-	};
-	expect(
-		await renderMediaBlockers({ clips: [{ url: "pending:k1" }] }, "default", editorState),
-	).toEqual(["beach.mov is still uploading. Wait for it to finish before export."]);
-	expect(await renderMediaBlockers({ clips: [] }, "default", editorState)).toEqual([]);
 });
 
 test("preflight refuses a clip placed past its source's measured length", async () => {
@@ -251,4 +239,27 @@ test("a quarantined original is never a render source, whatever compatibility th
 	expect(await renderMediaBlockers({ videoOverlays: [{ url }] }, "default", editorState)).toEqual([
 		"Original upload is not a playable source. Replace source before export.",
 	]);
+});
+
+test("an export that uses a minted identity still importing names the uploading file", async () => {
+	const project = (await createContentProject({ title: "Minted export" }))!;
+	const mediaId = mintMediaId();
+	await reserveProjectMediaImport({
+		workspace: "default",
+		projectId: project.project.id,
+		requestKey: mediaId,
+		filename: "camera.mov",
+		kind: "video",
+		uploadTimeoutMs: 60_000,
+	});
+	const doc = { clips: [{ id: "video:1", video: { url: mediaObjectUrl(mediaId) } }] };
+	expect(await renderMediaBlockers(doc, "default", null)).toEqual([
+		"camera.mov is still uploading. Wait for it to finish before export.",
+	]);
+	// Unplaced, it blocks nothing.
+	expect(
+		await renderMediaBlockers({ clips: [] }, "default", {
+			media_assets: [{ url: mediaObjectUrl(mediaId), label: "camera.mov" }],
+		} as never),
+	).toEqual([]);
 });

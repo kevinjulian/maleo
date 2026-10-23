@@ -12,7 +12,7 @@
 import {
 	agentSceneFromScene,
 	fromTimelineDoc,
-	pendingMediaBlockers,
+	referencesPendingMedia,
 	type Clip,
 	type EntityFingerprint,
 	type TimelineDoc,
@@ -76,11 +76,15 @@ export function clipAt(doc: TimelineDoc, family: EditFamily, index: number): Cli
 
 /* A file still uploading is the editor's alone: no agent edit creates, changes or
  * removes a clip that references one. */
-function touchesPendingMedia(before: TimelineDoc, after: TimelineDoc): boolean {
+function touchesPendingMedia(
+	before: TimelineDoc,
+	after: TimelineDoc,
+	pendingIds: readonly string[],
+): boolean {
 	const pending = (doc: TimelineDoc) =>
 		new Map(
 			doc.clips
-				.filter((clip) => pendingMediaBlockers(clip).length)
+				.filter((clip) => referencesPendingMedia(clip, pendingIds))
 				.map((clip) => [clip.id, JSON.stringify(clip)]),
 		);
 	const was = pending(before),
@@ -104,7 +108,7 @@ export function executeEdit(job: AgentJob, command: EditorCommand): EditOutcome 
 	if (!executed.ok) return { ok: false, error: executed.error.message };
 	// SAFETY: `{scope, inverse}` as the engine writes it; the scope is the admitted one, edited.
 	const after = (JSON.parse(executed.value) as { scope: EditScope }).scope;
-	if (touchesPendingMedia(doc, after.doc))
+	if (touchesPendingMedia(doc, after.doc, job.pendingMediaIds ?? []))
 		return {
 			ok: false,
 			error:

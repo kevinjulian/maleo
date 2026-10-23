@@ -20,6 +20,7 @@ import {
 } from "./persistence.ts";
 import { fingerprintBrief } from "./services/util.ts";
 import { getContentProject } from "@maleo/db/project-detail";
+import { unfinishedImportMediaIds } from "@maleo/db/media-imports";
 import { JOBS, getLatestRunningJobForProject } from "./session-store.ts";
 import { saveRun } from "./run-repository.ts";
 import type { AgentJob, AgentScene, AgentSlide, AgentPost } from "./model.ts";
@@ -189,6 +190,7 @@ export async function buildAgentJob(input: AgentJobInput): Promise<AgentJob> {
 					c.id.startsWith("vis:"),
 			),
 		clientCaptionSet,
+		pendingMediaIds: workspace ? await unfinishedImportMediaIds(workspace, input.projectId) : [],
 		aspect,
 		brief: input.brief ?? "",
 		styleImageUrl: input.styleImageUrl,

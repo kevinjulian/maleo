@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { removeClip, sceneEditCommand, updateClip, type EditorCommand } from "@maleo/shared/editor";
-import type { Clip } from "@maleo/shared";
+import { mediaUrl, mintMediaId, type Clip } from "@maleo/shared";
 import { agentTimelineDoc } from "./document.ts";
 import { executeEdit, jobFamiliesOf, runDocument } from "./edit-document.ts";
 import { reconstructCheckpointJob } from "./rehydrate.ts";
@@ -186,20 +186,22 @@ describe("executeEdit", () => {
 		expect(j).toEqual(before);
 	});
 
-	test("a clip on a file still uploading is refused and stays exactly as it was", () => {
-		const j = job({
-			videoOverlays: [{ ...job().videoOverlays[0]!, url: "pending:k1", mediaAssetId: "k1" }],
+	test("a clip on a minted identity still importing is refused; once finished it edits", () => {
+		const mediaId = mintMediaId();
+		const placed = job({
+			videoOverlays: [
+				{ ...job().videoOverlays[0]!, url: mediaUrl(mediaId), mediaAssetId: mediaId },
+			],
 		});
-		const before = structuredClone(j);
-		const id = runDocument(j).clips.find((c) => c.id.startsWith("video:"))!.id;
-		for (const command of [updateClip(id, { startSec: 3 }), removeClip(id)]) {
-			const outcome = executeEdit(j, command);
-			expect(outcome).toMatchObject({
-				ok: false,
-				error: expect.stringContaining("still uploading"),
-			});
-			expect(j).toEqual(before);
-		}
+		const pending = { ...placed, pendingMediaIds: [mediaId] };
+		const before = structuredClone(pending);
+		const id = runDocument(pending).clips.find((c) => c.id.startsWith("video:"))!.id;
+		expect(executeEdit(pending, updateClip(id, { startSec: 3 }))).toMatchObject({
+			ok: false,
+			error: expect.stringContaining("still uploading"),
+		});
+		expect(pending).toEqual(before);
+		expect(executeEdit(placed, updateClip(id, { startSec: 3 }))).toEqual({ ok: true });
 	});
 
 	test("a command that changes nothing is not recorded", () => {

@@ -8,7 +8,7 @@
  *
  * The behaviour worth pinning is the carry-over: an agent re-run must not lose
  * what the operator edited, and must not duplicate what it already generated. */
-import { describe, expect, test } from "vite-plus/test";
+import { afterEach, describe, expect, test } from "vite-plus/test";
 import type {
 	AgentAudioOverlayOut,
 	AgentCharacterOut,
@@ -17,6 +17,19 @@ import type {
 	AgentVideoOverlayOut,
 } from "@models/agent/agent-wire.ts";
 import type { AudioOverlay, RefImage, Scene, TextOverlay, VideoOverlay } from "@maleo/shared";
+import { mediaUrl, mintMediaId } from "@maleo/shared";
+import { clearPendingSources, trackPendingSource } from "@models/core/pending-media-sources.ts";
+
+/** Minted identities this session tracks as still importing. */
+const trackPending = (count: number): string[] =>
+	Array.from({ length: count }, () => {
+		const id = mintMediaId();
+		trackPendingSource(id);
+		return id;
+	});
+afterEach(() => {
+	clearPendingSources();
+});
 import {
 	mergeAgentAudioOverlays,
 	mergeAgentCharacters,
@@ -148,14 +161,15 @@ describe("scenes carry over what the agent did not send", () => {
 	});
 
 	test("a frame still uploading is kept, and the agent cannot name one", () => {
-		const prev = [editorScene({ id: 1, src: "pending:k1", mediaAssetId: "k1", img: true })];
+		const [k1, k2] = trackPending(2);
+		const prev = [editorScene({ id: 1, src: mediaUrl(k1!), mediaAssetId: "k1", img: true })];
 		const kept = mergeAgentScenes(prev, [agentScene({ image: "/uploads/new.png" })], {
 			idSeed: SEED,
 			admit,
 		})[0]!;
-		expect([kept.src, kept.mediaAssetId]).toEqual(["pending:k1", "k1"]);
+		expect([kept.src, kept.mediaAssetId]).toEqual([mediaUrl(k1!), "k1"]);
 		expect(
-			mergeAgentScenes([], [agentScene({ image: "pending:k2" })], { idSeed: SEED, admit })[0]!.src,
+			mergeAgentScenes([], [agentScene({ image: mediaUrl(k2!) })], { idSeed: SEED, admit })[0]!.src,
 		).toBeUndefined();
 	});
 
@@ -236,10 +250,11 @@ describe("text overlays", () => {
 
 describe("video and audio overlays", () => {
 	test("a clip on a pending upload is kept verbatim, and the agent cannot point a clip at one", () => {
+		const [k1, k2, k3] = trackPending(3);
 		const pending = {
 			id: 5,
 			kind: "video",
-			url: "pending:k1",
+			url: mediaUrl(k1!),
 			mediaAssetId: "k1",
 			start: 1,
 			dur: 2,
@@ -248,14 +263,14 @@ describe("video and audio overlays", () => {
 		} as VideoOverlay;
 		const incoming = [
 			{ id: 5, url: "/uploads/other.mp4", kind: "video", startSec: 4, durationSec: 1 },
-			{ url: "pending:k2", kind: "video", startSec: 0, durationSec: 1 },
+			{ url: mediaUrl(k2!), kind: "video", startSec: 0, durationSec: 1 },
 		] as AgentVideoOverlayOut[];
 		expect(mergeAgentVideoOverlays([pending], incoming, SEED, admit)).toEqual([pending]);
 		const audio = {
 			id: 6,
 			kind: "music",
 			content: "bed",
-			url: "pending:k3",
+			url: mediaUrl(k3!),
 			start: 0,
 			dur: 2,
 			track: 0,

@@ -152,21 +152,48 @@ the bytes are already on the filesystem or persist a temporary signed URL.
 - **WHEN** an object a render needs cannot be fetched
 - **THEN** the render fails naming the missing object, rather than rendering without it
 
-### Requirement: Pending uploads persist as stable pending references
+### Requirement: Imported media is referenced by its final identity from import
 
-A document that references a file still being imported SHALL persist a stable pending reference that names its import request identity. Persistence boundaries SHALL refuse `blob:` media URLs, and `data:` media URLs other than small inline images, in project, storyboard, and timeline documents. A pending reference SHALL resolve to the managed media URL once its import is ready, both in the editor and when the document is saved or loaded. Until then the editor SHALL resolve it to the browser's local copy when one exists, and every server consumer SHALL treat it as unavailable.
+A client SHALL mint the media identity of a file when it starts the import. A
+document that references a file still being imported SHALL persist the stable
+media URL of that identity. The reference SHALL NOT change when the import
+finishes. Until then, the editor SHALL resolve the identity to the browser's
+local copy when one exists, and every server consumer SHALL treat it as
+unavailable.
+
+Persistence boundaries SHALL refuse `blob:` media URLs, and `data:` media URLs
+other than small inline images, in project, storyboard, and timeline
+documents.
 
 #### Scenario: Save while uploading
 
-- **WHEN** a project with a placed pending clip is saved
-- **THEN** the saved document holds the pending reference and no browser-local URL
+- **WHEN** a project with a placed clip whose import is still running is saved
+- **THEN** the saved document holds the clip's stable media URL and no browser-local URL
+
+#### Scenario: The import finishes
+
+- **WHEN** the import of a placed clip becomes ready
+- **THEN** the document's reference is unchanged and now resolves to the stored bytes
 
 #### Scenario: A browser-local URL reaches persistence
 
 - **WHEN** a save contains a `blob:` media URL, or a `data:` media URL that is not a small inline image, in a clip, scene, or media asset
 - **THEN** the save is refused, no version is appended, and the reason names the field
 
-#### Scenario: Load after the import finished elsewhere
+### Requirement: The stable media route reports a pending import
 
-- **WHEN** a document saved with a pending reference is loaded after that import became ready
-- **THEN** its clips resolve to the managed media URL without an editor action
+An authorized read of a stable media URL whose identity belongs to an import
+that has not finished SHALL return `409` with error `media_pending`. A read of
+an identity whose import failed or was cancelled SHALL be answered as unknown
+media. A caller who is not a member of the owning workspace SHALL receive the
+same refusal as for any media, whatever the import state.
+
+#### Scenario: A member reads a pending identity
+
+- **WHEN** a workspace member requests the stable URL of an import that is processing
+- **THEN** the response is `409` with `media_pending` and no signed URL
+
+#### Scenario: A non-member reads a pending identity
+
+- **WHEN** an account outside the workspace requests the same URL
+- **THEN** the refusal matches the refusal for any other media of that workspace

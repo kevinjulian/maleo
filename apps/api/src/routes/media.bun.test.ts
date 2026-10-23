@@ -6,6 +6,9 @@ import { registerMediaObject } from "@maleo/db/media-objects";
 import { addWorkspaceMember } from "@maleo/db/workspace-members";
 import { openTestDb } from "@maleo/db/handle-testing";
 import { deleteMedia, putMedia } from "@maleo/storage";
+import { createContentProject } from "@maleo/db/project-detail";
+import { failProjectMediaImport, reserveProjectMediaImport } from "@maleo/db/media-imports";
+import { mintMediaId } from "@maleo/shared";
 import { serveMedia } from "./media.ts";
 
 const oldBackend = process.env.MALEO_MEDIA_STORAGE_BACKEND;
@@ -65,4 +68,40 @@ test("member reads private media with byte ranges; non-member learns nothing", a
 		expect(missing.headers.get("cache-control")).toBe("private, no-store");
 	}
 	await t.close();
+});
+
+test("a minted identity whose import has not finished reads as pending to members only", async () => {
+	const t = await openTestDb("postgres");
+	const db = t.db;
+	try {
+		await addWorkspaceMember({ workspace: "one", user_id: "member" }, db);
+		const project = (await createContentProject({ title: "Pending", workspace: "one" }, db))!;
+		const mediaId = mintMediaId();
+		const { row } = await reserveProjectMediaImport(
+			{
+				workspace: "one",
+				projectId: project.project.id,
+				requestKey: mediaId,
+				filename: "clip.mp4",
+				kind: "video",
+				uploadTimeoutMs: 60_000,
+			},
+			db,
+		);
+		const read = (user: string, method: "GET" | "HEAD" = "GET") =>
+			serveMedia(mediaId, user, null, db, method);
+		const pending = await read("member");
+		expect(pending.status).toBe(409);
+		expect(pending.headers.get("location")).toBeNull();
+		expect(await pending.json()).toEqual({ error: "media_pending" });
+		expect((await read("member", "HEAD")).status).toBe(409);
+		const refusal = async (response: Response) => [response.status, await response.text()];
+		const unknown = await refusal(await serveMedia(mintMediaId(), "stranger", null, db));
+		expect(await refusal(await read("stranger"))).toEqual(unknown);
+		await failProjectMediaImport(row, "broken", db);
+		expect(await refusal(await read("member"))).toEqual(unknown);
+		expect(await refusal(await read("stranger"))).toEqual(unknown);
+	} finally {
+		await t.close();
+	}
 });

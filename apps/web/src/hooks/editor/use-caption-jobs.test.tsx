@@ -401,7 +401,8 @@ test("generation waits for cancellation to settle and late cancel cannot clear a
 test("completed pending import generates managed input and applies captions without editing source", async () => {
 	const { setPendingReady, clearPendingSources, withReadyPending } =
 		await import("@models/core/pending-media-sources.ts");
-	const mediaId = "00000000-0000-4000-8000-000000000090";
+	const { mintMediaId } = await import("@maleo/shared");
+	const mediaId = mintMediaId();
 	const binding = {
 		clipId: "audio:7",
 		mediaId,
@@ -422,7 +423,7 @@ test("completed pending import generates managed input and applies captions with
 					id: 7,
 					kind: "voiceover",
 					content: "",
-					url: "pending:import-1",
+					url: `/api/media/${mediaId}`,
 					start: 0,
 					dur: 2,
 					track: 0,
@@ -431,7 +432,7 @@ test("completed pending import generates managed input and applies captions with
 		],
 		trackFlags: { 0: { group: "audio" } },
 	};
-	setPendingReady("import-1", {
+	setPendingReady(mediaId, {
 		id: "import-1",
 		label: "Speech",
 		kind: "audio",

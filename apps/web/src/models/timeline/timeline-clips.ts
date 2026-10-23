@@ -9,11 +9,11 @@ import type {
 	TextOverlay,
 	VideoOverlay,
 } from "@maleo/shared";
+import { isPendingMedia } from "@models/core/pending-media-sources.ts";
 import { audioKindLabel } from "@maleo/shared/audio-overlays";
 import type { AudioOrigin, AudioOverlayKind } from "@maleo/shared/audio-overlays";
 import {
 	clipId,
-	isPendingMediaUrl,
 	parseClipId,
 	BOUNDARY_TOLERANCE_SEC,
 	laneGroupOfType,
@@ -346,7 +346,7 @@ export function upsertAgentClips<C extends { id: number }, J>(
 		const id = idOf(j) ?? next++;
 		// A file still uploading is the editor's alone: the agent neither edits a clip
 		// on one nor points a clip at one.
-		if (isPendingMediaUrl(urlOf(map.get(id))) || isPendingMediaUrl(urlOf(j))) continue;
+		if (isPendingMedia(urlOf(map.get(id))) || isPendingMedia(urlOf(j))) continue;
 		map.set(id, build(j, id));
 	}
 	return [...map.values()];

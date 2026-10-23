@@ -225,13 +225,15 @@ stored state. Cancelling an import releases its quarantined original, and
 cancelling a finished worker job drops its result, so `scripts/cleanup-media.ts`
 collects those bytes on its next reachability pass after the usual grace period.
 
-Every upload carries a client-generated request key (`x-upload-id`). An editor
-document may reference a file still importing as `pending:<requestKey>`, never as
-a `blob:` or large `data:` URL: the project editor-state and storyboard save
-routes refuse those with `local_media_url`, naming the field. `GET
+Every upload carries a client-minted media identity, a UUIDv7, as its request
+key (`x-upload-id`); the server refuses any other key. An editor document
+references a file still importing by its final URL `/api/media/<id>`, never as a
+`blob:` or large `data:` URL: the project editor-state and storyboard save routes
+refuse those with `local_media_url`, naming the field. Until the import finishes,
+that URL answers a member with `409 media_pending`. `GET
 /projects/:id/media/import/request/:requestKey` returns the import for one key
 from stored state (read-only members included; it never advances the worker), so
-a reopened editor can resolve a pending reference to its ready media. Uploading
+a reopened editor can follow an unfinished import. Uploading
 again with the same key reclaims a failed or cancelled attempt, or one whose
 upload window expired, rather than creating a second import; a reclaimed attempt
 may carry a file chosen again under another name, as long as it is the same kind.

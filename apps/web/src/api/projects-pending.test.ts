@@ -1,5 +1,5 @@
 import { afterEach, expect, test } from "vite-plus/test";
-import type { ReadyImportedMedia } from "@maleo/shared";
+import { mediaUrl, mintMediaId, type ReadyImportedMedia } from "@maleo/shared";
 import { saveEditorState, saveStoryboard } from "./projects.ts";
 import { submitVideoRender } from "./project-render.ts";
 import {
@@ -8,7 +8,9 @@ import {
 	setPendingReady,
 } from "@models/core/pending-media-sources.ts";
 
-const managed = "/api/media/11111111-1111-4111-8111-111111111111";
+const k1 = mintMediaId(),
+	k2 = mintMediaId();
+const managed = mediaUrl(k1);
 const ready = {
 	id: "row",
 	label: "beach.mov",
@@ -26,7 +28,7 @@ afterEach(() => {
 	clearPendingSources();
 });
 
-test("saves write ready imports as managed URLs and keep unfinished ones pending, never a local URL", async () => {
+test("saves keep every minted URL, take ready metadata, and never write a local URL", async () => {
 	const bodies: string[] = [];
 	globalThis.fetch = Object.assign(
 		async (_input: RequestInfo | URL, init?: RequestInit) => {
@@ -38,23 +40,23 @@ test("saves write ready imports as managed URLs and keep unfinished ones pending
 		},
 		{ preconnect: realFetch.preconnect },
 	);
-	setPendingReady("k1", ready);
-	setPendingLocalUrl("k2", "blob:http://local/2");
+	setPendingReady(k1, ready);
+	setPendingLocalUrl(k2, "blob:http://local/2");
 	await saveStoryboard("p", {
 		clips: [
-			{ id: "video:1", video: { url: "pending:k1", mediaAssetId: "k1" } },
-			{ id: "video:2", video: { url: "pending:k2" } },
+			{ id: "video:1", video: { url: managed, mediaAssetId: k1 } },
+			{ id: "video:2", video: { url: mediaUrl(k2) } },
 		],
 	});
 	await saveEditorState("p", {
-		mediaAssets: [{ id: "k1", label: "Mine", url: "pending:k1", kind: "video", source: "upload" }],
+		mediaAssets: [{ id: k1, label: "Mine", url: managed, kind: "video", source: "upload" }],
 	});
 	const [storyboard, state] = bodies.map((body) => JSON.parse(body));
 	expect(
 		storyboard.storyboard_json.clips.map((clip: { video: { url: string } }) => clip.video.url),
-	).toEqual([managed, "pending:k2"]);
+	).toEqual([managed, mediaUrl(k2)]);
 	expect(state.editor_state.media_assets[0]).toMatchObject({
-		id: "k1",
+		id: k1,
 		label: "Mine",
 		url: managed,
 		dur: 4.2,
@@ -63,7 +65,7 @@ test("saves write ready imports as managed URLs and keep unfinished ones pending
 	expect(bodies.join("")).not.toContain("blob:");
 });
 
-test("a render request carries ready imports as managed URLs", async () => {
+test("a render request carries the minted URL unchanged", async () => {
 	const bodies: Array<{ url: string; body: string }> = [];
 	globalThis.fetch = Object.assign(
 		async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -75,7 +77,7 @@ test("a render request carries ready imports as managed URLs", async () => {
 		},
 		{ preconnect: realFetch.preconnect },
 	);
-	setPendingReady("k1", ready);
+	setPendingReady(k1, ready);
 	await submitVideoRender({
 		projectId: "p",
 		storyboardId: "s",
@@ -83,7 +85,7 @@ test("a render request carries ready imports as managed URLs", async () => {
 		render: {
 			doc: {
 				schemaVersion: 2,
-				clips: [{ id: "video:1", video: { url: "pending:k1" } }],
+				clips: [{ id: "video:1", video: { url: managed } }],
 				markers: [],
 			} as never,
 			config: {} as never,

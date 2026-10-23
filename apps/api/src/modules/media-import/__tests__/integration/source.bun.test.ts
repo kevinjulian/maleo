@@ -2,9 +2,9 @@ import { expect, test } from "bun:test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { Hono } from "hono";
+import { mintMediaId } from "@maleo/shared";
 import { openDb } from "@maleo/db/connection";
 import { createContentProject } from "@maleo/db/project-detail";
 import {
@@ -61,7 +61,7 @@ test("runtime quarantine authorization scopes revision/project/workspace and str
 		const { row } = await reserveProjectMediaImport({
 			workspace: "source-proof",
 			projectId: project.project.id,
-			requestKey: randomUUID(),
+			requestKey: mintMediaId(),
 			filename: "original.png",
 			kind: "image",
 			uploadTimeoutMs: 60000,

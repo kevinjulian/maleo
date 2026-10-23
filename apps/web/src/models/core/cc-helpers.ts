@@ -1,7 +1,8 @@
 /* CreateContent pure helpers — no component-state dependency. */
 import type { AgentJobState } from "@models/agent/agent-wire.ts";
 import type { RenderQueueStatus } from "@models/render/render-queue.ts";
-import { clipsPastSource, pendingMediaBlockers, type Clip } from "@maleo/shared";
+import { clipsPastSource, type Clip } from "@maleo/shared";
+import { pendingMediaKeys, pendingSourceKey } from "./pending-media-sources.ts";
 import {
 	hasClipCompositing,
 	clipControlBlockers,
@@ -200,7 +201,12 @@ export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflig
 			: mediaCompatibilityReason(asset.compatibility, "render");
 		if (reason) blockers.push(`${asset.label}: ${reason}. Replace source before export.`);
 	}
-	const serverBlockers = pendingMediaBlockers(input.clips ?? [], input.mediaAssets ?? []);
+	// The server render waits for every file still importing; the draft uses the local copy.
+	const serverBlockers = [...pendingMediaKeys(input.clips ?? [])].map((key) => {
+		const asset = (input.mediaAssets ?? []).find((item) => pendingSourceKey(item.url) === key);
+		const name = asset?.metadata?.originalFilename ?? asset?.label;
+		return `${name ?? "A file"} is still uploading. Wait for it to finish before export.`;
+	});
 	if (serverBlockers.length)
 		warnings.unshift(
 			`Fast render uses this browser's copy of ${serverBlockers.length} file${serverBlockers.length === 1 ? "" : "s"} still uploading; the server render waits for ${serverBlockers.length === 1 ? "it" : "them"}.`,

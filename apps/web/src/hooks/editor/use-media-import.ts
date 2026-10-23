@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	DEFAULT_MEDIA_IMPORT_LIMITS,
+	isMediaId,
 	mediaImportFilenameKind,
-	pendingMediaRequestKey,
+	mintMediaId,
 	type ImportedMediaKind,
 	type MediaImportReadiness,
 	type MediaImportState,
@@ -24,10 +25,12 @@ import { getActiveWorkspace } from "@models/core/active-workspace.ts";
 import { probeLocalMedia } from "@models/analysis/local-media-probe.ts";
 import {
 	clearPendingSources,
+	pendingSourceKey,
 	removePendingSource,
 	setPendingLocalUrl,
 	setPendingReady,
 	setPendingUploadState,
+	trackPendingSource,
 	type PendingUploadState,
 } from "@models/core/pending-media-sources.ts";
 import { pendingMediaAsset } from "@models/timeline/pending-media-asset.ts";
@@ -325,7 +328,8 @@ export function useMediaImport(
 									? oversize(limits.maxFileBytes)
 									: undefined;
 						return {
-							key: crypto.randomUUID(),
+							// The media identity, minted now: the placed reference never changes.
+							key: mintMediaId(),
 							file,
 							filename: file.name,
 							batchSize: files.length,
@@ -355,12 +359,14 @@ export function useMediaImport(
 			resolve(assets) {
 				if (!active || !project) return;
 				for (const { url, label } of assets) {
-					const key = pendingMediaRequestKey(url);
+					const key = pendingSourceKey(url);
 					if (!key || looked.has(key)) continue;
 					// A row restored on mount from the server's unfinished imports knows nothing of
 					// the pending asset or its staged file; resuming takes it over.
 					if (!claim(key)) continue;
 					looked.add(key);
+					// A minted URL loads nothing until the lookup settles, rather than the server's 409.
+					if (isMediaId(key)) trackPendingSource(key);
 					void (async () => {
 						let result: ProjectMediaImportResponse | undefined;
 						try {
@@ -387,6 +393,10 @@ export function useMediaImport(
 							return;
 						}
 						if (result && !["failed", "uploading", "cancelled"].includes(result.status)) {
+							// Processing: the staged copy plays until the server copy is ready.
+							const staged = await staging.read(project, key);
+							if (!active || !claim(key)) return;
+							if (staged) setPendingLocalUrl(key, URL.createObjectURL(staged));
 							add({
 								key,
 								id: result.id,

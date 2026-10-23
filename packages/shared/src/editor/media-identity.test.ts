@@ -19,7 +19,7 @@ describe("mediaAssetOf: the asset a clip refers to", () => {
 		/* After a relink or a pending upload's completion the clip's URL is not the
 		 * asset's; the id is what the clip means. */
 		expect(mediaAssetOf(assets, { mediaAssetId: "a1", url: "/api/media/old" })).toBe(relinked);
-		expect(mediaAssetOf(assets, { mediaAssetId: "a1", url: "pending:key-1" })).toBe(relinked);
+		expect(mediaAssetOf(assets, { mediaAssetId: "a1", url: "/api/media/old" })).toBe(relinked);
 	});
 
 	test("respects the kind it is asked for", () => {

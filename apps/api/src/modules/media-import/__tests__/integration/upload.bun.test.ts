@@ -7,13 +7,18 @@ import { join } from "node:path";
 import { Hono } from "hono";
 import {
 	DEFAULT_MEDIA_IMPORT_LIMITS,
+	mintMediaId,
 	ProjectMediaImportResponseSchema,
 	ProjectMediaImportPageSchema,
 	type ImportedMediaKind,
 } from "@maleo/shared";
 import { openDb } from "@maleo/db/connection";
 import { createContentProject } from "@maleo/db/project-detail";
-import { getProjectMediaImport, importOriginal } from "@maleo/db/media-imports";
+import {
+	getProjectMediaImport,
+	importOriginal,
+	reserveProjectMediaImport,
+} from "@maleo/db/media-imports";
 import { addWorkspaceMember } from "@maleo/db/workspace-members";
 import { getMediaObject } from "@maleo/db/media-objects";
 import { putMedia } from "@maleo/storage";
@@ -162,7 +167,7 @@ function app(
 	return app;
 }
 
-function uploadHeaders(filename: string, kind: ImportedMediaKind, key = randomUUID()) {
+function uploadHeaders(filename: string, kind: ImportedMediaKind, key: string = mintMediaId()) {
 	return {
 		"content-type": "application/octet-stream",
 		"x-file-name": encodeURIComponent(filename),
@@ -537,7 +542,7 @@ test("read-only members can poll but never drive worker submission or publicatio
 test("cancel by request key wins even while readiness is still pending, and frees the quarantined original", async () => {
 	const project = (await createContentProject({ title: "Early cancel" }))!;
 	const url = `/projects/${project.project.id}/media/import`;
-	const key = randomUUID();
+	const key = mintMediaId();
 	let release!: () => void;
 	const gate = new Promise<void>((resolve) => {
 		release = resolve;
@@ -581,7 +586,7 @@ test("cancel by request key wins even while readiness is still pending, and free
 test("two active streams enforce upload ceiling; cancellation by request identity blocks publication", async () => {
 	const project = (await createContentProject({ title: "Streaming quota" }))!;
 	const url = `/projects/${project.project.id}/media/import`;
-	const keys = [randomUUID(), randomUUID()];
+	const keys = [mintMediaId(), mintMediaId()];
 	const streams: ReadableStreamDefaultController<Uint8Array>[] = [];
 	const pending = keys.map((key) =>
 		app().request(url, {
@@ -824,7 +829,7 @@ test("lookup by request key returns stored import state within the caller's proj
 	const project = (await createContentProject({ title: "Request lookup" }))!;
 	const other = (await createContentProject({ title: "Other lookup" }))!;
 	const url = `/projects/${project.project.id}/media/import`;
-	const key = randomUUID();
+	const key = mintMediaId();
 	const uploaded = ProjectMediaImportResponseSchema.parse(
 		await (
 			await app().request(url, {
@@ -869,7 +874,7 @@ test("lookup by request key returns stored import state within the caller's proj
 test("a file chosen again for the same request key restarts an unfinished import under its new name", async () => {
 	const project = (await createContentProject({ title: "Choose again" }))!;
 	const url = `/projects/${project.project.id}/media/import`;
-	const key = randomUUID();
+	const key = mintMediaId();
 	const first = ProjectMediaImportResponseSchema.parse(
 		await (
 			await app().request(url, {
@@ -910,4 +915,78 @@ test("a file chosen again for the same request key restarts an unfinished import
 			})
 		).status,
 	).toBe(409);
+});
+
+test("a minted media identity is validated at import and the finished import is published under it", async () => {
+	const project = (await createContentProject({ title: "Minted identity" }))!;
+	const other = (await createContentProject({ title: "Elsewhere", workspace: "other" }))!;
+	const url = `/projects/${project.project.id}/media/import`;
+	const mediaId = mintMediaId();
+	const headers = uploadHeaders("clip.mp4", "video", mediaId);
+	const started = await app().request(url, {
+		method: "POST",
+		headers,
+		body: fixtures.get("video")!,
+	});
+	expect(started.status).toBe(202);
+	const pending = ProjectMediaImportResponseSchema.parse(await started.json());
+	expect((await getProjectMediaImport(pending.id))?.media_id).toBe(mediaId);
+	expect((await app().request(`/api/media/${mediaId}`)).status).toBe(409);
+	// Same project, same identity: the same import.
+	const retry = ProjectMediaImportResponseSchema.parse(
+		await (
+			await app().request(url, { method: "POST", headers, body: fixtures.get("video")! })
+		).json(),
+	);
+	expect(retry.id).toBe(pending.id);
+	// Malformed identity: refused as invalid before any bytes are stored.
+	const malformed = await app().request(url, {
+		method: "POST",
+		headers: { ...headers, "x-upload-id": `${mediaId}/x` },
+		body: fixtures.get("video")!,
+	});
+	expect(malformed.status).toBe(400);
+	// Taken by an import in another workspace: generic conflict, owner unnamed.
+	const foreignId = mintMediaId();
+	await reserveProjectMediaImport({
+		workspace: "other",
+		projectId: other.project.id,
+		requestKey: foreignId,
+		filename: "theirs.mp4",
+		kind: "video",
+		uploadTimeoutMs: 60_000,
+	});
+	const conflict = await app().request(url, {
+		method: "POST",
+		headers: uploadHeaders("clip.mp4", "video", foreignId),
+		body: fixtures.get("video")!,
+	});
+	expect(conflict.status).toBe(409);
+	const body = await conflict.json();
+	expect(body).toMatchObject({ error: "media_id_conflict" });
+	expect(JSON.stringify(body)).not.toContain("other");
+	expect(
+		await openDb().get(
+			"SELECT id FROM project_media_imports WHERE request_key = ? AND workspace = 'default'",
+			[foreignId],
+		),
+	).toBeNull();
+	// Finish: the registry publishes the playable object under the minted identity.
+	const row = (await getProjectMediaImport(pending.id))!;
+	await completeJob(jobs.get(row.worker_job_id!)!.request);
+	const ready = ProjectMediaImportResponseSchema.parse(
+		await (await app().request(`${url}/${pending.id}`)).json(),
+	);
+	expect(ready.status).toBe("ready");
+	expect(ready.asset?.url).toBe(`/api/media/${mediaId}`);
+	expect(ready.asset?.importedSource.playbackMediaId).toBe(mediaId);
+	const media = await app().request(`/api/media/${mediaId}`);
+	expect(media.status).toBe(200);
+	expect(new Uint8Array(await media.arrayBuffer())).toEqual(fixtures.get("video")!);
+	// No second identity for the playable bytes.
+	const playbackKey = (await getMediaObject(mediaId))!.storage_key;
+	expect(
+		(await openDb().all("SELECT id FROM media_objects WHERE storage_key = ?", [playbackKey]))
+			.length,
+	).toBe(1);
 });

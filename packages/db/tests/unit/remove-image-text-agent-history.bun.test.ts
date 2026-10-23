@@ -90,7 +90,12 @@ describe("removing image and text agent history", () => {
 
 	test("an editor state that is not valid JSON is left unchanged and does not fail the migration", async () => {
 		const db = await seeded();
-		expect(await migrate(db.sql, loadMigrations())).toEqual({ applied: [VERSION] });
+		expect(
+			await migrate(
+				db.sql,
+				loadMigrations().filter((migration) => migration.version <= VERSION),
+			),
+		).toEqual({ applied: [VERSION] });
 		expect(await editorState(db, "text-broken")).toBe("{not json");
 	});
 

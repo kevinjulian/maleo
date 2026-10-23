@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import {
 	ImportedMediaKindSchema,
+	isMediaId,
 	StoredImportMediaSchema,
 	ReadyImportedMediaSchema,
 	type StoredImportMedia,
@@ -15,6 +16,7 @@ const importRow = z.object({
 	workspace: z.string(),
 	project_id: z.string(),
 	request_key: z.string(),
+	media_id: z.string().nullable(),
 	original_filename: z.string(),
 	claimed_kind: ImportedMediaKindSchema,
 	source_revision: z.string(),
@@ -28,6 +30,8 @@ const importRow = z.object({
 	updated_at: z.number(),
 });
 export type ProjectMediaImport = z.infer<typeof importRow>;
+export const MEDIA_ID_CONFLICT = "Media identity already in use";
+
 export interface ImportReservation {
 	row: ProjectMediaImport;
 	claimed: boolean;
@@ -51,6 +55,28 @@ export async function getImportByRequestKey(
 		"SELECT * FROM project_media_imports WHERE workspace = ? AND project_id = ? AND request_key = ?",
 		[workspace, projectId, requestKey],
 	);
+	return row ? importRow.parse(row) : null;
+}
+
+/** Client-minted identities of the project's imports that have not finished. */
+export async function unfinishedImportMediaIds(
+	workspace: string,
+	projectId: string,
+	db: Db = openDb(),
+): Promise<string[]> {
+	const rows = await db.all<{ media_id: string }>(
+		`SELECT media_id FROM project_media_imports WHERE workspace = ? AND project_id = ?
+		AND media_id IS NOT NULL AND status IN ('uploading', 'processing')`,
+		[workspace, projectId],
+	);
+	return rows.map((row) => row.media_id);
+}
+
+export async function getImportByMediaId(
+	mediaId: string,
+	db: Db = openDb(),
+): Promise<ProjectMediaImport | null> {
+	const row = await db.get("SELECT * FROM project_media_imports WHERE media_id = ?", [mediaId]);
 	return row ? importRow.parse(row) : null;
 }
 
@@ -102,6 +128,9 @@ export async function reserveProjectMediaImport(
 	},
 	db: Db = openDb(),
 ): Promise<ImportReservation> {
+	// The request key is the client-minted media identity the import publishes under.
+	if (!isMediaId(input.requestKey)) throw new Error("Import request key must be a media id");
+	const mediaId = input.requestKey;
 	return db.transaction(async (tx) => {
 		await serialize(tx, `import:${input.workspace}:${input.projectId}:${input.requestKey}`);
 		const project = await tx.get<{ workspace: string }>(
@@ -137,16 +166,25 @@ export async function reserveProjectMediaImport(
 			);
 			return { row: (await getProjectMediaImport(row.id, tx))!, claimed: true };
 		}
+		await serialize(tx, `media-id:${mediaId}`);
+		const taken = await tx.get(
+			`SELECT 1 FROM media_objects WHERE id = ?
+			UNION ALL SELECT 1 FROM project_media_imports WHERE media_id = ? LIMIT 1`,
+			[mediaId, mediaId],
+		);
+		// Generic on purpose: the refusal never names the workspace that holds the identity.
+		if (taken) throw new Error(MEDIA_ID_CONFLICT);
 		const id = randomUUID();
 		await tx.run(
 			`INSERT INTO project_media_imports
-			(id, workspace, project_id, request_key, original_filename, claimed_kind, source_revision, status, lease_until, created_at, updated_at)
-			VALUES (?, ?, ?, ?, ?, ?, ?, 'uploading', ?, ?, ?)`,
+			(id, workspace, project_id, request_key, media_id, original_filename, claimed_kind, source_revision, status, lease_until, created_at, updated_at)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'uploading', ?, ?, ?)`,
 			[
 				id,
 				input.workspace,
 				input.projectId,
 				input.requestKey,
+				mediaId,
 				input.filename,
 				input.kind,
 				randomUUID(),

@@ -25,6 +25,10 @@ clients, and metering. Database modules remain in `@maleo/db`.
 
 `/api/sources` does not exist; stock discovery uses `/api/stock`.
 
+`/api/operations` resolves the workspace once per request (`workspaceScope`).
+Every `/projects/:id` route then refuses a project from another workspace with
+`404 project_not_found` (`projectWorkspaceScope`).
+
 ## Libraries
 
 ```text
@@ -43,6 +47,35 @@ direct image-service fallback. New generated image, speech, upload, and render
 URLs use `/api/media/:id`. API checks workspace membership and resolves a
 private object or local development file on each read. The
 `/api/image-gen/files/*` route remains for unmigrated legacy jobs.
+
+## Media import
+
+`modules/media-import` owns `/api/operations/projects/:id/media/import`. The
+client mints the media identity of each file with `mintMediaId()` (UUIDv7,
+`@maleo/shared`) and sends it as the import request key. The server refuses
+any other key with `400`. The flow:
+
+1. Reservation stores the key as `project_media_imports.media_id`. A key that a
+   registry row or another import already uses gets `409 media_id_conflict`.
+   The refusal does not name the owner.
+2. The upload goes to quarantine. The media worker makes the playback copy.
+3. On finish, the registry publishes the playback object under `media_id`.
+   The document reference `/api/media/<id>` does not change.
+
+Until the import finishes, `GET|HEAD /api/media/:id` gives a member
+`409 media_pending`. A failed or cancelled import and a non-member get the
+same refusal as unknown media.
+
+## Asset manifest
+
+`GET /api/operations/projects/:id/asset-manifest` lists the media that the
+current storyboard and the project media library reference. Each identity
+appears once, with `origin`, `kind`, `contentType`, `size`, `sha256`, `state`
+(`ready`, `pending`, `failed` or `external`) and `used`. `collectAssetReferences`
+in `@maleo/shared` finds the references. `lib/asset-manifest.ts` resolves the
+states with one import query and one registry query. Export preflight
+(`lib/render-media-preflight.ts`) blocks on each used `pending` or `failed`
+entry. A project outside the active workspace gets `404 project_not_found`.
 
 ## Verification
 

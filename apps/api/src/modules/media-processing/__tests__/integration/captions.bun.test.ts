@@ -11,7 +11,12 @@ import {
 } from "@maleo/db/media-imports";
 import { sourceMedia } from "../../service.ts";
 import { putMedia } from "@maleo/storage";
-import { CAPTION_JOB_LIMITS, DEFAULT_MEDIA_IMPORT_LIMITS } from "@maleo/shared";
+import {
+	CAPTION_JOB_LIMITS,
+	DEFAULT_MEDIA_IMPORT_LIMITS,
+	mediaUrl,
+	mintMediaId,
+} from "@maleo/shared";
 import type { CaptionProcessingJob, ProcessingMediaClient } from "@maleo/media/api";
 import { installTestCaller } from "../../../../middleware/auth-testing.ts";
 import { workspaceScope } from "../../../../lib/active-workspace.ts";
@@ -220,7 +225,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 		expect(denied.status).toBe(400);
 		expect(await denied.json()).toMatchObject({ error: "unknown_workspace" });
 		expect(jobs.size).toBe(1);
-		const requestKey = randomUUID();
+		const requestKey = mintMediaId();
 		await setContentEditorState(project.id, { media_assets: [asset] });
 		const packetTail = (durationSec: number) => ({
 			...input,
@@ -274,7 +279,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 			},
 		});
 		await setContentEditorState(project.id, {
-			media_assets: [{ ...asset, url: `pending:${requestKey}` }],
+			media_assets: [{ ...asset, url: mediaUrl(requestKey) }],
 		});
 		expect(
 			(

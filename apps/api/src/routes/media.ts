@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import type { Db } from "@maleo/db/handle";
 import { getMediaObject } from "@maleo/db/media-objects";
+import { getImportByMediaId } from "@maleo/db/media-imports";
 import { isWorkspaceMember } from "@maleo/db/workspace-members";
 import {
 	addressMedia,
@@ -20,6 +21,20 @@ export async function serveMedia(
 	method: "GET" | "HEAD" = "GET",
 ): Promise<Response> {
 	const row = await getMediaObject(id, db);
+	if (!row) {
+		// A client-minted identity exists before its bytes; membership is checked first,
+		// so a non-member gets the same refusal whatever the import state.
+		const pending = await getImportByMediaId(id, db);
+		if (
+			pending &&
+			(pending.status === "uploading" || pending.status === "processing") &&
+			(await isWorkspaceMember(pending.workspace, userId, db))
+		)
+			return Response.json(
+				{ error: "media_pending" },
+				{ status: 409, headers: { "cache-control": "private, no-store" } },
+			);
+	}
 	if (!row || !(await isWorkspaceMember(row.workspace, userId, db))) {
 		return new Response("not_found", {
 			status: 404,

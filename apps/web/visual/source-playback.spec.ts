@@ -139,8 +139,8 @@ for (const width of [1440, 320, 844])
 							{
 								id: 96,
 								kind: "video",
-								url: "pending:uploading-camera",
-								mediaAssetId: "uploading-camera",
+								url: "/api/media/01a00000-0000-7000-8000-000000000096",
+								mediaAssetId: "01a00000-0000-7000-8000-000000000096",
 								label: "Uploading",
 								start: 20,
 								dur: 2,
@@ -194,9 +194,9 @@ for (const width of [1440, 320, 844])
 					},
 				];
 				assets.push({
-					id: "uploading-camera",
+					id: "01a00000-0000-7000-8000-000000000096",
 					kind: "video",
-					url: "pending:uploading-camera",
+					url: "/api/media/01a00000-0000-7000-8000-000000000096",
 					source: "upload",
 					label: "Uploading",
 					metadata: {

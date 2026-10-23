@@ -5,13 +5,13 @@ import {
 	type Clip,
 	mediaCompatibilityReason,
 	parseImportedMediaFields,
-	pendingMediaBlockers,
 	reverseMediaBlockers,
 	sourceAudioBlockers,
 } from "@maleo/shared";
 import { getMediaObject } from "@maleo/db/media-objects";
 import { getMedia } from "@maleo/storage";
 import type { ContentProjectDetail } from "@maleo/db/project-detail";
+import { buildAssetManifest, type AssetManifestEntry } from "./asset-manifest.ts";
 
 const assetSchema = z.object({
 	label: z.string().optional(),
@@ -19,19 +19,28 @@ const assetSchema = z.object({
 	compatibility: z.unknown().optional(),
 });
 
-/** Check managed sources before enqueue; worker checks again when materializing. */
+/** Why each used, unavailable manifest entry blocks a server render. */
+function manifestBlockers(entries: readonly AssetManifestEntry[]): string[] {
+	return entries.flatMap((entry) => {
+		if (!entry.used || (entry.state !== "pending" && entry.state !== "failed")) return [];
+		if (entry.state === "pending")
+			return [
+				`${entry.label ?? "A file"} is still uploading. Wait for it to finish before export.`,
+			];
+		return ["Managed source unavailable. Replace missing source before export."];
+	});
+}
+
+/** Check managed sources before enqueue; worker checks again when materializing.
+ *  Availability comes from the asset manifest. */
 export async function renderMediaBlockers(
 	input: unknown,
 	workspace: string,
 	editorState: ContentProjectDetail["project"]["editor_state_json"],
 ): Promise<string[]> {
-	const urls = new Set<string>();
-	const collect = (value: unknown): void => {
-		if (typeof value === "string") urls.add(value);
-		else if (Array.isArray(value)) value.forEach(collect);
-		else if (value && typeof value === "object") Object.values(value).forEach(collect);
-	};
-	collect(input);
+	const manifest = await buildAssetManifest(input, editorState?.media_assets ?? [], workspace);
+	const used = manifest.filter((entry) => entry.used);
+	const urls = new Set(used.map((entry) => entry.url));
 	const clips = z
 		.object({
 			clips: z.array(z.custom<Clip>((value) => Boolean(value) && typeof value === "object")),
@@ -49,7 +58,7 @@ export async function renderMediaBlockers(
 		.catch([])
 		.parse(editorState?.media_assets ?? []);
 	const blockers: string[] = [
-		...pendingMediaBlockers(input, editorState?.media_assets),
+		...manifestBlockers(manifest),
 		...new Set(clipsPastSource(clips.success ? clips.data.clips : [], named).values()),
 		...clipControlBlockers(input),
 		...reverseMediaBlockers(input),
@@ -66,29 +75,16 @@ export async function renderMediaBlockers(
 		if (reason)
 			blockers.push(`${parsed.data.label ?? "Media"}: ${reason}. Replace source before export.`);
 	}
-	const ids = new Set<string>();
-	for (const url of urls) {
-		try {
-			const id = /^\/api\/media\/([0-9a-f-]{36})$/.exec(
-				new URL(url, "http://local.invalid").pathname,
-			)?.[1];
-			if (id) ids.add(id);
-		} catch {
-			/* Ordinary text is not a media URL. */
-		}
-	}
-	for (const id of ids) {
-		const row = await getMediaObject(id);
-		if (!row || row.workspace !== workspace) {
-			blockers.push("Managed source unavailable. Replace missing source before export.");
-			continue;
-		}
+	for (const entry of used) {
+		if (entry.state !== "ready") continue;
 		// Import originals are provenance only; their compatibility is whatever the client wrote.
-		if (row.kind === "file") {
+		if (entry.kind === "file") {
 			blockers.push("Original upload is not a playable source. Replace source before export.");
 			continue;
 		}
+		const row = await getMediaObject(entry.id);
 		try {
+			if (!row) throw new Error("registry row removed after the manifest read");
 			await getMedia(row.storage_key);
 		} catch {
 			blockers.push("Source file unavailable. Restore storage or replace source before export.");

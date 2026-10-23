@@ -21,8 +21,14 @@ export interface MediaObject {
 const KEY =
 	/^workspaces\/([A-Za-z0-9_-]+)\/(image|audio|video|manifest|file)\/([A-Za-z0-9_-]+\/)?[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-[A-Za-z0-9_.-]{1,100}$/;
 
+/** `id` is a client-minted identity an import publishes under; otherwise the registry mints one. */
 export async function registerMediaObject(
-	input: Pick<MediaObject, "workspace" | "kind" | "hash" | "storage_key" | "content_type" | "size">,
+	input: Pick<
+		MediaObject,
+		"workspace" | "kind" | "hash" | "storage_key" | "content_type" | "size"
+	> & {
+		id?: string;
+	},
 	db: Db = openDb(),
 ): Promise<MediaObject> {
 	const owner = KEY.exec(input.storage_key);
@@ -48,7 +54,7 @@ export async function registerMediaObject(
 		`INSERT INTO media_objects (id, workspace, kind, hash, storage_key, content_type, size, created_at)
 		 VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (storage_key) DO NOTHING`,
 		[
-			randomUUID(),
+			input.id ?? randomUUID(),
 			input.workspace,
 			input.kind,
 			input.hash,
@@ -68,6 +74,7 @@ export async function registerMediaObject(
 	 * disagreement would abort an import over nothing. */
 	if (
 		!row ||
+		(input.id !== undefined && row.id !== input.id) ||
 		row.workspace !== input.workspace ||
 		row.kind !== input.kind ||
 		row.hash !== input.hash ||

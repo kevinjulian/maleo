@@ -3,7 +3,7 @@
  * save and reload, the clip keeps referring to the same asset, and no
  * browser-local URL is ever written. Runs on the editor's own executor. */
 import { afterEach, describe, expect, test } from "vite-plus/test";
-import { localMediaUrlIssues, pendingMediaUrl, type ReadyImportedMedia } from "@maleo/shared";
+import { localMediaUrlIssues, mediaUrl, mintMediaId, type ReadyImportedMedia } from "@maleo/shared";
 import { engineExecutor, type EditScope } from "@maleo/shared/editor";
 import { createCommandLedger } from "@models/chat/command-ledger.ts";
 import { testEngine } from "@models/editor-engine/engine-fixture.ts";
@@ -24,7 +24,7 @@ afterEach(() => {
 	clearPendingSources();
 });
 
-const KEY = "upload-k1";
+const KEY = mintMediaId();
 const ready = (url: string, revision: string): ReadyImportedMedia => ({
 	id: `import-${revision}`,
 	label: "take.mp4",
@@ -47,11 +47,11 @@ const ready = (url: string, revision: string): ReadyImportedMedia => ({
 	},
 });
 
-/* A clip placed while its file uploaded: it and its asset say `pending:<key>`. */
+/* A clip placed while its file uploaded: it and its asset hold the minted URL. */
 const pendingAsset: MediaAsset = {
 	id: KEY,
 	label: "take.mp4",
-	url: pendingMediaUrl(KEY),
+	url: mediaUrl(KEY),
 	kind: "video",
 	source: "upload",
 };
@@ -79,7 +79,7 @@ const placed: EditScope = {
 				video: {
 					id: 1,
 					kind: "video",
-					url: pendingMediaUrl(KEY),
+					url: mediaUrl(KEY),
 					mediaAssetId: KEY,
 					start: 0,
 					dur: 2,
@@ -94,13 +94,14 @@ const reverseAsset = (scope: EditScope, assets: MediaAsset[] = scope.mediaAssets
 	reverseTargetSource(scope.doc, { source: "video", id: 1 }, assets)?.asset;
 
 describe("a clip's media through completion, relink, undo and reload", () => {
-	test("once its upload is ready, the clip still resolves its own asset though its URL still says pending", () => {
+	test("once its upload is ready, the clip and its asset keep the same URL and identity", () => {
 		setPendingLocalUrl(KEY, "blob:http://local/1");
-		setPendingReady(KEY, ready("/api/media/00000000-0000-0000-0000-000000000001", "r1"));
-		/* The library shows assets resolved; the document keeps what was recorded. */
+		setPendingReady(KEY, ready(mediaUrl(KEY), "r1"));
+		/* The library takes the server metadata; no reference changes. */
 		const library = placed.mediaAssets.map(resolvePendingAsset);
-		expect(library[0]?.url).toBe("/api/media/00000000-0000-0000-0000-000000000001");
-		expect(placed.doc.clips[0]?.video?.url).toBe(pendingMediaUrl(KEY));
+		expect(library[0]?.url).toBe(mediaUrl(KEY));
+		expect(library[0]?.importedSource?.revision).toBe("r1");
+		expect(placed.doc.clips[0]?.video?.url).toBe(mediaUrl(KEY));
 		expect(reverseAsset(placed, library)?.id).toBe(KEY);
 		expect(sourceEditInfo(placed.doc, { source: "video", id: 1 }, library)?.asset?.id).toBe(KEY);
 	});
@@ -151,11 +152,10 @@ describe("a clip's media through completion, relink, undo and reload", () => {
 
 	test("a save holds no browser-local URL, and a reload keeps every id", () => {
 		setPendingLocalUrl(KEY, "blob:http://local/1");
-		setPendingReady(KEY, ready("/api/media/00000000-0000-0000-0000-000000000001", "r1"));
+		setPendingReady(KEY, ready(mediaUrl(KEY), "r1"));
 		const storyboard = withReadyPending({ schemaVersion: 2, clips: placed.doc.clips, markers: [] });
 		const mediaAssets = withReadyPending(placed.mediaAssets);
 		expect(localMediaUrlIssues({ storyboard, mediaAssets })).toEqual([]);
-		expect(JSON.stringify([storyboard, mediaAssets])).not.toContain("pending:");
 		expect(JSON.stringify([storyboard, mediaAssets])).not.toContain("blob:");
 		clearPendingSources();
 		const reloaded = parseLoadedProject({

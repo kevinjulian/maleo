@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import {
-	isPendingMediaUrl,
 	processedAudioSource,
 	sourceInterval,
 	type MediaProcessingOperation,
@@ -13,7 +12,7 @@ import {
 } from "@api/media-processing.ts";
 import { mediaImportError } from "@api/media-import.ts";
 import { getActiveWorkspace } from "@models/core/active-workspace.ts";
-import { withReadyPending } from "@models/core/pending-media-sources.ts";
+import { isPendingMedia, withReadyPending } from "@models/core/pending-media-sources.ts";
 import { usePendingMediaVersion } from "@hooks/editor/use-pending-media-version.ts";
 import { canReuseReverse, reverseTargetSource } from "@models/timeline/video-reverse.ts";
 import {
@@ -264,7 +263,7 @@ export function SourcePlaybackControl({
 		pitch = Boolean(source?.settings.preservePitch),
 		reverse = Boolean(source?.settings.reverse);
 	const unavailable = !source?.sourceMediaId || !source.asset || !projectId;
-	const uploading = isPendingMediaUrl(source?.url);
+	const uploading = isPendingMedia(source?.url);
 	const disabled = Boolean(status) || Boolean(source?.locked) || uploading;
 	const recovery =
 		target.source !== "audio"

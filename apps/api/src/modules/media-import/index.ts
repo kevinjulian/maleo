@@ -3,7 +3,7 @@ import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
 import { bearerFrom, isValidServiceToken } from "../../lib/service-token.ts";
 import { activeCaller, activeWorkspace } from "../../lib/active-workspace.ts";
-import { MediaImportRequestKeySchema } from "@maleo/shared";
+import { MediaIdSchema } from "@maleo/shared";
 import { ImportSourceScopeSchema, ImportUploadHeadersSchema } from "./model.ts";
 import {
 	authorizedImportSource,
@@ -44,13 +44,15 @@ type ImportEnv = { Variables: { importCanWrite: boolean } };
 export function projectMediaImportRoutes(options: MediaImportOptions = {}): Hono<ImportEnv> {
 	const app = new Hono<ImportEnv>();
 	app.onError((error, c) =>
-		c.json(
-			{
-				error: "media_import_failed",
-				message: publicImportError(error, "Media import failed; try again"),
-			},
-			error instanceof HTTPException ? error.status : 500,
-		),
+		error instanceof HTTPException && error.res
+			? error.getResponse()
+			: c.json(
+					{
+						error: "media_import_failed",
+						message: publicImportError(error, "Media import failed; try again"),
+					},
+					error instanceof HTTPException ? error.status : 500,
+				),
 	);
 	app.use("/:id/media/import*", async (c: Context<ImportEnv>, next) => {
 		const { canWrite } = await assertImportProject(
@@ -73,7 +75,7 @@ export function projectMediaImportRoutes(options: MediaImportOptions = {}): Hono
 		return c.json(await pendingProjectImports(c.req.param("id"), activeWorkspace(c), cursor.data));
 	});
 	app.get("/:id/media/import/request/:requestKey", async (c) => {
-		const key = MediaImportRequestKeySchema.safeParse(c.req.param("requestKey"));
+		const key = MediaIdSchema.safeParse(c.req.param("requestKey"));
 		const result = key.success
 			? await importByRequestKey(key.data, c.req.param("id"), activeWorkspace(c))
 			: null;

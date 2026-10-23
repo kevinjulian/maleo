@@ -10,6 +10,7 @@ import {
 	failProjectMediaImport,
 	finishProjectMediaImport,
 	cancelProjectMediaImport,
+	MEDIA_ID_CONFLICT,
 	type ProjectMediaImport,
 } from "@maleo/db/media-imports";
 import { openDb } from "@maleo/db/connection";
@@ -206,6 +207,13 @@ export async function uploadProjectMedia(
 		}).catch((error) => {
 			if (error instanceof Error && error.message === "Upload retry does not match original file")
 				throw new HTTPException(409, { message: error.message });
+			if (error instanceof Error && error.message === MEDIA_ID_CONFLICT)
+				throw new HTTPException(409, {
+					res: Response.json(
+						{ error: "media_id_conflict", message: error.message },
+						{ status: 409 },
+					),
+				});
 			throw error;
 		});
 		row = reservation.row;
@@ -229,26 +237,30 @@ export async function uploadProjectMedia(
 		directory = await mkdtemp(join(tmpdir(), "maleo-upload-"));
 		const path = join(directory, "source.bin");
 		let size = 0;
-		const stream = request.body.pipeThrough(
-			new TransformStream<Uint8Array, Uint8Array>({
-				transform(chunk, controller) {
-					size += chunk.byteLength;
-					if (size > limits.maxFileBytes)
-						throw new HTTPException(413, { message: "File exceeds import byte limit" });
-					if (headers.declaredBytes != null && size > headers.declaredBytes)
-						throw new HTTPException(400, { message: "Upload was incomplete; retry file" });
-					controller.enqueue(chunk);
-				},
-			}),
-			{ signal },
-		);
+		/* A plain reader loop, not pipeThrough/pipeTo: with two uploads streaming at
+		 * once, Bun 1.3.1's pipeTo rejects an internal promise nothing handles, and an
+		 * unhandled rejection exits the API process. */
+		const reader = request.body.getReader();
+		const stop = () => void reader.cancel(signal.reason).catch(() => {});
+		signal.addEventListener("abort", stop, { once: true });
 		const file = await open(path, "w", 0o600);
+		let finished = false;
 		try {
-			await stream.pipeTo(
-				new WritableStream<Uint8Array>({ write: (chunk) => file.writeFile(chunk) }),
-				{ signal },
-			);
+			for (;;) {
+				const { done, value } = await reader.read();
+				signal.throwIfAborted();
+				if (done) break;
+				size += value.byteLength;
+				if (size > limits.maxFileBytes)
+					throw new HTTPException(413, { message: "File exceeds import byte limit" });
+				if (headers.declaredBytes != null && size > headers.declaredBytes)
+					throw new HTTPException(400, { message: "Upload was incomplete; retry file" });
+				await file.write(value);
+			}
+			finished = true;
 		} finally {
+			signal.removeEventListener("abort", stop);
+			if (!finished) await reader.cancel().catch(() => {});
 			await file.close();
 		}
 		if (!size) throw new HTTPException(400, { message: "File is empty" });
@@ -361,9 +373,14 @@ async function publishImport(
 		if (!current || current.source_revision !== row.source_revision)
 			throw new HTTPException(409, { message: "Import source changed" });
 		if (current.status === "ready" || current.status === "cancelled") return current;
-		const register = (stored: StoredMedia, kind: "file" | "image" | "audio" | "video") => {
+		const register = (
+			stored: StoredMedia,
+			kind: "file" | "image" | "audio" | "video",
+			id?: string,
+		) => {
 			return registerMediaObject(
 				{
+					...(id ? { id } : {}),
 					workspace: row.workspace,
 					kind,
 					hash: stored.hash,
@@ -375,7 +392,8 @@ async function publishImport(
 			);
 		};
 		const source = await register(original, "file");
-		const playback = await register(result.playback, row.claimed_kind);
+		// A client-minted identity names the playable object, the one documents reference.
+		const playback = await register(result.playback, row.claimed_kind, row.media_id ?? undefined);
 		const thumbnail = result.thumbnail ? await register(result.thumbnail, "image") : undefined;
 		const asset: ReadyImportedMedia = {
 			id: row.id,
