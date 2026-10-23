@@ -7,7 +7,7 @@ import { withReadyPending } from "@models/core/pending-media-sources.ts";
 
 export interface CommandLogEntry {
 	seq: number;
-	version: number;
+	version: number | null;
 	commands: EditorCommand[];
 	actor: string;
 	snapshot?: true;
@@ -22,7 +22,7 @@ export interface CommandRejection {
 export interface SubmitCommandsReply {
 	headSeq: number;
 	headVersion: number;
-	accepted: { clientCommandId: string; seq: number; version: number }[];
+	accepted: { clientCommandId: string; seq: number; version: number | null }[];
 	rejected: CommandRejection[];
 	delivered: CommandLogEntry[];
 }

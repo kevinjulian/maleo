@@ -66,7 +66,7 @@ interface Entry {
 interface Submitted {
 	headSeq: number;
 	headVersion: number;
-	accepted: { clientCommandId: string; seq: number; version: number }[];
+	accepted: { clientCommandId: string; seq: number; version: number | null }[];
 	rejected: { clientCommandId: string; kind: string; message: string }[];
 	delivered: Entry[];
 }
@@ -303,5 +303,91 @@ describe("PATCH /projects/:id/storyboard-presentation", () => {
 		const res = await patch(id, { presentation: null }, stranger);
 		expect(res.status).toBe(400);
 		expect(await versionCount(id)).toBe(1);
+	});
+});
+
+describe("the media library travels in the log (p1-media-library)", () => {
+	const asset = (id: string, url = `/api/media/${id}`) => ({
+		id,
+		label: id,
+		url,
+		kind: "image",
+		source: "stock",
+	});
+	const admit = (id: string, url?: string) => ({ type: "media.admit", asset: asset(id, url) });
+	const library = async (projectId: string) =>
+		(
+			await openDb().all<{ id: string }>(
+				`SELECT id FROM project_media_assets WHERE project_id = ? ORDER BY position DESC`,
+				[projectId],
+			)
+		).map((row) => row.id);
+
+	test("a library-only submission stores the asset and writes no version", async () => {
+		const id = await project("video", clip("text:1"));
+		const res = await submit(id, 1, [{ clientCommandId: "m1", command: admit("a") }]);
+		const body = (await res.json()) as Submitted;
+		expect(body.accepted).toEqual([{ clientCommandId: "m1", seq: 2, version: null }]);
+		expect(body.headVersion).toBe(1);
+		expect(await versionCount(id)).toBe(1);
+		expect(await library(id)).toEqual(["a"]);
+	});
+
+	test("admit and place in one submission write one version holding both commands", async () => {
+		const id = await project("video", clip("text:1"));
+		const place = { type: "clip.insert", clip: { ...clip("text:2", 3), mediaAssetId: "a" } };
+		const body = (await (
+			await submit(id, 1, [
+				{ clientCommandId: "a1", command: admit("a") },
+				{ clientCommandId: "a2", command: place },
+			])
+		).json()) as Submitted;
+		expect(body.rejected).toEqual([]);
+		expect(body.accepted.map((a) => [a.seq, a.version])).toEqual([
+			[2, 2],
+			[2, 2],
+		]);
+		expect(await versionCount(id)).toBe(2);
+		expect(await library(id)).toEqual(["a"]);
+		const log = (await (await app().request(`/projects/${id}/commands?after=1`)).json()) as {
+			entries: Entry[];
+		};
+		expect(log.entries[0]!.commands.map((c) => c.type)).toEqual(["media.admit", "clip.insert"]);
+	});
+
+	test("two clients admitting one URL get one asset", async () => {
+		const id = await project("video", clip("text:1"));
+		await submit(id, 1, [{ clientCommandId: "d1", command: admit("a", "/same") }]);
+		await submit(id, 1, [{ clientCommandId: "d2", command: admit("b", "/same") }]);
+		expect(await library(id)).toEqual(["a"]);
+	});
+
+	test("a submitted scope.replace keeps the server's library", async () => {
+		const id = await project("video", clip("text:1"));
+		await submit(id, 1, [{ clientCommandId: "r1", command: admit("a") }]);
+		const replace = {
+			type: "scope.replace",
+			scope: { doc: documentWith(clip("text:9")), slides: [], posts: [], mediaAssets: [] },
+		};
+		const body = (await (
+			await submit(id, 2, [{ clientCommandId: "r2", command: replace }])
+		).json()) as Submitted;
+		expect(body.rejected).toEqual([]);
+		expect(await library(id)).toEqual(["a"]);
+	});
+
+	test("a snapshot carries the library", async () => {
+		const id = await project("video", clip("text:1"));
+		await submit(id, 1, [{ clientCommandId: "s1", command: admit("a") }]);
+		await submit(id, 2, [{ clientCommandId: "s2", command: move("text:1", 2) }]);
+		await openDb().run(`DELETE FROM content_project_commands WHERE project_id = ? AND seq <= 2`, [
+			id,
+		]);
+		const body = (await (await app().request(`/projects/${id}/commands?after=0`)).json()) as {
+			entries: { snapshot?: true; commands: { scope?: { mediaAssets: { id: string }[] } }[] }[];
+		};
+		expect(body.entries).toHaveLength(1);
+		expect(body.entries[0]!.snapshot).toBe(true);
+		expect(body.entries[0]!.commands[0]!.scope!.mediaAssets.map((a) => a.id)).toEqual(["a"]);
 	});
 });

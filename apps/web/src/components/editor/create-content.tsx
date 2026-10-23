@@ -435,7 +435,6 @@ export function CreateContent({
 		presentation: { pacingDevices, infographicStyle, presentation },
 		editorState: {
 			chatMessages: chat.messages,
-			mediaAssets,
 			settings,
 			trackFlags,
 			hookVariants,

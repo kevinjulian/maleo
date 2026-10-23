@@ -17,6 +17,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, test } from "vite-plus/test";
 import { parseLoadedProject, type LoadedProjectDetail } from "./parse-loaded-project.ts";
 import { storyboardJson } from "./document-wire.ts";
+import { storedMediaLibrary } from "@maleo/shared/editor/storyboard-scope";
 
 const corpus = JSON.parse(
 	readFileSync(
@@ -42,6 +43,9 @@ function detailFor(storyboard: Record<string, unknown>): LoadedProjectDetail {
 			editor_state_json: null,
 		},
 		storyboards: [{ storyboard_json: storyboard as never }],
+		// A document's own media list reaches the editor as the project read's
+		// library, imported by the server on first read (`p1-media-library` D5).
+		mediaAssets: storedMediaLibrary(null, storyboard),
 		entities: [],
 		notes: [],
 		speakers: [],

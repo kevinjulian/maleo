@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vite-plus/test";
 import { readStoryboardDocument } from "../storyboard-document.ts";
-import { storyboardScope, storyboardWithScope } from "./storyboard-scope.ts";
+import { storedMediaLibrary, storyboardScope, storyboardWithScope } from "./storyboard-scope.ts";
 
 const head = {
 	schemaVersion: 2,
@@ -148,5 +148,37 @@ describe("the scope's optional parts", () => {
 				note_ids: [],
 			},
 		]);
+	});
+});
+
+describe("a project's stored media list", () => {
+	const asset = (id: string, url: string) => ({
+		id,
+		label: id,
+		url,
+		kind: "image",
+		source: "upload",
+	});
+
+	test("merges the editor state's list and the document's by URL, editor state first", () => {
+		const library = storedMediaLibrary(
+			{ media_assets: [asset("a", "/u/1"), asset("b", "/u/2")] },
+			{ media_assets: [asset("c", "/u/2"), asset("d", "/u/3")] },
+		);
+		expect(library.map((item) => item.id)).toEqual(["a", "b", "d"]);
+	});
+
+	test("drops entries without a URL and names an unnamed one by its URL", () => {
+		const library = storedMediaLibrary(
+			{
+				media_assets: [{ label: "x" }, { url: "/u/9", label: "y", kind: "image", source: "stock" }],
+			},
+			null,
+		);
+		expect(library.map((item) => item.id)).toEqual(["/u/9"]);
+	});
+
+	test("is empty when nothing was stored", () => {
+		expect(storedMediaLibrary(null, {})).toEqual([]);
 	});
 });

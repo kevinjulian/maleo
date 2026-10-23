@@ -5,7 +5,11 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { execFileSync } from "node:child_process";
-import { createContentProject, setContentEditorState } from "@maleo/db/project-detail";
+import { createContentProject } from "@maleo/db/project-detail";
+import { openDb } from "@maleo/db/connection";
+import { applyMediaLibraryChange, lockedMediaLibrary } from "@maleo/db/project-media-assets";
+import type { MediaAsset } from "@maleo/shared/editor";
+
 import { registerMediaObject, getMediaObject, mediaObjectUrl } from "@maleo/db/media-objects";
 import { putMedia, getMedia } from "@maleo/storage";
 import { DEFAULT_MEDIA_IMPORT_LIMITS, ProjectMediaProcessingResponseSchema } from "@maleo/shared";
@@ -14,6 +18,15 @@ import { installTestCaller } from "../../../../middleware/auth-testing.ts";
 import { workspaceScope } from "../../../../lib/active-workspace.ts";
 import { internalMediaProcessingRoutes, projectMediaProcessingRoutes } from "../../index.ts";
 import type { ProcessMediaBody } from "../../model.ts";
+
+/** The project's library rows, set wholesale (`p1-media-library`). */
+async function setLibrary(projectId: string, list: object[]): Promise<void> {
+	await openDb().transaction(async (tx) => {
+		const before = await lockedMediaLibrary(tx, projectId);
+		// SAFETY: test fixtures shaped as the assets the scope holds.
+		await applyMediaLibraryChange(tx, projectId, before, list as MediaAsset[]);
+	});
+}
 
 test("authenticated source processing enforces admission, revision and durable output ownership", async () => {
 	const previous = {
@@ -101,7 +114,7 @@ test("authenticated source processing enforces admission, revision and durable o
 			size: stored.size,
 		});
 		const asset = { id: "source", label: "Original", url: mediaObjectUrl(media.id), kind: "video" };
-		await setContentEditorState(project.project.id, { media_assets: [asset] });
+		await setLibrary(project.project.id, [asset]);
 		const input = {
 			sourceMediaId: media.id,
 			sourceRevision: media.id,
@@ -225,12 +238,10 @@ test("authenticated source processing enforces admission, revision and durable o
 			content_type: audioStored.contentType,
 			size: audioStored.size,
 		});
-		await setContentEditorState(project.project.id, {
-			media_assets: [
-				asset,
-				{ ...asset, id: "audio", kind: "audio", url: mediaObjectUrl(audioMedia.id) },
-			],
-		});
+		await setLibrary(project.project.id, [
+			asset,
+			{ ...asset, id: "audio", kind: "audio", url: mediaObjectUrl(audioMedia.id) },
+		]);
 		for (const original of [media, audioMedia]) {
 			const operation = {
 				type: "audio",
@@ -291,7 +302,7 @@ test("authenticated source processing enforces admission, revision and durable o
 			audioJob.result.derivative!.operation = { ...operation, preservePitch: false };
 			expect((await fetch(audioPoll)).status).toBe(500);
 		}
-		await setContentEditorState(project.project.id, { media_assets: [] });
+		await setLibrary(project.project.id, []);
 		expect((await fetch(pollUrl)).status).toBe(409);
 		expect((await fetch(sourceUrl, { method: "HEAD", headers })).status).toBe(404);
 		expect((await fetch(pollUrl, { method: "DELETE" })).status).toBe(200);

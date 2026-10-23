@@ -1,5 +1,6 @@
 /* `GET /projects/:id/asset-manifest`: the media the project's current storyboard and
  * media library reference, with each one's state (`p1-asset-identity` D4). */
+import { projectMediaLibrary } from "@maleo/db/project-media-assets";
 import type { Hono } from "hono";
 import { getContentProject } from "@maleo/db/project-detail";
 import { activeWorkspace } from "../../lib/active-workspace.ts";
@@ -21,7 +22,7 @@ export function registerAssetManifestRoutes(app: Hono): void {
 			storyboardVersion: storyboard?.version ?? null,
 			assets: await buildAssetManifest(
 				storyboard?.storyboard_json ?? {},
-				detail.project.editor_state_json?.media_assets ?? [],
+				await projectMediaLibrary(detail.project.id),
 				workspace,
 			),
 		});

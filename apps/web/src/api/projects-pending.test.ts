@@ -1,6 +1,6 @@
 import { afterEach, expect, test } from "vite-plus/test";
 import { mediaUrl, mintMediaId, type ReadyImportedMedia } from "@maleo/shared";
-import { saveEditorState, saveStoryboard } from "./projects.ts";
+import { saveStoryboard } from "./projects.ts";
 import { submitVideoRender } from "./project-render.ts";
 import {
 	clearPendingSources,
@@ -28,7 +28,7 @@ afterEach(() => {
 	clearPendingSources();
 });
 
-test("saves keep every minted URL, take ready metadata, and never write a local URL", async () => {
+test("saves keep every minted URL and never write a local URL", async () => {
 	const bodies: string[] = [];
 	globalThis.fetch = Object.assign(
 		async (_input: RequestInfo | URL, init?: RequestInit) => {
@@ -48,20 +48,10 @@ test("saves keep every minted URL, take ready metadata, and never write a local 
 			{ id: "video:2", video: { url: mediaUrl(k2) } },
 		],
 	});
-	await saveEditorState("p", {
-		mediaAssets: [{ id: k1, label: "Mine", url: managed, kind: "video", source: "upload" }],
-	});
-	const [storyboard, state] = bodies.map((body) => JSON.parse(body));
+	const [storyboard] = bodies.map((body) => JSON.parse(body));
 	expect(
 		storyboard.storyboard_json.clips.map((clip: { video: { url: string } }) => clip.video.url),
 	).toEqual([managed, mediaUrl(k2)]);
-	expect(state.editor_state.media_assets[0]).toMatchObject({
-		id: k1,
-		label: "Mine",
-		url: managed,
-		dur: 4.2,
-		metadata: ready.metadata,
-	});
 	expect(bodies.join("")).not.toContain("blob:");
 });
 

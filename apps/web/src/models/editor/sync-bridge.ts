@@ -7,8 +7,19 @@
  * inside `localOnly` — an agent run's preview and settled merge — are never
  * enqueued: the run's own version arrives from the log and replaces them.
  *
- * The media library is not compared: a storyboard does not hold it (D3). */
-import type { EditorCommand, EditScope } from "@maleo/shared/editor";
+ * The media library is server-owned (`p1-media-library`), and a submitted
+ * `scope.replace` does not change it, so it is compared on its own. A library
+ * write around the stack (an admission through `ensureMediaAsset`, a favorite,
+ * a removal) is sent as `media.admit` per new asset when it only added assets —
+ * the server deduplicates those by URL against every client's — and as a
+ * `media.update` of the whole list otherwise. */
+import {
+	admitMedia,
+	setMediaAssets,
+	type EditorCommand,
+	type EditScope,
+	type MediaAsset,
+} from "@maleo/shared/editor";
 import type { CommandSync } from "./command-sync.ts";
 
 export interface SyncBridge {
@@ -36,6 +47,35 @@ export interface SyncBridge {
 const sameStoryboard = (a: EditScope, b: EditScope): boolean =>
 	a.doc === b.doc && a.slides === b.slides && a.posts === b.posts;
 
+const sameLibrary = (a: MediaAsset[], b: MediaAsset[]): boolean =>
+	a === b || JSON.stringify(a) === JSON.stringify(b);
+
+/** The commands, with inverses, that move the library from `before` to `after`. */
+export function libraryCommands(
+	before: MediaAsset[],
+	after: MediaAsset[],
+): { command: EditorCommand; inverse: EditorCommand }[] {
+	if (sameLibrary(before, after)) return [];
+	const known = new Set(before.map((asset) => asset.id));
+	const added = after.filter((asset) => !known.has(asset.id));
+	if (
+		added.length &&
+		sameLibrary(
+			after.filter((asset) => known.has(asset.id)),
+			before,
+		)
+	) {
+		// Oldest first, so each prepend leaves the order `after` holds.
+		let current = before;
+		return [...added].reverse().map((asset) => {
+			const step = { command: admitMedia(asset), inverse: setMediaAssets(current) };
+			current = [asset, ...current];
+			return step;
+		});
+	}
+	return [{ command: setMediaAssets(after), inverse: setMediaAssets(before) }];
+}
+
 export function createSyncBridge(input: {
 	scope: () => EditScope;
 	/** Something was enqueued; the caller schedules a flush. */
@@ -48,10 +88,14 @@ export function createSyncBridge(input: {
 	/* Anything written around the stack since the last enqueue goes first, so
 	 * the server sees the writes in the order they happened. */
 	const flushGap = (now: EditScope): void => {
-		if (sync && synced && !sameStoryboard(synced, now)) {
-			sync.enqueueReplace(synced, now);
-			input.enqueued();
-		}
+		if (sync && synced) enqueueChange(sync, synced, now);
+	};
+	const enqueueChange = (target: CommandSync, before: EditScope, after: EditScope): void => {
+		const media = libraryCommands(before.mediaAssets, after.mediaAssets);
+		const storyboard = !sameStoryboard(before, after);
+		if (storyboard) target.enqueueReplace(before, after);
+		for (const { command, inverse } of media) target.enqueue(command, inverse);
+		if (storyboard || media.length) input.enqueued();
 	};
 
 	return {
@@ -82,10 +126,7 @@ export function createSyncBridge(input: {
 				return;
 			}
 			flushGap(before);
-			if (!sameStoryboard(before, after)) {
-				sync.enqueueReplace(before, after);
-				input.enqueued();
-			}
+			enqueueChange(sync, before, after);
 			synced = after;
 		},
 		catchUp() {

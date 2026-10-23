@@ -19,7 +19,6 @@ import type {
 	ProjectMaterials,
 } from "@maleo/shared";
 import type { ChatLogMessage } from "@models/chat/chat-log.ts";
-import type { MediaAsset } from "@models/timeline/editor-media.ts";
 import { BASE } from "./base.ts";
 import {
 	briefFromConfig,
@@ -57,7 +56,6 @@ export async function createProject(input: {
 	 *  autosave ran. */
 	editorState?: {
 		chat?: ChatLogMessage[];
-		mediaAssets?: MediaAsset[];
 		settings?: unknown;
 		direction?: unknown;
 		elementSources?: unknown;
@@ -123,7 +121,6 @@ export async function createProject(input: {
 			? {
 					editor_state: {
 						chat: input.editorState.chat ?? [],
-						media_assets: input.editorState.mediaAssets ?? [],
 						settings: input.editorState.settings ?? null,
 						direction: input.editorState.direction ?? null,
 						element_sources: input.editorState.elementSources ?? null,
@@ -169,7 +166,6 @@ export async function saveEditorState(
 	projectId: string,
 	state: {
 		chat?: ChatLogMessage[];
-		mediaAssets?: MediaAsset[];
 		settings?: unknown;
 		trackFlags?: unknown;
 		hookVariants?: unknown;
@@ -188,7 +184,6 @@ export async function saveEditorState(
 		// state holds `{}` from load, so `{}` is what normally persists.
 		editor_state: {
 			chat: state.chat ?? [],
-			media_assets: withReadyPending(state.mediaAssets ?? []),
 			settings: state.settings ?? null,
 			track_flags: state.trackFlags ?? null,
 			hook_variants: state.hookVariants ?? null,

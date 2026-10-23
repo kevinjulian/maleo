@@ -131,9 +131,15 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   an agent run's preview and settled merge (`bridge.localOnly`) not at all.
   `models/editor/command-sync.ts` submits the queue on a 1.2 s debounce, one
   request at a time, and resolves each reply with `pendingResolve` (undo
-  pending, apply delivered, re-apply pending except rejected). Delivered
-  `scope.replace` entries keep the editor's own media library, which a
-  storyboard does not hold. `hooks/editor/use-command-log.ts` opens it from
+  pending, apply delivered, re-apply pending except rejected).
+- The media library is server-owned (`p1-media-library`): the project read
+  returns it, and the editor-state autosave does not carry it. The bridge
+  compares it too: assets added around the stack (`ensureMediaAsset`) are
+  sent as one `media.admit` each, any other library change as `media.update`.
+  After a resolve the editor's library is the server's (from delivered and
+  accepted entries) with its pending `media.*` commands applied and its
+  unfinished uploads kept; a pending `scope.replace` never restores the
+  client's own list. `hooks/editor/use-command-log.ts` opens it from
   the loaded version's `commandSeq` and reads the log on window focus and
   when an agent run settles; a rejected or dropped edit is reported, a
   divergence reloads the saved project.

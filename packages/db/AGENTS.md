@@ -39,6 +39,15 @@ read/write modules. HTTP, providers, and subprocesses belong elsewhere.
   entry in the same transaction; the newest entry is never pruned, so a `seq`
   is never reused. A refused submitted command is kept by client command id
   in `content_project_command_rejections`, so a retry returns the same refusal.
+- A project's media library is its `project_media_assets` rows
+  (`project-media-assets.ts`), unique by URL within the project and written only
+  under the same `storyboard-version:<project>` lock, together with a log entry.
+  An entry that changes only the library has `version` NULL and writes no
+  storyboard version; retention deletes versionless entries whose `seq` is below
+  the oldest remaining versioned entry, in the transaction that prunes versions.
+  A project's stored `media_assets` list (editor state, then head document) is
+  imported once, on the first library read, and `media_library_imported_at` marks
+  it done.
 - Read a version by number through `readStoryboardVersion`, which answers
   found, pruned, never existed, or read failed — never a substitute version.
 

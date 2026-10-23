@@ -1,3 +1,4 @@
+import { projectMediaLibrary } from "@maleo/db/project-media-assets";
 import { z } from "zod";
 import { HTTPException } from "hono/http-exception";
 import { getContentProject } from "@maleo/db/project-detail";
@@ -55,8 +56,7 @@ export async function sourceMedia(id: string, scope: ImportSourceScope) {
 		!["video", "audio"].includes(media.kind)
 	)
 		throw new HTTPException(404, { message: "Managed media source not found" });
-	const assets = detail.project.editor_state_json?.media_assets;
-	const saved = (Array.isArray(assets) ? assets : [])
+	const saved = (await projectMediaLibrary(detail.project.id))
 		.map((value) => assetSchema.safeParse(value))
 		.find((value) => value.success && value.data.url === mediaObjectUrl(id));
 	const asset = saved?.success

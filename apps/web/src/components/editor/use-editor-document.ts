@@ -169,12 +169,14 @@ export function useEditorDocument(input: {
 		}),
 		[bridge, ledgerHandle],
 	);
-	// A write that went around the stack is enqueued once writes settle.
+	// A write that went around the stack — the media library's included — is
+	// enqueued once writes settle.
 	const liveDoc = useDocumentSelector(store, selectDoc);
+	const liveMedia = library.mediaAssets;
 	useEffect(() => {
 		const timer = setTimeout(() => bridge.catchUp(), 400);
 		return () => clearTimeout(timer);
-	}, [bridge, liveDoc, slides, posts]);
+	}, [bridge, liveDoc, slides, posts, liveMedia]);
 	// One value so the editor takes an undo stack rather than four loose props,
 	// memoised so it keeps its identity across parent renders.
 	const undoStack = useMemo(

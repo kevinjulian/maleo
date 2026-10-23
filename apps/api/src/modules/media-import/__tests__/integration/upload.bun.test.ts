@@ -13,6 +13,11 @@ import {
 	type ImportedMediaKind,
 } from "@maleo/shared";
 import { openDb } from "@maleo/db/connection";
+import {
+	admitProjectMediaAsset,
+	applyMediaLibraryChange,
+	lockedMediaLibrary,
+} from "@maleo/db/project-media-assets";
 import { createContentProject } from "@maleo/db/project-detail";
 import {
 	getProjectMediaImport,
@@ -727,35 +732,21 @@ test("shared imported source survives project removal and authenticated playback
 		const ready = ProjectMediaImportResponseSchema.parse(
 			await (await fetch(new URL(`${url.pathname}/${uploaded.id}`, server.url))).json(),
 		);
-		const saved = await fetch(new URL(`/projects/${project.project.id}/editor-state`, server.url), {
-			method: "PUT",
-			headers: { "content-type": "application/json" },
-			body: JSON.stringify({ editor_state: { media_assets: [ready.asset], chat: [] } }),
-		});
-		expect(saved.status).toBe(200);
-		const detail = await (
-			await fetch(new URL(`/projects/${project.project.id}`, server.url))
-		).json();
-		expect(detail.project.editor_state_json.media_assets).toEqual([ready.asset]);
+		// The finished import is the project's library; the project read returns it.
+		const libraryOf = async (id: string) =>
+			(await (await fetch(new URL(`/projects/${id}`, server.url))).json()).mediaAssets;
+		// The library names it by the identity the client minted, the import's `media_id`.
+		const admitted = { ...ready.asset!, id: row.media_id ?? row.id };
+		expect(await libraryOf(project.project.id)).toEqual([admitted]);
+		// Another project admits the same source; this one drops it.
 		const other = (await createContentProject({ title: "Shared source consumer" }))!;
-		const saveAssets = (id: string, assets: unknown[]) =>
-			fetch(new URL(`/projects/${id}/editor-state`, server.url), {
-				method: "PUT",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({
-					editor_state: { media_assets: assets, chat: [] },
-				}),
-			});
-		expect((await saveAssets(other.project.id, [ready.asset])).status).toBe(200);
-		expect((await saveAssets(project.project.id, [])).status).toBe(200);
-		const retained = await (
-			await fetch(new URL(`/projects/${other.project.id}`, server.url))
-		).json();
-		expect(retained.project.editor_state_json.media_assets).toEqual([ready.asset]);
-		const removed = await (
-			await fetch(new URL(`/projects/${project.project.id}`, server.url))
-		).json();
-		expect(removed.project.editor_state_json.media_assets).toEqual([]);
+		await admitProjectMediaAsset(other.project.id, admitted);
+		await openDb().transaction(async (tx) => {
+			const before = await lockedMediaLibrary(tx, project.project.id);
+			await applyMediaLibraryChange(tx, project.project.id, before, []);
+		});
+		expect(await libraryOf(other.project.id)).toEqual([admitted]);
+		expect(await libraryOf(project.project.id)).toEqual([]);
 		const playback = await fetch(new URL(ready.asset!.url, server.url), {
 			headers: { range: "bytes=0-31" },
 		});
@@ -988,5 +979,25 @@ test("a minted media identity is validated at import and the finished import is 
 	expect(
 		(await openDb().all("SELECT id FROM media_objects WHERE storage_key = ?", [playbackKey]))
 			.length,
-	).toBe(1);
+	).toBe(1); // The project's library holds it under the minted identity, admitted in the log.
+	const library = () =>
+		openDb().all<{ id: string }>("SELECT id FROM project_media_assets WHERE project_id = ?", [
+			project.project.id,
+		]);
+	const admissions = () =>
+		openDb().all<{ command_json: string; version: number | null }>(
+			"SELECT command_json, version FROM content_project_commands WHERE project_id = ?",
+			[project.project.id],
+		);
+	expect(await library()).toEqual([{ id: mediaId }]);
+	const [entry] = await admissions();
+	expect(entry!.version).toBeNull();
+	expect(JSON.parse(entry!.command_json)).toMatchObject({
+		type: "media.admit",
+		asset: { id: mediaId, url: `/api/media/${mediaId}` },
+	});
+	// A second finish adds nothing.
+	await app().request(`${url}/${pending.id}`);
+	expect(await library()).toHaveLength(1);
+	expect(await admissions()).toHaveLength(1);
 });

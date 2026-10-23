@@ -1,5 +1,6 @@
 /* The project command log (`p1-command-log`): the editor commands that produced
- * each storyboard version, in order. Entries are ordered by a per-project `seq`,
+ * each storyboard version, in order, and the media library changes that wrote no
+ * version (`p1-media-library`). Entries are ordered by a per-project `seq`,
  * issued as `MAX(seq) + 1` under the storyboard version lock, so it is
  * serialized with every writer and monotonic; each entry names the version it
  * wrote. The sequence is the log's own (D1) so a later entity type can join the
@@ -20,7 +21,9 @@ export interface LoggedCommand {
  *  log no longer holds. */
 export interface CommandLogEntry {
 	readonly seq: number;
-	readonly version: number;
+	/** The storyboard version the entry wrote; null when it changed only the media
+	 *  library (`p1-media-library` D2). */
+	readonly version: number | null;
 	readonly commands: EditorCommand[];
 	readonly actor: string;
 	readonly snapshot?: true;
@@ -33,7 +36,7 @@ export interface CommandRejection {
 
 /** What the server already decided for a client command identity. */
 export type CommandOutcome =
-	| { readonly state: "accepted"; readonly seq: number; readonly version: number }
+	| { readonly state: "accepted"; readonly seq: number; readonly version: number | null }
 	| { readonly state: "rejected"; readonly error: CommandRejection };
 
 /** The highest sequence issued for a project; 0 before its first entry. The
@@ -52,7 +55,7 @@ export async function recordCommandEntry(
 	tx: Db,
 	input: {
 		project_id: string;
-		version: number;
+		version: number | null;
 		commands: readonly LoggedCommand[];
 		actor_type: string;
 		created_at: number;
@@ -103,7 +106,11 @@ export async function commandOutcomes(
 	const outcomes = new Map<string, CommandOutcome>();
 	if (!ids.length) return outcomes;
 	const marks = ids.map(() => "?").join(",");
-	for (const row of await db.all<{ client_command_id: string; seq: number; version: number }>(
+	for (const row of await db.all<{
+		client_command_id: string;
+		seq: number;
+		version: number | null;
+	}>(
 		`SELECT client_command_id, seq, version FROM content_project_commands
 		 WHERE project_id = ? AND client_command_id IN (${marks})`,
 		[projectId, ...ids],
@@ -137,7 +144,7 @@ export async function commandEntriesBetween(
 	if (through <= after) return [];
 	const rows = await db.all<{
 		seq: number;
-		version: number;
+		version: number | null;
 		command_json: string;
 		actor_type: string;
 	}>(
@@ -162,8 +169,11 @@ export async function commandEntriesBetween(
 	return entries.length === through - after ? entries : null;
 }
 
-/** Drop the entries of versions about to be pruned. Called by retention, in the
- *  transaction that deletes the versions. */
+/** Drop the entries of versions about to be pruned, then the versionless entries
+ *  older than the oldest versioned entry left (`p1-media-library` D4): a client
+ *  behind that entry already gets a snapshot, which carries the library. The
+ *  newest versioned entry is never pruned, so `MAX(seq)` never decreases. Called
+ *  by retention, in the transaction that deletes the versions. */
 export async function deleteCommandEntries(
 	db: Db,
 	projectId: string,
@@ -174,6 +184,11 @@ export async function deleteCommandEntries(
 		`DELETE FROM content_project_commands WHERE project_id = ? AND version IN
 		 (SELECT version FROM content_storyboards WHERE project_id = ? AND id IN (${storyboardIds.map(() => "?").join(",")}))`,
 		[projectId, projectId, ...storyboardIds],
+	);
+	await db.run(
+		`DELETE FROM content_project_commands WHERE project_id = ? AND version IS NULL AND seq <
+		 (SELECT MIN(seq) FROM content_project_commands WHERE project_id = ? AND version IS NOT NULL)`,
+		[projectId, projectId],
 	);
 }
 

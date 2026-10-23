@@ -23,7 +23,9 @@ packages/db/src/
     workspace-config.ts  workspace configuration rows
     row-json.ts      JSON-column decoding
     storyboard-retention.ts  which storyboard versions a project keeps; pruned on write
-    project-commands.ts  command log: one entry per storyboard version at its own seq, pruned with it
+    project-commands.ts  command log: one entry per storyboard version at its own seq, pruned with it;
+                     library-only entries name no version, pruned behind the oldest versioned entry
+    project-media-assets.ts  project media library rows; diff writes, server admission, one-time import
     <family>.ts      queries and writes for one entity family
 ```
 

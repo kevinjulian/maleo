@@ -8,7 +8,8 @@
  * bookmarks, references, materials, captions, track flags, slides and posts.
  * Everything else — pacing devices, infographic style, presentation, the agent's
  * artifacts and unit lifecycle — stays the head's. Media assets are not part of a
- * storyboard (the editor state holds them), so a stored scope has none. */
+ * storyboard: the server holds them as library rows (`p1-media-library`), and the
+ * caller passes them in. */
 import {
 	readStoryboardDocument,
 	readStoryboardPosts,
@@ -18,10 +19,14 @@ import {
 	writeStoryboardSlides,
 	type StoredStoryboardDocument,
 } from "../storyboard-document.ts";
-import type { EditScope, Post, Slide } from "./scope.ts";
+import { z } from "zod";
+import { parseImportedMediaFields } from "../media-import.ts";
+import type { EditScope, MediaAsset, Post, Slide } from "./scope.ts";
 
-/** The editable scope of a stored storyboard document. */
-export function storyboardScope(raw: unknown): EditScope {
+export type { MediaAsset };
+
+/** The editable scope of a stored storyboard document, with the project's library. */
+export function storyboardScope(raw: unknown, mediaAssets: MediaAsset[] = []): EditScope {
 	const doc = readStoryboardDocument(raw).doc;
 	const slides = readStoryboardSlides(raw).map((slide, index): Slide => ({
 		key: slide.key,
@@ -56,8 +61,50 @@ export function storyboardScope(raw: unknown): EditScope {
 		},
 		slides,
 		posts,
-		mediaAssets: [],
+		mediaAssets,
 	};
+}
+
+/* An asset as the editor wrote it: the fields every asset has are checked, the
+ * rest is kept as written. */
+const StoredAssetSchema = z
+	.object({
+		id: z.string().optional(),
+		url: z.string(),
+		label: z.string().catch(""),
+		kind: z.enum(["image", "video", "audio"]).catch("image"),
+		source: z.enum(["generated", "stock", "upload", "reference"]).catch("upload"),
+		metadata: z.unknown(),
+		compatibility: z.unknown(),
+		importedSource: z.unknown(),
+	})
+	.passthrough();
+const StoredListSchema = z.object({ media_assets: z.array(z.unknown()).catch([]) }).catch({
+	media_assets: [],
+});
+
+/** The media list a project stored before its library had rows (`p1-media-library`
+ *  D5): the editor state's `media_assets`, then an older head document's, each asset
+ *  once by URL, in stored order. An entry without a string URL is dropped; one
+ *  without an id is named by its URL. */
+export function storedMediaLibrary(editorState: unknown, document: unknown): MediaAsset[] {
+	const assets: MediaAsset[] = [];
+	for (const source of [editorState, document]) {
+		for (const value of StoredListSchema.parse(source ?? {}).media_assets) {
+			const parsed = StoredAssetSchema.safeParse(value);
+			if (!parsed.success) continue;
+			const { url } = parsed.data;
+			const id = parsed.data.id || url;
+			if (assets.some((asset) => asset.url === url || asset.id === id)) continue;
+			const { metadata, compatibility, importedSource, ...legacy } = parsed.data;
+			assets.push({
+				...legacy,
+				id,
+				...parseImportedMediaFields({ metadata, compatibility, importedSource }),
+			});
+		}
+	}
+	return assets;
 }
 
 /** `head` with the scope's fields replaced by `scope`'s: the stored document a

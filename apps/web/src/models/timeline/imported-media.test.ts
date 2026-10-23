@@ -52,9 +52,10 @@ test("import admission and reload retain stable IDs and original metadata withou
 			target_format: null,
 			target_platform: null,
 			brief_json: null,
-			editor_state_json: { media_assets: [...imported.assets, ...legacy] },
+			editor_state_json: null,
 		},
 		storyboards: [],
+		mediaAssets: [...imported.assets, ...legacy],
 	};
 	const loaded = parseLoadedProject(detail);
 	expect(loaded.mediaAssets).toEqual([...imported.assets, ...legacy]);
@@ -62,6 +63,6 @@ test("import admission and reload retain stable IDs and original metadata withou
 	expect(loaded.mediaAssets[0]?.metadata?.duration).toBeUndefined();
 	expect(loaded.mediaAssets[1]).not.toHaveProperty("metadata");
 	const malformed = structuredClone(detail);
-	malformed.project.editor_state_json!.media_assets![0]!.metadata!.duration = -1;
+	(malformed.mediaAssets as typeof imported.assets)[0]!.metadata!.duration = -1;
 	expect(parseLoadedProject(malformed).mediaAssets[0]).not.toHaveProperty("metadata");
 });

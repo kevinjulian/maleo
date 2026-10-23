@@ -168,9 +168,10 @@ describe("a clip's media through completion, relink, undo and reload", () => {
 				target_format: null,
 				target_platform: null,
 				brief_json: null,
-				editor_state_json: { media_assets: mediaAssets } as never,
+				editor_state_json: null,
 			},
 			storyboards: [{ storyboard_json: storyboard }],
+			mediaAssets,
 		});
 		expect(reloaded.mediaAssets.map((asset) => asset.id)).toEqual([KEY, "other"]);
 		const scope: EditScope = {

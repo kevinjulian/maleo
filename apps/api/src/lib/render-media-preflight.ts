@@ -32,7 +32,8 @@ function manifestBlockers(entries: readonly AssetManifestEntry[]): string[] {
 }
 
 /** Check managed sources before enqueue; worker checks again when materializing.
- *  Availability comes from the asset manifest. */
+ *  Availability comes from the asset manifest. `editorState.media_assets` is the
+ *  project's library, which callers read from its rows (`projectMediaLibrary`). */
 export async function renderMediaBlockers(
 	input: unknown,
 	workspace: string,

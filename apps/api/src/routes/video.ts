@@ -1,3 +1,4 @@
+import { projectMediaLibrary } from "@maleo/db/project-media-assets";
 import { captionOutputBlockers } from "@maleo/shared";
 import { Hono } from "hono";
 import { fieldOf } from "@maleo/shared";
@@ -217,15 +218,13 @@ export function videoRoutes(): Hono {
 			);
 			if (captionIssues.length)
 				return c.json({ error: "captions_need_refresh", blockers: captionIssues }, 422);
-			const sourceBlockers = await renderMediaBlockers(
-				r.doc,
-				project.project.workspace,
-				project.project.editor_state_json,
-			);
+			const sourceBlockers = await renderMediaBlockers(r.doc, project.project.workspace, {
+				media_assets: await projectMediaLibrary(project.project.id),
+			});
 			if (sourceBlockers.length)
 				return c.json({ error: "media_unavailable", blockers: sourceBlockers }, 422);
 			const built = buildRenderStoryboardFromDoc(r.config, r.refs, r.doc, {
-				mediaAssets: project.project.editor_state_json?.media_assets,
+				mediaAssets: await projectMediaLibrary(project.project.id),
 				trackFlags: r.trackFlags,
 				captions: r.captions,
 				pacingDevices: r.pacingDevices,
@@ -250,7 +249,7 @@ export function videoRoutes(): Hono {
 			const blockers = await renderMediaBlockers(
 				isStoryboard ? (storyboard ?? body.product) : body.product,
 				project.project.workspace,
-				project.project.editor_state_json,
+				{ media_assets: await projectMediaLibrary(project.project.id) },
 			);
 			if (blockers.length)
 				return c.json({ error: "media_unavailable", message: blockers.join(" "), blockers }, 422);

@@ -13,6 +13,7 @@ import {
 	MEDIA_ID_CONFLICT,
 	type ProjectMediaImport,
 } from "@maleo/db/media-imports";
+import { admitProjectMediaAsset } from "@maleo/db/project-media-assets";
 import { openDb } from "@maleo/db/connection";
 import { serialize } from "@maleo/db/handle";
 import { getWorkspaceMember } from "@maleo/db/workspace-members";
@@ -415,6 +416,9 @@ async function publishImport(
 		};
 		if (!(await finishProjectMediaImport(current, asset, tx)))
 			throw new HTTPException(409, { message: "Import was cancelled or replaced" });
+		// The project's library holds the upload under the identity its client minted,
+		// with a `media.admit` entry every client reads before anyone places it.
+		await admitProjectMediaAsset(row.project_id, { ...asset, id: row.media_id ?? row.id }, tx);
 		return (await getProjectMediaImport(row.id, tx))!;
 	});
 }

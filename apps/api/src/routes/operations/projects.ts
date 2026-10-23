@@ -1,4 +1,5 @@
 /* Content project list/feed + CRUD + editor-state routes. */
+import { projectMediaLibrary } from "@maleo/db/project-media-assets";
 import { commandSeqOfVersion } from "@maleo/db/project-commands";
 import type { Hono } from "hono";
 import { listContentFeed, listContentProjects } from "@maleo/db/content-projects";
@@ -207,6 +208,8 @@ export function registerProjectRoutes(app: Hono): void {
 			entities: toReferenceEntityWires(detail.entities),
 			notes: toProjectNoteWires(detail.notes),
 			speakers: toProjectSpeakerWires(detail.speakers),
+			/* The project's media library: its rows, never the editor state's list. */
+			mediaAssets: await projectMediaLibrary(detail.project.id),
 			/* Where the editor's command log reading starts: the entry that wrote the
 			 * version it loads, so a write landing after this read is delivered. */
 			commandSeq: detail.storyboards[0]

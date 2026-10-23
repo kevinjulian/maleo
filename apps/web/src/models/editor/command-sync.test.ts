@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vite-plus/test";
 import {
+	admitMedia,
 	engineExecutor,
 	insertClip,
 	moveClip,
@@ -7,7 +8,7 @@ import {
 	type EditorCommand,
 	type EditScope,
 } from "@maleo/shared/editor";
-import type { Clip } from "@maleo/shared";
+import { mediaUrl, mintMediaId, type Clip } from "@maleo/shared";
 import type { CommandLogRead, SubmitCommandsReply } from "@api/project-commands.ts";
 import { testEngine as engine } from "@models/editor-engine/engine-fixture.ts";
 import { createCommandLedger } from "@models/chat/command-ledger.ts";
@@ -163,12 +164,19 @@ describe("the editor submits its pending commands", () => {
 });
 
 describe("the editor reads the log", () => {
-	test("an agent's scope.replace lands under pending edits and keeps the media library", async () => {
-		const media = [
-			{ id: "m1", label: "Upload", url: "/api/media/m1", kind: "image", source: "upload" },
-		];
-		const agentScope = scopeOf([clip("text:1"), clip("text:9", 7)]);
-		const { sync, edit, scope } = editor(scopeOf([clip("text:1")], media as never), {
+	test("an agent's scope.replace lands under pending edits with the server's library plus local pending uploads", async () => {
+		const pendingId = mintMediaId();
+		const pending = {
+			id: pendingId,
+			label: "Uploading",
+			url: mediaUrl(pendingId),
+			kind: "image",
+			source: "upload",
+		};
+		const stale = { id: "old", label: "Old", url: "/old.png", kind: "image", source: "stock" };
+		const server = { id: "s1", label: "Stock", url: "/stock.png", kind: "image", source: "stock" };
+		const agentScope = scopeOf([clip("text:1"), clip("text:9", 7)], [server] as never);
+		const { sync, edit, scope } = editor(scopeOf([clip("text:1")], [pending, stale] as never), {
 			read: async (after) => ({
 				headSeq: after + 1,
 				headVersion: after + 1,
@@ -187,9 +195,34 @@ describe("the editor reads the log", () => {
 		await sync.pull();
 
 		expect(starts(scope())).toEqual({ "text:1": 4, "text:9": 7 });
-		expect(scope().mediaAssets).toEqual(media);
+		expect(scope().mediaAssets).toEqual([pending, server]);
 		expect(sync.pending()).toBe(1);
 		expect(sync.baseSeq()).toBe(2);
+	});
+
+	test("a pending scope.replace does not hide an asset another client admitted", async () => {
+		const own = { id: "m1", label: "Mine", url: "/m1.png", kind: "image", source: "stock" };
+		const theirs = { id: "t1", label: "Theirs", url: "/t1.png", kind: "image", source: "stock" };
+		const { sync, edit, scope } = editor(scopeOf([clip("text:1")], [own] as never), {
+			read: async (after) => ({
+				headSeq: after + 1,
+				headVersion: after,
+				headStoryboardId: null,
+				entries: [
+					{
+						seq: after + 1,
+						version: null,
+						actor: "system",
+						commands: [admitMedia(theirs as never)],
+					},
+				],
+			}),
+		});
+		// An undo, sent as a whole-scope replace carrying this client's library.
+		edit(replaceScope(scopeOf([clip("text:1", 5)], [own] as never)));
+		await sync.pull();
+		expect(sync.pending()).toBe(1);
+		expect(scope().mediaAssets).toEqual([theirs, own]);
 	});
 
 	test("a pending edit the delivered entries make impossible is dropped and reported", async () => {

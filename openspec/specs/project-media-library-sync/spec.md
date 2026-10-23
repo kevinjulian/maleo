@@ -1,8 +1,10 @@
+# project-media-library-sync Specification
+
 ## Purpose
 
 Keep a project's media library as server-owned records that change through the project command log, so every client of the project sees the same library, including uploads not yet placed on the timeline.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: The server owns the project's media library
 

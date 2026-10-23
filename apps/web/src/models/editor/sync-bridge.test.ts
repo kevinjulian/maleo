@@ -74,19 +74,61 @@ describe("which editor writes reach the command log", () => {
 		expect(sent).toEqual([[replaceScope(scopeOf(1)), replaceScope(a)]]);
 	});
 
-	test("a media-library-only change is not sent", () => {
-		const a = scopeOf(0);
-		const { bridge, sent, set } = wired(a);
-		set({ ...a, mediaAssets: [{ id: "m" } as never] });
-		bridge.catchUp();
-		expect(sent).toEqual([]);
-	});
-
 	test("nothing is sent before a project is attached", () => {
 		const { bridge, sent } = wired(scopeOf(0));
 		bridge.detach();
 		bridge.applied(scopeOf(0), move, back, scopeOf(1));
 		bridge.catchUp();
 		expect(sent).toEqual([]);
+	});
+});
+
+describe("the media library reaches the log as media commands (p1-media-library)", () => {
+	const asset = (id: string, favorite = false) => ({
+		id,
+		label: id,
+		url: `/${id}.png`,
+		kind: "image" as const,
+		source: "stock" as const,
+		...(favorite ? { favorite } : {}),
+	});
+	const storyboard = scopeOf(0);
+	const withMedia = (mediaAssets: EditScope["mediaAssets"]): EditScope => ({
+		...storyboard,
+		mediaAssets,
+	});
+
+	test("assets added around the stack are sent as one media.admit each, oldest first", () => {
+		const a = scopeOf(0);
+		const base = { ...a, mediaAssets: [asset("old")] };
+		const { bridge, sent, set } = wired(base);
+		set({ ...base, mediaAssets: [asset("b"), asset("a"), asset("old")] });
+		bridge.catchUp();
+		expect(sent.map(([command]) => command)).toEqual([
+			{ type: "media.admit", asset: asset("a") },
+			{ type: "media.admit", asset: asset("b") },
+		]);
+		expect(sent[1]![1]).toEqual({ type: "media.update", mediaAssets: [asset("a"), asset("old")] });
+	});
+
+	test("any other library change around the stack is sent as media.update of the list", () => {
+		const base = withMedia([asset("a"), asset("b")]);
+		const { bridge, sent, set } = wired(base);
+		set(withMedia([asset("a", true)]));
+		bridge.catchUp();
+		expect(sent).toEqual([
+			[
+				{ type: "media.update", mediaAssets: [asset("a", true)] },
+				{ type: "media.update", mediaAssets: [asset("a"), asset("b")] },
+			],
+		]);
+	});
+
+	test("an undo that changes the storyboard and the library sends both", () => {
+		const before = withMedia([asset("a")]);
+		const after = { ...scopeOf(1), mediaAssets: [] };
+		const { bridge, sent } = wired(before);
+		bridge.replaced(before, after);
+		expect(sent.map(([command]) => command.type)).toEqual(["scope.replace", "media.update"]);
 	});
 });

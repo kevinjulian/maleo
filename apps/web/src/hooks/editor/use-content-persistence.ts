@@ -1,5 +1,7 @@
 /* Maleo — persistence for a content project: the storyboard, the decoupled
- * editor state (chat + media library), and the project meta.
+ * editor state (chat, settings, provenance), and the project meta. The media
+ * library is not here: it is server-owned and changes through the command log
+ * (`p1-media-library`).
  *
  * Storyboard edits reach the server as commands through the project command
  * log (`use-command-log.ts`); nothing here posts a whole document. The three
@@ -23,7 +25,6 @@ import type {
 } from "@maleo/shared";
 import type { ChatLogMessage } from "@models/chat/chat-log.ts";
 import type { HookVariant } from "@models/content/content-types.ts";
-import type { MediaAsset } from "@models/timeline/editor-media.ts";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import type { SaveState } from "@models/content/create-content-model.ts";
 import type { ElementSourceMap, RenderOverrides } from "@models/presets/element-sources.ts";
@@ -38,7 +39,6 @@ interface PresentationBundle {
 
 interface EditorStateBundle {
 	chatMessages: ChatLogMessage[];
-	mediaAssets: MediaAsset[];
 	settings: GlobalSettings;
 	trackFlags: TrackFlags;
 	hookVariants: HookVariant[];
@@ -150,7 +150,6 @@ export function useContentPersistence(input: {
 		const next = { ...es, ...overrides };
 		return saveEditorState(projectId, {
 			chat: next.chatMessages,
-			mediaAssets: next.mediaAssets,
 			settings: next.settings,
 			trackFlags: next.trackFlags,
 			hookVariants: next.hookVariants,
@@ -162,14 +161,13 @@ export function useContentPersistence(input: {
 		});
 	};
 
-	// Editor state (chat + media library) saves on its own debounce, decoupled from
+	// Editor state saves on its own debounce, decoupled from
 	// the versioned storyboard so it isn't duplicated per version or lost on a
 	// partial storyboard write.
 	useDebouncedSave(
 		true,
 		[
 			es.chatMessages,
-			es.mediaAssets,
 			es.settings,
 			es.trackFlags,
 			es.hookVariants,

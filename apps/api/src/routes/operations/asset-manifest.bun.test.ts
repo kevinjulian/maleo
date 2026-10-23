@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto";
 import { Hono } from "hono";
 import { mediaUrl, mintMediaId } from "@maleo/shared";
 import { openDb } from "@maleo/db/connection";
+import { applyMediaLibraryChange } from "@maleo/db/project-media-assets";
+import type { MediaAsset } from "@maleo/shared/editor";
 import { createContentProject } from "@maleo/db/project-detail";
 import { registerMediaObject } from "@maleo/db/media-objects";
 import { failProjectMediaImport, reserveProjectMediaImport } from "@maleo/db/media-imports";
@@ -44,10 +46,10 @@ async function project(clips: unknown[], mediaAssets: unknown[] = []) {
 		title: "Manifest",
 		seed_storyboard: { storyboard_json: { clips } },
 	}))!;
-	await openDb().run("UPDATE content_projects SET editor_state_json = ? WHERE id = ?", [
-		JSON.stringify({ media_assets: mediaAssets }),
-		created.project.id,
-	]);
+	// The project's library rows (`p1-media-library`), written as stored.
+	await openDb().transaction((tx) =>
+		applyMediaLibraryChange(tx, created.project.id, [], mediaAssets as MediaAsset[]),
+	);
 	return created.project.id;
 }
 
@@ -75,7 +77,14 @@ test("each referenced identity is listed once with its state", async () => {
 			{ id: "video:5", video: { url: mediaUrl(goneId) } },
 			{ id: "video:6", video: { url: "https://cdn.example/stock.mp4" } },
 		],
-		[{ label: "Spare", url: mediaUrl(pendingId), metadata: { originalFilename: "camera.mov" } }],
+		[
+			{
+				id: pendingId,
+				label: "Spare",
+				url: mediaUrl(pendingId),
+				metadata: { originalFilename: "camera.mov" },
+			},
+		],
 	);
 	await reserve(id, pendingId, "camera.mov");
 	const { row } = await reserve(id, failedId, "broken.mov");

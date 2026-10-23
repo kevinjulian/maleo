@@ -15,9 +15,6 @@ import type { ChatLogMessage } from "@models/chat/chat-log.ts";
 import type { HookVariant } from "@models/content/content-types.ts";
 import type { MediaAsset } from "@models/timeline/editor-media.ts";
 import { DEFAULT_SETTINGS, type GlobalSettings } from "@models/presets/creative-settings.ts";
-import type { EditorStateJson, StoryboardJson } from "./parse-loaded-project.ts";
-
-type EditorState = EditorStateJson | null;
 
 export function parseHookVariants(raw: unknown): HookVariant[] {
 	if (!Array.isArray(raw)) return [];
@@ -147,17 +144,12 @@ export function resolveSettings(raw: unknown, fallbackFormat: string | undefined
 	};
 }
 
-export function parseMediaAssets(
-	editorState: EditorState,
-	latestStoryboard: StoryboardJson | null,
-): MediaAsset[] {
-	// SAFETY: the legacy storyboard copy is only cast once it is an array, and the
-	// filter below drops any entry without a string url.
-	const raw = Array.isArray(editorState?.media_assets)
-		? editorState.media_assets
-		: Array.isArray(latestStoryboard?.media_assets)
-			? (latestStoryboard.media_assets as MediaAsset[])
-			: [];
+/** The project's media library as the project read returns it: the server's rows
+ *  (`p1-media-library`), never the editor state's list or a document's. */
+export function parseMediaAssets(library: unknown): MediaAsset[] {
+	// SAFETY: the list is only cast once it is an array, and the filter below
+	// drops any entry without a string url.
+	const raw = Array.isArray(library) ? (library as MediaAsset[]) : [];
 	return raw
 		.filter((a) => a && typeof a.url === "string")
 		.map((asset) => {

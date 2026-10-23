@@ -94,6 +94,8 @@ export function useCommandLog(input: {
 			timer = setTimeout(submit, SUBMIT_DEBOUNCE_MS);
 		};
 		const onFocus = (): void => {
+			// A write around the stack goes first, so the read cannot overwrite it.
+			log.bridge.catchUp();
 			void sync.pull().catch(() => {
 				/* the next submit or focus reads again */
 			});

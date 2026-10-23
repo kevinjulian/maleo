@@ -2,7 +2,11 @@ import { expect, test } from "bun:test";
 import { Hono } from "hono";
 import { randomUUID } from "node:crypto";
 import { execFileSync } from "node:child_process";
-import { createContentProject, setContentEditorState } from "@maleo/db/project-detail";
+import { createContentProject } from "@maleo/db/project-detail";
+import { openDb } from "@maleo/db/connection";
+import { applyMediaLibraryChange, lockedMediaLibrary } from "@maleo/db/project-media-assets";
+import type { MediaAsset } from "@maleo/shared/editor";
+
 import { registerMediaObject, mediaObjectUrl } from "@maleo/db/media-objects";
 import {
 	reserveProjectMediaImport,
@@ -21,6 +25,15 @@ import type { CaptionProcessingJob, ProcessingMediaClient } from "@maleo/media/a
 import { installTestCaller } from "../../../../middleware/auth-testing.ts";
 import { workspaceScope } from "../../../../lib/active-workspace.ts";
 import { projectMediaProcessingRoutes } from "../../index.ts";
+
+/** The project's library rows, set wholesale (`p1-media-library`). */
+async function setLibrary(projectId: string, list: object[]): Promise<void> {
+	await openDb().transaction(async (tx) => {
+		const before = await lockedMediaLibrary(tx, projectId);
+		// SAFETY: test fixtures shaped as the assets the scope holds.
+		await applyMediaLibraryChange(tx, projectId, before, list as MediaAsset[]);
+	});
+}
 
 const headers = { "content-type": "application/json" };
 
@@ -102,7 +115,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 			url: mediaObjectUrl(media.id),
 			dur: 2,
 		};
-		await setContentEditorState(project.id, { media_assets: [asset] });
+		await setLibrary(project.id, [asset]);
 		const input = {
 			requestKey: randomUUID(),
 			doc: {
@@ -199,7 +212,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 		expect(
 			(await post({ ...input, padding: "x".repeat(CAPTION_JOB_LIMITS.maxBodyBytes) })).status,
 		).toBe(413);
-		await setContentEditorState(project.id, { media_assets: [] });
+		await setLibrary(project.id, []);
 		expect((await app.request(`/projects/${project.id}/captions/jobs/${id}`)).status).toBe(409);
 		expect(
 			(await app.request(`/projects/${project.id}/captions/jobs/${id}`, { method: "DELETE" }))
@@ -226,7 +239,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 		expect(await denied.json()).toMatchObject({ error: "unknown_workspace" });
 		expect(jobs.size).toBe(1);
 		const requestKey = mintMediaId();
-		await setContentEditorState(project.id, { media_assets: [asset] });
+		await setLibrary(project.id, [asset]);
 		const packetTail = (durationSec: number) => ({
 			...input,
 			requestKey: randomUUID(),
@@ -278,9 +291,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 				playbackMediaId: media.id,
 			},
 		});
-		await setContentEditorState(project.id, {
-			media_assets: [{ ...asset, url: mediaUrl(requestKey) }],
-		});
+		await setLibrary(project.id, [{ ...asset, url: mediaUrl(requestKey) }]);
 		expect(
 			(
 				await sourceMedia(media.id, {
@@ -297,7 +308,7 @@ test("caption routes authorize admitted sources from live unsaved state and fenc
 				revision: row.source_revision,
 			}),
 		).rejects.toThrow();
-		await setContentEditorState(project.id, { media_assets: [] });
+		await setLibrary(project.id, []);
 		expect(
 			(
 				await sourceMedia(media.id, {

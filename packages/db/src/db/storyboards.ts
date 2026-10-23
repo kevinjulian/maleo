@@ -7,6 +7,7 @@ import { recordContentProjectEventDb } from "./events.ts";
 import { replaceScope } from "@maleo/shared/editor/commands";
 import { storyboardScope } from "@maleo/shared/editor/storyboard-scope";
 import { recordCommandEntry, type LoggedCommand } from "./project-commands.ts";
+import { lockedMediaLibrary } from "./project-media-assets.ts";
 import {
 	pruneStoryboardVersions,
 	storyboardRetentionPolicy,
@@ -56,7 +57,8 @@ export class StoryboardRevisionConflict extends Error {
  *
  *  The version's command log entry is written in the same transaction: the
  *  `commands` that produced it, or — for a writer that submits none — one
- *  `scope.replace` of the written document's editable scope. */
+ *  `scope.replace` of the written document's editable scope with the project's
+ *  media library, which clients apply. */
 export async function addContentStoryboard(
 	input: {
 		project_id: string;
@@ -132,7 +134,11 @@ export async function addContentStoryboard(
 			project_id: input.project_id,
 			version,
 			commands: input.commands ?? [
-				{ command: replaceScope(storyboardScope(input.storyboard_json)) },
+				{
+					command: replaceScope(
+						storyboardScope(input.storyboard_json, await lockedMediaLibrary(tx, input.project_id)),
+					),
+				},
 			],
 			actor_type: input.actor_type ?? "system",
 			created_at: now,

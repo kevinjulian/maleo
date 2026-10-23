@@ -4,18 +4,27 @@
  * engine the editor runs, under the same per-project lock every storyboard
  * writer takes. A command the engine refuses, or whose result fails the save
  * route's rules, is rejected and the next one runs. The accepted ones become one
- * new version, whose log entry holds them. */
+ * new version, whose log entry holds them — or, when they change only the media
+ * library, one entry that names no version (`p1-media-library` D2). The scope's
+ * library is the project's rows; the accepted library is written back as row
+ * changes in the same transaction. */
 import { openDb } from "@maleo/db/connection";
 import { serialize, type Db } from "@maleo/db/handle";
 import {
 	commandEntriesBetween,
 	commandOutcomes,
 	headCommandSeq,
+	recordCommandEntry,
 	recordCommandRejection,
 	type CommandLogEntry,
 	type CommandRejection,
 	type LoggedCommand,
 } from "@maleo/db/project-commands";
+import {
+	applyMediaLibraryChange,
+	lockedMediaLibrary,
+	projectMediaLibrary,
+} from "@maleo/db/project-media-assets";
 import { syncProjectReferenceLock } from "@maleo/db/references";
 import {
 	addContentStoryboard,
@@ -30,6 +39,7 @@ import {
 	storyboardWithScope,
 	type EditorCommand,
 	type EditScope,
+	type MediaAsset,
 } from "@maleo/shared/editor";
 import { editorEngine } from "./editor-engine.ts";
 import { prepareStoryboardSave } from "./storyboard-save.ts";
@@ -45,7 +55,8 @@ export interface SubmitResult {
 	readonly accepted: {
 		readonly clientCommandId: string;
 		readonly seq: number;
-		readonly version: number;
+		/** Null when the command changed only the media library. */
+		readonly version: number | null;
 	}[];
 	readonly rejected: ({ readonly clientCommandId: string } & CommandRejection)[];
 	/** Entries after the base sequence the client has not seen, in order. */
@@ -68,10 +79,14 @@ async function headRow(db: Db, projectId: string): Promise<ContentStoryboardRow 
 	return row ? mapContentStoryboardRow(row) : null;
 }
 
-const snapshotOf = (head: ContentStoryboardRow, seq: number): CommandLogEntry => ({
+const snapshotOf = (
+	head: ContentStoryboardRow,
+	library: MediaAsset[],
+	seq: number,
+): CommandLogEntry => ({
 	seq,
 	version: head.version,
-	commands: [replaceScope(storyboardScope(head.storyboard_json))],
+	commands: [replaceScope(storyboardScope(head.storyboard_json, library))],
 	actor: "system",
 	snapshot: true,
 });
@@ -84,15 +99,36 @@ async function entriesAfter(
 	after: number,
 	headSeq: number,
 	head: ContentStoryboardRow | null,
+	library: () => Promise<MediaAsset[]>,
 ): Promise<CommandLogEntry[]> {
 	if (headSeq <= after) return [];
 	const entries = await commandEntriesBetween(projectId, after, headSeq, db);
 	if (entries) return entries;
-	return head ? [snapshotOf(head, headSeq)] : [];
+	return head ? [snapshotOf(head, await library(), headSeq)] : [];
+}
+
+/** Commands that write only the media library: they need no storyboard version. */
+const isLibraryCommand = (command: EditorCommand): boolean =>
+	command.type === "media.admit" || command.type === "media.update";
+
+/** A submitted `scope.replace` carries the client's library; the library changes
+ *  only through `media.*` commands, so the server's is kept. */
+const withServerLibrary = (command: EditorCommand, library: MediaAsset[]): EditorCommand =>
+	command.type === "scope.replace"
+		? { ...command, scope: { ...command.scope, mediaAssets: library } }
+		: command;
+
+/** The rows' constraints, checked before writing: one asset per id and per URL. */
+function libraryIssue(library: readonly MediaAsset[]): string | null {
+	const ids = new Set(library.map((asset) => asset.id));
+	const urls = new Set(library.map((asset) => asset.url));
+	return ids.size === library.length && urls.size === library.length
+		? null
+		: "Two media assets share an id or a URL.";
 }
 
 type Executed =
-	| { ok: true; scope: EditScope; storyboard_json: StoredStoryboardDocument }
+	| { ok: true; scope: EditScope; storyboard_json?: StoredStoryboardDocument }
 	| { ok: false; error: CommandRejection };
 
 /** One command against `scope`, and the document it would save. */
@@ -101,6 +137,9 @@ function executeOne(head: unknown, scope: EditScope, command: EditorCommand): Ex
 	if (!result.ok) return { ok: false, error: result.error };
 	// SAFETY: `{scope, inverse}` as the engine writes it; the scope is the admitted one, edited.
 	const next = (JSON.parse(result.value) as { scope: EditScope }).scope;
+	const issue = libraryIssue(next.mediaAssets);
+	if (issue) return { ok: false, error: { kind: "invalid_media_library", message: issue } };
+	if (isLibraryCommand(command)) return { ok: true, scope: next };
 	let written: StoredStoryboardDocument;
 	try {
 		written = storyboardWithScope(head, next);
@@ -144,12 +183,13 @@ export async function submitCommands(
 		);
 		const head = await headRow(tx, projectId);
 		const headSeq = await headCommandSeq(tx, projectId);
-		let scope = storyboardScope(head?.storyboard_json);
+		const library = await lockedMediaLibrary(tx, projectId);
+		let scope = storyboardScope(head?.storyboard_json, library);
 		let written: StoredStoryboardDocument | undefined;
 		const fresh: LoggedCommand[] = [];
 		const accepted: SubmitResult["accepted"] = [];
 		const rejected: SubmitResult["rejected"] = [];
-		for (const { clientCommandId, command } of commands) {
+		for (const { clientCommandId, command: submitted } of commands) {
 			const outcome = known.get(clientCommandId);
 			if (outcome?.state === "accepted") {
 				accepted.push({ clientCommandId, seq: outcome.seq, version: outcome.version });
@@ -159,6 +199,7 @@ export async function submitCommands(
 				rejected.push({ clientCommandId, ...outcome.error });
 				continue;
 			}
+			const command = withServerLibrary(submitted, scope.mediaAssets);
 			const executed = executeOne(head?.storyboard_json, scope, command);
 			if (!executed.ok) {
 				await recordCommandRejection(tx, projectId, clientCommandId, executed.error);
@@ -166,17 +207,30 @@ export async function submitCommands(
 				continue;
 			}
 			scope = executed.scope;
-			written = executed.storyboard_json;
+			if (executed.storyboard_json) written = executed.storyboard_json;
 			fresh.push({ command, clientCommandId });
 		}
 		/* What this client already knows: its own accepted entries, from this
 		 * submission or the attempt it is retrying. */
 		const own = new Set(accepted.map((a) => a.seq));
-		const delivered = (await entriesAfter(tx, projectId, baseSeq, headSeq, head)).filter(
-			(entry) => !own.has(entry.seq),
-		);
-		if (!written)
+		const delivered = (
+			await entriesAfter(tx, projectId, baseSeq, headSeq, head, async () => library)
+		).filter((entry) => !own.has(entry.seq));
+		if (!fresh.length)
 			return { headSeq, headVersion: head?.version ?? 0, accepted, rejected, delivered };
+		await applyMediaLibraryChange(tx, projectId, library, scope.mediaAssets);
+		if (!written) {
+			const seq = await recordCommandEntry(tx, {
+				project_id: projectId,
+				version: null,
+				commands: fresh,
+				actor_type: "editor",
+				created_at: Date.now(),
+			});
+			for (const { clientCommandId } of fresh)
+				accepted.push({ clientCommandId: clientCommandId!, seq, version: null });
+			return { headSeq: seq, headVersion: head?.version ?? 0, accepted, rejected, delivered };
+		}
 		const saved = await addContentStoryboard(
 			{ project_id: projectId, storyboard_json: written, commands: fresh, actor_type: "editor" },
 			tx,
@@ -214,7 +268,12 @@ export async function readCommandLog(
 		headSeq,
 		headVersion: head?.version ?? 0,
 		headStoryboardId: head?.id ?? null,
-		entries: after === undefined ? [] : await entriesAfter(db, projectId, after, headSeq, head),
+		entries:
+			after === undefined
+				? []
+				: await entriesAfter(db, projectId, after, headSeq, head, () =>
+						projectMediaLibrary(projectId, db),
+					),
 	};
 }
 

@@ -15,7 +15,7 @@ import {
 } from "./content-projects.ts";
 import { recordContentProjectEventDb } from "./events.ts";
 import { upsertProjectSpeaker } from "./project-children.ts";
-import { parseJsonValue, isStringArray } from "./row-json.ts";
+import { parseJsonValue, isJsonObjectOrNull, isStringArray } from "./row-json.ts";
 import type {
 	ContentProjectBrief,
 	ContentProjectStatus,
@@ -326,18 +326,36 @@ export async function createContentProject(
 	return (await getContentProject(projectId, db))!;
 }
 
-// Persist the project's mutable editor state (chat log, media library). Stored on
-// content_projects, separate from the versioned storyboard snapshots.
+// Persist the project's mutable editor state (chat log, settings, provenance).
+// Stored on content_projects, separate from the versioned storyboard snapshots.
+// The media library is its own rows (`project-media-assets.ts`), so a written
+// `media_assets` is ignored and the stored one — the list imported from, kept for
+// rollback — stays as it was.
 export async function setContentEditorState(
 	projectId: string,
 	state: Record<string, unknown>,
 	db: Db = openDb(),
 ): Promise<boolean> {
-	const res = await db.run(
-		`UPDATE content_projects SET editor_state_json = ?, updated_at = ? WHERE id = ?`,
-		[JSON.stringify(state), Date.now(), projectId],
-	);
-	return res.changes > 0;
+	const { media_assets: _written, ...rest } = state;
+	return db.transaction(async (tx) => {
+		const row = await tx.get<{ editor_state_json: string | null }>(
+			`SELECT editor_state_json FROM content_projects WHERE id = ?`,
+			[projectId],
+		);
+		if (!row) return false;
+		const stored = parseJsonValue<Record<string, unknown> | null>(
+			row.editor_state_json,
+			null,
+			isJsonObjectOrNull,
+		)?.media_assets;
+		const next = stored === undefined ? rest : { ...rest, media_assets: stored };
+		await tx.run(`UPDATE content_projects SET editor_state_json = ?, updated_at = ? WHERE id = ?`, [
+			JSON.stringify(next),
+			Date.now(),
+			projectId,
+		]);
+		return true;
+	});
 }
 
 // Columns on content_projects that callers may patch. brief_json is serialized.

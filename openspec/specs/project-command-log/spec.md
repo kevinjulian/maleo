@@ -113,7 +113,8 @@ caller SHALL receive the refusal the project routes give.
 The web editor SHALL persist edits by submitting its pending commands, and
 SHALL NOT post whole storyboard documents for edits it can express as
 commands. It SHALL apply delivered entries through the shared core's rebase,
-SHALL keep its own media library when it applies a delivered `scope.replace`,
+SHALL apply the media library a delivered `scope.replace` carries, keeping only
+its own assets whose upload has not finished,
 and SHALL tell the user when a pending edit was rejected or dropped. The editor
 SHALL NOT submit its local merge or preview of an agent run; when the run ends,
 the run's version from the log SHALL replace the local merge. Fields outside

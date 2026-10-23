@@ -109,6 +109,8 @@ export interface LoadedProjectDetail {
 	storyboards: Array<{ storyboard_json: StoryboardJson }>;
 	/** The command log sequence of the loaded version (`p1-command-log`). */
 	commandSeq?: number;
+	/** The project's media library, from the server's rows (`p1-media-library`). */
+	mediaAssets?: unknown;
 	/** The project's selected reference entities, as domain objects. The server
 	 *  maps its rows once (`lib/wire/reference-entity.ts`), so nothing here parses
 	 *  `tags_json` or compares `is_primary` to 1. */
@@ -490,7 +492,7 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 						: items,
 			};
 		};
-		const mediaAssets = parseMediaAssets(editorState, latestStoryboard);
+		const mediaAssets = parseMediaAssets(detail.mediaAssets);
 		/* The document's presentation wins over the editor state, so a restored version
 		   opens as it rendered — and where it actually replaces a value, that element is
 		   recorded as the operator's. Without that the source map would describe values the

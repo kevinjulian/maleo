@@ -6,7 +6,11 @@ import { Hono } from "hono";
 import { randomUUID } from "node:crypto";
 import { execFileSync, spawn } from "node:child_process";
 import { join, resolve } from "node:path";
-import { createContentProject, setContentEditorState } from "@maleo/db/project-detail";
+import { createContentProject } from "@maleo/db/project-detail";
+import { openDb } from "@maleo/db/connection";
+import { applyMediaLibraryChange, lockedMediaLibrary } from "@maleo/db/project-media-assets";
+import type { MediaAsset } from "@maleo/shared/editor";
+
 import { registerMediaObject, mediaObjectUrl } from "@maleo/db/media-objects";
 import { createMediaClient } from "@maleo/media/api";
 import { putMedia } from "@maleo/storage";
@@ -22,6 +26,15 @@ import {
 import { registerProjectRoutes } from "../../../../routes/operations/projects.ts";
 import { registerStoryboardRoutes } from "../../../../routes/operations/storyboards.ts";
 import { mediaRoutes } from "../../../../routes/media.ts";
+
+/** The project's library rows, set wholesale (`p1-media-library`). */
+async function setLibrary(projectId: string, list: object[]): Promise<void> {
+	await openDb().transaction(async (tx) => {
+		const before = await lockedMediaLibrary(tx, projectId);
+		// SAFETY: test fixtures shaped as the assets the scope holds.
+		await applyMediaLibraryChange(tx, projectId, before, list as MediaAsset[]);
+	});
+}
 
 const enabled = process.env.MALEO_CAPTION_RUNTIME_PROOF === "1";
 test.skipIf(!enabled)(
@@ -121,9 +134,7 @@ test.skipIf(!enabled)(
 					size: stored.size,
 				});
 				const url = mediaObjectUrl(media.id);
-				await setContentEditorState(project.id, {
-					media_assets: [{ id: "speech", label: sample, kind, url, dur: duration }],
-				});
+				await setLibrary(project.id, [{ id: "speech", label: sample, kind, url, dur: duration }]);
 				const doc: EditorDoc = {
 					schemaVersion: 2,
 					markers: [],
@@ -347,7 +358,7 @@ test.skipIf(!enabled)(
 						final: mixed.doc,
 					});
 				}
-				await setContentEditorState(project.id, { media_assets: [] });
+				await setLibrary(project.id, []);
 				expect((await fetch(`${path}/${accepted.id}`)).status).toBe(409);
 				expect(
 					(
