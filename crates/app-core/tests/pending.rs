@@ -128,3 +128,60 @@ fn a_delivered_command_that_fails_is_a_divergence_and_changes_nothing() {
     assert_eq!(queue, before);
     assert!(ledger.can_undo());
 }
+
+#[test]
+fn a_reply_with_accepted_rejected_and_delivered_resolves_in_one_call() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1", "text:2"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+    let s2 = local(&mut queue, &mut ledger, &s1, "c2", move_to("text:2", 6.0));
+    let s3 = local(&mut queue, &mut ledger, &s2, "c3", insert("text:3", 2.0));
+    let remote = insert("text:9", 7.0);
+
+    // The server delivered `remote`, accepted c1 and c3 after it, and rejected c2.
+    let resolved = queue.resolve(&s3, std::slice::from_ref(&remote), &["c1", "c3"], &["c2"], &mut ledger).expect("resolves");
+
+    assert!(resolved.dropped.is_empty());
+    assert_eq!(resolved.scope, run_all(&s0, &[remote, move_to("text:1", 4.0), insert("text:3", 2.0)]));
+    assert!(queue.items().is_empty());
+}
+
+#[test]
+fn a_resolve_keeps_commands_the_server_has_not_answered() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+    // Made while the request was in flight.
+    let s2 = local(&mut queue, &mut ledger, &s1, "c2", insert("text:2", 1.0));
+
+    let resolved = queue.resolve(&s2, &[], &["c1"], &[], &mut ledger).expect("resolves");
+
+    assert_eq!(resolved.scope, s2);
+    assert_eq!(ids(&queue), ["c2"]);
+}
+
+#[test]
+fn a_pending_command_that_no_longer_applies_after_delivered_is_dropped() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+
+    let resolved = queue.resolve(&s1, &[remove("text:1")], &[], &[], &mut ledger).expect("resolves");
+
+    assert_eq!(resolved.dropped.len(), 1);
+    assert_eq!(resolved.dropped[0].id, "c1");
+    assert!(queue.items().is_empty());
+}
+
+#[test]
+fn an_accepted_command_that_no_longer_applies_is_a_divergence_and_changes_nothing() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+    let before = queue.clone();
+
+    let error = queue.resolve(&s1, &[remove("text:1")], &["c1"], &[], &mut ledger).expect_err("diverged");
+
+    assert_eq!(error, RebaseError::Accepted { id: "c1".into(), reason: EngineError::ClipNotFound("text:1".into()) });
+    assert_eq!(queue, before);
+}

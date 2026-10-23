@@ -168,19 +168,37 @@ impl AppState {
 
     /// `{"delivered": [commands…]}` in; `{"delta", "dropped": [{"id", "type", "kind", "message"}]}` out.
     pub fn pending_rebase(&mut self, documents: &mut Documents, queue: u32, ledger: u32, doc: u32, json: &str) -> Result<String, String> {
+        self.pending_resolve(documents, queue, ledger, doc, json)
+    }
+
+    /// A server reply (`p1-command-log` D3):
+    /// `{"delivered": [commands…], "accepted"?: [ids…], "rejected"?: [ids…]}` in;
+    /// `{"delta", "dropped": [{"id", "type", "kind", "message"}]}` out.
+    pub fn pending_resolve(&mut self, documents: &mut Documents, queue: u32, ledger: u32, doc: u32, json: &str) -> Result<String, String> {
         let mut input = parse(json)?;
         let delivered = match input["delivered"].take() {
             Value::Array(commands) => commands.into_iter().map(admit_command_value).collect::<Result<Vec<_>, _>>().map_err(|error| error_json(&error))?,
             _ => return Err(invalid("`delivered` is not an array")),
         };
+        let ids = |key: &str| -> Result<Vec<String>, String> {
+            match &input[key] {
+                Value::Null => Ok(Vec::new()),
+                Value::Array(items) => items.iter().map(|item| item.as_str().map(str::to_owned).ok_or_else(|| invalid(format!("`{key}` holds a non-string id")))).collect(),
+                _ => Err(invalid(format!("`{key}` is not an array"))),
+            }
+        };
+        let (accepted, rejected) = (ids("accepted")?, ids("rejected")?);
+        let accepted: Vec<&str> = accepted.iter().map(String::as_str).collect();
+        let rejected: Vec<&str> = rejected.iter().map(String::as_str).collect();
         let scope = documents.scope(doc)?;
         let held = find(&mut self.ledgers, ledger).ok_or_else(|| unknown("ledger", ledger))?;
         let pending = find(&mut self.queues, queue).ok_or_else(|| unknown("pending queue", queue))?;
-        let rebased = pending.rebase(scope, &delivered, held).map_err(|error| match error {
+        let resolved = pending.resolve(scope, &delivered, &accepted, &rejected, held).map_err(|error| match error {
             RebaseError::Unwind { id, reason } => refusal("RebaseUnwind", &reason, json!({ "id": id })),
             RebaseError::Delivered { index, reason } => refusal("RebaseDelivered", &reason, json!({ "index": index })),
+            RebaseError::Accepted { id, reason } => refusal("RebaseAccepted", &reason, json!({ "id": id })),
         })?;
-        let dropped: Vec<Value> = rebased
+        let dropped: Vec<Value> = resolved
             .dropped
             .iter()
             .map(|dropped| {
@@ -188,7 +206,7 @@ impl AppState {
                 json!({ "id": dropped.id, "type": dropped.command_type, "kind": reason["kind"], "message": reason["message"] })
             })
             .collect();
-        let delta = land(documents, doc, rebased.scope)?;
+        let delta = land(documents, doc, resolved.scope)?;
         Ok(format!("{{\"delta\":{delta},\"dropped\":{}}}", Value::Array(dropped)))
     }
 
@@ -309,6 +327,25 @@ mod tests {
         assert_eq!(documents.read(doc).expect("reads"), before);
         assert_eq!(app.pending_ack(queue, "c1").expect("acks"), "true");
         assert_eq!(app.pending_ack(queue, "c1").expect("acks"), "false");
+    }
+
+    #[test]
+    fn a_reply_resolves_accepted_and_rejected_in_one_call() {
+        let (mut app, mut documents) = (AppState::default(), Documents::default());
+        let doc = documents.open(SCOPE).expect("opens");
+        let (ledger, queue) = (app.ledger_open(60), app.pending_open());
+        for (id, start) in [("c1", 4), ("c2", 6)] {
+            let command = format!(r#"{{"type":"clip.move","id":"text:1","patch":{{"startSec":{start}}}}}"#);
+            let inverse = documents.execute(doc, &command).expect("moves");
+            app.pending_enqueue(queue, &format!(r#"{{"id":"{id}","command":{command},"inverse":{inverse}}}"#)).expect("enqueues");
+        }
+        let reply = r#"{"delivered":[{"type":"clip.insert","clip":{"id":"text:9","type":"text","startSec":7,"durationSec":1,"track":0}}],"accepted":["c1"],"rejected":["c2"]}"#;
+        let resolved = app.pending_resolve(&mut documents, queue, ledger, doc, reply).expect("resolves");
+        assert!(resolved.contains(r#""dropped":[]"#), "{resolved}");
+        let read = documents.read(doc).expect("reads");
+        assert!(read.contains(r#""startSec":4"#) && read.contains("text:9") && !read.contains(r#""startSec":6"#), "{read}");
+        assert_eq!(app.pending_state(queue).expect("state"), "[]");
+        assert_eq!(kind(&app.pending_resolve(&mut documents, queue, ledger, doc, r#"{"delivered":[],"accepted":[1]}"#).expect_err("bad id")), "InvalidInput");
     }
 
     #[test]

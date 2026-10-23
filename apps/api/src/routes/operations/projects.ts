@@ -1,4 +1,5 @@
 /* Content project list/feed + CRUD + editor-state routes. */
+import { commandSeqOfVersion } from "@maleo/db/project-commands";
 import type { Hono } from "hono";
 import { listContentFeed, listContentProjects } from "@maleo/db/content-projects";
 import { listContentOutputs } from "@maleo/db/outputs";
@@ -206,6 +207,11 @@ export function registerProjectRoutes(app: Hono): void {
 			entities: toReferenceEntityWires(detail.entities),
 			notes: toProjectNoteWires(detail.notes),
 			speakers: toProjectSpeakerWires(detail.speakers),
+			/* Where the editor's command log reading starts: the entry that wrote the
+			 * version it loads, so a write landing after this read is delivered. */
+			commandSeq: detail.storyboards[0]
+				? await commandSeqOfVersion(detail.project.id, detail.storyboards[0].version)
+				: 0,
 		});
 	});
 

@@ -296,3 +296,36 @@ export const createAssetBody = z
 		meta_json: jsonObject.nullable(),
 	})
 	.partial();
+
+/* --- project command log ------------------------------------------------- */
+
+/* The command itself is admitted by the engine, which owns the vocabulary and
+ * names what it refuses; the schema checks only the envelope. */
+export const submitCommandsBody = z
+	.object({
+		baseSeq: z.number().int().min(0),
+		commands: z
+			.array(
+				z
+					.object({
+						clientCommandId: z.string().min(1).max(200),
+						command: z.object({ type: z.string().min(1) }).passthrough(),
+					})
+					.strict(),
+			)
+			.min(1)
+			.max(500)
+			.refine(
+				(commands) => new Set(commands.map((c) => c.clientCommandId)).size === commands.length,
+				"client command ids repeat",
+			),
+	})
+	.strict();
+
+export const presentationPatchBody = z
+	.object({
+		pacingDevices: jsonObject.nullable().optional(),
+		infographicStyle: jsonObject.nullable().optional(),
+		presentation: jsonObject.nullable().optional(),
+	})
+	.strict();

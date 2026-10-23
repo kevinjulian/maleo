@@ -4,6 +4,9 @@ import { openDb } from "./connection.ts";
 import { serialize, type Db } from "./handle.ts";
 import { parseJsonValue } from "./row-json.ts";
 import { recordContentProjectEventDb } from "./events.ts";
+import { replaceScope } from "@maleo/shared/editor/commands";
+import { storyboardScope } from "@maleo/shared/editor/storyboard-scope";
+import { recordCommandEntry, type LoggedCommand } from "./project-commands.ts";
 import {
 	pruneStoryboardVersions,
 	storyboardRetentionPolicy,
@@ -49,7 +52,11 @@ export class StoryboardRevisionConflict extends Error {
 
 /** Write a new version and enforce retention, as one transaction: a write that
  *  fails prunes nothing, and the bound holds after every write rather than after
- *  a maintenance pass. See `storyboard-retention.ts` for what is kept. */
+ *  a maintenance pass. See `storyboard-retention.ts` for what is kept.
+ *
+ *  The version's command log entry is written in the same transaction: the
+ *  `commands` that produced it, or — for a writer that submits none — one
+ *  `scope.replace` of the written document's editable scope. */
 export async function addContentStoryboard(
 	input: {
 		project_id: string;
@@ -58,6 +65,8 @@ export async function addContentStoryboard(
 		reference_notes?: string | null;
 		status?: string;
 		storyboard_json: Record<string, unknown>;
+		commands?: readonly LoggedCommand[];
+		actor_type?: string;
 	},
 	db: Db = openDb(),
 	retention: StoryboardRetentionPolicy = storyboardRetentionPolicy(),
@@ -117,6 +126,15 @@ export async function addContentStoryboard(
 				version,
 				status: input.status ?? "draft",
 			},
+			created_at: now,
+		});
+		await recordCommandEntry(tx, {
+			project_id: input.project_id,
+			version,
+			commands: input.commands ?? [
+				{ command: replaceScope(storyboardScope(input.storyboard_json)) },
+			],
+			actor_type: input.actor_type ?? "system",
 			created_at: now,
 		});
 		await pruneStoryboardVersions(tx, input.project_id, retention);

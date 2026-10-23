@@ -943,6 +943,13 @@ export function writeStoryboardDocument(doc: StoryboardDocument) {
 	};
 }
 
+/** A stored storyboard as a writer emits it: the document, plus the slides of a
+ *  carousel or the posts of a thread when it has them. */
+export type StoredStoryboardDocument = ReturnType<typeof writeStoryboardDocument> & {
+	slides?: StoredSlide[];
+	posts?: StoredPost[];
+};
+
 /** Exported for the load path, which still owns the array→clip projection these
  *  feed. `sceneMetadataTextOverlays` and `migrateSceneTextOverlays` deliberately
  *  stayed in web: they DERIVE overlays from scenes and need track layout

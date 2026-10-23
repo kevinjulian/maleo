@@ -41,6 +41,7 @@ import { agentRunSucceeded, buildRenderPreflight, errMsg } from "@models/core/cc
 import type { AgentEditMarker, CommandExecutor } from "@maleo/shared/editor";
 import { useContentPersistence } from "@hooks/editor/use-content-persistence.ts";
 import { useProjectLoad } from "@hooks/editor/use-project-load.ts";
+import { useCommandLog } from "@hooks/editor/use-command-log.ts";
 // Re-export pure helpers so existing import sites (and tests) keep their paths.
 export {
 	logicalRefId,
@@ -128,9 +129,9 @@ export function CreateContent({
 		library,
 		liveLists: () => ({ slides: slidesRef.current, posts: postsRef.current }),
 	});
-	const { store, slides, setSlides, posts, setPosts, captions, scenes } = doc;
+	const { store, slides, setSlides, posts, setPosts, scenes } = doc;
 	const { overlays, audioOverlays, videoOverlays, infographicOverlays } = doc;
-	const { effects, transitions, projectReferences, trackFlags, writers } = doc;
+	const { effects, projectReferences, trackFlags, writers } = doc;
 	const { runCommand, isLatest, doUndo } = doc;
 	const { setScenes, setOverlays, setAudioOverlays, setVideoOverlays, setInfographicOverlays } =
 		writers;
@@ -203,6 +204,8 @@ export function CreateContent({
 	const [pendingInitial, setPendingInitial] = useState<PendingInitialRun | null>(null);
 	/** Set once the persisted project — chat log included — has been applied. */
 	const [projectLoaded, setProjectLoaded] = useState(false);
+	// The command log sequence of the loaded version; null until a project loads.
+	const [loadedSeq, setLoadedSeq] = useState<number | null>(null);
 	const [agentFailed, setAgentFailed] = useShellChromeField(chrome, "agentFailed");
 
 	/* Live mirrors for the agent loop: a multi-minute run's closure would
@@ -216,10 +219,12 @@ export function CreateContent({
 	);
 
 	const loadedAgentEditRef = useRef<AgentEditMarker | undefined>(undefined);
-	const loadedCaptionState = useRef<string | null>(null);
 	useProjectLoad({
 		initialProjectId,
-		onStart: () => setSaveError(null),
+		onStart: () => {
+			setSaveError(null);
+			setLoadedSeq(null);
+		},
 		onError: (message) => setSaveError(message),
 		persistIdentityRepair: async (p) => {
 			await saveStoryboard(
@@ -235,7 +240,6 @@ export function CreateContent({
 			);
 		},
 		apply: (p) => {
-			loadedCaptionState.current = p.persistedCaptionState;
 			setType(p.type);
 			loadedAgentEditRef.current = p.agentEdit;
 			setConfig(p.config);
@@ -268,6 +272,7 @@ export function CreateContent({
 			 * reload, which is how one project reached 262 messages for a run that
 			 * emitted 32 events. */
 			setProjectLoaded(true);
+			setLoadedSeq(p.commandSeq);
 			// The media library, plus the project's own entities (generated images,
 			// notes, voices) merged back in so they survive reloads.
 			library.hydrate(p);
@@ -306,7 +311,11 @@ export function CreateContent({
 	});
 	/* The agent's writes back into the editor: scenes patched live while the run
 	 * streams, everything else upserted on completion (see use-agent-apply.ts). */
-	const { apply, buildStart, previewFocus } = useAgentApply({
+	const {
+		apply: applyLocally,
+		buildStart,
+		previewFocus,
+	} = useAgentApply({
 		type,
 		config,
 		settings,
@@ -345,6 +354,42 @@ export function CreateContent({
 			decisions: chatRef.current?.decisions ?? [],
 		}),
 	});
+
+	/* Edits reach the server through the project command log (use-command-log.ts). */
+	const commandLog = useCommandLog({
+		projectId: projectId ?? "",
+		loadedSeq: projectId ? loadedSeq : null,
+		executor,
+		log: doc.log,
+		scope: () => ({
+			doc: store.getDoc(),
+			slides: slidesRef.current,
+			posts: postsRef.current,
+			mediaAssets: library.getMediaAssets(),
+		}),
+		onSaving: () => setSaveState("saving"),
+		onSaved: () => setSaveState("saved"),
+		onFailed: (message) => {
+			setSaveState("failed");
+			setSaveError(message);
+		},
+		onProblems: (message) => setSaveError(message),
+		// ponytail: a divergence reloads the saved project and loses unsent edits; re-applying them onto a snapshot is the upgrade.
+		onDiverged: () => {
+			setSaveError("The editor disagreed with the saved project; reloading the saved version.");
+			window.location.reload();
+		},
+	});
+	/* An agent run's preview and settled merge stay local: the run's own version
+	 * arrives from the log when it settles and replaces them (design D4). */
+	const apply: typeof applyLocally = {
+		...applyLocally,
+		onScenes: (job, opts) => {
+			const outcome = doc.log.bridge.localOnly(() => applyLocally.onScenes?.(job, opts));
+			if (!opts.running) void commandLog.pull().catch(() => {});
+			return outcome;
+		},
+	};
 
 	// The chat log and the run that writes to it, as one value — every workspace's
 	// ChatPanel and the timeline editor take exactly this.
@@ -385,31 +430,9 @@ export function CreateContent({
 	// Debounced persistence: versioned storyboard, decoupled editor state, project meta.
 	const { flushStoryboard, flushEditorState, retrySave, retrying } = useContentPersistence({
 		projectId,
-		loadedCaptionState: loadedCaptionState.current,
 		type,
-		storyboard: {
-			clips: store.getDoc().clips,
-			captionSet: store.getDoc().captionSet,
-			scenes,
-			slides,
-			posts,
-			overlays,
-			audioOverlays,
-			videoOverlays,
-			infographicOverlays,
-			effects,
-			transitions,
-			captions,
-			pacingDevices,
-			infographicStyle,
-			projectReferences,
-			materials: store.getDoc().materials ?? EMPTY_PROJECT_MATERIALS,
-			markers: store.getDoc().markers,
-			chapters: store.getDoc().chapters ?? null,
-			bookmarks: store.getDoc().bookmarks,
-			trackFlags,
-			presentation,
-		},
+		commandLog,
+		presentation: { pacingDevices, infographicStyle, presentation },
 		editorState: {
 			chatMessages: chat.messages,
 			mediaAssets,

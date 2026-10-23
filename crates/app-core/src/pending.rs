@@ -36,6 +36,9 @@ pub enum RebaseError {
     /// A server-accepted command did not apply: client and server diverged,
     /// and the controller reloads the snapshot.
     Delivered { index: usize, reason: EngineError },
+    /// A pending command the server accepted no longer applies here after the
+    /// delivered commands: the same divergence, found on re-apply.
+    Accepted { id: String, reason: EngineError },
 }
 
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -62,21 +65,42 @@ impl PendingQueue {
     /// success the ledger's redo stack is cleared, since the document under it
     /// changed.
     pub fn rebase(&mut self, scope: &EditScope, delivered: &[EditorCommand], ledger: &mut Ledger) -> Result<Rebased, RebaseError> {
+        self.resolve(scope, delivered, &[], &[], ledger)
+    }
+
+    /// Apply a server reply in one step (`p1-command-log` D3): undo pending in
+    /// reverse, apply `delivered`, re-apply pending in order skipping `rejected`,
+    /// then remove `accepted` and `rejected` from the queue. Accepted commands
+    /// re-apply where the server placed them, after the delivered ones. A
+    /// rejected id is not reported as dropped; the caller already has its reason.
+    /// Nothing changes on error.
+    pub fn resolve(
+        &mut self,
+        scope: &EditScope,
+        delivered: &[EditorCommand],
+        accepted: &[&str],
+        rejected: &[&str],
+        ledger: &mut Ledger,
+    ) -> Result<Rebased, RebaseError> {
         let unwound = self.items.iter().rev().try_fold(scope.clone(), |state, item| {
             execute(&state, &item.inverse).map(|executed| executed.scope).map_err(|reason| RebaseError::Unwind { id: item.id.clone(), reason })
         })?;
-        let accepted = delivered.iter().enumerate().try_fold(unwound, |state, (index, command)| {
+        let applied = delivered.iter().enumerate().try_fold(unwound, |state, (index, command)| {
             execute(&state, command).map(|executed| executed.scope).map_err(|reason| RebaseError::Delivered { index, reason })
         })?;
         let mut kept = Vec::with_capacity(self.items.len());
         let mut dropped = Vec::new();
-        let mut state = accepted;
-        for item in &self.items {
+        let mut state = applied;
+        for item in self.items.iter().filter(|item| !rejected.contains(&item.id.as_str())) {
+            let is_accepted = accepted.contains(&item.id.as_str());
             match execute(&state, &item.command) {
                 Ok(executed) => {
                     state = executed.scope;
-                    kept.push(Pending { inverse: executed.inverse, ..item.clone() });
+                    if !is_accepted {
+                        kept.push(Pending { inverse: executed.inverse, ..item.clone() });
+                    }
                 }
+                Err(reason) if is_accepted => return Err(RebaseError::Accepted { id: item.id.clone(), reason }),
                 Err(reason) => dropped.push(Dropped { id: item.id.clone(), command_type: command_type(&item.command), reason }),
             }
         }

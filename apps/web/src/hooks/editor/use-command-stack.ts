@@ -66,6 +66,20 @@ export interface CommandStack {
 	doRedo: () => void;
 	canUndo: boolean;
 	canRedo: boolean;
+	/** The engine ledger handle, for the command log's resolve (`p1-command-log`). */
+	ledgerHandle: number;
+}
+
+/** Where an applied change goes besides the undo stack: the command log
+ *  (`sync-bridge.ts`). */
+export interface CommandStackListener {
+	applied: (
+		before: EditScope,
+		command: EditorCommand,
+		inverse: EditorCommand,
+		after: EditScope,
+	) => void;
+	replaced: (before: EditScope, after: EditScope) => void;
 }
 
 /** The undo stack as a surface renders it: two actions and whether each is
@@ -102,8 +116,9 @@ export function useCommandStack(input: {
 	deps: unknown[];
 	/** Write a scope back onto component state (store doc + slides + posts). */
 	commit: (scope: EditScope) => void;
+	listener?: CommandStackListener;
 }): CommandStack {
-	const { executor, scope, deps, commit } = input;
+	const { executor, scope, deps, commit, listener } = input;
 	const ledgerRef = useRef<CommandLedger | null>(null);
 	if (!ledgerRef.current) ledgerRef.current = createCommandLedger(executor);
 	const ledger = ledgerRef.current;
@@ -133,6 +148,7 @@ export function useCommandStack(input: {
 		commit(after);
 		baselineRef.current = after;
 		const step = ledger.record(command, before, gestureRef.current, executed);
+		listener?.applied(before, command, executed.inverse, after);
 		sync();
 		setTimeout(() => {
 			applyingRef.current = false;
@@ -173,11 +189,13 @@ export function useCommandStack(input: {
 	}, deps);
 
 	const doUndo = (): void => {
-		const after = refusedAsNull(() => ledger.undo(scopeRef.current));
+		const before = scopeRef.current;
+		const after = refusedAsNull(() => ledger.undo(before));
 		if (after === null) return;
 		applyingRef.current = true;
 		commandDocRef.current = after.doc;
 		commit(after);
+		listener?.replaced(before, after);
 		baselineRef.current = after;
 		sync();
 		setTimeout(() => {
@@ -186,11 +204,13 @@ export function useCommandStack(input: {
 	};
 
 	const doRedo = (): void => {
-		const after = refusedAsNull(() => ledger.redo(scopeRef.current));
+		const before = scopeRef.current;
+		const after = refusedAsNull(() => ledger.redo(before));
 		if (after === null) return;
 		applyingRef.current = true;
 		commandDocRef.current = after.doc;
 		commit(after);
+		listener?.replaced(before, after);
 		baselineRef.current = after;
 		sync();
 		setTimeout(() => {
@@ -225,5 +245,6 @@ export function useCommandStack(input: {
 		doRedo,
 		canUndo: hist.undo > 0,
 		canRedo: hist.redo > 0,
+		ledgerHandle: ledger.handle,
 	};
 }

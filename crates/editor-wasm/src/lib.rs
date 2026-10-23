@@ -480,6 +480,11 @@ mod abi {
     }
 
     #[unsafe(no_mangle)]
+    pub extern "C" fn pending_resolve(queue: u32, ledger: u32, doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_app(|app, documents| app.pending_resolve(documents, queue, ledger, doc, &json))))
+    }
+
+    #[unsafe(no_mangle)]
     pub extern "C" fn pending_state(queue: u32) -> u32 {
         status(with_app(|app, _| app.pending_state(queue)))
     }

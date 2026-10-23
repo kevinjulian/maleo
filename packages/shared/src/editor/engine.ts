@@ -76,6 +76,10 @@ export interface Engine {
 	pendingAck(queue: number, id: string): EngineResult<boolean>;
 	/** `{delivered: [commands]}` → `{delta, dropped: [{id, type, kind, message}]}`. */
 	pendingRebase(queue: number, ledger: number, doc: number, json: string): EngineResult<string>;
+	/** A server reply (`p1-command-log` D3): `{delivered: [commands], accepted?: [ids], rejected?: [ids]}`
+	 *  → `{delta, dropped}`. Undo pending, apply delivered, re-apply pending except rejected, then
+	 *  remove accepted and rejected. `RebaseAccepted` when an accepted command no longer applies. */
+	pendingResolve(queue: number, ledger: number, doc: number, json: string): EngineResult<string>;
 	/** `[{id, type}]` in queue order. */
 	pendingState(queue: number): EngineResult<string>;
 	/** `{selection, action}` → the next selection. */
@@ -126,6 +130,7 @@ interface Exports {
 	pending_enqueue(queue: number, ptr: number, len: number): number;
 	pending_ack(queue: number, ptr: number, len: number): number;
 	pending_rebase(queue: number, ledger: number, doc: number, ptr: number, len: number): number;
+	pending_resolve(queue: number, ledger: number, doc: number, ptr: number, len: number): number;
 	pending_state(queue: number): number;
 	selection_apply(ptr: number, len: number): number;
 }
@@ -175,6 +180,7 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 		pending_enqueue: call("pending_enqueue"),
 		pending_ack: call("pending_ack"),
 		pending_rebase: call("pending_rebase"),
+		pending_resolve: call("pending_resolve"),
 		pending_state: call("pending_state"),
 		selection_apply: call("selection_apply"),
 	};
@@ -292,6 +298,8 @@ function engineOf(wasm: Exports): Engine {
 		},
 		pendingRebase: (queue, ledger, doc, json) =>
 			result(wasm.pending_rebase(queue, ledger, doc, ...write(json))),
+		pendingResolve: (queue, ledger, doc, json) =>
+			result(wasm.pending_resolve(queue, ledger, doc, ...write(json))),
 		pendingState: (queue) => result(wasm.pending_state(queue)),
 		selectionApply: (json) => result(wasm.selection_apply(...write(json))),
 	};

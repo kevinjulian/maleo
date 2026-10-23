@@ -21,6 +21,7 @@ import {
 	type SeedableArtifactKind,
 } from "@maleo/shared";
 import type { Db } from "./handle.ts";
+import { deleteCommandEntries } from "./project-commands.ts";
 
 export const STORYBOARD_RETENTION_WINDOW_ENV = "MALEO_STORYBOARD_RETENTION_WINDOW";
 /** Nothing in the product steps back through versions; the window exists so a
@@ -188,17 +189,19 @@ export async function deleteStoryboardVersions(db: Db, ids: readonly string[]): 
 }
 
 /** Enforce retention for one project. Callers run this inside the transaction
- *  that wrote the new version, so a failed write prunes nothing. */
+ *  that wrote the new version, so a failed write prunes nothing. A pruned
+ *  version's command log entry goes with it. */
 export async function pruneStoryboardVersions(
 	db: Db,
 	projectId: string,
 	policy: StoryboardRetentionPolicy = storyboardRetentionPolicy(),
 ): Promise<number> {
 	if (policy.window === null) return 0;
-	return deleteStoryboardVersions(
-		db,
-		await prunableStoryboardIds(await retentionRows(db, projectId), policy.window, (row) =>
-			seedableKindsOf(db, row.id),
-		),
+	const ids = await prunableStoryboardIds(
+		await retentionRows(db, projectId),
+		policy.window,
+		(row) => seedableKindsOf(db, row.id),
 	);
+	await deleteCommandEntries(db, projectId, ids);
+	return deleteStoryboardVersions(db, ids);
 }

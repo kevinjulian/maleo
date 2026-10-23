@@ -66,6 +66,32 @@ Until the import finishes, `GET|HEAD /api/media/:id` gives a member
 `409 media_pending`. A failed or cancelled import and a non-member get the
 same refusal as unknown media.
 
+## Project command log
+
+`routes/operations/commands.ts` and `lib/project-commands.ts` own the editor
+command log (`p1-command-log`):
+
+- `POST /api/operations/projects/:id/commands` takes
+  `{baseSeq, commands: [{clientCommandId, command}]}`. Under the
+  `storyboard-version:<project>` lock, each command executes against the head
+  scope in the Rust engine. Its result must pass `prepareStoryboardSave`
+  (`lib/storyboard-save.ts`), the save route's validation and merge. A refused
+  command is rejected with the engine's or the save rule's reason, and the next
+  command runs. The accepted commands become one version, at the next log
+  sequence. The reply is `{headSeq, headVersion, accepted, rejected,
+  delivered}`. `delivered` holds the entries after `baseSeq` that the client
+  did not write. A repeated
+  `clientCommandId` gets its first outcome back and does not execute again.
+- `GET /api/operations/projects/:id/commands?after=<seq>` returns
+  `{headSeq, headVersion, entries}`. When the log does not hold every entry
+  after `after` (pruned), `entries` is one `scope.replace` of the head, marked
+  `snapshot: true`. Without `after`, `entries` is empty: a client reads where
+  the head is when it loads.
+
+Every other storyboard writer records its version as one `scope.replace`
+(`@maleo/db/project-commands`). A non-member gets the workspace scope's
+refusal before any command executes.
+
 ## Asset manifest
 
 `GET /api/operations/projects/:id/asset-manifest` lists the media that the

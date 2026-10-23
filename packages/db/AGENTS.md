@@ -30,6 +30,15 @@ read/write modules. HTTP, providers, and subprocesses belong elsewhere.
   (`@maleo/shared` `seedable-artifact.ts`). The newest version is never pruned,
   so `MAX(version)` is the highest number ever issued. Anything new that points at
   a storyboard version must be added to the retention query, or pruning drops it.
+- Every storyboard version has one command log entry (`content_project_commands`,
+  `project-commands.ts`), written inside `addContentStoryboard`'s transaction: the
+  `commands` the caller passes, else one `scope.replace` of the written
+  document's editable scope (`@maleo/shared/editor/storyboard-scope`). Entries
+  are ordered by their own per-project `seq` (`MAX(seq) + 1` under the same
+  lock) and name the version they wrote. Retention deletes a pruned version's
+  entry in the same transaction; the newest entry is never pruned, so a `seq`
+  is never reused. A refused submitted command is kept by client command id
+  in `content_project_command_rejections`, so a retry returns the same refusal.
 - Read a version by number through `readStoryboardVersion`, which answers
   found, pruned, never existed, or read failed — never a substitute version.
 

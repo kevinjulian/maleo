@@ -4,7 +4,7 @@
  *
  * Split out of `create-content.tsx`.
  */
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { type Post, type Slide } from "@models/content/content-types.ts";
 import { EMPTY_PROJECT_SELECTION } from "@maleo/shared";
@@ -24,6 +24,7 @@ import { useCommandStack, type CommandStack } from "@hooks/editor/use-command-st
 import type { CommandExecutor, EditorCommand, EditScope } from "@maleo/shared/editor";
 import { resolveEdit } from "@models/timeline/command-edit.ts";
 import { diffScopeToCommand } from "@maleo/shared/editor";
+import { createSyncBridge, type SyncBridge } from "@models/editor/sync-bridge.ts";
 
 type Derived = ReturnType<typeof selectDerivedArrays>;
 
@@ -54,7 +55,18 @@ export interface EditorDocument {
 	};
 	writers: DocumentWriters;
 	trackFlags: ReturnType<typeof selectDocTrackFlags>;
+	/** What the command log needs from the document (`use-command-log.ts`). */
+	log: {
+		bridge: SyncBridge;
+		ledgerHandle: number;
+		/** Write a resolved scope back onto the editor. */
+		commit: (scope: EditScope) => void;
+		/** Called whenever something is enqueued; the log hook schedules the flush. */
+		onEnqueued: { current: () => void };
+	};
 }
+
+const selectDoc = (store: TimelineDocumentStore): EditorDoc => store.getDoc();
 
 export function useEditorDocument(input: {
 	executor: CommandExecutor;
@@ -103,6 +115,24 @@ export function useEditorDocument(input: {
 		},
 	});
 	const isCommandResultRef = useRef<(doc: unknown) => boolean>(() => false);
+	/* Every write the stack applies, and every write that goes around it, reaches
+	 * the command log through one bridge (`sync-bridge.ts`). */
+	const onEnqueuedRef = useRef<() => void>(() => {
+		/* set by use-command-log */
+	});
+	const bridgeRef = useRef<SyncBridge | null>(null);
+	if (!bridgeRef.current)
+		bridgeRef.current = createSyncBridge({
+			scope: () => ({ doc: store.getDoc(), ...liveLists(), mediaAssets: library.getMediaAssets() }),
+			enqueued: () => onEnqueuedRef.current(),
+		});
+	const bridge = bridgeRef.current;
+	const commitScope = (s: EditScope): void => {
+		store.setDoc(s.doc);
+		setSlides(s.slides);
+		setPosts(s.posts);
+		library.setMediaAssets(s.mediaAssets);
+	};
 	const editScope: EditScope = {
 		doc: store.getDoc(),
 		slides,
@@ -119,17 +149,32 @@ export function useEditorDocument(input: {
 		doRedo,
 		canUndo,
 		canRedo,
+		ledgerHandle,
 	} = useCommandStack({
 		executor,
 		scope: editScope,
 		deps: [slides, posts],
-		commit: (s) => {
-			store.setDoc(s.doc);
-			setSlides(s.slides);
-			setPosts(s.posts);
-			library.setMediaAssets(s.mediaAssets);
-		},
+		commit: commitScope,
+		listener: bridge,
 	});
+	const commitScopeRef = useRef(commitScope);
+	commitScopeRef.current = commitScope;
+	// Stable, so the command log is opened once per loaded project.
+	const log = useMemo(
+		() => ({
+			bridge,
+			ledgerHandle,
+			commit: (next: EditScope) => commitScopeRef.current(next),
+			onEnqueued: onEnqueuedRef,
+		}),
+		[bridge, ledgerHandle],
+	);
+	// A write that went around the stack is enqueued once writes settle.
+	const liveDoc = useDocumentSelector(store, selectDoc);
+	useEffect(() => {
+		const timer = setTimeout(() => bridge.catchUp(), 400);
+		return () => clearTimeout(timer);
+	}, [bridge, liveDoc, slides, posts]);
 	// One value so the editor takes an undo stack rather than four loose props,
 	// memoised so it keeps its identity across parent renders.
 	const undoStack = useMemo(
@@ -216,5 +261,6 @@ export function useEditorDocument(input: {
 		undoStack,
 		writers,
 		trackFlags,
+		log,
 	};
 }

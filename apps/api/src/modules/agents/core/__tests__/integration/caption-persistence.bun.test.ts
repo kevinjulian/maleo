@@ -10,6 +10,7 @@ import {
 import { closeMaleoDb } from "@maleo/db/connection";
 import { createContentProject, getContentProject } from "@maleo/db/project-detail";
 import { addContentStoryboard, StoryboardRevisionConflict } from "@maleo/db/storyboards";
+import { commandEntriesBetween } from "@maleo/db/project-commands";
 import { buildAgentJob } from "../../run-bracket.ts";
 import { runDocument, executeEdit } from "../../edit-document.ts";
 import { updateClip, moveClip } from "@maleo/shared/editor";
@@ -314,4 +315,22 @@ test("source commands hold when linked caption is corrected or deleted during ru
 		expect(saved.clips.find((clip) => clip.id === source.id)?.startSec).toBe(0);
 		expect(saved.clips.filter((clip) => clip.type === "caption")).toEqual(latestCues);
 	}
+});
+
+test("an agent write enters the command log as one scope.replace", async () => {
+	const { id, row } = await seed();
+	const job = await buildAgentJob({ projectId: id, instruction: "" });
+	expect(executeEdit(job, { type: "clip.move", id: "text:1", patch: { startSec: 1 } })).toEqual({
+		ok: true,
+	});
+	await persist(job);
+	const head = (await getContentProject(id))!.storyboards[0]!;
+	expect(head.version).toBeGreaterThan(row.version);
+	const entries = await commandEntriesBetween(id, row.version, head.version);
+	const last = entries!.at(-1)!;
+	expect(last.version).toBe(head.version);
+	expect(last.commands.map((command) => command.type)).toEqual(["scope.replace"]);
+	const [command] = last.commands;
+	if (command?.type !== "scope.replace") throw new Error("expected a scope.replace");
+	expect(command.scope.doc.clips.find((clip) => clip.id === "text:1")?.startSec).toBe(1);
 });

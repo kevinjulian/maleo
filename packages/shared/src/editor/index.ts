@@ -10,3 +10,4 @@ export * from "./conformance.ts";
 export * from "./command-targets.ts";
 export * from "./agent-edit-marker.ts";
 export * from "./media-identity.ts";
+export * from "./storyboard-scope.ts";

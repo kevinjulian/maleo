@@ -107,6 +107,8 @@ export interface LoadedProjectDetail {
 		editor_state_json?: EditorStateJson | null;
 	};
 	storyboards: Array<{ storyboard_json: StoryboardJson }>;
+	/** The command log sequence of the loaded version (`p1-command-log`). */
+	commandSeq?: number;
 	/** The project's selected reference entities, as domain objects. The server
 	 *  maps its rows once (`lib/wire/reference-entity.ts`), so nothing here parses
 	 *  `tags_json` or compares `is_primary` to 1. */
@@ -132,6 +134,8 @@ export interface ParsedProject {
 	/** The `agentEdit` marker of the loaded version: which agent run's commands it
 	 *  already holds, so settling that run does not apply them again. */
 	agentEdit?: AgentEditMarker;
+	/** Where the editor's command log reading starts. */
+	commandSeq: number;
 	overlays: TextOverlay[];
 	audioOverlays: AudioOverlay[];
 	videoOverlays: VideoOverlay[];
@@ -405,6 +409,7 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 	const base: ParsedProject = {
 		...(agentEdit ? { agentEdit } : {}),
 		projectId: project.id,
+		commandSeq: detail.commandSeq ?? 0,
 		persistedCaptionState: captionStateFingerprint(doc),
 		type: project.type,
 		config,

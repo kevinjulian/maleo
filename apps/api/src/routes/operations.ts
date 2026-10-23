@@ -15,6 +15,7 @@ import { registerProjectRoutes } from "./operations/projects.ts";
 import { registerReferenceRoutes } from "./operations/references.ts";
 import { registerRenderRoutes } from "./operations/renders.ts";
 import { registerStoryboardRoutes } from "./operations/storyboards.ts";
+import { registerCommandRoutes } from "./operations/commands.ts";
 import { registerBlockerRoutes } from "./operations/blockers.ts";
 import { registerTimelineTemplateRoutes } from "./operations/timeline-templates.ts";
 import { registerContentPresetRoutes } from "./operations/content-presets.ts";
@@ -48,6 +49,7 @@ export function operationsRoutes(): Hono {
 	registerProjectRoutes(app);
 	registerAssetManifestRoutes(app);
 	registerStoryboardRoutes(app);
+	registerCommandRoutes(app);
 	registerBlockerRoutes(app);
 	registerReferenceRoutes(app);
 	registerRenderRoutes(app);

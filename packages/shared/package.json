@@ -14,7 +14,9 @@
 		"./audio-overlays": "./src/audio-overlays.ts",
 		"./agent-wire": "./src/agent-wire.ts",
 		"./provider-config": "./src/provider-config.ts",
-		"./editor": "./src/editor/index.ts"
+		"./editor": "./src/editor/index.ts",
+		"./editor/commands": "./src/editor/commands.ts",
+		"./editor/storyboard-scope": "./src/editor/storyboard-scope.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit",

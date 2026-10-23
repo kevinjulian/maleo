@@ -1,76 +1,38 @@
-/* Maleo — debounced persistence for a content project: the versioned
- * storyboard, the decoupled editor state (chat + media library), and the
- * project meta. Three independent debounces, lifted out of CreateContent so the
- * container holds state, not save plumbing. */
+/* Maleo — persistence for a content project: the storyboard, the decoupled
+ * editor state (chat + media library), and the project meta.
+ *
+ * Storyboard edits reach the server as commands through the project command
+ * log (`use-command-log.ts`); nothing here posts a whole document. The three
+ * stored fields outside the editable scope — pacing devices, infographic style,
+ * presentation — are written alone onto the head on their own debounce
+ * (`p1-command-log` D4). Editor state and meta keep their debounces. */
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
-import { captionStateFingerprint, readStoryboardDocument } from "@maleo/shared";
-import { saveEditorState, saveStoryboard, updateProjectMeta } from "@api/projects.ts";
-import { storyboardJson } from "@models/storyboard/document-wire.ts";
+import { saveEditorState, updateProjectMeta } from "@api/projects.ts";
+import { readCommandLog, savePresentation } from "@api/project-commands.ts";
 import { errMsg } from "@models/core/cc-helpers.ts";
 import { useDebouncedSave } from "./use-debounced-save.ts";
+import type { CommandLog } from "./use-command-log.ts";
 import type {
-	AudioOverlay,
-	Chapter,
 	Config,
 	ContentType,
-	EffectClip,
-	InfographicOverlay,
 	InfographicStyle,
 	PacingDevices,
-	ProjectSelection,
-	Scene,
-	TextOverlay,
 	TrackFlags,
-	TransitionClip,
-	VideoOverlay,
-	Clip,
-	ProjectMaterials,
 	RenderPresentation,
-	SceneMarker,
-	CaptionConfig,
-	CaptionSet,
 	CreativeDirection,
-	Bookmark,
 } from "@maleo/shared";
 import type { ChatLogMessage } from "@models/chat/chat-log.ts";
-import type { HookVariant, Post, Slide } from "@models/content/content-types.ts";
+import type { HookVariant } from "@models/content/content-types.ts";
 import type { MediaAsset } from "@models/timeline/editor-media.ts";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import type { SaveState } from "@models/content/create-content-model.ts";
 import type { ElementSourceMap, RenderOverrides } from "@models/presets/element-sources.ts";
 import type { ConversationDecision } from "@maleo/shared";
 
-interface StoryboardBundle {
-	clips: Clip[];
-	scenes: Scene[];
-	slides: Slide[];
-	posts: Post[];
-	overlays: TextOverlay[];
-	audioOverlays: AudioOverlay[];
-	videoOverlays: VideoOverlay[];
-	infographicOverlays: InfographicOverlay[];
-	effects: EffectClip[];
-	transitions: TransitionClip[];
-	captions: CaptionConfig;
-	captionSet?: CaptionSet;
+/** The stored fields outside the editable scope. */
+interface PresentationBundle {
 	pacingDevices: PacingDevices;
 	infographicStyle: InfographicStyle;
-	projectReferences: ProjectSelection;
-	/* The project's generation context. Versioned with the storyboard because it is
-	 * what the generation READ — restoring a version has to reproduce what produced
-	 * it, and materials decide that as much as the clips do. */
-	materials: ProjectMaterials;
-	markers: SceneMarker[];
-	/* Carried through the autosave, not re-derived. Without it the write would
-	 * resolve chapters to null and the editor would wipe them the first time it
-	 * saved anything — the document distinguishes "never had chapters" from
-	 * "operator deleted them all", and an omission reads as the first. */
-	chapters: Chapter[] | null;
-	bookmarks?: Bookmark[];
-	/* Render-affecting presentation. It also rides in the editor state, which is the
-	 * desk's working copy; the document's copy is the one a restored version renders
-	 * with. Only the document's is versioned. */
-	trackFlags: TrackFlags;
 	presentation: RenderPresentation;
 }
 
@@ -98,23 +60,21 @@ interface EditorStateBundle {
 /** What the hook hands back: the immediate write, for callers holding something
  *  that must not wait out the debounce. */
 export interface ContentPersistence {
-	flushStoryboard: () => ReturnType<typeof saveStoryboard>;
+	/** Make the storyboard durable now; resolves with the head version's id. */
+	flushStoryboard: () => Promise<{ id: string }>;
 	flushEditorState: (overrides?: Partial<EditorStateBundle>) => Promise<void>;
 	retrySave: () => Promise<void>;
 	retrying: boolean;
 }
 
 export function useContentPersistence(input: {
-	/* Required, both of them. This used to ask `screen === "work" && !!projectId
-	 * && !!type` — three conditions for one fact, the editor is open on a real
-	 * project. Only the editor page mounts this hook, and that page has an id
-	 * from the route and a type from the loaded project, so mounting IS the
-	 * condition. The `screen` string it also took was untyped: `"wrok"` compiled
-	 * and silently disabled autosave. */
+	/* Required, both of them. Only the editor page mounts this hook, and that
+	 * page has an id from the route and a type from the loaded project, so
+	 * mounting IS the condition. */
 	projectId: string;
-	loadedCaptionState: string | null;
 	type: ContentType | null;
-	storyboard: StoryboardBundle;
+	commandLog: CommandLog;
+	presentation: PresentationBundle;
 	editorState: EditorStateBundle;
 	config: Config;
 	setSaveState: Dispatch<SetStateAction<SaveState>>;
@@ -122,100 +82,65 @@ export function useContentPersistence(input: {
 }): ContentPersistence {
 	const {
 		projectId,
-		loadedCaptionState,
 		type,
-		storyboard: sb,
+		commandLog,
+		presentation: pres,
 		editorState: es,
 		config,
 		setSaveState,
 		setSaveError,
 	} = input;
 	const [retrying, setRetrying] = useState(false);
-	const savedCaptionState = useRef<{ project: string; fingerprint: string } | null>(null);
-	if (type && loadedCaptionState !== null && savedCaptionState.current?.project !== projectId)
-		savedCaptionState.current = { project: projectId, fingerprint: loadedCaptionState };
-	const pendingSave = useRef<Promise<unknown>>(Promise.resolve());
-	const writeStoryboard = (): ReturnType<typeof saveStoryboard> => {
-		const base = savedCaptionState.current;
-		const snapshot = storyboardJson(
-			type!,
-			{ scenes: sb.scenes, slides: sb.slides, posts: sb.posts },
-			{
-				clips: type === "video" ? sb.clips : undefined,
-				overlays: sb.overlays,
-				audioOverlays: sb.audioOverlays,
-				videoOverlays: sb.videoOverlays,
-				infographicOverlays: sb.infographicOverlays,
-				effects: sb.effects,
-				transitions: sb.transitions,
-				captions: sb.captions,
-				captionSet: sb.captionSet,
-				pacingDevices: sb.pacingDevices,
-				infographicStyle: sb.infographicStyle,
-				projectReferences: sb.projectReferences,
-				materials: sb.materials,
-				markers: sb.markers,
-				chapters: sb.chapters,
-				bookmarks: sb.bookmarks,
-				trackFlags: sb.trackFlags,
-				presentation: sb.presentation,
-			},
-		);
-		const save = pendingSave.current
+	// Set when a presentation field changed and has not been written yet.
+	const presentationDirty = useRef(false);
+	const pendingPresentation = useRef<Promise<unknown>>(Promise.resolve());
+	const writePresentation = (): Promise<unknown> => {
+		presentationDirty.current = false;
+		const write = pendingPresentation.current
 			.catch(() => {})
-			.then(async () => {
-				const result = await saveStoryboard(projectId, snapshot, base?.fingerprint);
-				if (base)
-					base.fingerprint = captionStateFingerprint(
-						readStoryboardDocument(result.storyboard_json ?? snapshot).doc,
-					);
-				return result;
-			});
-		pendingSave.current = save;
-		return save;
+			.then(() =>
+				savePresentation(projectId, {
+					pacingDevices: pres.pacingDevices,
+					infographicStyle: pres.infographicStyle,
+					presentation: pres.presentation,
+				}),
+			);
+		pendingPresentation.current = write;
+		return write;
 	};
-
-	// Debounced auto-save: persist the working storyboard (incl. generated images)
-	// whenever scenes/slides/posts change while editing a saved project. Skips the
-	// first run after a load so we don't immediately re-save unchanged content.
 	useDebouncedSave(
 		!!type,
-		[
-			sb.clips,
-			sb.captionSet,
-			sb.scenes,
-			sb.slides,
-			sb.posts,
-			sb.overlays,
-			sb.audioOverlays,
-			sb.videoOverlays,
-			sb.infographicOverlays,
-			sb.effects,
-			sb.transitions,
-			sb.captions,
-			sb.pacingDevices,
-			sb.infographicStyle,
-			sb.projectReferences,
-			sb.materials,
-			sb.markers,
-			sb.chapters,
-			sb.bookmarks,
-			sb.trackFlags,
-			sb.presentation,
-			projectId,
-			type,
-		],
+		[pres.pacingDevices, pres.infographicStyle, pres.presentation, projectId, type],
 		1200,
 		() => {
 			setSaveState("saving");
-			void writeStoryboard()
+			void writePresentation()
 				.then(() => setSaveState("saved"))
 				.catch((err) => {
+					presentationDirty.current = true;
 					setSaveState("failed");
 					setSaveError(`Auto-save failed: ${errMsg(err)}`);
 				});
 		},
 	);
+	// Marked before the debounce fires, so an immediate flush does not miss it.
+	useDebouncedSave(
+		!!type,
+		[pres.pacingDevices, pres.infographicStyle, pres.presentation],
+		0,
+		() => {
+			presentationDirty.current = true;
+		},
+	);
+
+	const writeStoryboard = async (): Promise<{ id: string }> => {
+		if (presentationDirty.current) await writePresentation();
+		await pendingPresentation.current;
+		await commandLog.flush();
+		const head = await readCommandLog(projectId);
+		if (!head.headStoryboardId) throw new Error("the project has no saved storyboard yet");
+		return { id: head.headStoryboardId };
+	};
 
 	/* One writer for editor state, used by both the debounce and the immediate
 	 * flush. `overrides` exists because a caller that just changed something and

@@ -16,8 +16,9 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   seconds and a `track` row index. `timeline-clips.ts: buildFreeClips`
   projects them into `TimelineClip { id: "<source>:<refId>", ... }`.
 - **Persistence** is storyboard schemaVersion 2 (`timeline-doc.ts:
-  toTimelineDoc`): `clips[]` + `markers[]`. Chat/media/settings live in
-  `editor_state_json`, not the storyboard. Markers are annotations, never
+  toTimelineDoc`): `clips[]` + `markers[]`, written as editor commands through
+  the project command log (see "Editing commands and undo"). Chat/media/settings
+  live in `editor_state_json`, not the storyboard. Markers are annotations, never
   clip containers.
 - **Animation** is one model for every clip and overlay: `layout.animation`
   (audio: `animation`), per-property tracks of `{t, v, easing}` in clip-local
@@ -122,6 +123,23 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   id, `isLatest(id)` answers whether an agent result can still be undone.
   `models/timeline/selection-model.ts` sends each selection transition to the
   core and keeps the per-render reads in TypeScript.
+- Edits persist through the project command log (`p1-command-log`), not as
+  whole documents. `models/editor/sync-bridge.ts` decides what reaches it:
+  a command the stack ran is enqueued as itself; an undo, a redo, or a write
+  that went around the stack (script-view chapters, media reconciliation, the
+  slide and post panels) as a `scope.replace` from the last submitted scope;
+  an agent run's preview and settled merge (`bridge.localOnly`) not at all.
+  `models/editor/command-sync.ts` submits the queue on a 1.2 s debounce, one
+  request at a time, and resolves each reply with `pendingResolve` (undo
+  pending, apply delivered, re-apply pending except rejected). Delivered
+  `scope.replace` entries keep the editor's own media library, which a
+  storyboard does not hold. `hooks/editor/use-command-log.ts` opens it from
+  the loaded version's `commandSeq` and reads the log on window focus and
+  when an agent run settles; a rejected or dropped edit is reported, a
+  divergence reloads the saved project.
+- Pacing devices, infographic style and presentation are outside the editable
+  scope; `use-content-persistence.ts` writes them alone through
+  `PATCH /projects/:id/storyboard-presentation`.
 - Command behavior is pinned by the golden fixtures in
   `packages/shared/src/editor/fixtures/<type>/`; any other implementation of
   `execute` must pass the same files.

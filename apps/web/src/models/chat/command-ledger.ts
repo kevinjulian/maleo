@@ -56,6 +56,9 @@ export interface CommandLedger {
 	 *  matches. */
 	latestStep: () => string | null;
 	depths: () => { undo: number; redo: number };
+	/** The engine ledger handle, for app-core calls that clear or check it
+	 *  alongside a pending queue (`pendingResolve`). */
+	readonly handle: number;
 }
 
 /** `executor` runs any recorded command whose execution the caller did not
@@ -119,6 +122,7 @@ export function createCommandLedger(executor: CommandExecutor, limit = 60): Comm
 			const { undo, redo } = state();
 			return { undo: undo.length, redo: redo.length };
 		},
+		handle,
 	};
 	closing.register(ledger, () => engine.ledgerClose(handle));
 	return ledger;
