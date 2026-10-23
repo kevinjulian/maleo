@@ -222,15 +222,13 @@ export function planningPromptSamples() {
 		sequenceRepair: storySequenceDirectionPrompt(
 			[],
 			{
-				allowInfographics: false,
 				visual: "ink",
 				rules: "no text",
-				templateConstraints: { useData: false },
+				templateConstraints: { maxVisualBeatSec: 6 },
 			},
 			'Repair repeated shot; preserve "Seed A".',
 		),
 		sequenceFirstAttempt: storySequenceDirectionPrompt(directedSections(), {
-			allowInfographics: true,
 			roster: [
 				{ id: "entity-1", role: "character", label: "Gardener", description: "An old gardener" },
 			],

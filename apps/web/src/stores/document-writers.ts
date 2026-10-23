@@ -22,7 +22,6 @@ import {
 import type {
 	AudioOverlay,
 	EffectClip,
-	InfographicOverlay,
 	Scene,
 	TextOverlay,
 	TransitionClip,
@@ -44,7 +43,6 @@ export interface DocumentWriters {
 	setOverlays: Dispatch<SetStateAction<TextOverlay[]>>;
 	setAudioOverlays: Dispatch<SetStateAction<AudioOverlay[]>>;
 	setVideoOverlays: Dispatch<SetStateAction<VideoOverlay[]>>;
-	setInfographicOverlays: Dispatch<SetStateAction<InfographicOverlay[]>>;
 	setEffects: Dispatch<SetStateAction<EffectClip[]>>;
 	setTransitions: Dispatch<SetStateAction<TransitionClip[]>>;
 	setProjectReferences: Dispatch<SetStateAction<ProjectSelection>>;
@@ -161,7 +159,6 @@ export function createDocumentWriters(input: {
 			videoOverlays: views.videoOverlays,
 			textOverlays: views.textOverlays,
 			audioOverlays: views.audioOverlays,
-			infographicOverlays: views.infographicOverlays,
 			effects: views.effects,
 			transitions: views.transitions,
 			projectReferences: views.projectReferences,
@@ -185,7 +182,6 @@ export function createDocumentWriters(input: {
 		setOverlays: family("textOverlays"),
 		setAudioOverlays: family("audioOverlays"),
 		setVideoOverlays: family("videoOverlays"),
-		setInfographicOverlays: family("infographicOverlays"),
 		setEffects: family("effects"),
 		setTransitions: family("transitions"),
 		setProjectReferences: (next) =>

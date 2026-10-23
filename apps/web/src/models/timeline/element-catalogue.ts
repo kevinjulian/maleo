@@ -1,8 +1,7 @@
 /* The built-in placeable elements, as data.
  *
  * These lists used to live inside the editor's own panel components — the text
- * presets and their labels in `timeline-editor-panels.tsx`, the data callout
- * kinds in `infographics-panel.tsx`. That was fine while the Elements rail was
+ * presets and their labels in `timeline-editor-panels.tsx`. That was fine while the Elements rail was
  * the only thing that read them. Library > Elements is a second reader, and a
  * catalogue that had to import an editor panel to learn what a Title element is
  * would either drag the editor into the library or, far more likely, grow its
@@ -12,15 +11,14 @@
  * paths. Nothing about a built-in element's identity needs React, a timeline, a
  * playhead or a project.
  *
- * What is NOT here: previews. `TextPresetPreview` and `InfographicTypePreview`
- * already default `brand` to `DEFAULT_BRAND`, so they render outside a project
- * without a stand-in — they are components, they stay in component files, and
- * both readers call them directly.
+ * What is NOT here: previews. `TextPresetPreview` already defaults `brand` to
+ * `DEFAULT_BRAND`, so it renders outside a project without a stand-in — it is a
+ * component, it stays in component files, and both readers call it directly.
  */
 import { DEFAULT_TEXT_BY_PRESET } from "./timeline-editor-model.ts";
 import { TEMPLATE_ITEMS } from "@models/clip-templates/registry.ts";
 import type { TemplateItem } from "@models/clip-templates/registry.ts";
-import type { InfographicPayload, TextPreset } from "@maleo/shared";
+import type { TextPreset } from "@maleo/shared";
 import { elementKindOfPreset, textOnlyPresets } from "./element-groups.ts";
 
 /** Every text preset the editor offers, in the order it offers them. */
@@ -75,22 +73,6 @@ export const TEXT_PRESET_SAMPLES = {
 	"explainer-card": "A forbidden object instantly creates curiosity.\nIt is like a wet paint sign.",
 	"section-card": "Can he resist?",
 } satisfies TextPresetCopy;
-
-export const INFOGRAPHIC_KINDS: ReadonlyArray<{ type: InfographicPayload["type"]; label: string }> =
-	[
-		{ type: "stat_reveal", label: "Stat" },
-		{ type: "bar_chart", label: "Bar" },
-		{ type: "line_chart", label: "Line" },
-		{ type: "area_chart", label: "Area" },
-		{ type: "pie_chart", label: "Pie" },
-		{ type: "donut_chart", label: "Donut" },
-		{ type: "progress_bars", label: "Bars" },
-		{ type: "circular_progress", label: "Ring" },
-		{ type: "table_build", label: "Table" },
-		{ type: "price_tag", label: "Price" },
-		{ type: "social_proof", label: "Proof" },
-		{ type: "urgency", label: "Urgency" },
-	];
 
 /** Static primitives share normal text/shape clips and keyframe controls. */
 export const BASIC_ELEMENTS: ReadonlyArray<{

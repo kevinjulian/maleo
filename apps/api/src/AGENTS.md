@@ -119,12 +119,10 @@ Owns the content-studio HTTP surface, the server-side chat agent, generation
   `layout` is not projected into the document. Until
   `move-agent-tools-to-editor-commands` lands, the track rides the job and the
   usual agent merge rather than a `clip.setKeys` command.
-- Agent-generated infographic overlays use reserved ids; rebuild/regenerate flows
-  may replace those auto overlays but must preserve user-authored or explicit
-  `add_infographic` clips. New videos use explicit long-form `motionGraphic`
-  decisions, and a selected timeline template with `useData=false` suppresses
-  generated infographic overlays and their entry SFX. Never invent comparison
-  rows or values. Legacy short-form editorial artifacts are migration-only.
+- Agent-generated text overlays use reserved ids; rebuild/regenerate flows may
+  replace those auto overlays but must preserve user-authored clips. A number a
+  video must show goes into native on-screen text; never invent comparison rows
+  or values. Legacy short-form editorial artifacts are migration-only.
 - Video outcome evaluation includes deterministic viewer-attention findings.
   Sustained overload, competing primary overlays, and unreadable text block
   completion alongside duration, evidence, visual, and timeline failures.
@@ -133,7 +131,7 @@ Owns the content-studio HTTP surface, the server-side chat agent, generation
   marks the run terminal on the product record, after which every tool call of
   that run is refused (`modules/agents/core/service.ts`).
 - Agent-authored storyboard snapshots must carry client-owned project references,
-  captions, pacing devices, and infographic style from the latest version. Never
+  captions and pacing devices from the latest version. Never
   let an intermediate generation snapshot reset editor selections on reload.
 - Agent-facing Remotion clip generation must output structured JSON clips only (`startSec`, `durationSec`, layout, typed payload). Never ask the model to generate JSX, CSS keyframes, or ad hoc animation code for project content.
 - Image generation is style-locked: every generated frame must use either the

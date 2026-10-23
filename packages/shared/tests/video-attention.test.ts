@@ -10,7 +10,7 @@ describe("viewer attention", () => {
 		const spans: AttentionSpan[] = [
 			{ kind: "voiceover", start: 0, dur: 3 },
 			{ kind: "text", start: 0, dur: 3 },
-			{ kind: "infographic", start: 0, dur: 3 },
+			{ kind: "text", start: 0, dur: 3 },
 			{ kind: "sfx", start: 0, dur: 0.4 },
 			{ kind: "scene_cut", start: 0.2, dur: 0 },
 		];
@@ -27,7 +27,7 @@ describe("viewer attention", () => {
 				start: 0,
 				dur: 3,
 			},
-			{ kind: "infographic", start: 0, dur: 3 },
+			{ kind: "text", start: 0, dur: 3 },
 			{ kind: "motion", start: 0, dur: 3 },
 			{ kind: "sfx", start: 0, dur: 0.5 },
 			{ kind: "scene_cut", start: 0.2, dur: 0 },

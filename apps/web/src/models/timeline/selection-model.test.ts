@@ -38,19 +38,12 @@ describe("selecting one kind clears the others", () => {
 		expect(primaryClipKey(next)).toBe("video:7");
 	});
 
-	test("each clip family clears the other three", () => {
+	test("each clip family clears the others", () => {
 		const text = selectClip("text", 1);
-		expect([text.videoOverlayId, text.audioId, text.infographicId]).toEqual([null, null, null]);
+		expect([text.videoOverlayId, text.audioId]).toEqual([null, null]);
 
 		const audio = selectClip("audio", 2);
-		expect([audio.videoOverlayId, audio.overlayId, audio.infographicId]).toEqual([
-			null,
-			null,
-			null,
-		]);
-
-		const info = selectClip("infographic", 3);
-		expect([info.videoOverlayId, info.overlayId, info.audioId]).toEqual([null, null, null]);
+		expect([audio.videoOverlayId, audio.overlayId]).toEqual([null, null]);
 	});
 
 	test("an effect selects like any other clip family", () => {
@@ -58,12 +51,7 @@ describe("selecting one kind clears the others", () => {
 
 		expect(next.effectId).toBe(6);
 		expect(primaryClipKey(next)).toBe("effect:6");
-		expect([next.videoOverlayId, next.overlayId, next.audioId, next.infographicId]).toEqual([
-			null,
-			null,
-			null,
-			null,
-		]);
+		expect([next.videoOverlayId, next.overlayId, next.audioId]).toEqual([null, null, null]);
 	});
 
 	test("selecting a clip replaces the multi-select set rather than adding to it", () => {
@@ -110,19 +98,6 @@ describe("shift-click toggling", () => {
 		expect(next.sceneId).toBeUndefined();
 		expect(next.editorSceneId).toBeUndefined();
 	});
-
-	/* Recorded, not corrected: `selectClip` clears all four families, but the
-	 * toggle path clears only three — an infographic stays primary through a
-	 * shift-click on another family. It reads as an oversight rather than a
-	 * decision, and changing it changes what the inspector shows, so it is pinned
-	 * here and left for a deliberate call. */
-	test("does NOT clear a primary infographic, unlike single-click", () => {
-		const withInfographic = selectClip("infographic", 5);
-		const next = toggleClip(withInfographic, "video", 1);
-
-		expect(next.infographicId).toBe(5);
-		expect(next.videoOverlayId).toBe(1);
-	});
 });
 
 describe("what counts as selected", () => {
@@ -140,7 +115,6 @@ describe("what counts as selected", () => {
 		expect(primaryClipKey(selectClip("video", 1))).toBe("video:1");
 		expect(primaryClipKey(selectClip("text", 1))).toBe("text:1");
 		expect(primaryClipKey(selectClip("audio", 1))).toBe("audio:1");
-		expect(primaryClipKey(selectClip("infographic", 1))).toBe("infographic:1");
 	});
 
 	test("clip keys are the ids the timeline already uses", () => {

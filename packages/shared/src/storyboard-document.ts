@@ -45,8 +45,6 @@ import type {
 	AudioOverlay,
 	CustomMotion,
 	EffectClip,
-	InfographicOverlay,
-	InfographicStyle,
 	MotionEasing,
 	MotionKeyframe,
 	PacingDevices,
@@ -275,8 +273,6 @@ function parseVideoScenes(storyboardScenes: readonly unknown[]): Scene[] {
 				voiceIds: strArr(prop(scene, "voice_ids")),
 				noteIds: strArr(prop(scene, "note_ids")),
 				onScreenText: optStr(scene, "onScreenText"),
-				motionGraphic:
-					carriedObject<NonNullable<Scene["motionGraphic"]>>(scene, "motionGraphic") ?? undefined,
 				// Checked against both members, so this one is a real narrowing.
 				sceneKind:
 					sceneKind === "section_intro" || sceneKind === "storyboard" ? sceneKind : undefined,
@@ -499,7 +495,6 @@ export interface StoryboardDocument {
 	captions: CaptionConfig | null;
 	captionSet: CaptionSet | null;
 	pacingDevices: PacingDevices | null;
-	infographicStyle: InfographicStyle | null;
 	/** Which one-time clip migrations this document has already been through. */
 	sceneTextClipMigrationVersion: number | null;
 	/* Render-affecting presentation. These decide what a render CONTAINS -- which
@@ -525,6 +520,9 @@ export interface StoryboardReadDiagnostic {
 	defaulted: string[];
 	/** True when the input carried the pre-`schemaVersion` per-type arrays. */
 	legacy: boolean;
+	/** Stored content of a removed feature that the read dropped: each infographic
+	 *  clip as `clips[<id>]`, and each removed field by its key. */
+	dropped: string[];
 }
 
 export interface StoryboardRead {
@@ -545,7 +543,6 @@ export interface LegacyArrays {
 	textOverlays: TextOverlay[];
 	audioOverlays: AudioOverlay[];
 	videoOverlays: VideoOverlay[];
-	infographicOverlays: InfographicOverlay[];
 	effects: EffectClip[];
 	transitions: TransitionClip[];
 }
@@ -555,7 +552,6 @@ const EMPTY_LEGACY: LegacyArrays = {
 	textOverlays: [],
 	audioOverlays: [],
 	videoOverlays: [],
-	infographicOverlays: [],
 	effects: [],
 	transitions: [],
 };
@@ -573,7 +569,6 @@ const KNOWN_KEYS = new Set([
 	"captions",
 	"captionSet",
 	"pacingDevices",
-	"infographicStyle",
 	"sceneTextClipMigrationVersion",
 	"trackFlags",
 	"presentation",
@@ -584,11 +579,9 @@ const KNOWN_KEYS = new Set([
 	"text_overlays",
 	"audio_overlays",
 	"video_overlays",
-	"infographic_overlays",
 	"overlays",
 	"audioOverlays",
 	"videoOverlays",
-	"infographicOverlays",
 	"effects",
 	"transitions",
 	"outline",
@@ -600,19 +593,42 @@ const KNOWN_KEYS = new Set([
 	"posts",
 ]);
 
+/* Keys of the removed infographic feature. A stored document may still carry
+ * them; the read drops them and names them in `diagnostic.dropped`, and the
+ * write never emits them, so the next save of a project cleans its newest
+ * version. Stored versions are not rewritten. */
+const REMOVED_KEYS = new Set(["infographicStyle", "infographicOverlays", "infographic_overlays"]);
+
+/* The `data` lane group held infographic clips only. A stored flag entry that
+ * declares it is dropped, which leaves its row undeclared; `migrateLaneGroups`
+ * then removes the empty row on load. */
+function withoutDataLanes(flags: TrackFlags | null, dropped: string[]): TrackFlags | null {
+	if (!flags) return flags;
+	const kept = Object.entries(flags).filter(([row, flag]) => {
+		// The stored group is a string the current `LaneGroup` union no longer covers.
+		if (String(flag?.group) !== "data") return true;
+		dropped.push(`trackFlags[${row}]`);
+		return false;
+	});
+	return kept.length === Object.keys(flags).length ? flags : Object.fromEntries(kept);
+}
+
+/* A scene's `motionGraphic` was the infographic decision for that beat. */
+function withoutMotionGraphic(clip: Clip, dropped: string[]): Clip {
+	if (!clip.scene || !("motionGraphic" in clip.scene)) return clip;
+	// SAFETY: checked above that the stored scene carries the key; the rest of it
+	// is the scene the tolerant read already carries.
+	const { motionGraphic: _motionGraphic, ...scene } = clip.scene as Scene & {
+		motionGraphic?: unknown;
+	};
+	dropped.push(`clips[${clip.id}].scene.motionGraphic`);
+	return { ...clip, scene };
+}
+
 const CLIP_TYPES_BY_NAME: ReadonlyMap<string, ClipType> = new Map(
-	(
-		[
-			"image",
-			"video",
-			"text",
-			"audio",
-			"effect",
-			"transition",
-			"infographic",
-			"caption",
-		] satisfies ClipType[]
-	).map((t) => [t, t]),
+	(["image", "video", "text", "audio", "effect", "transition", "caption"] satisfies ClipType[]).map(
+		(t) => [t, t],
+	),
 );
 
 /** Decode one persisted clip.
@@ -707,14 +723,19 @@ export function readStoryboardDocument(raw: unknown): StoryboardRead {
 	// above — so its own keys are the document's keys.
 	const r: object = isObject(raw) ? raw : {};
 	const defaulted: string[] = [];
-	const unknownKeys = Object.keys(r).filter((k) => !KNOWN_KEYS.has(k));
+	const dropped = Object.keys(r).filter((k) => REMOVED_KEYS.has(k));
+	const unknownKeys = Object.keys(r).filter((k) => !KNOWN_KEYS.has(k) && !REMOVED_KEYS.has(k));
 
 	const rawClips = prop(r, "clips");
 	const clips: Clip[] = [];
 	if (Array.isArray(rawClips)) {
 		for (const c of rawClips) {
+			if (prop(c, "type") === "infographic") {
+				dropped.push(`clips[${String(prop(c, "id"))}]`);
+				continue;
+			}
 			const clip = parseClip(c, defaulted);
-			if (clip) clips.push(clip);
+			if (clip) clips.push(withoutMotionGraphic(clip, dropped));
 			else defaulted.push("clips[]");
 		}
 	} else {
@@ -762,7 +783,6 @@ export function readStoryboardDocument(raw: unknown): StoryboardRead {
 				textOverlays: parseTextOverlays(r),
 				audioOverlays: parseAudioOverlays(r, storyboardScenes),
 				videoOverlays: parseVideoOverlays(r),
-				infographicOverlays: [],
 				effects: parseEffects(r),
 				transitions: parseTransitions(r, storyboardScenes),
 			}
@@ -788,16 +808,15 @@ export function readStoryboardDocument(raw: unknown): StoryboardRead {
 			captions: carriedObject<CaptionConfig>(r, "captions"),
 			captionSet,
 			pacingDevices: carriedObject<PacingDevices>(r, "pacingDevices"),
-			infographicStyle: carriedObject<InfographicStyle>(r, "infographicStyle"),
 			sceneTextClipMigrationVersion: typeof migrationVersion === "number" ? migrationVersion : null,
-			trackFlags: carriedObject<TrackFlags>(r, "trackFlags"),
+			trackFlags: withoutDataLanes(carriedObject<TrackFlags>(r, "trackFlags"), dropped),
 			presentation: carriedObject<RenderPresentation>(r, "presentation"),
 			unitLifecycle: prop(r, "unit_lifecycle") ?? null,
 			artifacts: items(prop(r, "artifacts")),
 		},
 		clipFirst: isClipFirst,
 		legacyArrays,
-		diagnostic: { unknownKeys, defaulted, legacy },
+		diagnostic: { unknownKeys, defaulted, legacy, dropped },
 	};
 }
 
@@ -924,7 +943,6 @@ export function writeStoryboardDocument(doc: StoryboardDocument) {
 		captions: doc.captions,
 		...(doc.captionSet == null ? {} : { captionSet: doc.captionSet }),
 		pacingDevices: doc.pacingDevices,
-		infographicStyle: doc.infographicStyle,
 		trackFlags: doc.trackFlags,
 		presentation: doc.presentation,
 		/* Omitted when empty, like the two below. Materials arrived after thousands of

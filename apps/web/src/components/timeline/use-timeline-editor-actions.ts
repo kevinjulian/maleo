@@ -35,13 +35,11 @@ export function useTimelineEditorActions(
 		setOverlays,
 		setAudioOverlays,
 		setVideoOverlays,
-		setInfographicOverlays,
 		setEffects,
 		scenes,
 		overlays,
 		audioOverlays,
 		videoOverlays,
-		infographicOverlays,
 		effects,
 		transitions,
 		chromeStore,
@@ -81,7 +79,6 @@ export function useTimelineEditorActions(
 		setSelection,
 		selectionSlot,
 		selectedOverlayId,
-		selectedInfographicId,
 		selectedAudioId,
 		selectedVideoOvId,
 		selectedEffectId,
@@ -123,10 +120,6 @@ export function useTimelineEditorActions(
 		addSceneWithMedia,
 		clampMenuToViewport,
 		selectionSpansRef,
-		addInfographic,
-		addInfographicPayload,
-		updateInfographicPayload,
-		removeInfographic,
 		updateOverlay,
 		removeOverlay,
 		selectedOverlay,
@@ -148,7 +141,6 @@ export function useTimelineEditorActions(
 		animateScene,
 		setSceneLayout,
 		selectedScene,
-		selectedInfographic,
 		selectedClip,
 		selectedClipLocked,
 		addEffect,
@@ -204,16 +196,8 @@ export function useTimelineEditorActions(
 	 * while the document does, so this recomputes exactly when the clips change. */
 	const captionClips = useDocumentSelector(store, selectDerivedArrays).captionClips;
 	const freeClips = useMemo(
-		() =>
-			buildFreeClips(
-				videoOverlays,
-				overlays,
-				audioOverlays,
-				effects,
-				infographicOverlays,
-				captionClips,
-			),
-		[videoOverlays, overlays, audioOverlays, effects, infographicOverlays, captionClips],
+		() => buildFreeClips(videoOverlays, overlays, audioOverlays, effects, captionClips),
+		[videoOverlays, overlays, audioOverlays, effects, captionClips],
 	);
 	const freeRows = Math.max(4, freeRowCount(freeClips));
 
@@ -245,9 +229,7 @@ export function useTimelineEditorActions(
 				? clipId("text", selectedOverlayId)
 				: selectedAudioId != null
 					? clipId("audio", selectedAudioId)
-					: selectedFreeIds.size === 1 &&
-						  ([...selectedFreeIds][0]?.startsWith("infographic:") ||
-								[...selectedFreeIds][0]?.startsWith("caption:"))
+					: selectedFreeIds.size === 1 && [...selectedFreeIds][0]?.startsWith("caption:")
 						? [...selectedFreeIds][0]!
 						: null;
 
@@ -271,10 +253,8 @@ export function useTimelineEditorActions(
 		overlays,
 		audioOverlays,
 		videoOverlays,
-		infographicOverlays,
 		effects,
 		setScenes,
-		setInfographicOverlays,
 		setSelection,
 		setPreviewSceneId,
 		setInspectorOpen,
@@ -339,7 +319,6 @@ export function useTimelineEditorActions(
 		removeVideoOverlay,
 		removeAudio,
 		removeOverlay,
-		setInfographicOverlays,
 	});
 
 	// NLE clip operations (clipboard, split, ripple/lift delete, z-order, ctx menu)
@@ -367,7 +346,6 @@ export function useTimelineEditorActions(
 		videoOverlays,
 		overlays,
 		audioOverlays,
-		infographicOverlays,
 		effects,
 		selectedFreeIds: selectedFreeIdSet,
 		selectedFreeId,
@@ -376,7 +354,6 @@ export function useTimelineEditorActions(
 		setVideoOverlays,
 		setOverlays,
 		setAudioOverlays,
-		setInfographicOverlays,
 		setEffects,
 		setScenes,
 		setPreviewSceneId,
@@ -503,9 +480,6 @@ export function useTimelineEditorActions(
 		updateAudio,
 		regenAudio,
 		updateVideoOverlay,
-		addInfographic,
-		updateInfographicPayload,
-		removeInfographic,
 		addEffect,
 		removeEffect,
 		upsertTransition,
@@ -545,7 +519,6 @@ export function useTimelineEditorActions(
 		selectedOverlay,
 		selectedAudio,
 		selectedVideoOverlay,
-		selectedInfographic,
 		selectedEffectId,
 		selectedTransition,
 		selectedFreeIds: selectedFreeIdSet,
@@ -595,7 +568,6 @@ export function useTimelineEditorActions(
 		addVideoOverlay,
 		addAudio,
 		addOverlay,
-		addInfographicPayload,
 		removeEffect,
 		ensureMediaAsset,
 		mediaAssets,
@@ -617,7 +589,6 @@ export function useTimelineEditorActions(
 		zoomOut,
 		setZoomPercent,
 		setSelectedFreeIds,
-		setInfographicOverlays,
 		setFreeClipPos,
 		sceneStart,
 		setTrackFlags,
@@ -661,8 +632,6 @@ export function useTimelineEditorActions(
 		addOverlay,
 		updateOverlay,
 		placeComposition,
-		addInfographic,
-		addInfographicPayload,
 		addEffect: (kind) => addEffect(kind),
 		addAutoInterrupts,
 		addSceneWithMedia,
@@ -690,7 +659,6 @@ export function useTimelineEditorActions(
 		lockedMediaAssetIds,
 		ttsStatus,
 		selectedOverlayId,
-		selectedInfographicId,
 		activeTransitionType: transitionTarget.activeTransitionType,
 		canApplyTransition: transitionTarget.canApply,
 		transitionTargetName: transitionTarget.targetName,

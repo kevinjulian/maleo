@@ -287,7 +287,7 @@ export const PROMPT_FRAGMENTS = {
 			},
 			{
 				name: "editorial.presentation",
-				type: '"explainer" | "transition" | "narrative" | "headline" | "infographic"',
+				type: '"explainer" | "transition" | "narrative" | "headline"',
 				required: true,
 				source: "editorial.presentation",
 				condition: "Conditional: editorial",

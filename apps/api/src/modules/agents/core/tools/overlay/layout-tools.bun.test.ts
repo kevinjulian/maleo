@@ -40,7 +40,6 @@ const job = (): AgentJob => ({
 		},
 	],
 	videoOverlays: [{ id: 3, url: "v.mp4", kind: "video", startSec: 0, durationSec: 3, track: 1 }],
-	infographicOverlays: [],
 	audioOverlays: [],
 	characters: [],
 	artifacts: [],

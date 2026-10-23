@@ -457,7 +457,7 @@ surfaces is what carries instead.
 
 ### Requirement: The script discloses timeline content it does not own
 
-Overlays, music, transitions, effects, and infographics SHALL NOT produce script
+Overlays, music, transitions and effects SHALL NOT produce script
 rows. Each script row SHALL show a read-only summary of such content overlapping
 that scene.
 

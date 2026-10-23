@@ -64,7 +64,7 @@ import { KeyframeCurveInspector } from "./keyframe-curve-inspector.tsx";
 import type { ClipBodyContext } from "./clip-body-context.ts";
 import { sceneClipBody } from "./scene-clip-body.tsx";
 import { audioClipBody, brollClipBody, textClipBody } from "./overlay-clip-body.tsx";
-import { effectClipBody, infographicClipBody } from "./infographic-clip-body.tsx";
+import { effectClipBody } from "./effect-clip-body.tsx";
 
 /** Groups that edit what the canvas draws; a locked track freezes them all. */
 const LOCKABLE_GROUPS: ReadonlySet<string> = new Set([
@@ -156,7 +156,6 @@ export function TimelineClipInspector({
 		selectedOverlay,
 		selectedAudio,
 		selectedVideoOverlay,
-		selectedInfographic,
 		selectedEffectId,
 		selectedTransition,
 		selectedFreeIds,
@@ -194,15 +193,13 @@ export function TimelineClipInspector({
 			: normalizeSceneClips(selectedScene).visualClips?.[0]?.id);
 	const keyTarget: ClipAnimationTarget | undefined = selectedOverlay
 		? { source: "text", id: selectedOverlay.id }
-		: selectedInfographic
-			? { source: "infographic", id: selectedInfographic.id }
-			: selectedVideoOverlay
-				? { source: "video", id: selectedVideoOverlay.id }
-				: selectedAudio
-					? { source: "audio", id: selectedAudio.id }
-					: selectedScene && sceneVisualId
-						? { source: "scene", id: selectedScene.id, visualId: sceneVisualId }
-						: undefined;
+		: selectedVideoOverlay
+			? { source: "video", id: selectedVideoOverlay.id }
+			: selectedAudio
+				? { source: "audio", id: selectedAudio.id }
+				: selectedScene && sceneVisualId
+					? { source: "scene", id: selectedScene.id, visualId: sceneVisualId }
+					: undefined;
 	const {
 		keying,
 		rowKeying,
@@ -236,7 +233,6 @@ export function TimelineClipInspector({
 		videoOverlay: selectedVideoOverlay,
 		audio: selectedAudio,
 		text: selectedOverlay,
-		infographic: selectedInfographic,
 		effectId: selectedEffectId,
 		transitionId: selectedTransition,
 		scene: selectedScene,
@@ -362,8 +358,6 @@ export function TimelineClipInspector({
 		if (clipSel.kind === "broll" && selectedVideoOverlay)
 			return brollClipBody(ctx, selectedVideoOverlay);
 		if (clipSel.kind === "audio" && selectedAudio) return audioClipBody(ctx, selectedAudio);
-		if (clipSel.kind === "infographic" && selectedInfographic)
-			return infographicClipBody(ctx, selectedInfographic);
 		if (clipSel.kind === "effect" && selectedEffectId != null) {
 			const fx = effects.find((x) => x.id === selectedEffectId);
 			if (!fx) return null;
@@ -550,7 +544,6 @@ export function TimelineClipInspectorSheet(props: TimelineClipInspectorProps): J
 		selectedOverlay,
 		selectedAudio,
 		selectedVideoOverlay,
-		selectedInfographic,
 		selectedEffectId,
 		selectedTransition,
 		selectedFreeIds,
@@ -559,7 +552,6 @@ export function TimelineClipInspectorSheet(props: TimelineClipInspectorProps): J
 		videoOverlay: selectedVideoOverlay,
 		audio: selectedAudio,
 		text: selectedOverlay,
-		infographic: selectedInfographic,
 		effectId: selectedEffectId,
 		transitionId: selectedTransition,
 		scene: selectedScene,

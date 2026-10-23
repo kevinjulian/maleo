@@ -59,10 +59,7 @@ import {
 } from "@models/presets/element-push.ts";
 import { createContentPreset, getContentPresetUsage, updateContentPreset } from "@api/presets.ts";
 import { DEFAULT_SETTINGS, presetSettings } from "@models/presets/creative-settings.ts";
-import {
-	DEFAULT_INFOGRAPHIC_STYLE,
-	DEFAULT_PACING_DEVICES,
-} from "@models/presets/generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "@models/presets/generation-defaults.ts";
 import { useDefaulterNames } from "@hooks/editor/use-defaulter-names.ts";
 import type {
 	TemplateParams,
@@ -111,8 +108,6 @@ export interface TimelinePanelOps {
 	) => void;
 	updateOverlay: (id: number, patch: Partial<TextOverlay>) => void;
 	placeComposition: ElementsProps["onPlaceComposition"];
-	addInfographic: ElementsProps["onAddData"];
-	addInfographicPayload: ElementsProps["onPlaceCustomData"];
 	addEffect: (kind: EffectKind) => void;
 	addAutoInterrupts: (intervalSec: number) => void;
 	addSceneWithMedia: (url: string, mediaAssetId?: string) => void;
@@ -141,7 +136,6 @@ export interface TimelinePanelView {
 	lockedMediaAssetIds: Set<string>;
 	ttsStatus: ComponentProps<typeof SettingsPanel>["tts"];
 	selectedOverlayId: number | null;
-	selectedInfographicId: number | null | undefined;
 	activeTransitionType: TransitionsProps["activeType"];
 	canApplyTransition: boolean;
 	transitionTargetName: TransitionsProps["targetName"];
@@ -204,9 +198,9 @@ export function TimelinePanelHost({
 	const [mediaError, setMediaError] = useState<string | null>(null);
 
 	const derived = useDocumentSelector(store, selectDerivedArrays);
-	const { scenes, audioOverlays, infographicOverlays } = derived;
+	const { scenes, audioOverlays } = derived;
 	const projectReferences = derived.projectReferences ?? EMPTY_PROJECT_SELECTION;
-	const { setInfographicOverlays, setProjectReferences } = writers;
+	const { setProjectReferences } = writers;
 
 	const { refs, setRefs, pool, setPool, products, mediaAssets, ensureMediaAsset } = library;
 	const {
@@ -216,8 +210,6 @@ export function TimelinePanelHost({
 		setDirection,
 		pacingDevices,
 		setPacingDevices,
-		infographicStyle,
-		setInfographicStyle,
 		elementSources,
 		setElementSources,
 		renderOverrides,
@@ -255,14 +247,12 @@ export function TimelinePanelHost({
 			settingsPaths: SETTINGS_ELEMENT_PATHS,
 			axisPaths: {
 				pacingDevices: AXIS_ELEMENT_PATHS.pacingDevices,
-				infographicStyle: AXIS_ELEMENT_PATHS.infographicStyle,
 			},
 			supplier: activePreset
 				? {
 						id: activePreset.id,
 						settings: presetSettings(activePreset.bundle.settings),
 						pacingDevices: activePreset.bundle.pacingDevices,
-						infographicStyle: activePreset.bundle.infographicStyle,
 					}
 				: null,
 		});
@@ -276,30 +266,25 @@ export function TimelinePanelHost({
 			paths,
 			settings,
 			pacingDevices,
-			infographicStyle,
 			sources: elementSources,
 			settingsPaths: SETTINGS_ELEMENT_PATHS,
 			axisPaths: {
 				pacingDevices: AXIS_ELEMENT_PATHS.pacingDevices,
-				infographicStyle: AXIS_ELEMENT_PATHS.infographicStyle,
 			},
 			defaults: {
 				settings: DEFAULT_SETTINGS,
 				pacingDevices: DEFAULT_PACING_DEVICES,
-				infographicStyle: DEFAULT_INFOGRAPHIC_STYLE,
 			},
 			supplier: activePreset
 				? {
 						id: activePreset.id,
 						settings: presetSettings(activePreset.bundle.settings),
 						pacingDevices: activePreset.bundle.pacingDevices,
-						infographicStyle: activePreset.bundle.infographicStyle,
 					}
 				: null,
 		});
 		setSettings(next.settings);
 		setPacingDevices(next.pacingDevices);
-		setInfographicStyle(next.infographicStyle);
 		setElementSources(next.sources);
 	};
 
@@ -316,13 +301,11 @@ export function TimelinePanelHost({
 			projectReferences,
 			settings,
 			pacingDevices,
-			infographicStyle,
 			settingsPaths: SETTINGS_ELEMENT_PATHS,
 			axisPaths: {
 				config: AXIS_ELEMENT_PATHS.config,
 				projectReferences: AXIS_ELEMENT_PATHS.projectReferences,
 				pacingDevices: AXIS_ELEMENT_PATHS.pacingDevices,
-				infographicStyle: AXIS_ELEMENT_PATHS.infographicStyle,
 			},
 		});
 		if (!plan.pushed.length) return;
@@ -378,12 +361,6 @@ export function TimelinePanelHost({
 			return resolveSetState(update, prev);
 		});
 	};
-	const setInfographicAsOperator: typeof setInfographicStyle = (update) => {
-		setInfographicStyle((prev) => {
-			setElementSources((sources) => recordAxisEdit(AXIS_ELEMENT_PATHS.infographicStyle, sources));
-			return resolveSetState(update, prev);
-		});
-	};
 
 	/* Held in a variable so the phone and desktop arms below share one tree.
 	 * An inline wrapper component would be a new function identity every
@@ -418,29 +395,13 @@ export function TimelinePanelHost({
 					styleRefs={view.allImageRefs.filter((r) => !isProductRef(r))}
 					pacingDevices={pacingDevices}
 					onPacingChange={setPacingAsOperator}
-					dataStyle={(() => {
-						const selected =
-							infographicOverlays.find((x) => x.id === view.selectedInfographicId) ?? null;
-						return {
-							effective: { ...infographicStyle, ...selected?.style },
-							selected: !!selected,
-							clipOwn: Boolean(selected?.style),
-							onChange: (next) => {
-								if (selected)
-									setInfographicOverlays((items) =>
-										items.map((x) => (x.id === selected.id ? { ...x, style: next } : x)),
-									);
-								else setInfographicAsOperator(next);
-							},
-						};
-					})()}
 					/* Applying a preset replaces INHERITED values only. It used to replace every
 					   axis unconditionally, because nothing recorded which values were the
 					   operator's; now something does, so the apply respects them unless the
 					   operator ticks the opt-in the confirmation offers. */
 					onApplyPreset={(bundle, meta, options) => {
 						const next = applyPresetSourced(
-							{ config, projectReferences, settings, pacingDevices, infographicStyle },
+							{ config, projectReferences, settings, pacingDevices },
 							elementSources,
 							bundle,
 							meta,
@@ -450,7 +411,6 @@ export function TimelinePanelHost({
 						setProjectReferences(next.targets.projectReferences);
 						setSettings(next.targets.settings);
 						setPacingDevices(next.targets.pacingDevices);
-						setInfographicStyle(next.targets.infographicStyle);
 						setElementSources(next.sources);
 						// Record WHICH preset the project is now on: per-element sources cannot answer
 						// that for an element the operator later edits, and that is exactly the element
@@ -460,7 +420,7 @@ export function TimelinePanelHost({
 					}}
 					describeApply={(bundle, meta) =>
 						describePresetApply(
-							{ config, projectReferences, settings, pacingDevices, infographicStyle },
+							{ config, projectReferences, settings, pacingDevices },
 							elementSources,
 							bundle,
 							meta,
@@ -554,8 +514,6 @@ export function TimelinePanelHost({
 						ops.addOverlay(undefined, undefined, preset, defaultParams)
 					}
 					onPlaceComposition={ops.placeComposition}
-					onAddData={ops.addInfographic}
-					onPlaceCustomData={ops.addInfographicPayload}
 					onClose={close}
 				/>
 			) : rail === "templates" ? (

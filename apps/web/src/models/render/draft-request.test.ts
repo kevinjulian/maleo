@@ -79,7 +79,6 @@ describe("hasRenderableVisual", () => {
 	test("any visual clip counts; audio alone does not", () => {
 		expect(hasRenderableVisual([clip({ id: "a", type: "image" })])).toBe(true);
 		expect(hasRenderableVisual([clip({ id: "t", type: "text" })])).toBe(true);
-		expect(hasRenderableVisual([clip({ id: "i", type: "infographic" })])).toBe(true);
 		expect(hasRenderableVisual([clip({ id: "s", type: "audio" })])).toBe(false);
 		expect(hasRenderableVisual([])).toBe(false);
 	});

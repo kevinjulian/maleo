@@ -115,7 +115,7 @@ export async function persistSubmission(input: {
 	const { store, scenes, slides, posts, trackFlags, captions } = doc;
 	const captionIssues = captionOutputBlockers(store.getDoc().clips, captions, trackFlags);
 	if (captionIssues.length) throw new Error(captionIssues.join(" "));
-	const { settings, pacingDevices, infographicStyle } = creative;
+	const { settings, pacingDevices } = creative;
 	if (!projectId) throw new Error("draft was not saved — please regenerate and try again");
 	const saved = await input.saveStoryboard();
 	if (type === "video") {
@@ -140,7 +140,6 @@ export async function persistSubmission(input: {
 				trackFlags,
 				captions,
 				pacingDevices,
-				infographicStyle,
 				brand: renderPresentation(settings).brand,
 				backgroundFill: renderPresentation(settings).backgroundFill,
 			},

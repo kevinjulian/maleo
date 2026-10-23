@@ -348,143 +348,6 @@ export const textOverlaySchema = z.object({
 	/** Normalized animation of a Motion Studio preview layer; timeline text uses `layout.animation`. */
 	anim: overlayAnimSchema.nullish(),
 });
-export const infographicPayloadSchema = z.discriminatedUnion("type", [
-	z.object({
-		type: z.literal("stat_reveal"),
-		title: z.string(),
-		value: z.string(),
-		suffix: z.string().optional(),
-		comparison: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("bar_chart"),
-		title: z.string(),
-		rows: z
-			.array(z.object({ label: z.string(), value: z.number(), color: z.string().optional() }))
-			.min(1),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("line_chart"),
-		title: z.string(),
-		points: z.array(z.object({ label: z.string(), value: z.number() })).min(2),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("area_chart"),
-		title: z.string(),
-		points: z.array(z.object({ label: z.string(), value: z.number() })).min(2),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("pie_chart"),
-		title: z.string(),
-		slices: z
-			.array(z.object({ label: z.string(), value: z.number(), color: z.string().optional() }))
-			.min(1),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("donut_chart"),
-		title: z.string(),
-		slices: z
-			.array(z.object({ label: z.string(), value: z.number(), color: z.string().optional() }))
-			.min(1),
-		centerLabel: z.string().optional(),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("progress_bars"),
-		title: z.string(),
-		rows: z
-			.array(z.object({ label: z.string(), value: z.number(), color: z.string().optional() }))
-			.min(1),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("circular_progress"),
-		title: z.string(),
-		value: z.number(),
-		label: z.string().optional(),
-		unit: z.string().optional(),
-	}),
-	z.object({
-		type: z.literal("table_build"),
-		title: z.string(),
-		columns: z.array(z.string()).min(1),
-		rows: z.array(z.array(z.string())).min(1),
-		highlight: z.object({ row: z.number().optional(), col: z.number().optional() }).optional(),
-		// Per-cell verdict marks (tick/cross), same shape as `rows`. A marked cell
-		// renders the icon instead of text-only styling — comparison-table device.
-		marks: z.array(z.array(z.enum(["tick", "cross", "none"]))).optional(),
-		// One-shot SFX per revealed row: tick rows play tickUrl, cross rows crossUrl.
-		rowSfx: z
-			.object({ tickUrl: z.string().optional(), crossUrl: z.string().optional() })
-			.optional(),
-	}),
-	z.object({
-		type: z.literal("price_tag"),
-		title: z.string(),
-		price: z.string(),
-		// Anchor/original price rendered struck-through next to `price`.
-		compareAt: z.string().optional(),
-		note: z.string().optional(),
-		// Urgency pill ("Today only", "-40%") popped in after the price lands.
-		badge: z.string().optional(),
-		// Animate the number falling from compareAt down to price (both numeric).
-		dropAnimation: z.boolean().optional(),
-	}),
-	z.object({
-		// Social proof: star rating fly-in + sold/review count-ups from product metadata.
-		type: z.literal("social_proof"),
-		title: z.string(),
-		rating: z.number().min(0).max(5).optional(),
-		reviewCount: z.string().optional(),
-		soldCount: z.string().optional(),
-		badge: z.string().optional(),
-	}),
-	z.object({
-		// Scarcity/urgency: stock counter and/or deadline line. Values may be
-		// refreshed at render time from a live product feed before validation.
-		type: z.literal("urgency"),
-		title: z.string(),
-		stockCount: z.number().optional(),
-		stockLabel: z.string().optional(),
-		deadlineText: z.string().optional(),
-		note: z.string().optional(),
-	}),
-]);
-export const infographicOverlaySchema = z.object({
-	startSec: z.number().default(0),
-	durationSec: z.number().default(3),
-	// Absolute video time (seconds) when the main build/count animation starts.
-	// Before it, the panel sits entered-but-idle — lets a stat pop exactly on the
-	// voiceover word instead of the clip edge. Absent → build starts at startSec.
-	revealAtSec: z.number().nullish(),
-	track: z.number().default(0),
-	layout: clipLayoutSchema,
-	animation: z
-		.object({
-			in: z.enum(["fade", "slide_up", "scale"]).default("fade"),
-			main: z.enum(["build", "count", "highlight"]).default("build"),
-			out: z.enum(["fade"]).default("fade"),
-		})
-		.partial()
-		.optional(),
-	payload: infographicPayloadSchema,
-	style: z
-		.object({
-			bgColor: z.string().optional(),
-			bgOpacity: z.number().min(0).max(1).optional(),
-			borderColor: z.string().optional(),
-			borderOpacity: z.number().min(0).max(1).optional(),
-			borderRadius: z.number().min(0).max(40).optional(),
-			blur: z.number().min(0).max(30).optional(),
-			dataColor: z.string().optional(),
-			labelColor: z.string().optional(),
-		})
-		.optional(),
-});
 export const audioOverlaySchema = z.object({
 	animation: audioAnimationSchema.optional(),
 	loopSource: z.boolean().optional(),
@@ -595,7 +458,6 @@ export const storyboardSchema = z.object({
 	hideBase: z.boolean().optional(),
 	muteBase: z.boolean().optional(),
 	textOverlays: z.array(textOverlaySchema).default([]),
-	infographicOverlays: z.array(infographicOverlaySchema).default([]),
 	audioOverlays: z.array(audioOverlaySchema).default([]),
 	videoOverlays: z.array(videoOverlaySchema).default([]),
 	effects: z.array(effectClipSchema).default([]),
@@ -629,18 +491,6 @@ export const storyboardSchema = z.object({
 		.optional(),
 	captions: captionsConfigSchema,
 	pacingDevices: pacingDevicesSchema,
-	infographicStyle: z
-		.object({
-			bgColor: z.string().optional(),
-			bgOpacity: z.number().min(0).max(1).optional(),
-			borderColor: z.string().optional(),
-			borderOpacity: z.number().min(0).max(1).optional(),
-			borderRadius: z.number().min(0).max(40).optional(),
-			blur: z.number().min(0).max(30).optional(),
-			dataColor: z.string().optional(),
-			labelColor: z.string().optional(),
-		})
-		.optional(),
 	// Desired total duration. When set (and there's no audio to time against),
 	// scene durations scale to fill this so the video matches the requested length
 	// instead of a flat per-scene default.
@@ -650,11 +500,6 @@ export const storyboardSchema = z.object({
 export type StoryboardSceneData = z.infer<typeof storyboardSceneSchema>;
 export type Storyboard = z.infer<typeof storyboardSchema>;
 export type TextOverlayData = z.infer<typeof textOverlaySchema>;
-export type InfographicPayload = z.infer<typeof infographicPayloadSchema>;
-export type InfographicOverlayData = z.infer<typeof infographicOverlaySchema>;
-export type InfographicStyleData = NonNullable<
-	z.infer<typeof storyboardSchema>["infographicStyle"]
->;
 export type AudioOverlayData = z.infer<typeof audioOverlaySchema>;
 export type VideoOverlayData = z.infer<typeof videoOverlaySchema>;
 

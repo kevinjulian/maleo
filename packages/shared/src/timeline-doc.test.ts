@@ -12,7 +12,6 @@ import { EMPTY_PROJECT_MATERIALS } from "./project-materials.ts";
 import type {
 	AudioOverlay,
 	EffectClip,
-	InfographicOverlay,
 	Scene,
 	TextOverlay,
 	TransitionClip,
@@ -418,43 +417,6 @@ describe("toTimelineDoc / fromTimelineDoc", () => {
 		});
 	});
 
-	test("round-trips an infographic clip preserving payload, style, animation, and edited timing", () => {
-		const infographic = {
-			id: 70,
-			start: 2,
-			dur: 4,
-			track: 3,
-			revealAt: 2.5,
-			animation: { in: "slide_up", main: "count", out: "fade" },
-			payload: { kind: "stat", value: "42%", label: "growth" },
-			style: { accent: "#ff0066" },
-		} as unknown as InfographicOverlay;
-		const doc = JSON.parse(
-			JSON.stringify(
-				toTimelineDoc([scene({ id: 1 })], [], [], [], [], [], undefined, [infographic]),
-			),
-		) as ReturnType<typeof toTimelineDoc>;
-		expect(doc.clips.find((c) => c.id === "infographic:70")?.type).toBe("infographic");
-		// Simulate the infographic being moved + resized in the doc.
-		const moved = {
-			...doc,
-			clips: doc.clips.map((c) =>
-				c.id === "infographic:70" ? { ...c, startSec: 9, durationSec: 6, track: 1 } : c,
-			),
-		};
-		const back = fromTimelineDoc(moved);
-		expect(back.infographicOverlays[0]).toMatchObject({
-			id: 70,
-			start: 9,
-			dur: 6,
-			track: 1,
-			revealAt: 2.5,
-			animation: { in: "slide_up", main: "count", out: "fade" },
-			payload: { kind: "stat", value: "42%", label: "growth" },
-			style: { accent: "#ff0066" },
-		});
-	});
-
 	test("round-trips an effect clip preserving intensity + edited timing", () => {
 		const effect: EffectClip = {
 			id: 40,
@@ -547,7 +509,6 @@ describe("toTimelineDoc / fromTimelineDoc", () => {
 					captions: null,
 					captionSet: null,
 					pacingDevices: null,
-					infographicStyle: null,
 					trackFlags: null,
 					presentation: null,
 					unitLifecycle: null,

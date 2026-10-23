@@ -17,7 +17,6 @@ import {
 	type BrandKit,
 	type CaptionConfig,
 	type Config,
-	type InfographicStyle,
 	type PacingDevices,
 	type RefsState,
 	type TimelineDoc,
@@ -50,7 +49,6 @@ interface VideoRenderRequest {
 	trackFlags?: TrackFlags;
 	captions?: CaptionConfig;
 	pacingDevices?: PacingDevices;
-	infographicStyle?: InfographicStyle;
 	brand?: BrandKit;
 	backgroundFill?: string;
 }
@@ -228,7 +226,6 @@ export function videoRoutes(): Hono {
 				trackFlags: r.trackFlags,
 				captions: r.captions,
 				pacingDevices: r.pacingDevices,
-				infographicStyle: r.infographicStyle,
 				brand: r.brand,
 				backgroundFill: r.backgroundFill,
 			});

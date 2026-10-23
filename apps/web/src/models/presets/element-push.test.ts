@@ -19,7 +19,6 @@ const AXIS_PATHS = {
 	config: "style",
 	projectReferences: "projectReferences",
 	pacingDevices: "pacingDevices",
-	infographicStyle: "infographicStyle",
 };
 
 const target = (over: Partial<ContentPresetBundle> = {}): ContentPresetBundle =>
@@ -28,7 +27,6 @@ const target = (over: Partial<ContentPresetBundle> = {}): ContentPresetBundle =>
 		projectRefs: {},
 		settings: { aspectRatio: "9:16" },
 		pacingDevices: {},
-		infographicStyle: {},
 		...over,
 	}) as ContentPresetBundle;
 
@@ -50,7 +48,6 @@ const plan = (
 		projectReferences: { prompt: "warm", entityIds: ["ent-1"] },
 		settings: { aspectRatio: "16:9", voice: "Kore" } as never,
 		pacingDevices: { chapterPills: true, progressBar: false, variant: "pill" } as never,
-		infographicStyle: { bgColor: "#123456" } as never,
 		settingsPaths: SETTINGS_PATHS as never,
 		axisPaths: AXIS_PATHS,
 	});
@@ -79,7 +76,6 @@ describe("a push writes the project's value into the target bundle", () => {
 			progressBar: false,
 			variant: "pill",
 		});
-		expect(plan(["infographicStyle"]).bundle.infographicStyle).toEqual({ bgColor: "#123456" });
 	});
 
 	test("the target bundle it was given is not mutated", () => {

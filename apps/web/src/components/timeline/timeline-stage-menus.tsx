@@ -39,7 +39,6 @@ export function TimelineStageMenus({
 		trackLocked,
 		addOverlay,
 		addAudio,
-		addInfographic,
 		addEffect,
 		addSceneAt,
 		dupScene,
@@ -318,16 +317,6 @@ export function TimelineStageMenus({
 											}}
 										>
 											{Ic.spark(ICON.sm)} SFX
-										</button>
-										<button
-											type="button"
-											role="menuitem"
-											onClick={() => {
-												addInfographic("stat_reveal", t, row);
-												close();
-											}}
-										>
-											{Ic.box(ICON.sm)} Data callout
 										</button>
 										<button
 											type="button"

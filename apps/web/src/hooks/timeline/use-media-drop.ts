@@ -10,11 +10,7 @@ import type { TimelineDocumentStore } from "@stores/timeline-document-store.ts";
 import type { DocumentWriters } from "@stores/document-writers.ts";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import type { BaseTrackClip, TimelineClip } from "@models/timeline/timeline-clips.ts";
-import {
-	DATA_CALLOUT_DND_MIME,
-	MEDIA_DND_MIME,
-	type MediaAsset,
-} from "@models/timeline/editor-media.ts";
+import { MEDIA_DND_MIME, type MediaAsset } from "@models/timeline/editor-media.ts";
 import { mediaDragPreview } from "@models/timeline/media-drag.ts";
 import {
 	hasTimelineExternalDrag,
@@ -252,7 +248,7 @@ export function useMediaDrop(input: {
 		ghost.style.display = "";
 		ghost.style.left = `${(target?.start ?? at) * pxPerSec}px`;
 		ghost.style.top = `${destination.offsetTop}px`;
-		const dur = target?.dur ?? (e.dataTransfer.types.includes(DATA_CALLOUT_DND_MIME) ? 4 : 3);
+		const dur = target?.dur ?? 3;
 		ghost.style.width = `${Math.max(1, dur * pxPerSec)}px`;
 		ghost.style.height = `${destination.offsetHeight}px`;
 		ghost.textContent =

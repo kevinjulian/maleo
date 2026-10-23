@@ -2,8 +2,7 @@
  * initial-run marker. No component state, no JSX.
  *
  * The draft preview dims now sit beside FORMAT_DIMS in
- * models/timeline/timeline-editor-model.ts, which they are derived from; the
- * agent infographic merge is models/agent/merge-infographic-overlays.ts; and
+ * models/timeline/timeline-editor-model.ts, which they are derived from; and
  * the export glyph was a duplicate of the registry's `Ic.export`. */
 // Persisted save indicator shown in the workspace header.
 export type SaveState = "idle" | "saving" | "saved" | "failed";

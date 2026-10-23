@@ -42,7 +42,6 @@ export function resolveClipSubject(sel: {
 	videoOverlay?: { kind: string; url?: string } | null;
 	audio?: { kind: AudioOverlayKind; origin?: AudioOrigin; url?: string } | null;
 	text?: { preset?: string } | null;
-	infographic?: unknown;
 	effectId?: number | null;
 	transitionId?: number | null;
 	scene?: { name: string } | null;
@@ -63,7 +62,6 @@ export function resolveClipSubject(sel: {
 		const shape = shapeElement(sel.text.preset);
 		return shape ? { kind: "shape", title: shape.label } : { kind: "text", title: "Text" };
 	}
-	if (sel.infographic) return { kind: "infographic", title: "Data callout" };
 	if (sel.effectId != null) return { kind: "effect", title: "Effect" };
 	if (sel.transitionId != null) return { kind: "transition", title: "Transition" };
 	if (sel.scene) return { kind: "scene", title: `Scene · ${sel.scene.name}` };
@@ -180,15 +178,6 @@ export function clipPropertyGroups(
 				ANIMATION,
 				TIMING,
 				{ k: "content", icon: Ic.mic, label: "Source" },
-			];
-		case "infographic":
-			return [
-				{ k: "content", icon: Ic.chart, label: "Data" },
-				TRANSFORM,
-				ANIMATION,
-				BLENDING,
-				{ k: "motion", icon: Ic.spark, label: "Motion" },
-				BACKGROUND,
 			];
 		case "effect":
 			return [{ k: "effect", icon: Ic.spark, label: "Effect" }];

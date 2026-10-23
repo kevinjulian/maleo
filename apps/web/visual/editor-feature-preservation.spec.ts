@@ -3,6 +3,7 @@ import { readStoryboardDocument } from "@maleo/shared";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { FIXTURE_PROJECT_ID } from "./screens.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
@@ -148,13 +149,12 @@ for (const width of [1440, 320]) {
 				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
 				(route) => route.fulfill({ json: detail }),
 			);
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/storyboards(\\?|$)`),
-				async (route) => {
-					detail.storyboards[0]!.storyboard_json = route.request().postDataJSON().storyboard_json;
-					await route.fulfill({ json: { storyboard: detail.storyboards[0] } });
+			await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+				stored: () => detail.storyboards[0]!.storyboard_json,
+				onSave: (next) => {
+					detail.storyboards[0]!.storyboard_json = next;
 				},
-			);
+			});
 			const page = await context.newPage();
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			const trigger = page.getByTitle("Edit Project Materials", { exact: true });

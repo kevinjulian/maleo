@@ -7,7 +7,6 @@ import { toolByName, RETIRED_TOOL_NAMES, TOOL_ALIAS_CANONICAL } from "./registry
 import type { ToolHelpers, ToolContext, ToolEffect, ToolKind } from "./types.ts";
 import { type EditDraft } from "./pipeline.ts";
 import { clampShortformSceneDuration } from "./visual-gen.ts";
-import { parseMotionGraphic } from "./trace.ts";
 import { getStoryPlan } from "./plan-state.ts";
 import { str, num } from "./services/util.ts";
 import {
@@ -31,7 +30,6 @@ const TOOL_HELPERS: ToolHelpers = {
 	num,
 	index: clampIndex,
 	clampSceneDuration: clampShortformSceneDuration,
-	parseMotionGraphic,
 };
 
 // Resolve an `index` argument against a list. Eight tools wrote this expression

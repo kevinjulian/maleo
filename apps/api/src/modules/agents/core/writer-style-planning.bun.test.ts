@@ -46,7 +46,6 @@ function videoJob(projectId: string, brief: string, workspace?: string): AgentJo
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -9,7 +9,6 @@ const LABELS: Readonly<Record<string, string>> = {
 	style: "Style",
 	projectReferences: "References",
 	pacingDevices: "Retention overlays",
-	infographicStyle: "Data callouts",
 	"settings.aspectRatio": "Aspect ratio",
 	"settings.timelineTemplateId": "Template",
 	"settings.globalStyleRefId": "Style reference",

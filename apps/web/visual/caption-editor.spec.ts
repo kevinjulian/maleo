@@ -3,13 +3,9 @@ import { chooseOption } from "./options.ts";
 import { expect, test, type Page } from "@playwright/test";
 import { resolve } from "node:path";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { FIXTURE_PROJECT_ID } from "./screens.ts";
-import {
-	captureCaptionResult,
-	captionStateFingerprint,
-	readStoryboardDocument,
-	type Clip,
-} from "@maleo/shared";
+import { captureCaptionResult, type Clip } from "@maleo/shared";
 import type { EditorDoc } from "@maleo/shared/editor";
 import type { CaptionJobInput } from "../src/api/caption-jobs.ts";
 import { editorChatProjectDetail, EDITOR_CHAT_PROJECT_ID } from "./fixtures/editor-chat-data.ts";
@@ -231,24 +227,13 @@ for (const width of [1440, 320]) {
 				},
 			};
 			let savedDoc = fixtureDoc;
-			const captionConflicts: string[] = [];
-			await context.route(/\/storyboards(\?|$)/, (route) => {
-				if (route.request().method() !== "POST") return route.fallback();
-				const body = route.request().postDataJSON();
-				const prior = captionStateFingerprint(readStoryboardDocument(savedDoc).doc);
-				if (
-					body.expectedCaptionState !== prior &&
-					captionStateFingerprint(readStoryboardDocument(body.storyboard_json).doc) !== prior
-				) {
-					captionConflicts.push(body.expectedCaptionState);
-					return route.fulfill({ status: 409, json: { error: "caption_conflict" } });
-				}
-				savedDoc = body.storyboard_json;
-				return route.fulfill({
-					json: {
-						storyboard: { ...editorChatProjectDetail.storyboards[0], storyboard_json: savedDoc },
-					},
-				});
+			/* Captions apply through the command log, which the engine checks. */
+			await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+				stored: () => savedDoc,
+				onSave: (next) => {
+					savedDoc = next as typeof savedDoc;
+				},
+				media: () => [{ id: "speech", label: "Speech", kind: "audio", url, dur: 2 }] as never,
 			});
 			await context.route(
 				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
@@ -258,11 +243,9 @@ for (const width of [1440, 320]) {
 							...editorChatProjectDetail,
 							project: {
 								...editorChatProjectDetail.project,
-								editor_state_json: {
-									chat: [],
-									media_assets: [{ id: "speech", label: "Speech", kind: "audio", url, dur: 2 }],
-								},
+								editor_state_json: { chat: [] },
 							},
+							mediaAssets: [{ id: "speech", label: "Speech", kind: "audio", url, dur: 2 }],
 							storyboards: [
 								{ ...editorChatProjectDetail.storyboards[0], storyboard_json: savedDoc },
 							],
@@ -548,7 +531,6 @@ for (const width of [1440, 320]) {
 			await expect
 				.poll(() => savedDoc.clips.filter((clip) => clip.type === "caption").length)
 				.toBe(2);
-			expect(captionConflicts).toEqual([]);
 			await page.reload();
 			await expect(page.locator(".tl2-timeline")).toBeVisible();
 			await expect(page.locator('[data-clipid^="audio:"]')).toHaveCount(2);

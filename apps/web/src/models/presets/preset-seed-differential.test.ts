@@ -24,7 +24,7 @@ import {
 } from "@maleo/shared";
 import { describe, expect, test } from "vite-plus/test";
 import type { Config } from "@maleo/shared";
-import { DEFAULT_PACING_DEVICES, DEFAULT_INFOGRAPHIC_STYLE } from "./generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "./generation-defaults.ts";
 import { DEFAULT_SETTINGS } from "./creative-settings.ts";
 import { seedFromPreset, type PresetTargets } from "./preset-apply.ts";
 import { seedFromPresetSourced } from "./preset-apply-sourced.ts";
@@ -41,7 +41,6 @@ const bundle: ContentPresetBundle = presetBundle({
 	// so "did the operator choose 9:16 on purpose?" becomes answerable.
 	settings: { aspectRatio: "16:9", voice: "Kore", language: "en" },
 	pacingDevices: { chapterPills: true, progressBar: true, variant: "pill" },
-	infographicStyle: { bgColor: "#123456" },
 	direction: undefined,
 });
 
@@ -51,7 +50,6 @@ function targets(over: Partial<PresetTargets> = {}): PresetTargets {
 		projectReferences: { ...EMPTY_PROJECT_SELECTION },
 		settings: { ...DEFAULT_SETTINGS },
 		pacingDevices: { ...DEFAULT_PACING_DEVICES },
-		infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE },
 		...over,
 	};
 }
@@ -66,7 +64,6 @@ function allCodeDefault(): ElementSourceMap {
 			["style", { layer: "code-default", defaulterId: null }],
 			["projectReferences", { layer: "code-default", defaulterId: null }],
 			["pacingDevices", { layer: "code-default", defaulterId: null }],
-			["infographicStyle", { layer: "code-default", defaulterId: null }],
 			...Object.values(SETTINGS_ELEMENT_PATHS).map((path) => [
 				path,
 				{ layer: "code-default", defaulterId: null },
@@ -109,7 +106,6 @@ const FIXTURES: Fixture[] = [
 			projectReferences: { prompt: "warm", entityIds: ["ent-1"] },
 			settings: { ...DEFAULT_SETTINGS, aspectRatio: "16:9", voice: "Kore", language: "en" },
 			pacingDevices: { chapterPills: true, progressBar: true, variant: "pill" },
-			infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE, bgColor: "#123456" },
 		}),
 		sources: allFrom("cp_diff"),
 		knownBug: null,
@@ -139,12 +135,10 @@ const FIXTURES: Fixture[] = [
 		name: "BUG B — an axis a previous preset supplied is frozen by value comparison",
 		targets: targets({
 			pacingDevices: { chapterPills: false, progressBar: true, variant: "minimal" },
-			infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE, bgColor: "#abcdef" },
 		}),
 		sources: {
 			...allCodeDefault(),
 			pacingDevices: { layer: "project-preset", defaulterId: "cp_earlier" },
-			infographicStyle: { layer: "project-preset", defaulterId: "cp_earlier" },
 		},
 		knownBug: "B",
 	},
@@ -171,8 +165,6 @@ function disagreements(fixture: Fixture): string[] {
 		out.push("projectReferences");
 	if (JSON.stringify(old.pacingDevices) !== JSON.stringify(next.pacingDevices))
 		out.push("pacingDevices");
-	if (JSON.stringify(old.infographicStyle) !== JSON.stringify(next.infographicStyle))
-		out.push("infographicStyle");
 	for (const field of keysOf(SETTINGS_ELEMENT_PATHS)) {
 		if (old.settings[field] !== next.settings[field]) out.push(`settings.${field}`);
 	}
@@ -204,8 +196,7 @@ describe("where they disagree, the new rules are the correct ones", () => {
 
 	/* BUG B: the operator touched `pacingDevices.variant`. The old rule stringifies the
 	 * whole object, so pacing is frozen — correctly, as it happens — but it uses the
-	 * same all-or-nothing reasoning for every other axis, and `infographicStyle`, which
-	 * nobody touched, gets seeded by both. The difference this fixture pins is that the
+	 * same all-or-nothing reasoning for every other axis. The difference this fixture pins is that the
 	 * new rule can express "this axis is theirs, that one is not" per axis rather than
 	 * per comparison. */
 	test("BUG B — an axis a previous preset supplied is re-seeded, not frozen", () => {
@@ -216,10 +207,8 @@ describe("where they disagree, the new rules are the correct ones", () => {
 		// Old: value differs from the shipped default, so it reads as touched and the
 		// earlier preset's pacing survives a preset change.
 		expect(old.pacingDevices.variant).toBe("minimal");
-		expect(old.infographicStyle.bgColor).toBe("#abcdef");
 		// New: the layer says a preset supplied it, so the incoming preset supplies it now.
 		expect(next.pacingDevices.chapterPills).toBe(true);
-		expect(next.infographicStyle.bgColor).toBe("#123456");
 	});
 
 	/* A project persisted before provenance existed has no sources, so every element
@@ -244,15 +233,11 @@ describe("no unexplained disagreement exists", () => {
 		"a fresh project, nothing set": [],
 		"a project already seeded from this preset": [],
 		"BUG A — the operator chose a value that equals the code default": ["settings.aspectRatio"],
-		"BUG B — an axis a previous preset supplied is frozen by value comparison": [
-			"infographicStyle",
-			"pacingDevices",
-		],
+		"BUG B — an axis a previous preset supplied is frozen by value comparison": ["pacingDevices"],
 		"a project with no recorded sources at all": [
 			"style",
 			"projectReferences",
 			"pacingDevices",
-			"infographicStyle",
 			"settings.aspectRatio",
 			"settings.voice",
 			"settings.language",

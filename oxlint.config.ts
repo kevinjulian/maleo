@@ -985,8 +985,8 @@ export default {
 		{
 			/* A preset bundle is a SNAPSHOT of settings as they were.
 			 *
-			 * `contentPresetBundleSchema` stores `settings`, `pacingDevices` and
-			 * `infographicStyle` as open records on purpose: a preset saved before a
+			 * `contentPresetBundleSchema` stores `settings` and `pacingDevices` as
+			 * open records on purpose: a preset saved before a
 			 * field existed, or after one was removed, still has to load. Typing the
 			 * snapshot to today's `GlobalSettings` would reject yesterday's preset —
 			 * which is the one thing a preset library must not do. 2 hits. */

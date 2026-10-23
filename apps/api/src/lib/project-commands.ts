@@ -280,7 +280,6 @@ export async function readCommandLog(
 /** Fields of the stored document outside the editable scope (design D4). */
 export interface PresentationPatch {
 	readonly pacingDevices?: unknown;
-	readonly infographicStyle?: unknown;
 	readonly presentation?: unknown;
 }
 

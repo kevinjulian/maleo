@@ -66,7 +66,6 @@ export async function redirectStorySections(
 		sections: sections.map((section) => ({
 			...section,
 			editorial: editorial.get(section.semanticBeatId ?? section.id),
-			motionGraphic: editorial.get(section.semanticBeatId ?? section.id)?.motionGraphic,
 		})),
 		plannedReferences: directed.plannedReferences,
 		referenceAliases: directed.referenceAliases,

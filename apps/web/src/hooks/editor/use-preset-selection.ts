@@ -22,13 +22,10 @@ import {
 	type MaterialRecord,
 	type ProjectMaterials,
 } from "@maleo/shared";
-import {
-	DEFAULT_INFOGRAPHIC_STYLE,
-	DEFAULT_PACING_DEVICES,
-} from "@models/presets/generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "@models/presets/generation-defaults.ts";
 import { DEFAULT_SETTINGS } from "@models/presets/creative-settings.ts";
 import { clearedMaterialsSeed, seedMaterialsFromPreset } from "@models/materials/materials-seed.ts";
-import type { Config, InfographicStyle, PacingDevices, CreativeDirection } from "@maleo/shared";
+import type { Config, PacingDevices, CreativeDirection } from "@maleo/shared";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import type { DocumentWriters } from "@stores/document-writers.ts";
 import type { ElementSourceMap } from "@models/presets/element-sources.ts";
@@ -40,12 +37,10 @@ export interface PresetSelectionInput {
 	config: Config;
 	settings: GlobalSettings;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	projectReferences: NonNullable<Derived["projectReferences"]>;
 	setConfig: Dispatch<SetStateAction<Config>>;
 	setSettings: Dispatch<SetStateAction<GlobalSettings>>;
 	setPacingDevices: Dispatch<SetStateAction<PacingDevices>>;
-	setInfographicStyle: Dispatch<SetStateAction<InfographicStyle>>;
 	setDirection: Dispatch<SetStateAction<CreativeDirection>>;
 	setProjectReferences: DocumentWriters["setProjectReferences"];
 	setElementSources: Dispatch<SetStateAction<ElementSourceMap>>;
@@ -79,12 +74,10 @@ export function usePresetSelection({
 	config,
 	settings,
 	pacingDevices,
-	infographicStyle,
 	projectReferences,
 	setConfig,
 	setSettings,
 	setPacingDevices,
-	setInfographicStyle,
 	setDirection,
 	setProjectReferences,
 	setElementSources,
@@ -111,7 +104,7 @@ export function usePresetSelection({
 			 * The editor's Change-preset path is the opposite, deliberately: there the
 			 * project already has history worth protecting. */
 			const next = applyPresetSourced(
-				{ config, projectReferences, settings, pacingDevices, infographicStyle },
+				{ config, projectReferences, settings, pacingDevices },
 				{},
 				preset.bundle,
 				{ id: preset.id, name: preset.name, description: preset.description },
@@ -121,7 +114,6 @@ export function usePresetSelection({
 			setProjectReferences(next.targets.projectReferences);
 			setSettings(next.targets.settings);
 			setPacingDevices(next.targets.pacingDevices);
-			setInfographicStyle(next.targets.infographicStyle);
 			/* Materials and Video Template are what the preset actually IS, so they are
 			 * seeded from the same act of picking it. `overwriteOperatorEdits` matches the
 			 * snapshot semantics above: picking a preset on the create form claims every
@@ -143,7 +135,6 @@ export function usePresetSelection({
 			setProjectReferences(EMPTY_PROJECT_SELECTION);
 			setSettings(DEFAULT_SETTINGS);
 			setPacingDevices(DEFAULT_PACING_DEVICES);
-			setInfographicStyle(DEFAULT_INFOGRAPHIC_STYLE);
 			// Removing the preset resets the axes, so nothing supplies them any more.
 			const cleared = clearedMaterialsSeed({});
 			setMaterials(cleared.materials);

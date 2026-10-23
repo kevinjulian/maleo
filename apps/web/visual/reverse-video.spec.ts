@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toTimelineDoc } from "@maleo/shared";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
@@ -89,27 +90,24 @@ for (const width of [1440, 320, 844])
 					label: "Camera",
 					dur: 8,
 				};
-				await context.route(
-					new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/storyboards(\\?|$)`),
-					async (route) => {
-						if (route.request().method() === "POST")
-							saved = route.request().postDataJSON().storyboard_json;
-						await route.fallback();
+				let library: unknown[] = [asset];
+				await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+					stored: () => saved,
+					onSave: (next) => {
+						saved = next as typeof saved;
 					},
-				);
+					media: () => library as never,
+					onMedia: (next) => {
+						library = next;
+					},
+				});
 				await context.route(
 					new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
 					(route) =>
 						route.fulfill({
 							json: {
 								...editorChatProjectDetail,
-								project: {
-									...editorChatProjectDetail.project,
-									editor_state_json: {
-										...editorChatProjectDetail.project.editor_state_json,
-										media_assets: [asset],
-									},
-								},
+								mediaAssets: library,
 								storyboards: [{ ...first, storyboard_json: saved }],
 							},
 						}),

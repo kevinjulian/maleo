@@ -91,7 +91,7 @@ async function mount(
 			config: {} as never,
 			settings: {} as never,
 			pool: [],
-			refs: {} as never,
+			refs: { speakers: [], images: [] } as never,
 			projectReferences: { entityIds: [] },
 			store: { getDoc: () => e.scope.doc },
 			slides: [],
@@ -103,7 +103,6 @@ async function mount(
 			setScenes: onPreview,
 			setOverlays: noop,
 			setVideoOverlays: noop,
-			setInfographicOverlays: noop,
 			setAudioOverlays: noop,
 			setPool: noop,
 			runCommand: e.runCommand,
@@ -275,6 +274,34 @@ describe("settling a run that carries its commands", () => {
 					running: false,
 				}),
 			).toMatchObject({ status: "held", conflicts: [{ kind: "clip", id: "text:9" }] });
+		} finally {
+			await unmount();
+		}
+	});
+});
+
+describe("settling a job result stored before infographics were removed", () => {
+	test("applies its other families and adds no infographic clip", async () => {
+		const e = editor();
+		const { apply, unmount } = await mount(e);
+		try {
+			const stored = {
+				...job([]),
+				commands: undefined,
+				textOverlays: [{ id: 7, content: "Kept", startSec: 1, durationSec: 2, preset: "title" }],
+				infographicOverlays: [
+					{
+						id: 3,
+						startSec: 0,
+						durationSec: 2,
+						payload: { type: "stat_reveal", title: "Users", value: "10k" },
+					},
+				],
+			} as AgentJobState;
+
+			expect(apply.onScenes!(stored, { running: false })).toMatchObject({ status: "applied" });
+			expect(e.scope.doc.clips.some((clip) => clip.text?.content === "Kept")).toBe(true);
+			expect(JSON.stringify(e.scope.doc)).not.toMatch(/infographic/i);
 		} finally {
 			await unmount();
 		}

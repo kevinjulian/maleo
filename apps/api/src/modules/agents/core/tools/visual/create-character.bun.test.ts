@@ -40,7 +40,6 @@ function job(projectId: string): AgentJob {
 		scenes: [],
 
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

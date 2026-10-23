@@ -336,11 +336,6 @@
 		display: grid;
 		gap: var(--s-1-5);
 	}
-	/* `.tl2-ct-slot` was here. Its only renderer was `InfographicsPanel`'s
- * `customBlock` slot, and that panel was deleted for being rendered by nothing —
- * so the rule went from styling a surface nobody could see to styling nothing at
- * all. `check:layers` named it on the first run after the deletion, which is the
- * direction of that check that finds dead weight rather than a live defect. */
 	.tl2-ct-err {
 		font-size: var(--type-caption-size);
 		color: var(--err);

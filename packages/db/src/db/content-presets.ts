@@ -252,11 +252,6 @@ function valueAtPath(
 		};
 	if (path === "pacingDevices")
 		return { projectValue: storyboard.pacingDevices, defaulterValue: preset?.bundle.pacingDevices };
-	if (path === "infographicStyle")
-		return {
-			projectValue: storyboard.infographicStyle,
-			defaulterValue: preset?.bundle.infographicStyle,
-		};
 	return { projectValue: undefined, defaulterValue: undefined };
 }
 

@@ -127,7 +127,6 @@ export function animationSchemaFor(kind: AnimationElementKind): z.ZodType<Animat
 export const clipAnimationSchema = animationSchemaFor("video");
 export const audioAnimationSchema = animationSchemaFor("audio");
 export const textAnimationSchema = animationSchemaFor("text");
-export const infographicAnimationSchema = animationSchemaFor("infographic");
 
 export function sampleClipProperty(
 	animation: Animation | undefined,
@@ -261,8 +260,6 @@ const AUDIO_KINDS = ["voiceover", "music", "sfx", "ambient", "accent_hit"];
 const PAYLOAD_KINDS = new Map<string, AnimationElementKind>([
 	["text", "text"],
 	["textOverlays", "text"],
-	["infographic", "infographic"],
-	["infographicOverlays", "infographic"],
 	["audio", "audio"],
 	["audioOverlays", "audio"],
 ]);

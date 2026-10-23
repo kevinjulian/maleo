@@ -66,7 +66,6 @@ pub enum ClipType {
     Audio,
     Effect,
     Transition,
-    Infographic,
     Caption,
 }
 

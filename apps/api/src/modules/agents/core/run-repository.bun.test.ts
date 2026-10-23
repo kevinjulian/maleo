@@ -77,7 +77,6 @@ function makeJob(over: Partial<AgentJob> = {}): AgentJob {
 			},
 		],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

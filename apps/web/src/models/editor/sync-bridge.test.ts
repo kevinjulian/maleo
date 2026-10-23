@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vite-plus/test";
 import { replaceScope, type EditorCommand, type EditScope } from "@maleo/shared/editor";
 import type { CommandSync } from "./command-sync.ts";
-import { createSyncBridge } from "./sync-bridge.ts";
+import { createSyncBridge, type StoredLayout } from "./sync-bridge.ts";
 
 const scopeOf = (n: number): EditScope => ({
 	doc: { schemaVersion: 2, clips: [], markers: [{ id: n } as never] },
@@ -12,7 +12,7 @@ const scopeOf = (n: number): EditScope => ({
 const move: EditorCommand = { type: "clip.move", id: "text:1", patch: { startSec: 1 } };
 const back: EditorCommand = { type: "clip.move", id: "text:1", patch: { startSec: 0 } };
 
-function wired(initial: EditScope) {
+function wired(initial: EditScope, stored?: StoredLayout) {
 	let current = initial;
 	const sent: [EditorCommand, EditorCommand][] = [];
 	const sync = {
@@ -22,7 +22,7 @@ function wired(initial: EditScope) {
 	} as unknown as CommandSync;
 	let enqueued = 0;
 	const bridge = createSyncBridge({ scope: () => current, enqueued: () => enqueued++ });
-	bridge.attach(sync);
+	bridge.attach(sync, stored);
 	return {
 		bridge,
 		sent,
@@ -72,6 +72,21 @@ describe("which editor writes reach the command log", () => {
 		const { bridge, sent } = wired(a);
 		bridge.replaced(a, scopeOf(1));
 		expect(sent).toEqual([[replaceScope(scopeOf(1)), replaceScope(a)]]);
+	});
+
+	test("a layout the load migrated is sent as a replace of the stored layout", () => {
+		const loaded = scopeOf(1);
+		const stored: StoredLayout = { clips: [], markers: [{ id: 0 } as never] };
+		const { bridge, sent } = wired(loaded, stored);
+		bridge.catchUp();
+		expect(sent).toEqual([[replaceScope(loaded), replaceScope(scopeOf(0))]]);
+	});
+
+	test("a load that matches the stored layout sends nothing", () => {
+		const loaded = scopeOf(1);
+		const { bridge, sent } = wired(loaded, { clips: [], markers: loaded.doc.markers });
+		bridge.catchUp();
+		expect(sent).toEqual([]);
 	});
 
 	test("nothing is sent before a project is attached", () => {

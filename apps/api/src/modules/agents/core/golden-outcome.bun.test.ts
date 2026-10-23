@@ -15,7 +15,6 @@ function video(
 		events: [],
 		scenes,
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

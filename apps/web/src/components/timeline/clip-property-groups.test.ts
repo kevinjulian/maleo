@@ -56,14 +56,6 @@ test("each kind lists its groups in the OpenCut order, content first", () => {
 		"Background",
 	]);
 	expect(labels("audio")).toEqual(["Audio", "Animation", "Timing", "Source"]);
-	expect(labels("infographic")).toEqual([
-		"Data",
-		"Transform",
-		"Animation",
-		"Blending",
-		"Motion",
-		"Background",
-	]);
 	expect(labels(null)).toEqual([]);
 });
 
@@ -73,7 +65,6 @@ test("no icon stands for two groups within a kind, and shared groups keep one ic
 		["broll", { videoHasAudio: true, brollKind: "video" }],
 		["scene", { sceneHasVideo: true }],
 		["audio"],
-		["infographic"],
 	] as const;
 	const iconOf = new Map<string, (s?: number) => JSX.Element>();
 	for (const [kind, opts] of kinds) {

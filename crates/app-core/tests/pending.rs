@@ -116,6 +116,37 @@ fn a_rebase_clears_redo() {
 }
 
 #[test]
+fn a_reply_that_only_accepts_keeps_redo() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+    queue.resolve(&s1, &[], &["c1"], &[], &mut ledger).expect("resolves");
+    let undone = ledger.undo(&s1).expect("undoes").expect("undone");
+    queue.enqueue("u1", move_to("text:1", 0.0), move_to("text:1", 4.0));
+    assert!(ledger.can_redo());
+
+    let resolved = queue.resolve(&undone, &[], &["u1"], &[], &mut ledger).expect("resolves");
+
+    assert_eq!(resolved.scope, undone);
+    assert!(ledger.can_redo());
+}
+
+#[test]
+fn a_rejected_command_clears_redo() {
+    let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
+    let s0 = scope(&["text:1"]);
+    let s1 = local(&mut queue, &mut ledger, &s0, "c1", move_to("text:1", 4.0));
+    queue.ack("c1");
+    let undone = ledger.undo(&s1).expect("undoes").expect("undone");
+    queue.enqueue("u1", move_to("text:1", 0.0), move_to("text:1", 4.0));
+    assert!(ledger.can_redo());
+
+    queue.resolve(&undone, &[], &[], &["u1"], &mut ledger).expect("resolves");
+
+    assert!(!ledger.can_redo());
+}
+
+#[test]
 fn a_delivered_command_that_fails_is_a_divergence_and_changes_nothing() {
     let (mut queue, mut ledger) = (PendingQueue::default(), Ledger::default());
     let s0 = scope(&["text:1"]);

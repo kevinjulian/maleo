@@ -64,13 +64,11 @@ function documentShapeOf(storyboard: Record<string, unknown>) {
 		overlays: parsed.overlays,
 		audioOverlays: parsed.audioOverlays,
 		videoOverlays: parsed.videoOverlays,
-		infographicOverlays: parsed.infographicOverlays,
 		effects: parsed.effects,
 		transitions: parsed.transitions,
 		projectReferences: parsed.projectReferences,
 		captions: parsed.captions,
 		pacingDevices: parsed.pacingDevices,
-		infographicStyle: parsed.infographicStyle,
 		mediaAssets: parsed.mediaAssets,
 	};
 }
@@ -135,12 +133,10 @@ describe("what the editor writes for a loaded document", () => {
 					overlays: parsed.overlays,
 					audioOverlays: parsed.audioOverlays,
 					videoOverlays: parsed.videoOverlays,
-					infographicOverlays: parsed.infographicOverlays,
 					effects: parsed.effects,
 					transitions: parsed.transitions,
 					captions: parsed.captions,
 					pacingDevices: parsed.pacingDevices,
-					infographicStyle: parsed.infographicStyle,
 					projectReferences: parsed.projectReferences,
 				},
 			);
@@ -167,7 +163,6 @@ describe("what the editor writes for a loaded document", () => {
 					markers: parsed.markers,
 					captions: parsed.captions,
 					pacingDevices: parsed.pacingDevices,
-					infographicStyle: parsed.infographicStyle,
 					projectReferences: parsed.projectReferences,
 				},
 			) as Record<string, unknown>;

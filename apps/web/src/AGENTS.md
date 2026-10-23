@@ -282,7 +282,6 @@ rediscovered as if new:
   per-type setters, the projection rebuild and the raw `doc -> doc` seam. Do not
   add a second path into the store.
 - Timeline preview is WYSIWYG by default: the center stage uses Remotion `Player` with the same `buildRenderStoryboard`/`StoryboardReel` path as export, while edit handles/controls overlay the Player and the timeline playhead syncs to Player frame updates. Use Remotion packages for player-adjacent behavior where available (`@remotion/preload` for near-playhead media preloading and `@remotion/media-utils` for waveform data), and keep caption menu state flowing into render storyboard props. Do not reintroduce a separate Preview toggle or a second manual playback renderer for audio/video.
-- Infographic clips are structured timeline overlays, not generated JSX. Keep `InfographicOverlay` JSON flowing through schemaVersion 2 clips, `buildRenderStoryboard`, Remotion preview/export, and chat-agent output together. Supported payloads are stat reveals, bar/line/area/pie/donut charts, progress bars/rings, table builds, price tags, social proof, and urgency callouts; extend the typed payload contract before adding new Remotion components. New videos keep explicit section `motionGraphic` trace; legacy short-form blueprint cards remain read-only compatibility.
 - Placeable animated text belongs in the Motion rail. Motion tiles preview through
   the same Remotion `StoryboardReel` path as timeline/export, then add normal
   timeline clips rather than hidden scene metadata. Keep Motion separate from
@@ -290,7 +289,7 @@ rediscovered as if new:
 - The Templates rail owns only workspace-global timeline-framework selection plus
   Create/Edit actions. Create and Edit open a modal whose live preview uses the
   same `StoryboardReel` composition as timeline/export; do not use a CSS mock.
-  Frameworks control intro motion, entry SFX, data use, background fill, image
+  Frameworks control intro motion, entry SFX, background fill, image
   guidance, and reference mentions. Selection persists only the global template
   id plus applied editor values; definitions never become project-owned. Copy
   mentioned global visual refs into project-local All Media during selection.
@@ -325,7 +324,7 @@ rediscovered as if new:
   the `video_blueprint` (`sceneKind`, stable logical/section/storyboard ids,
   intro image source, editorial pattern, semantic information, `question`,
   `claim`, `evidence`, `sourceEvidence`, `analogy`, `visualType`,
-  `onScreenText`, `motionGraphic`, `sectionTransition`). Keep these fields flowing through chat job state and
+  `onScreenText`, `sectionTransition`). Keep these fields flowing through chat job state and
   timeline persistence as provenance only. Visible `onScreenText`,
   `claim`/`evidence` explainer card text, and `sectionTransition.text` must be
   materialized as timeline text clips before preview/export;
@@ -334,7 +333,7 @@ rediscovered as if new:
   their first storyboard scene's image, but no hidden renderable card.
 - Caption editing reads and writes canonical caption cues only, through the shared command ledger; voiceover words never become captions. The panel leads with results (`apps/web/DESIGN.md`, Captions): generate card without cues, caption list with cues, rare actions in the header menu. Show timing provenance (recognized vs estimated) and Needs refresh state, keep the unavailable reason beside Generate with a link to Settings, which owns worker setup. Caption UX controls stay reader-facing and Remotion-backed: presets, max words/chars, motion, active word colour, width and shadow flow into render props.
 - Create-content flow (`components/editor/`) is unified: Setup → create the project FIRST (`createProject`, status `brief`) → open the workspace. Setup never starts generation and never writes a first chat prompt. Video opens an empty timeline editor first; storyboard generation is an explicit chat action (`Generate storyboard`) and must not auto-run on project creation or live in the global topbar. All agent commands run through `useContentAgent` (`hooks/editor/use-content-agent.ts`); `CreateContent` owns the run + apply callbacks. Chat command shortcuts are slash-only (`/` autocomplete); command rows show `command | intent`, selecting a command stages the slash token plus natural-language intent in the prompt, and the user must press Send before tools run. Keep `@` autocomplete reserved for project/reference mentions. A reload mid-run re-attaches via `agent.resume()`. Image/text reuse the video `ChatPanel` in a left split pane.
-- Create setup is only a project shell form: required project title, optional description, and output format where relevant. Do not expose setup brief or setup duration. Description is project metadata (`reference_notes`) and must not feed generation, chat prompts, or agent context. Creative direction belongs inside the editor so it stays visible and editable after creation: style direction, global style reference, brand kit, project background, data-callout style, and retention overlays live in the Style rail; Project/Settings owns format, generation providers, voice defaults, and render backend; references/media and captions stay in their owning editor panels.
+- Create setup is only a project shell form: required project title, optional description, and output format where relevant. Do not expose setup brief or setup duration. Description is project metadata (`reference_notes`) and must not feed generation, chat prompts, or agent context. Creative direction belongs inside the editor so it stays visible and editable after creation: style direction, global style reference, brand kit, project background, and retention overlays live in the Style rail; Project/Settings owns format, generation providers, voice defaults, and render backend; references/media and captions stay in their owning editor panels.
 - Content list is operator inventory, not a campaign/status board: show title, type, date created, and last edit only. Keep search plus type filter (`all`, `video`, `image`, `text`) as the primary controls. The title is the editor CTA; do not add separate Open editor buttons or status/campaign/platform columns.
 - Longform plan cards expose evidence coverage honestly: show aggregate matched/partial/unverified state, mark unsupported factual sections, and let users expand exact supporting quotes + source links. Never label exact-quote matching as independent fact verification.
 - Longform plan cards expose visual-style retry when no `visualStyle` is locked; the action must route through chat to the deterministic style retry path and must not approve/generate assets.
@@ -352,7 +351,7 @@ rediscovered as if new:
 - Pacing insights model both boredom and cognitive overload. Sustained high load
   is a first-class lint state and the heatmap must distinguish balanced, busy,
   overloaded, and quiet ranges.
-- Create-content generated outputs must expose a local why + edit handle in the chat/workspace surface: blueprint beats show purpose and edit command, style bible shows rules/source and retry, images show prompt/style/ref source and regenerate command, voiceovers show script/voice/measured duration and edit/revoice command, infographics show data/reason/source and edit/remove, captions show estimated/aligned status and re-align, and render QA surfaces concrete problems with a fix command.
+- Create-content generated outputs must expose a local why + edit handle in the chat/workspace surface: blueprint beats show purpose and edit command, style bible shows rules/source and retry, images show prompt/style/ref source and regenerate command, voiceovers show script/voice/measured duration and edit/revoice command, captions show estimated/aligned status and re-align, and render QA surfaces concrete problems with a fix command.
 - Create-content chat must render the server's delivery evaluation as an outcome
   card, never translate `needs_attention` into “Done.” Each blocker/warning keeps
   its scoped repair action. Audit shows requested objective, outcome score,

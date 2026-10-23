@@ -47,6 +47,5 @@ export function studioBaseStoryboard({
 		audioOverlays: [],
 		videoOverlays: [],
 		effects: [],
-		infographicOverlays: [],
 	};
 }

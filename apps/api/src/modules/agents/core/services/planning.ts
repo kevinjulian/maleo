@@ -31,7 +31,7 @@ import { materializePlannedSections, researchForPlan } from "../evidence.ts";
 import { getStoryPlan, setStoryPlan, emitPlanTable } from "../plan-state.ts";
 import { lockedConstraintsFor } from "../visual-gen.ts";
 import { persist } from "../persistence.ts";
-import { pushNote, parseMotionGraphic } from "../trace.ts";
+import { pushNote } from "../trace.ts";
 import { directedBibleEntries, workspaceBreath, writerStyleWarning } from "./planning-steps.ts";
 import { voicePromptLayers } from "../material-layers.ts";
 
@@ -137,7 +137,6 @@ export async function redraftStoryPlanFlow(
 				arc: frame.arc,
 				writerStyle,
 				skeleton,
-				allowInfographics: job.timelineTemplate?.useData !== false,
 				direction: await directionOptionsFor(job),
 			},
 		);
@@ -145,24 +144,12 @@ export async function redraftStoryPlanFlow(
 		throw new Error(`Story revision failed: ${err instanceof Error ? err.message : String(err)}`);
 	}
 	const budgets = distributeWordBudget(wordBudget, drafted.sections.length);
-	const allowData = job.timelineTemplate?.useData !== false;
 	const sections = materializePlannedSections(drafted.sections, 0, evidence, grounded, budgets).map(
 		(section) => {
 			const prior = plan.sections.find(
 				(candidate) => (candidate.sectionId ?? candidate.id) === (section.sectionId ?? section.id),
 			);
-			const authored = prior?.locked ? prior : section;
-			return allowData
-				? authored
-				: {
-						...authored,
-						motionGraphic: {
-							needed: false,
-							kind: "none" as const,
-							purpose: "none" as const,
-							reason: "Timeline template disables data overlays.",
-						},
-					};
+			return prior?.locked ? prior : section;
 		},
 	);
 	const generationState = replaceStoryDraft(
@@ -240,12 +227,6 @@ export async function updateSectionFlow(
 		};
 	const narration = args.narration ?? s.narration;
 	const visualPrompt = args.visualPrompt ?? s.visualPrompt;
-	const motionGraphic =
-		args.motionGraphic != null ? parseMotionGraphic(args.motionGraphic) : undefined;
-	if (args.motionGraphic != null && !motionGraphic)
-		return {
-			note: "Invalid motionGraphic. Use needed, kind, purpose, reason, and optional title/value/rows/columns/tableRows.",
-		};
 	const narrationChanged = narration !== s.narration;
 	const visualChanged = visualPrompt !== s.visualPrompt;
 	const editorialChanged =
@@ -268,10 +249,7 @@ export async function updateSectionFlow(
 				...(args.title !== undefined ? { title: args.title } : {}),
 				...(args.narration !== undefined ? { narration } : {}),
 				...(args.visualPrompt !== undefined ? { visualPrompt } : {}),
-				...(motionGraphic ? { motionGraphic } : {}),
-				...(args.editorial
-					? { editorial: args.editorial, motionGraphic: args.editorial.motionGraphic }
-					: {}),
+				...(args.editorial ? { editorial: args.editorial } : {}),
 			},
 		},
 		{ save: () => {} },
@@ -330,7 +308,6 @@ export async function refreshStoryDirectionForApproval(
 		return false;
 	const directed = await redirectStorySections(plan.sections, {
 		...(await directionOptionsFor(job)),
-		allowInfographics: job.timelineTemplate?.useData !== false,
 		plannedReferences: plan.plannedReferences,
 	});
 	if (!directed.ok) {

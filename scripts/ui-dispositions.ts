@@ -368,7 +368,6 @@ export const CANDIDATES: readonly Candidate[] = [
 		component: "apps/web/src/design-system/patterns/inspector.tsx",
 		provenBy: [
 			"apps/web/visual/clip-inspector-rows.spec.ts",
-			"apps/web/visual/data-style-rows.spec.ts",
 			"apps/web/visual/mobile-editor.spec.ts",
 		],
 	},

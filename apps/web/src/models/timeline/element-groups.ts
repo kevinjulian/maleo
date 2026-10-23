@@ -1,5 +1,5 @@
-/* Maleo — element grouping for the unified Elements menu. Text, Motion, and
- * Data draw from different source lists; this module owns the one place that
+/* Maleo — element grouping for the unified Elements menu. Text and Motion
+ * draw from different source lists; this module owns the one place that
  * decides which group a text preset belongs to so the picker and any dedupe
  * agree. Motion templates (rve-* and animated cards) win over the
  * plain Text presets, so a preset present in both shows only under Motion. */
@@ -7,7 +7,7 @@ import { shapeElement } from "./shape-elements.ts";
 import { TEMPLATE_ITEMS } from "@models/clip-templates/registry.ts";
 import type { TextPreset } from "@maleo/shared";
 
-export type ElementKind = "basic" | "shapes" | "text" | "motion" | "data";
+export type ElementKind = "basic" | "shapes" | "text" | "motion";
 
 export const BASIC_TEXT_PRESETS: ReadonlySet<string> = new Set([
 	"plain",
@@ -32,7 +32,7 @@ export function textOnlyPresets(all: readonly TextPreset[]): TextPreset[] {
 }
 
 /** Group a text preset: motion when a motion template backs it, else text. */
-export function elementKindOfPreset(preset: TextPreset): Exclude<ElementKind, "data"> {
+export function elementKindOfPreset(preset: TextPreset): ElementKind {
 	return shapeElement(preset)
 		? "shapes"
 		: BASIC_TEXT_PRESETS.has(preset)

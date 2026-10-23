@@ -40,7 +40,6 @@ const emptyDoc = (over: Partial<StoryboardDocument> = {}): StoryboardDocument =>
 	captions: null,
 	captionSet: null,
 	pacingDevices: null,
-	infographicStyle: null,
 	sceneTextClipMigrationVersion: null,
 	trackFlags: null,
 	presentation: null,

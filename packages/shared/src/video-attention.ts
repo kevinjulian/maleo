@@ -4,7 +4,6 @@ export type AttentionLayerKind =
 	| "caption"
 	| "voiceover"
 	| "text"
-	| "infographic"
 	| "sfx"
 	| "effect";
 
@@ -29,11 +28,10 @@ const WEIGHT = {
 	caption: 0.25,
 	voiceover: 0.4,
 	text: 1,
-	infographic: 1.2,
 	sfx: 0.8,
 	effect: 1,
 } satisfies Readonly<Record<AttentionLayerKind, number>>;
-const PRIMARY = new Set<AttentionLayerKind>(["text", "infographic"]);
+const PRIMARY = new Set<AttentionLayerKind>(["text"]);
 
 function active(span: AttentionSpan, sec: number): boolean {
 	return sec >= span.start && sec < span.start + Math.max(0, span.dur);

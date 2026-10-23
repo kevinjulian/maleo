@@ -4,6 +4,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toTimelineDoc } from "@maleo/shared";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
@@ -86,19 +87,22 @@ for (const width of [1440, 320])
 					})),
 				),
 			};
-			/* What the editor saves back: the chat it was given, plus the media it admits. */
+			/* What the editor saves back: the chat it was given. */
 			let editorState: {
 				chat: unknown[];
-				media_assets?: Array<{ url: string; thumb?: string; poster?: string }>;
 			} = editorChatProjectDetail.project.editor_state_json;
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/storyboards(\\?|$)`),
-				async (route) => {
-					if (route.request().method() === "POST")
-						saved = route.request().postDataJSON().storyboard_json;
-					await route.fallback();
+			/* The project's media library: server rows the editor admits through commands. */
+			let library: Array<{ url: string; thumb?: string; poster?: string }> = [];
+			await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+				stored: () => saved,
+				onSave: (next) => {
+					saved = next as typeof saved;
 				},
-			);
+				media: () => library as never,
+				onMedia: (next) => {
+					library = next as typeof library;
+				},
+			});
 			await context.route(
 				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/editor-state(\\?|$)`),
 				async (route) => {
@@ -114,6 +118,7 @@ for (const width of [1440, 320])
 						json: {
 							...editorChatProjectDetail,
 							project: { ...editorChatProjectDetail.project, editor_state_json: editorState },
+							mediaAssets: library,
 							storyboards: [{ ...first, storyboard_json: saved }],
 						},
 					}),
@@ -204,21 +209,11 @@ for (const width of [1440, 320])
 			expect(duration()).toBe(4);
 			await close();
 			await expect
-				.poll(
-					() =>
-						Array.isArray(editorState?.media_assets) &&
-						editorState.media_assets.some(
-							(asset: { url: string }) => asset.url === long.video!.url,
-						),
-				)
+				.poll(() => library.some((asset: { url: string }) => asset.url === long.video!.url))
 				.toBe(true);
-			// Reload preserves the server poster through the Rust engine and editor state.
+			// Reload preserves the server poster through the Rust engine and the media library.
 			await expect
-				.poll(
-					() =>
-						editorState.media_assets?.find((asset) => asset.url === generated[0]!.video!.url)
-							?.poster,
-				)
+				.poll(() => library.find((asset) => asset.url === generated[0]!.video!.url)?.poster)
 				.toBe(posterUrl);
 			await page.reload();
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
@@ -226,12 +221,9 @@ for (const width of [1440, 320])
 			// Stop autosave before replacing persisted data with the legacy fixture.
 			await page.goto("about:blank");
 			// Older saved clips used the orange scene image; reload must show blue video.
-			delete editorState.media_assets!.find((asset) => asset.url === generated[0]!.video!.url)!
-				.poster;
+			delete library.find((asset) => asset.url === generated[0]!.video!.url)!.poster;
 			saved.clips.find((c) => c.id === long.id)!.video!.thumb = source;
-			const admitted = editorState!.media_assets!.find(
-				(asset: { url: string }) => asset.url === long.video!.url,
-			)!;
+			const admitted = library.find((asset: { url: string }) => asset.url === long.video!.url)!;
 			admitted.thumb = source;
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();

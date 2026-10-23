@@ -39,7 +39,6 @@ function Harness() {
 		trackFlags: {},
 		captions: { enabled: false } as never,
 		pacingDevices: {} as never,
-		infographicStyle: {} as never,
 		deps: [],
 	});
 	return null;

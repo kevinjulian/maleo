@@ -19,7 +19,7 @@ export type CaptionDeletedRange = { id: string, groupId: string, startSec: numbe
 
 export type CaptionSet = { initialized: true, language: string, detectedLanguage?: string, revision: number, deletedRanges: Array<CaptionDeletedRange>, appliedRunIds: Array<string>, };
 
-export type ClipType = "image" | "video" | "text" | "audio" | "effect" | "transition" | "infographic" | "caption";
+export type ClipType = "image" | "video" | "text" | "audio" | "effect" | "transition" | "caption";
 
 export type Clip = { id: string, type: ClipType, startSec: number, durationSec: number, track: number, };
 

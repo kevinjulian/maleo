@@ -37,16 +37,6 @@ const doc = toTimelineDoc(
 	[{ id: 5, kind: "music", content: "", start: 0, dur: 4, volume: 0.6 }],
 	[],
 	[],
-	undefined,
-	[
-		{
-			id: 6,
-			start: 0,
-			dur: 4,
-			track: 1,
-			payload: { type: "stat_reveal", value: "42", title: "Stat" },
-		},
-	],
 );
 const scope: EditScope = { doc, slides: [], posts: [], mediaAssets: [] };
 
@@ -57,7 +47,6 @@ test("edge presets use reversible ordinary tracks on scene, media, text and audi
 		{ source: "video", id: 3 },
 		{ source: "text", id: 4 },
 		{ source: "audio", id: 5 },
-		{ source: "infographic", id: 6 },
 	] satisfies ClipAnimationTarget[]) {
 		for (const preset of target.source === "audio"
 			? (["fade"] as const)

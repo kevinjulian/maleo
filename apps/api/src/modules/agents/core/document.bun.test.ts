@@ -30,7 +30,6 @@ const job = (over: Partial<AgentJob> = {}): AgentJob => ({
 	events: [],
 	scenes: [],
 	textOverlays: [],
-	infographicOverlays: [],
 	videoOverlays: [],
 	audioOverlays: [],
 	characters: [],
@@ -161,14 +160,6 @@ describe("agentTimelineDoc", () => {
 						mediaStartSec: 1,
 					},
 				],
-				infographicOverlays: [
-					{
-						id: 2,
-						startSec: 1,
-						durationSec: 3,
-						payload: { type: "stat_reveal", title: "Users", value: "10k" },
-					},
-				],
 			}),
 		);
 		const back = fromTimelineDoc(doc);
@@ -202,12 +193,6 @@ describe("agentTimelineDoc", () => {
 			fadeIn: 0,
 			fadeOut: 0,
 		});
-		expect(back.infographicOverlays[0]).toMatchObject({
-			id: 2,
-			start: 1,
-			dur: 3,
-			payload: { type: "stat_reveal", title: "Users", value: "10k" },
-		});
 	});
 });
 
@@ -234,25 +219,12 @@ test("a run seeded from its own snapshot reads its overlays back unchanged", () 
 		audioOverlays: [
 			{ id: 1, kind: "voiceover", content: "vo", url: "vo.wav", startSec: 0, durationSec: 4 },
 		],
-		infographicOverlays: [
-			{
-				id: 3,
-				startSec: 1,
-				durationSec: 2,
-				payload: { type: "stat_reveal", title: "Users", value: "10k" },
-			},
-		],
 	});
 
 	const seeded = overlaysFromV2Clips(agentTimelineDoc(before).clips);
 
 	expect(seeded.textOverlays).toEqual(before.textOverlays);
 	expect(seeded.videoOverlays).toEqual(before.videoOverlays);
-	// The reader defaults an untracked clip to row 0 rather than leaving it absent.
-	expect(seeded.infographicOverlays[0]).toMatchObject({
-		...before.infographicOverlays[0]!,
-		track: 0,
-	});
 	expect(seeded.audioOverlays[0]).toMatchObject({
 		id: 1,
 		kind: "voiceover",

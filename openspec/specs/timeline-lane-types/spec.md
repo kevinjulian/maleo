@@ -32,7 +32,7 @@ An empty declared lane SHALL remain available, except for redundant empty captio
 
 ### Requirement: Six groups, and why each boundary falls where it does
 
-The lane groups SHALL be exactly `visual` (scenes, images, video), `audio` (voiceover, music, SFX, ambient, accent), `text` (text overlays and motion templates), `caption` (timed caption cues), `data` (infographics) and `effect` (effects).
+The lane groups SHALL be exactly `visual` (scenes, images, video), `audio` (voiceover, music, SFX, ambient, accent), `text` (text overlays and motion templates), `caption` (timed caption cues) and `effect` (effects). There SHALL be no `data` group.
 
 Images and video are one group because a transition requires two visual clips adjacent on the same track; separating them would make an image-to-video transition impossible to express. Text and motion are one group because a motion clip is a text overlay identified by its preset, so separating them would move a clip to a different lane when its preset changed. Captions are separate from text because a caption cue is owned by the caption set, follows its linked source and is styled by the caption style rather than by its own text properties; mixing them would let a text overlay take part in caption regeneration, SRT export and source synchronization. The remaining groups have distinct renderers and no adjacency relationship with anything else.
 
@@ -49,12 +49,18 @@ Images and video are one group because a transition requires two visual clips ad
 #### Scenario: A group is chosen for a clip
 
 - **WHEN** any clip is classified
-- **THEN** it resolves to exactly one of the six groups
+- **THEN** it resolves to exactly one of the five groups
 
 #### Scenario: A caption cue is classified
 
 - **WHEN** a caption cue is placed on the timeline
 - **THEN** it resolves to the `caption` group and never shares a lane with a text overlay
+
+#### Scenario: A stored document declares a data lane
+
+- **WHEN** a stored document carries a lane flag entry whose group is `data`
+- **THEN** the reader drops that entry
+- **AND** no lane of group `data` is shown
 
 ### Requirement: All audio kinds may share one lane
 

@@ -83,8 +83,8 @@ typecheck in every writer that does not account for it.
 
 #### Scenario: The agent supplies fields it does not own
 
-- **WHEN** the agent persists a document for a project whose editor set captions, pacing
-  devices or an infographic style
+- **WHEN** the agent persists a document for a project whose editor set captions or pacing
+  devices
 - **THEN** the agent reads the prior document and supplies those values to the write
 - **AND** the persisted document carries them unchanged
 
@@ -589,3 +589,28 @@ The storyboard read SHALL convert legacy text overlay animation into the overlay
 
 - **WHEN** a legacy text animation track has non-numeric keys
 - **THEN** the read returns the overlay without that track, reports it, and does not throw
+
+### Requirement: The read drops stored infographic content
+
+The storyboard read SHALL drop every infographic clip, the `infographicStyle` field, and the
+legacy `infographicOverlays` and `infographic_overlays` arrays from a stored document. It SHALL
+report each dropped item through the read diagnostic. It SHALL NOT throw. The write SHALL NOT
+emit any of them. Stored documents SHALL NOT be rewritten by a migration. The next write of a
+project removes the content from its newest version.
+
+#### Scenario: A stored document has an infographic clip
+
+- **WHEN** a stored document with two infographic clips and an `infographicStyle` is read
+- **THEN** the returned document has no infographic clip and no `infographicStyle`
+- **AND** the read diagnostic names the two dropped clips and the dropped field
+- **AND** every other clip is returned unchanged
+
+#### Scenario: The next write is clean
+
+- **WHEN** that document is written back
+- **THEN** the persisted version carries no infographic content
+
+#### Scenario: A restored old version is clean
+
+- **WHEN** an operator restores a retained version that was written with infographic clips
+- **THEN** the restored document carries no infographic content

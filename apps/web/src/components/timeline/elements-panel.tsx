@@ -6,22 +6,14 @@ import { PanelHeader } from "@design-system/patterns/panel-header.tsx";
 import { MediaCard, MediaGrid } from "@design-system/patterns/media.tsx";
 import { SearchField } from "@design-system/components/search-field.tsx";
 import { TabsList, TabsPanel, TabsRoot, TabsTab } from "@design-system/components/tabs.tsx";
-import { CLIP_TEMPLATE_DND_MIME, DATA_CALLOUT_DND_MIME } from "@models/timeline/editor-media.ts";
-import { defaultInfographicPayload } from "@models/presets/generation-defaults.ts";
-import type {
-	InfographicPayload,
-	TextPreset,
-	TemplateParams,
-	ClipTemplateKind,
-} from "@maleo/shared";
+import { CLIP_TEMPLATE_DND_MIME } from "@models/timeline/editor-media.ts";
+import type { TextPreset, TemplateParams, ClipTemplateKind } from "@maleo/shared";
 import type { CompositionConfig } from "@models/clip-templates/composition-config.ts";
 import { CustomTemplatesBlock } from "@components/clip-templates/custom-clip-templates.tsx";
 import { TextPresetPreview } from "./timeline-editor-panels.tsx";
-import { InfographicTypePreview } from "@components/timeline/infographics/infographics-panel.tsx";
 import {
 	BASIC_ELEMENTS,
 	BUILT_IN_TEXT_PRESETS,
-	INFOGRAPHIC_KINDS,
 	MOTION_ITEMS,
 	textPresetLabel,
 	textPresetSample,
@@ -33,14 +25,13 @@ import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 
 const MOTION_KINDS: ClipTemplateKind[] = ["text", "composition"];
 
-type ElementFilter = "all" | "basic" | "shapes" | "text" | "motion" | "data";
+type ElementFilter = "all" | "basic" | "shapes" | "text" | "motion";
 const FILTER_TABS = [
 	{ id: "all", label: "All" },
 	{ id: "basic", label: "Basic" },
 	{ id: "shapes", label: "Shapes" },
 	{ id: "text", label: "Text" },
 	{ id: "motion", label: "Motion" },
-	{ id: "data", label: "Data" },
 ] as const;
 
 export interface ElementsPanelProps {
@@ -49,8 +40,6 @@ export interface ElementsPanelProps {
 	onAddText: (preset?: TextPreset) => void;
 	onPlaceCustomText: (preset: TextPreset, defaultParams?: TemplateParams) => void;
 	onPlaceComposition: (config: CompositionConfig, label?: string) => void;
-	onAddData: (type: InfographicPayload["type"]) => void;
-	onPlaceCustomData: (payload: InfographicPayload) => void;
 	onClose: () => void;
 }
 
@@ -60,8 +49,6 @@ export function ElementsPanel({
 	onAddText,
 	onPlaceCustomText,
 	onPlaceComposition,
-	onAddData,
-	onPlaceCustomData,
 	onClose,
 }: ElementsPanelProps): JSX.Element {
 	const [filter, setFilter] = useState<ElementFilter>("all"),
@@ -73,7 +60,6 @@ export function ElementsPanel({
 	const shapes = SHAPE_ELEMENTS.filter((item) => matches(item.label, item.kind));
 	const texts = BUILT_IN_TEXT_PRESETS.filter((preset) => matches(textPresetLabel(preset)));
 	const motions = MOTION_ITEMS.filter((item) => matches(item.label, item.intent));
-	const data = INFOGRAPHIC_KINDS.filter((item) => matches(item.label));
 	const dragText = (event: DragEvent<HTMLElement>, preset: TextPreset) => {
 		event.dataTransfer.setData(CLIP_TEMPLATE_DND_MIME, JSON.stringify({ kind: "text", preset }));
 		event.dataTransfer.effectAllowed = "copy";
@@ -173,49 +159,6 @@ export function ElementsPanel({
 										() => onAddText(item.preset),
 									),
 								)}
-							</MediaGrid>
-						</CustomTemplatesBlock>
-					</section>
-				)}
-				{shows("data") && (
-					<section className="tl2-elgroup" aria-label="Data elements">
-						<CustomTemplatesBlock
-							heading="Data"
-							kind="data"
-							brand={brand}
-							query={q}
-							onPlace={(item) => {
-								if (item.kind === "data" && item.payload) onPlaceCustomData(item.payload);
-							}}
-						>
-							<MediaGrid label="Data elements" min={72} density="compact">
-								{data.map((item) => (
-									<MediaCard
-										key={item.type}
-										variant="picker"
-										title={item.label}
-										label={`Add ${item.label} data callout`}
-										ground="var(--media-bg)"
-										preview={
-											<InfographicTypePreview
-												payload={defaultInfographicPayload(item.type)}
-												brand={brand}
-												compact
-											/>
-										}
-										hint={`Add ${item.label}, or drag to the timeline`}
-										onActivate={() => onAddData(item.type)}
-										draggable
-										onDragStart={(event) => {
-											event.dataTransfer.setData(
-												DATA_CALLOUT_DND_MIME,
-												JSON.stringify(defaultInfographicPayload(item.type)),
-											);
-											event.dataTransfer.effectAllowed = "copy";
-											event.dataTransfer.setDragImage(event.currentTarget, 12, 12);
-										}}
-									/>
-								))}
 							</MediaGrid>
 						</CustomTemplatesBlock>
 					</section>

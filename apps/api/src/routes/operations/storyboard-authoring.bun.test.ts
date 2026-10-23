@@ -459,7 +459,7 @@ describe("storyboard authoring routes", () => {
 		expect((await getContentProject(id))!.storyboards[0]?.version).toBe(1);
 	});
 
-	test("approval allows direction errors that generation normalizes when data is off", async () => {
+	test("approval allows the infographic errors a plan stored before their removal carries", async () => {
 		const id = await seed(false, {
 			needsDirection: true,
 			directionErrors: [

@@ -24,7 +24,6 @@ export const AUDIO_OVERLAY_KINDS = ["sfx", "ambient", "accent_hit", "music"] as 
 export const DEFAULT_SCENE_DUR_SEC = 4;
 export const DEFAULT_TEXT_DUR_SEC = 2;
 export const DEFAULT_OVERLAY_DUR_SEC = 3;
-export const DEFAULT_INFOGRAPHIC_DUR_SEC = 4;
 export const DEFAULT_AUDIO_DUR_SEC = 2;
 export const DEFAULT_ACCENT_HIT_DUR_SEC = 0.6;
 
@@ -42,7 +41,6 @@ export const DEFAULT_OVERLAY_LAYOUT: AgentClipLayout = {
 	widthPct: 42,
 	fit: "cover",
 };
-export const DEFAULT_INFOGRAPHIC_LAYOUT: AgentClipLayout = { xPct: 8, yPct: 14, widthPct: 84 };
 
 // Served directory for synthesized/generated assets.
 export const UPLOADS_DIR = "public/uploads";

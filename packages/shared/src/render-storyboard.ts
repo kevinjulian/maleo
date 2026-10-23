@@ -17,8 +17,6 @@ import {
 	type BrandKit,
 	type Config,
 	type EffectClip,
-	type InfographicOverlay,
-	type InfographicStyle,
 	type PacingDevices,
 	type RefsState,
 	type Scene,
@@ -83,81 +81,6 @@ type RenderMotionKeyframe = {
 };
 type RenderMotion = { keyframes: RenderMotionKeyframe[] };
 type RenderReveal = VisualRevealEffect;
-type RenderInfographicPayload =
-	| { type: "stat_reveal"; title: string; value: string; suffix?: string; comparison?: string }
-	| {
-			type: "bar_chart";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "line_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "area_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "pie_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "donut_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			centerLabel?: string;
-			unit?: string;
-	  }
-	| {
-			type: "progress_bars";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| { type: "circular_progress"; title: string; value: number; label?: string; unit?: string }
-	| {
-			type: "table_build";
-			title: string;
-			columns: string[];
-			rows: string[][];
-			highlight?: { row?: number; col?: number };
-			marks?: Array<Array<"tick" | "cross" | "none">>;
-			rowSfx?: { tickUrl?: string; crossUrl?: string };
-	  }
-	| {
-			type: "price_tag";
-			title: string;
-			price: string;
-			compareAt?: string;
-			note?: string;
-			badge?: string;
-			dropAnimation?: boolean;
-	  }
-	| {
-			type: "social_proof";
-			title: string;
-			rating?: number;
-			reviewCount?: string;
-			soldCount?: string;
-			badge?: string;
-	  }
-	| {
-			type: "urgency";
-			title: string;
-			stockCount?: number;
-			stockLabel?: string;
-			deadlineText?: string;
-			note?: string;
-	  };
-
 export interface StoryboardForRender {
 	scenes: Array<{
 		image: string;
@@ -273,29 +196,6 @@ export interface StoryboardForRender {
 			>;
 		} | null;
 	}>;
-	infographicOverlays?: Array<{
-		startSec: number;
-		durationSec: number;
-		revealAtSec?: number;
-		track?: number;
-		layout?: unknown;
-		animation?: {
-			in?: "fade" | "slide_up" | "scale";
-			main?: "build" | "count" | "highlight";
-			out?: "fade";
-		};
-		style?: {
-			bgColor?: string;
-			bgOpacity?: number;
-			borderColor?: string;
-			borderOpacity?: number;
-			borderRadius?: number;
-			blur?: number;
-			dataColor?: string;
-			labelColor?: string;
-		};
-		payload: RenderInfographicPayload;
-	}>;
 	audioOverlays?: Array<{
 		kind: "voiceover" | "music" | "sfx" | "ambient" | "accent_hit";
 		content: string;
@@ -356,16 +256,6 @@ export interface StoryboardForRender {
 		caption: CaptionCue;
 	}>;
 	pacingDevices?: { chapterPills?: boolean; progressBar?: boolean; variant?: "pill" | "minimal" };
-	infographicStyle?: {
-		bgColor?: string;
-		bgOpacity?: number;
-		borderColor?: string;
-		borderOpacity?: number;
-		borderRadius?: number;
-		blur?: number;
-		dataColor?: string;
-		labelColor?: string;
-	};
 	voiceover?: {
 		text: string;
 		startSec?: number;
@@ -399,14 +289,12 @@ export interface BuildRenderStoryboardExtra {
 	overlays?: TextOverlay[];
 	audioOverlays?: AudioOverlay[];
 	videoOverlays?: VideoOverlay[];
-	infographicOverlays?: InfographicOverlay[];
 	effects?: EffectClip[];
 	transitions?: TransitionClip[];
 	// reads `enabled`/`fontFamily` and spreads it). `object` accepts the dashboard's
 	// CaptionConfig interface, which has no index signature.
 	captions?: object;
 	pacingDevices?: PacingDevices;
-	infographicStyle?: InfographicStyle;
 	/* The document's chapters, so a rendered chapter pill can count chapters
 	 * rather than scenes. Only the titles are read; a chapter's span is derived
 	 * from the scenes that name it, at render time, the same way it is on the
@@ -703,16 +591,6 @@ export function buildRenderStoryboard(
 				style: o.style ?? undefined,
 				params: o.params ?? undefined,
 			})),
-			infographicOverlays: (extra?.infographicOverlays ?? []).map((g) => ({
-				startSec: g.start,
-				durationSec: g.dur,
-				revealAtSec: g.revealAt,
-				track: g.track,
-				layout: g.layout ?? undefined,
-				animation: g.animation,
-				payload: g.payload,
-				style: g.style ?? undefined,
-			})),
 			videoOverlays: [
 				...(extra?.videoOverlays ?? []).map((clip) => {
 					const volume = clip.layout?.sourceAudioExtraction
@@ -823,7 +701,6 @@ export function buildRenderStoryboard(
 					})()
 				: null,
 			pacingDevices: extra?.pacingDevices,
-			infographicStyle: extra?.infographicStyle,
 		},
 	};
 }
@@ -854,20 +731,12 @@ export function buildRenderStoryboardFromDoc(
 		trackFlags?: TrackFlags;
 		captions?: CaptionConfig;
 		pacingDevices?: PacingDevices;
-		infographicStyle?: InfographicStyle;
 		brand?: BrandKit;
 		backgroundFill?: string;
 	},
 ): BuiltRenderStoryboard {
-	const {
-		scenes,
-		videoOverlays,
-		textOverlays,
-		audioOverlays,
-		infographicOverlays,
-		effects,
-		transitions,
-	} = fromTimelineDoc(doc);
+	const { scenes, videoOverlays, textOverlays, audioOverlays, effects, transitions } =
+		fromTimelineDoc(doc);
 	const flags = extra?.trackFlags ?? {};
 	const { shown, audible } = trackVisibility(flags);
 	const built = buildRenderStoryboard(config, refs, scenes, {
@@ -878,7 +747,6 @@ export function buildRenderStoryboardFromDoc(
 			.map((v) =>
 				flags[v.track ?? 0]?.muted ? { ...v, volume: 0, layout: silentSourceLayout(v.layout) } : v,
 			),
-		infographicOverlays: infographicOverlays.filter((g) => shown(g.track)),
 		effects: effects.filter((e) => shown(e.track)),
 		chapters: doc.chapters,
 		mediaAssets: extra?.mediaAssets,
@@ -886,7 +754,6 @@ export function buildRenderStoryboardFromDoc(
 		transitions,
 		captions: extra?.captions ?? doc.captions,
 		pacingDevices: extra?.pacingDevices,
-		infographicStyle: extra?.infographicStyle,
 		brand: extra?.brand,
 	});
 	const captionCues = renderCaptionClips(doc.clips, extra?.captions ?? doc.captions, flags);

@@ -17,9 +17,10 @@ describe("stored blobs written before the field retirements still parse", () => 
 		sectionTextPreset: undefined,
 		introMotionPreset: "section-card",
 		sectionMotionPreset: "rve-countdown-intro",
-		// The two retired keys, both of which a real row still carries.
+		// The retired keys, each of which a real row still carries.
 		backgroundFill: "#123456",
 		referenceIds: ["ent_abc", "ent_def"],
+		useData: false,
 	});
 
 	test("an old blob parses and yields the current field names", () => {
@@ -42,6 +43,7 @@ describe("stored blobs written before the field retirements still parse", () => 
 
 		expect("backgroundFill" in parsed).toBe(false);
 		expect("referenceIds" in parsed).toBe(false);
+		expect("useData" in parsed).toBe(false);
 	});
 
 	test("a current blob is unaffected, so the shim is a no-op after the migration", () => {

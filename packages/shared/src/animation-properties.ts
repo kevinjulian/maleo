@@ -8,7 +8,7 @@ import { keysOf } from "./object-keys.ts";
 export const KEYFRAME_EASINGS = ["linear", "in", "out", "in-out", "bezier", "hold"] as const;
 export type KeyframeEasing = (typeof KEYFRAME_EASINGS)[number];
 
-export const ANIMATION_ELEMENT_KINDS = ["image", "video", "audio", "text", "infographic"] as const;
+export const ANIMATION_ELEMENT_KINDS = ["image", "video", "audio", "text"] as const;
 export type AnimationElementKind = (typeof ANIMATION_ELEMENT_KINDS)[number];
 
 export interface NumericPropertySpec {
@@ -28,7 +28,7 @@ export interface ColorPropertySpec {
 	kinds: readonly AnimationElementKind[];
 }
 
-const BOX: readonly AnimationElementKind[] = ["image", "video", "text", "infographic"];
+const BOX: readonly AnimationElementKind[] = ["image", "video", "text"];
 const TEXT: readonly AnimationElementKind[] = ["text"];
 
 export const NUMERIC_ANIMATION_PROPERTIES = {

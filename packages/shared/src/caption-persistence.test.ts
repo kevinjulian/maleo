@@ -65,7 +65,6 @@ test("family projections and unrelated rebuilds preserve canonical caption clips
 		views.effects,
 		views.transitions,
 		views.projectReferences,
-		views.infographicOverlays,
 		views,
 	);
 	expect(projected.clips).toEqual(doc.clips);

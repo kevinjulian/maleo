@@ -24,13 +24,19 @@ The video editor's read paths — timeline panels, persistence bundle, render bu
 
 ### Requirement: Clip retains its typed payloads as the clip's data
 
-`Clip` SHALL keep its typed nested payloads (`scene`/`video`/`text`/`audio`/`infographic`/`effect`/`transition`) as the discriminated data carried on the clip. Readers SHALL migrate by reading those payloads (and clip-native timing) directly off `doc.clips`; field graduation and payload thinning SHALL NOT be performed.
+`Clip` SHALL keep its typed nested payloads (`scene`/`video`/`text`/`audio`/`effect`/`transition`) as the discriminated data carried on the clip. Readers SHALL migrate by reading those payloads (and clip-native timing) directly off `doc.clips`; field graduation and payload thinning SHALL NOT be performed. There SHALL be no `infographic` clip type and no `infographic` payload. The editor engine SHALL refuse a clip of type `infographic`.
 
 #### Scenario: Reader reads payload off the clip
 
 - **WHEN** a consumer needs a type-specific field (e.g. an audio clip's `kind`)
 - **THEN** it reads `clip.audio.kind` from `doc.clips`
 - **AND** no derived legacy-array bundle is consulted
+
+#### Scenario: The engine refuses an infographic clip
+
+- **WHEN** a command adds a clip of type `infographic`
+- **THEN** the engine refuses the command as invalid input
+- **AND** the document is unchanged
 
 ### Requirement: The renderer consumes clips directly
 

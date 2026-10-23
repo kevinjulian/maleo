@@ -58,20 +58,17 @@ export function useAnimationInspector({
 					? "text"
 					: selected.videoOverlayId != null
 						? "broll"
-						: selected.infographicId != null
-							? "infographic"
-							: selected.effectId != null
-								? "effect"
-								: selected.transitionId != null
-									? "transition"
-									: "scene";
+						: selected.effectId != null
+							? "effect"
+							: selected.transitionId != null
+								? "transition"
+								: "scene";
 		chromeStore.patch("clipTab", defaultClipInspectorTab(kind));
 	}, [
 		selected.sceneId,
 		selected.audioId,
 		selected.overlayId,
 		selected.videoOverlayId,
-		selected.infographicId,
 		selected.effectId,
 		selected.transitionId,
 	]);

@@ -27,7 +27,6 @@ function videoJob(projectId: string, artifacts: PipelineArtifact[]): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

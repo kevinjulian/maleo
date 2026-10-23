@@ -23,10 +23,7 @@ import { agentTimelineDoc } from "./document.ts";
 import { overlaysFromV2Clips } from "./persistence.ts";
 import type { AgentJob, AgentScene } from "./model.ts";
 
-type JobFamilies = Pick<
-	AgentJob,
-	"scenes" | "textOverlays" | "infographicOverlays" | "videoOverlays" | "audioOverlays"
->;
+type JobFamilies = Pick<AgentJob, "scenes" | "textOverlays" | "videoOverlays" | "audioOverlays">;
 
 /* Clips the agent does not own: the same rule run-bracket.ts seeds `clientClips` by. */
 const isClientClip = (clip: Clip): boolean =>
@@ -62,7 +59,6 @@ const FAMILIES = {
 	text: { prefix: "text:", label: "text overlay" },
 	video: { prefix: "video:", label: "overlay clip" },
 	audio: { prefix: "audio:", label: "audio clip" },
-	infographic: { prefix: "infographic:", label: "infographic" },
 } as const;
 export type EditFamily = keyof typeof FAMILIES;
 
@@ -120,7 +116,6 @@ export function executeEdit(job: AgentJob, command: EditorCommand): EditOutcome 
 	const families = jobFamiliesOf(after.doc, job.scenes);
 	job.scenes = families.scenes;
 	job.textOverlays = families.textOverlays;
-	job.infographicOverlays = families.infographicOverlays;
 	job.videoOverlays = families.videoOverlays;
 	job.audioOverlays = families.audioOverlays;
 	job.editorScenes = fromTimelineDoc(after.doc).scenes;
@@ -130,10 +125,7 @@ export function executeEdit(job: AgentJob, command: EditorCommand): EditOutcome 
 	return { ok: true };
 }
 
-type Placements = Pick<
-	AgentJob,
-	"textOverlays" | "infographicOverlays" | "videoOverlays" | "audioOverlays"
->;
+type Placements = Pick<AgentJob, "textOverlays" | "videoOverlays" | "audioOverlays">;
 
 /** Place one more overlay of a family: the clip the job's projection builds for
  *  it, inserted through `executeEdit`. */

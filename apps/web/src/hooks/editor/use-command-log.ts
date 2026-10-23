@@ -22,7 +22,7 @@ import {
 	type SyncProblem,
 } from "@models/editor/command-sync.ts";
 import { errMsg } from "@models/core/cc-helpers.ts";
-import type { EditorDocument } from "@components/editor/use-editor-document.ts";
+import type { StoredLayout, SyncBridge } from "@models/editor/sync-bridge.ts";
 
 const SUBMIT_DEBOUNCE_MS = 1200;
 
@@ -41,12 +41,25 @@ export function describeSyncProblems(problems: readonly SyncProblem[]): string {
 	return `${count} could not be saved and ${problems.length === 1 ? "was" : "were"} removed: ${first.message || first.reason}`;
 }
 
+/** What the command log needs from the editor document. */
+export interface DocumentLog {
+	bridge: SyncBridge;
+	ledgerHandle: number;
+	/** Write a resolved scope back onto the editor. */
+	commit: (scope: EditScope) => void;
+	/** Called whenever something is enqueued; the log hook schedules the flush. */
+	onEnqueued: { current: () => void };
+}
+
 export function useCommandLog(input: {
 	projectId: string;
 	/** The log sequence of the version the editor loaded; null until loaded. */
 	loadedSeq: number | null;
+	/** The loaded version's clips, markers and lane flags before the load
+	 *  migrations, so a migration the load made is submitted. */
+	storedLayout: () => StoredLayout | undefined;
 	executor: CommandExecutor;
-	log: EditorDocument["log"];
+	log: DocumentLog;
 	scope: () => EditScope;
 	onSaving: () => void;
 	onSaved: () => void;
@@ -78,7 +91,7 @@ export function useCommandLog(input: {
 			diverged: (error) => latest.current.onDiverged(error),
 		});
 		syncRef.current = sync;
-		log.bridge.attach(sync);
+		log.bridge.attach(sync, latest.current.storedLayout());
 		let timer: ReturnType<typeof setTimeout> | undefined;
 		const submit = (): void => {
 			// A write that went around the stack in the last moments goes too.
@@ -93,6 +106,8 @@ export function useCommandLog(input: {
 			clearTimeout(timer);
 			timer = setTimeout(submit, SUBMIT_DEBOUNCE_MS);
 		};
+		// A load migration is the first write: enqueued now, sent on the usual debounce.
+		log.bridge.catchUp();
 		const onFocus = (): void => {
 			// A write around the stack goes first, so the read cannot overwrite it.
 			log.bridge.catchUp();

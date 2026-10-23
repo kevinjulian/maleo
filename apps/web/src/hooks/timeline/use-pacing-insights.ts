@@ -5,14 +5,7 @@
  * the same inputs while the insights strip is toggled off.
  */
 import { useCallback, useMemo, useState } from "react";
-import type {
-	EffectClip,
-	AudioOverlay,
-	InfographicOverlay,
-	Scene,
-	TextOverlay,
-	VideoOverlay,
-} from "@maleo/shared";
+import type { EffectClip, AudioOverlay, Scene, TextOverlay, VideoOverlay } from "@maleo/shared";
 import {
 	densityPerSecond,
 	lintPacing,
@@ -49,23 +42,13 @@ export interface PacingInsights {
 export function usePacingInsights(args: {
 	scenes: Scene[];
 	overlays: TextOverlay[];
-	infographicOverlays: InfographicOverlay[];
 	videoOverlays: VideoOverlay[];
 	audioOverlays: AudioOverlay[];
 	effects: EffectClip[];
 	total: number;
 	captionWords: Array<{ startSec: number; endSec: number }>;
 }): PacingInsights {
-	const {
-		scenes,
-		overlays,
-		infographicOverlays,
-		videoOverlays,
-		audioOverlays,
-		effects,
-		total,
-		captionWords,
-	} = args;
+	const { scenes, overlays, videoOverlays, audioOverlays, effects, total, captionWords } = args;
 	const [insightsOn, setInsightsOn] = useState(false);
 
 	const buildPacingInputs = useCallback((): PacingBuild => {
@@ -81,7 +64,7 @@ export function usePacingInsights(args: {
 			totalSec: total,
 			scenes: timedScenes,
 			captionWords,
-			overlays: [...overlays, ...infographicOverlays, ...videoOverlays].map((o) => ({
+			overlays: [...overlays, ...videoOverlays].map((o) => ({
 				start: o.start,
 				dur: o.dur,
 			})),
@@ -91,16 +74,7 @@ export function usePacingInsights(args: {
 			effects: effects.map((e) => ({ start: e.start, dur: e.dur })),
 		};
 		return { inputs, timedScenes };
-	}, [
-		scenes,
-		overlays,
-		infographicOverlays,
-		videoOverlays,
-		audioOverlays,
-		effects,
-		total,
-		captionWords,
-	]);
+	}, [scenes, overlays, videoOverlays, audioOverlays, effects, total, captionWords]);
 
 	const pacing = useMemo(() => {
 		if (!insightsOn) return null;

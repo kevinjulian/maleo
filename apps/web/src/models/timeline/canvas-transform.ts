@@ -28,7 +28,7 @@ import type { EditorDoc } from "@models/storyboard/editor-doc.ts";
 import { normalizeLayout, type ClipKind } from "./clip-layout.ts";
 
 export interface CanvasTarget {
-	source: "scene" | "video" | "text" | "infographic";
+	source: "scene" | "video" | "text";
 	id: number;
 	visualId?: string;
 }
@@ -60,9 +60,7 @@ export function canvasClipLayout(doc: EditorDoc, target: CanvasTarget) {
 			? scene
 			: target.source === "video"
 				? views.videoOverlays.find((v) => v.id === target.id)
-				: target.source === "text"
-					? views.textOverlays.find((v) => v.id === target.id)
-					: views.infographicOverlays.find((v) => v.id === target.id);
+				: views.textOverlays.find((v) => v.id === target.id);
 	const duration =
 		animatedVisual && scene
 			? normalizeSceneClips(scene).visualClips?.length === 1 && !animatedVisual.startSec
@@ -126,9 +124,7 @@ export function patchCanvasLayout(
 			? "scenes"
 			: target.source === "video"
 				? "videoOverlays"
-				: target.source === "text"
-					? "textOverlays"
-					: "infographicOverlays";
+				: "textOverlays";
 	const current = views[key].find((item) => item.id === target.id);
 	if (
 		!current ||
@@ -145,12 +141,7 @@ export function patchCanvasLayout(
 					? current.kind
 					: "image";
 	const keyed = canvasClipLayout(doc, target);
-	const base = keyed.visual
-		? keyed.layout
-		: (current.layout ??
-			(target.source === "infographic"
-				? { xPct: 8, yPct: 16, widthPct: 84, fit: "contain" as const }
-				: undefined));
+	const base = keyed.visual ? keyed.layout : current.layout;
 	const layout = normalizeLayout({ ...normalizeLayout(base, kind), ...patch }, kind);
 	if (keyed.visual && target.source === "scene")
 		return rebuildDocWith(doc, {

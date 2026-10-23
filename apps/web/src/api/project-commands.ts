@@ -4,35 +4,7 @@ import type { EditorCommand } from "@maleo/shared/editor";
 import { get, patch, post } from "./client.ts";
 import { BASE } from "./base.ts";
 import { withReadyPending } from "@models/core/pending-media-sources.ts";
-
-export interface CommandLogEntry {
-	seq: number;
-	version: number | null;
-	commands: EditorCommand[];
-	actor: string;
-	snapshot?: true;
-}
-
-export interface CommandRejection {
-	clientCommandId: string;
-	kind: string;
-	message: string;
-}
-
-export interface SubmitCommandsReply {
-	headSeq: number;
-	headVersion: number;
-	accepted: { clientCommandId: string; seq: number; version: number | null }[];
-	rejected: CommandRejection[];
-	delivered: CommandLogEntry[];
-}
-
-export interface CommandLogRead {
-	headSeq: number;
-	headVersion: number;
-	headStoryboardId: string | null;
-	entries: CommandLogEntry[];
-}
+import type { CommandLogRead, SubmitCommandsReply } from "@models/editor/command-log-wire.ts";
 
 export function submitCommands(
 	projectId: string,
@@ -57,7 +29,6 @@ export function savePresentation(
 	projectId: string,
 	fields: {
 		pacingDevices: object | null;
-		infographicStyle: object | null;
 		presentation: object | null;
 	},
 ): Promise<{ ok: true; version: number }> {

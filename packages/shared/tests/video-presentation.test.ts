@@ -9,14 +9,6 @@ describe("presentation grammar", () => {
 	test("selects one primary family by editorial priority", () => {
 		expect(
 			presentationFor({
-				motionGraphic: { needed: true, kind: "table_build" },
-				claim: "Five habits",
-				onScreenText: "5 habits",
-				sectionTransition: { text: "Summary" },
-			}).category,
-		).toBe("infographic");
-		expect(
-			presentationFor({
 				claim: "Five habits",
 				onScreenText: "5 habits",
 				sectionTransition: { text: "Summary" },
@@ -32,7 +24,7 @@ describe("presentation grammar", () => {
 
 	test("maps categories to reusable compatible templates", () => {
 		expect(PRESENTATION_TEMPLATE_MAP.explainer.clipFamily).toBe("text");
-		expect(PRESENTATION_TEMPLATE_MAP.infographic.clipFamily).toBe("infographic");
+		expect(PRESENTATION_TEMPLATE_MAP.narrative.clipFamily).toBe("none");
 		expect(templateCompatibleWithPresentation("explainer", "explainer-card")).toBe(true);
 		expect(templateCompatibleWithPresentation("explainer", "rve-quote-card")).toBe(true);
 		expect(templateCompatibleWithPresentation("explainer", "table_build")).toBe(false);

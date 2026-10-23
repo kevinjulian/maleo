@@ -44,7 +44,6 @@ describe("element paths address every seedable element exactly once", () => {
 	test("every PresetTargets axis has a path", () => {
 		expect(Object.keys(AXIS_ELEMENT_PATHS).sort()).toEqual([
 			"config",
-			"infographicStyle",
 			"pacingDevices",
 			"projectReferences",
 			"settings",

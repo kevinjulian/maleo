@@ -2,13 +2,7 @@
  * arrays (scenes / videoOverlays / overlays / audioOverlays), but the timeline
  * surface operates on a single generic TimelineClip[] so rows are layers (tracks),
  * not types, and any non-scene clip can move to any row. */
-import type {
-	AudioOverlay,
-	EffectClip,
-	InfographicOverlay,
-	TextOverlay,
-	VideoOverlay,
-} from "@maleo/shared";
+import type { AudioOverlay, EffectClip, TextOverlay, VideoOverlay } from "@maleo/shared";
 import { isPendingMedia } from "@models/core/pending-media-sources.ts";
 import { audioKindLabel } from "@maleo/shared/audio-overlays";
 import type { AudioOrigin, AudioOverlayKind } from "@maleo/shared/audio-overlays";
@@ -32,7 +26,7 @@ export { LANE_GROUP_ORDER, type LaneGroup };
 // import site.
 export { clipId, parseClipId, type ClipSource, type PrimaryClipSource };
 
-export type ClipMedia = "image" | "video" | "text" | "audio" | "effect" | "infographic";
+export type ClipMedia = "image" | "video" | "text" | "audio" | "effect";
 
 export interface OverlayTimelineClip {
 	id: string; // "video:3"
@@ -102,7 +96,6 @@ export function buildFreeClips(
 	overlays: TextOverlay[],
 	audioOverlays: AudioOverlay[],
 	effects: EffectClip[] = [],
-	infographicOverlays: InfographicOverlay[] = [],
 	captionClips: readonly import("@maleo/shared").Clip[] = [],
 ): TimelineClip[] {
 	const v: TimelineClip[] = videoOverlays.map((o) => ({
@@ -151,16 +144,6 @@ export function buildFreeClips(
 		track: e.track ?? 0,
 		label: e.effect.replace(/_/g, " "),
 	}));
-	const g: TimelineClip[] = infographicOverlays.map((o) => ({
-		id: clipId("infographic", o.id),
-		source: "infographic",
-		media: "infographic",
-		refId: o.id,
-		start: o.start,
-		dur: o.dur,
-		track: o.track ?? 0,
-		label: o.payload.title || o.payload.type.replace(/_/g, " "),
-	}));
 	const captions: TimelineClip[] = captionClips
 		.filter((clip) => clip.type === "caption")
 		.map((clip) => ({
@@ -173,7 +156,7 @@ export function buildFreeClips(
 			track: clip.track,
 			label: clip.caption?.text ?? "Caption",
 		}));
-	return [...v, ...t, ...a, ...g, ...fx, ...captions];
+	return [...v, ...t, ...a, ...fx, ...captions];
 }
 
 /* A clip's lane group: what kind of lane accepts it. Five, not the eight this
@@ -259,7 +242,6 @@ const LANE_GROUP_LABEL = {
 	audio: { group: "Audio", label: "Audio" },
 	text: { group: "Visual", label: "Text / Motion" },
 	caption: { group: "Captions", label: "Captions" },
-	data: { group: "Visual", label: "Data" },
 	effect: { group: "Visual", label: "Effects" },
 } satisfies Record<LaneGroup, { group: string; label: string }>;
 
@@ -289,7 +271,6 @@ const LANE_GROUP_HUE = {
 	audio: "--clip-audio",
 	text: "--clip-text",
 	caption: "--clip-caption",
-	data: "--clip-data",
 	effect: "--clip-effect",
 } satisfies Record<LaneGroup, string>;
 

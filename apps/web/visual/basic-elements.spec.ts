@@ -3,6 +3,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toTimelineDoc } from "@maleo/shared";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
@@ -84,14 +85,12 @@ for (const width of [1440, 320])
 						],
 					),
 				};
-				await context.route(
-					new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/storyboards(\\?|$)`),
-					async (route) => {
-						if (route.request().method() === "POST")
-							saved = route.request().postDataJSON().storyboard_json;
-						await route.fallback();
+				await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+					stored: () => saved,
+					onSave: (next) => {
+						saved = next as typeof saved;
 					},
-				);
+				});
 				await context.route(
 					new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
 					(route) =>
@@ -140,7 +139,7 @@ for (const width of [1440, 320])
 						).toHaveCount(1);
 						await expect(basics.locator(".fc-template-tile")).toHaveCount(0);
 						const tabs = page.getByRole("tablist", { name: "Element category", exact: true });
-						await expect(tabs.getByRole("tab")).toHaveCount(6);
+						await expect(tabs.getByRole("tab")).toHaveCount(5);
 						await expect(tabs.locator("svg")).toHaveCount(0);
 						const searchBox = (await page.locator('[data-slot="search-field"]').boundingBox())!;
 						const tabsBox = (await tabs.boundingBox())!;
@@ -298,23 +297,6 @@ for (const width of [1440, 320])
 				expect(textClips()[0]?.text?.content).toBe("Existing text");
 				expect(textClips()[0]?.text?.layout?.animation).toEqual(oldKeys);
 				await openElements();
-				await category.getByRole("tab", { name: "Data", exact: true }).click();
-				const dataGroup = page.getByRole("region", { name: "Data elements", exact: true });
-				const create = dataGroup.getByRole("button", { name: "New data", exact: true });
-				const header = dataGroup.locator(".tl2-elgroup-h"),
-					headingBox = (await header.boundingBox())!,
-					createBox = (await create.boundingBox())!;
-				expect(createBox.x).toBeGreaterThan(headingBox.x + headingBox.width / 2);
-				expect(createBox.y).toBeGreaterThanOrEqual(headingBox.y);
-				expect(createBox.y + createBox.height).toBeLessThanOrEqual(
-					headingBox.y + headingBox.height + 1,
-				);
-				await create.click();
-				await expect(page.locator(".tl2-ct-modal")).toBeVisible();
-				await page
-					.locator(".tl2-ct-modal")
-					.getByRole("button", { name: "Close", exact: true })
-					.click();
 				await category.getByRole("tab", { name: "Motion", exact: true }).click();
 				await expect(
 					page

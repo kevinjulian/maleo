@@ -389,7 +389,7 @@ fn number(value: f64) -> EngineResult<Value> {
 /// refreshing only keys the payload already has. A transition takes only its
 /// duration; a scene-local `vis` payload takes nothing.
 pub fn with_mirrored_timing(clip: Clip) -> EngineResult<Clip> {
-    const PAYLOADS: [&str; 7] = ["scene", "video", "text", "audio", "infographic", "effect", "transition"];
+    const PAYLOADS: [&str; 6] = ["scene", "video", "text", "audio", "effect", "transition"];
     let Some(key) = PAYLOADS.into_iter().find(|key| js_truthy(clip.extra.get(*key))) else {
         return Ok(clip);
     };

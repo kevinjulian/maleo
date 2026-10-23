@@ -26,7 +26,7 @@ import {
 	type RenderOverrides,
 } from "./element-sources.ts";
 import type { GlobalSettings } from "./creative-settings.ts";
-import type { InfographicStyle, PacingDevices, TemplateParamValue } from "@maleo/shared";
+import type { PacingDevices, TemplateParamValue } from "@maleo/shared";
 
 /** A value and the source map that describes it, moving together. */
 export interface ElementWrite<T> {
@@ -172,7 +172,6 @@ export function recordAxisEdit(path: string, sources: ElementSourceMap): Element
 export interface SectionReset {
 	settings: GlobalSettings;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	sources: ElementSourceMap;
 }
 
@@ -181,7 +180,6 @@ export interface ResetSupplier {
 	id: string;
 	settings?: Partial<GlobalSettings>;
 	pacingDevices?: Partial<PacingDevices>;
-	infographicStyle?: Partial<InfographicStyle>;
 }
 
 /** Does this supplier actually carry a value for this element?
@@ -197,7 +195,7 @@ export interface ResetSupplier {
 export function supplierSuppliesPath(input: {
 	path: string;
 	settingsPaths: Readonly<Record<keyof GlobalSettings, string>>;
-	axisPaths: { pacingDevices: string; infographicStyle: string };
+	axisPaths: { pacingDevices: string };
 	supplier: ResetSupplier | null | undefined;
 }): boolean {
 	const { supplier } = input;
@@ -206,8 +204,6 @@ export function supplierSuppliesPath(input: {
 	if (field) return supplier.settings?.[field] !== undefined;
 	if (input.path === input.axisPaths.pacingDevices)
 		return Boolean(supplier.pacingDevices && Object.keys(supplier.pacingDevices).length);
-	if (input.path === input.axisPaths.infographicStyle)
-		return Boolean(supplier.infographicStyle && Object.keys(supplier.infographicStyle).length);
 	return false;
 }
 
@@ -235,14 +231,12 @@ export function resetSectionToDefaults(input: {
 	paths: readonly string[];
 	settings: GlobalSettings;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	sources: ElementSourceMap;
 	settingsPaths: Readonly<Record<keyof GlobalSettings, string>>;
-	axisPaths: { pacingDevices: string; infographicStyle: string };
+	axisPaths: { pacingDevices: string };
 	defaults: {
 		settings: GlobalSettings;
 		pacingDevices: PacingDevices;
-		infographicStyle: InfographicStyle;
 	};
 	/** The preset the project is currently on, when it has one. Its values are what a
 	 *  revert goes back to; absent, the shipped defaults are. */
@@ -250,12 +244,10 @@ export function resetSectionToDefaults(input: {
 		id: string;
 		settings?: Partial<GlobalSettings>;
 		pacingDevices?: Partial<PacingDevices>;
-		infographicStyle?: Partial<InfographicStyle>;
 	} | null;
 }): SectionReset {
 	const settings: GlobalSettings = { ...input.settings };
 	let pacingDevices = input.pacingDevices;
-	let infographicStyle = input.infographicStyle;
 	let sources = input.sources;
 
 	const fieldForPath = new Map<string, keyof GlobalSettings>(
@@ -291,10 +283,6 @@ export function resetSectionToDefaults(input: {
 			pacingDevices = fromSupplier
 				? { ...input.defaults.pacingDevices, ...supplier!.pacingDevices }
 				: input.defaults.pacingDevices;
-		} else if (path === input.axisPaths.infographicStyle) {
-			infographicStyle = fromSupplier
-				? { ...input.defaults.infographicStyle, ...supplier!.infographicStyle }
-				: input.defaults.infographicStyle;
 		} else {
 			// A path this reset does not know how to restore: leave the value alone rather
 			// than rewriting a source for something whose value did not change.
@@ -306,7 +294,7 @@ export function resetSectionToDefaults(input: {
 		sources = withSource(sources, path, suppliedSource(fromSupplier));
 	}
 
-	return { settings, pacingDevices, infographicStyle, sources };
+	return { settings, pacingDevices, sources };
 }
 
 /* Folding a document's persisted presentation over the editor's settings, with

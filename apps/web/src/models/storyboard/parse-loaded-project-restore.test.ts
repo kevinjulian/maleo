@@ -181,13 +181,15 @@ describe("parseLoadedProject · element provenance", () => {
 		const parsed = parseLoadedProject(
 			baseDetail(
 				{
-					editor_state_json: { render_overrides: { maxVisualBeatSec: 6, useData: false } },
+					editor_state_json: {
+						render_overrides: { maxVisualBeatSec: 6, staticSceneMovement: false },
+					},
 				},
 				null,
 			),
 		);
 
-		expect(parsed.renderOverrides).toEqual({ maxVisualBeatSec: 6, useData: false });
+		expect(parsed.renderOverrides).toEqual({ maxVisualBeatSec: 6, staticSceneMovement: false });
 	});
 
 	it("a project with no editor state loads with empty provenance, not a crash", () => {

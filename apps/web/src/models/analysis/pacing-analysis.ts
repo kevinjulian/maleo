@@ -22,7 +22,7 @@ export interface PacingInputs {
 	scenes: PacingScene[];
 	/** Caption word windows (absolute seconds). */
 	captionWords: Array<{ startSec: number; endSec: number }>;
-	/** Visual/text/infographic overlay windows. */
+	/** Visual/text overlay windows. */
 	overlays: PacingSpan[];
 	/** Non-voiceover audio hits (sfx / accent_hit) — stimulation spikes. */
 	audioHits: PacingSpan[];

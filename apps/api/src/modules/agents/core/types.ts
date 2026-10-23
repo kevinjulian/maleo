@@ -7,7 +7,7 @@
  * registry one tool at a time; `ask_user` is the first live example. */
 import type { EditorCommand } from "@maleo/shared/editor";
 import type { z } from "zod";
-import type { MotionGraphicDecision, AgentTemplateOperation } from "@maleo/shared";
+import type { AgentTemplateOperation } from "@maleo/shared";
 import type { AgentJob } from "./model.ts";
 
 /* Declared in the run contract: both ride on events the editor renders. */
@@ -85,7 +85,6 @@ export interface ToolHelpers {
 	 *  0 when absent. Eight tools wrote this same expression out. */
 	index: (v: unknown, length: number) => number;
 	clampSceneDuration: (n: number) => number;
-	parseMotionGraphic: (v: unknown) => MotionGraphicDecision | undefined;
 }
 
 export interface StyleLock {

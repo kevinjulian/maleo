@@ -13,13 +13,7 @@
  */
 import { AXIS_ELEMENT_PATHS, SETTINGS_ELEMENT_PATHS } from "@models/presets/element-paths.ts";
 
-export type PanelGroupId =
-	| "direction"
-	| "style-reference"
-	| "brand"
-	| "data-callout"
-	| "output"
-	| "audio";
+export type PanelGroupId = "direction" | "style-reference" | "brand" | "output" | "audio";
 
 export interface PanelGroupDef {
 	id: PanelGroupId;
@@ -56,13 +50,6 @@ export const BRAND_GROUP: PanelGroupDef = {
 	],
 };
 
-/** How data callouts are drawn. With a clip selected the controls edit that clip. */
-export const DATA_CALLOUT_GROUP: PanelGroupDef = {
-	id: "data-callout",
-	title: "Data callout",
-	paths: [AXIS_ELEMENT_PATHS.infographicStyle],
-};
-
 /** What a render is cut to and produced by. */
 export const OUTPUT_GROUP: PanelGroupDef = {
 	id: "output",
@@ -86,7 +73,6 @@ export const STYLE_PANEL_GROUPS: readonly PanelGroupDef[] = [
 	DIRECTION_GROUP,
 	STYLE_REFERENCE_GROUP,
 	BRAND_GROUP,
-	DATA_CALLOUT_GROUP,
 ];
 
 /** Groups the Project Settings rail renders, in order. */

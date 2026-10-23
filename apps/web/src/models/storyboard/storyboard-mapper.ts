@@ -45,81 +45,6 @@ type RenderMotionKeyframe = {
 	easing?: RenderMotionEasing;
 };
 type RenderMotion = { keyframes: RenderMotionKeyframe[] };
-type RenderInfographicPayload =
-	| { type: "stat_reveal"; title: string; value: string; suffix?: string; comparison?: string }
-	| {
-			type: "bar_chart";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "line_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "area_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "pie_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "donut_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			centerLabel?: string;
-			unit?: string;
-	  }
-	| {
-			type: "progress_bars";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| { type: "circular_progress"; title: string; value: number; label?: string; unit?: string }
-	| {
-			type: "table_build";
-			title: string;
-			columns: string[];
-			rows: string[][];
-			highlight?: { row?: number; col?: number };
-			marks?: Array<Array<"tick" | "cross" | "none">>;
-			rowSfx?: { tickUrl?: string; crossUrl?: string };
-	  }
-	| {
-			type: "price_tag";
-			title: string;
-			price: string;
-			compareAt?: string;
-			note?: string;
-			badge?: string;
-			dropAnimation?: boolean;
-	  }
-	| {
-			type: "social_proof";
-			title: string;
-			rating?: number;
-			reviewCount?: string;
-			soldCount?: string;
-			badge?: string;
-	  }
-	| {
-			type: "urgency";
-			title: string;
-			stockCount?: number;
-			stockLabel?: string;
-			deadlineText?: string;
-			note?: string;
-	  };
-
 export interface StoryboardForRender {
 	scenes: Array<{
 		image: string;
@@ -234,30 +159,6 @@ export interface StoryboardForRender {
 			>;
 		} | null;
 	}>;
-	infographicOverlays?: Array<{
-		startSec: number;
-		durationSec: number;
-		// Absolute video time (sec) when the main build/count starts (word-timed reveal).
-		revealAtSec?: number;
-		track?: number;
-		layout?: unknown;
-		animation?: {
-			in?: "fade" | "slide_up" | "scale";
-			main?: "build" | "count" | "highlight";
-			out?: "fade";
-		};
-		style?: {
-			bgColor?: string;
-			bgOpacity?: number;
-			borderColor?: string;
-			borderOpacity?: number;
-			borderRadius?: number;
-			blur?: number;
-			dataColor?: string;
-			labelColor?: string;
-		};
-		payload: RenderInfographicPayload;
-	}>;
 	audioOverlays?: Array<{
 		kind: "voiceover" | "music" | "sfx" | "ambient" | "accent_hit";
 		content: string;
@@ -303,17 +204,6 @@ export interface StoryboardForRender {
 	captions?: Record<string, unknown> | null;
 	// Retention devices layered over the reel (chapter pill / progress bar), palette-driven.
 	pacingDevices?: { chapterPills?: boolean; progressBar?: boolean; variant?: "pill" | "minimal" };
-	// Global visual style for all infographic/data callout panels.
-	infographicStyle?: {
-		bgColor?: string;
-		bgOpacity?: number;
-		borderColor?: string;
-		borderOpacity?: number;
-		borderRadius?: number;
-		blur?: number;
-		dataColor?: string;
-		labelColor?: string;
-	};
 	// Whole-video narration track with absolute-time word timings — drives the
 	// renderer's kinetic captions (StoryboardReel reads storyboard.voiceover.words).
 	voiceover?: {

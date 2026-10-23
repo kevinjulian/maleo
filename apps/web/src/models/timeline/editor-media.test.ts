@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
-import { preserveAgentSceneTimeline, DATA_CALLOUT_DND_MIME } from "./editor-media.ts";
-import { defaultInfographicPayload } from "@models/presets/generation-defaults.ts";
-import type { InfographicPayload, Scene } from "@maleo/shared";
+import { preserveAgentSceneTimeline } from "./editor-media.ts";
+import type { Scene } from "@maleo/shared";
 
 const scene = (over: Partial<Scene> & { id: number }): Scene => ({
 	dur: 4,
@@ -33,30 +32,5 @@ describe("preserveAgentSceneTimeline", () => {
 			track: 0,
 			contentDur: 1.683,
 		});
-	});
-});
-
-describe("data callout defaults", () => {
-	it("covers every draggable callout type with renderable payload data", () => {
-		const types: InfographicPayload["type"][] = [
-			"stat_reveal",
-			"bar_chart",
-			"line_chart",
-			"area_chart",
-			"pie_chart",
-			"donut_chart",
-			"progress_bars",
-			"circular_progress",
-			"table_build",
-			"price_tag",
-			"social_proof",
-			"urgency",
-		];
-		expect(DATA_CALLOUT_DND_MIME).toBe("text/maleo-data-callout");
-		for (const type of types) {
-			const payload = defaultInfographicPayload(type);
-			expect(payload.type).toBe(type);
-			expect(payload.title.length).toBeGreaterThan(0);
-		}
 	});
 });

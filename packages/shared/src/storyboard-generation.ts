@@ -189,7 +189,6 @@ const beatFields = z
 		title: z.string().optional(),
 		narration: z.string().optional(),
 		visualPrompt: z.string().optional(),
-		motionGraphic: z.unknown().optional(),
 		editorial: storyEditorialDecisionSchema.optional(),
 	})
 	.strict();

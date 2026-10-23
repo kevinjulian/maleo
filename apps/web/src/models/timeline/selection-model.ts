@@ -28,10 +28,7 @@ export type { ClipSource };
 /** The families a single click can make primary. An effect is included: the
  *  timeline selects one the same way, through a handler that used to carry its
  *  own copy of the clear-the-others rule. */
-export type PrimaryClipSource = Extract<
-	ClipSource,
-	"video" | "text" | "audio" | "infographic" | "effect"
->;
+export type PrimaryClipSource = Extract<ClipSource, "video" | "text" | "audio" | "effect">;
 
 export interface Selection {
 	/** The selected scene, if the selection is a scene. */
@@ -39,7 +36,6 @@ export interface Selection {
 	/** The scene whose editor drawer is open. Cleared by every transition. */
 	editorSceneId?: number;
 	overlayId: number | null;
-	infographicId: number | null;
 	audioId: number | null;
 	videoOverlayId: number | null;
 	effectId: number | null;
@@ -52,7 +48,6 @@ export const EMPTY_SELECTION: Selection = {
 	sceneId: undefined,
 	editorSceneId: undefined,
 	overlayId: null,
-	infographicId: null,
 	audioId: null,
 	videoOverlayId: null,
 	effectId: null,
@@ -94,14 +89,7 @@ export function selectClip(source: PrimaryClipSource, refId: number): Selection 
 	return applyAction(EMPTY_SELECTION, { type: "selectClip", source, refId });
 }
 
-/** Shift-click: add or remove a clip in the multi-select set, and make it primary.
- *
- *  Note the asymmetry with `selectClip`, preserved deliberately: this path does
- *  NOT clear `infographicId`, so shift-clicking a video clip while an infographic
- *  is primary leaves the infographic primary too. It reads as an oversight rather
- *  than a decision — the other three families are cleared — but changing it
- *  changes what the inspector shows after a shift-click, so it is recorded here
- *  and left alone rather than quietly altered during a refactor. */
+/** Shift-click: add or remove a clip in the multi-select set, and make it primary. */
 export function toggleClip(current: Selection, source: ClipSource, refId: number): Selection {
 	return applyAction(current, { type: "toggleClip", source, refId });
 }
@@ -127,7 +115,6 @@ export function primaryClipKey(selection: Selection): string | null {
 	if (selection.videoOverlayId != null) return clipKey("video", selection.videoOverlayId);
 	if (selection.overlayId != null) return clipKey("text", selection.overlayId);
 	if (selection.audioId != null) return clipKey("audio", selection.audioId);
-	if (selection.infographicId != null) return clipKey("infographic", selection.infographicId);
 	if (selection.effectId != null) return clipKey("effect", selection.effectId);
 	return null;
 }
@@ -148,7 +135,7 @@ export function isClipSelected(selection: Selection, key: string): boolean {
 export function selectionsEqual(a: Selection, b: Selection): boolean {
 	if (a === b) return true;
 	if (a.sceneId !== b.sceneId || a.editorSceneId !== b.editorSceneId) return false;
-	if (a.overlayId !== b.overlayId || a.infographicId !== b.infographicId) return false;
+	if (a.overlayId !== b.overlayId) return false;
 	if (a.audioId !== b.audioId || a.videoOverlayId !== b.videoOverlayId) return false;
 	if (a.effectId !== b.effectId || a.transitionId !== b.transitionId) return false;
 	if (a.freeIds.size !== b.freeIds.size) return false;

@@ -8,25 +8,25 @@ A unified timeline sidebar element picker. It lists Text, Motion, and Data (info
 
 ### Requirement: Unified Elements rail
 
-The timeline sidebar SHALL expose a single "Elements" rail that replaces the separate Text, Motion, and Data rails. Opening it SHALL show one panel containing all placeable overlay elements. The rail button SHALL use a composite icon that represents the merged element types rather than a text-only glyph.
+The timeline sidebar SHALL expose a single "Elements" rail that replaces the separate Text and Motion rails. Opening it SHALL show one panel containing all placeable overlay elements. The rail button SHALL use a composite icon that represents the merged element types rather than a text-only glyph. The panel SHALL NOT list Data (infographic) elements.
 
 #### Scenario: Open the Elements rail
 
 - **WHEN** the user selects the Elements rail button in the timeline sidebar
-- **THEN** a single panel opens listing Text, Motion, and Data elements together
+- **THEN** a single panel opens listing Text and Motion elements together
 - **AND** no separate Text, Motion, or Data rail buttons are shown
 
 #### Scenario: Rail icon represents all element types
 
 - **WHEN** the timeline sidebar renders the Elements rail button
-- **THEN** its icon is a composite mark combining box, circle, text, and data motifs
+- **THEN** its icon is a composite mark combining box, circle and text motifs
 - **AND** it is not the text-only type glyph
 
 #### Scenario: Legacy rails removed
 
 - **WHEN** the timeline sidebar renders
 - **THEN** the standalone Text, Motion, and Data rail buttons are absent
-- **AND** all their elements remain reachable through the Elements panel
+- **AND** all Text and Motion elements remain reachable through the Elements panel
 
 ### Requirement: Shared search across all element types
 
@@ -56,7 +56,7 @@ The Elements panel SHALL provide a single search box that filters every element 
 
 ### Requirement: Type-grouped results with headers
 
-The Elements panel SHALL render one scrollable result region grouped by Basic, Shapes, Text, Motion and Data, with each in-scope group preceded by its header. Built-in presets and available custom items SHALL appear together in their supported groups as preview tiles. Every in-scope group SHALL keep its header when no entries match, with an empty hint beneath it. Built-ins SHALL render without waiting for custom items; custom items SHALL append when loaded without gating group visibility.
+The Elements panel SHALL render one scrollable result region grouped by Basic, Shapes, Text and Motion, with each in-scope group preceded by its header. Built-in presets and available custom items SHALL appear together in their supported groups as preview tiles. Every in-scope group SHALL keep its header when no entries match, with an empty hint beneath it. Built-ins SHALL render without waiting for custom items; custom items SHALL append when loaded without gating group visibility. There SHALL be no Data group.
 
 #### Scenario: Groups render with headers
 
@@ -96,7 +96,7 @@ The Elements panel SHALL keep the filter chips, the search box, and the currentl
 
 ### Requirement: Click and drag placement
 
-Each element tile SHALL support click-to-add and drag-onto-timeline. Placement SHALL route by kind: text presets add a text overlay, motion compositions expand as a composition clip, and data elements add an infographic payload. Dropped elements SHALL land at the drop position and track.
+Each element tile SHALL support click-to-add and drag-onto-timeline. Placement SHALL route by kind: text presets add a text overlay, and motion compositions expand as a composition clip. Dropped elements SHALL land at the drop position and track.
 
 #### Scenario: Click to add
 
@@ -151,9 +151,9 @@ The rail's existing listing, filtering, search, grouping, preview, and placement
 
 ### Requirement: Library Elements lists all placeable element families
 
-Library > Elements SHALL expose a catalogue view of placeable timeline building blocks. The view SHALL include built-in elements, user-authored Custom Elements, Data elements, Motion compositions, and Motion presets when those definitions are available. The library view SHALL support search and group filtering across those families without adding anything to a timeline.
+Library > Elements SHALL expose a catalogue view of placeable timeline building blocks. The view SHALL include built-in elements, user-authored Custom Elements, Motion compositions, and Motion presets when those definitions are available. The library view SHALL support search and group filtering across those families without adding anything to a timeline. There SHALL be no Data family, and no custom element of kind `data` SHALL exist.
 
-The catalogue SHALL adapt the same built-in text, data, motion, and custom-template source models used by the editor Elements rail. It SHALL NOT maintain a parallel hardcoded list of placeable element definitions that can drift from rail behavior.
+The catalogue SHALL adapt the same built-in text, motion, and custom-template source models used by the editor Elements rail. It SHALL NOT maintain a parallel hardcoded list of placeable element definitions that can drift from rail behavior.
 
 An element's definition and its preview SHALL be renderable without a timeline, a
 playhead, a selected clip, or a project brand palette. Where a preview currently
@@ -175,12 +175,12 @@ fallback rather than forcing the library to supply a stand-in project.
 #### Scenario: Search spans element families
 
 - **WHEN** an operator searches Library > Elements
-- **THEN** matching records remain visible under their groups across built-in, custom, data, and motion families
+- **THEN** matching records remain visible under their groups across built-in, custom and motion families
 - **AND** non-matching records are hidden
 
 #### Scenario: Library and rail share element source models
 
-- **WHEN** built-in text, data, or motion definitions change for the editor Elements rail
+- **WHEN** built-in text or motion definitions change for the editor Elements rail
 - **THEN** Library > Elements reads those definitions through the same source model
 - **AND** the library catalogue does not require a second hardcoded element list to stay current
 
@@ -190,14 +190,25 @@ fallback rather than forcing the library to supply a stand-in project.
 - **THEN** the preview renders with a neutral palette
 - **AND** the library does not construct a placeholder project, timeline, or selected clip to obtain one
 
+#### Scenario: Stored custom data elements are removed
+
+- **WHEN** the database migrates to the release that removes infographics
+- **THEN** every custom element record of kind `data` is deleted
+- **AND** custom elements of other kinds are unchanged
+
+#### Scenario: A data element cannot be created
+
+- **WHEN** a client submits a custom element of kind `data`
+- **THEN** the request is rejected as invalid input
+
 ### Requirement: Type category tabs
 
-The Elements panel SHALL provide icon-free category tabs `All`, `Basic`, `Shapes`, `Text`, `Motion`, and `Data`. Selecting a category other than `All` SHALL restrict visible groups to that category. `All` SHALL be the default. Basic SHALL contain static plain Text; Shapes SHALL contain Rectangle and Circle. Shape entries SHALL appear once in All and SHALL NOT also appear in Basic or Text.
+The Elements panel SHALL provide icon-free category tabs `All`, `Basic`, `Shapes`, `Text` and `Motion`. Selecting a category other than `All` SHALL restrict visible groups to that category. `All` SHALL be the default. Basic SHALL contain static plain Text; Shapes SHALL contain Rectangle and Circle. Shape entries SHALL appear once in All and SHALL NOT also appear in Basic or Text.
 
 #### Scenario: Default shows all types
 
 - **WHEN** the Elements panel first opens
-- **THEN** All is active and Basic, Shapes, Text, Motion and Data groups are visible
+- **THEN** All is active and Basic, Shapes, Text and Motion groups are visible
 
 #### Scenario: Categories use text labels
 
@@ -206,8 +217,8 @@ The Elements panel SHALL provide icon-free category tabs `All`, `Basic`, `Shapes
 
 #### Scenario: Filter to a single type
 
-- **WHEN** the operator selects Data
-- **THEN** only Data is shown and other groups are hidden
+- **WHEN** the operator selects Motion
+- **THEN** only Motion is shown and other groups are hidden
 
 #### Scenario: Filter to Shapes
 
@@ -217,7 +228,7 @@ The Elements panel SHALL provide icon-free category tabs `All`, `Basic`, `Shapes
 
 ### Requirement: Compact element preview tiles
 
-Every element SHALL render as a compact square picker tile with a type glyph or renderer-backed preview, an accessible name and a hover/focus hint. Basic plain Text SHALL use its text glyph; Rectangle and Circle SHALL use shape previews. Text/Motion presets SHALL use the text-preset renderer, compositions SHALL use their authored preview and Data SHALL use its infographic preview. Tiles SHALL omit persistent captions and subtitles. Built-in and saved tiles SHALL share this treatment, with at least a 44px touch target. Editor animated previews SHALL loop, while reduced motion SHALL use a stable arrived frame.
+Every element SHALL render as a compact square picker tile with a type glyph or renderer-backed preview, an accessible name and a hover/focus hint. Basic plain Text SHALL use its text glyph; Rectangle and Circle SHALL use shape previews. Text/Motion presets SHALL use the text-preset renderer, and compositions SHALL use their authored preview. Tiles SHALL omit persistent captions and subtitles. Built-in and saved tiles SHALL share this treatment, with at least a 44px touch target. Editor animated previews SHALL loop, while reduced motion SHALL use a stable arrived frame.
 
 #### Scenario: Tile shows appropriate preview
 

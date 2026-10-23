@@ -19,7 +19,7 @@ const pacing = (totalSec: number, overrides: Partial<PacingInputs> = {}): Pacing
 });
 
 describe("critiqueStoryboard", () => {
-	test("flags a numeric VO claim with no infographic overlay in the scene window", () => {
+	test("flags a numeric VO claim with no text overlay in the scene window", () => {
 		const findings = critiqueStoryboard(
 			pacing(8, { scenes: [{ start: 0, dur: 8, move: "Slow Zoom In" }] }),
 			[{ start: 0, dur: 4, name: "Proof beat", vo: "rated 4.8 stars by 2,300 reviews" }],
@@ -28,7 +28,7 @@ describe("critiqueStoryboard", () => {
 		expect(findings.some((f) => f.message.includes("no on-screen proof"))).toBe(true);
 	});
 
-	test("claim covered by an overlapping infographic is not flagged", () => {
+	test("claim covered by an overlapping text overlay is not flagged", () => {
 		const findings = critiqueStoryboard(
 			pacing(8, { scenes: [{ start: 0, dur: 8, move: "Slow Zoom In" }] }),
 			[{ start: 0, dur: 4, name: "Proof beat", vo: "rated 4.8 stars by 2,300 reviews" }],

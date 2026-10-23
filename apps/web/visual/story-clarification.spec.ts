@@ -102,7 +102,6 @@ function parkedJob() {
 		slides: [],
 		posts: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

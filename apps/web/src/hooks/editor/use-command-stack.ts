@@ -19,6 +19,7 @@ import { createCommandLedger, type CommandLedger } from "@models/chat/command-le
 import {
 	EngineCommandError,
 	replaceScope,
+	scopeEqual,
 	type CommandExecutor,
 	type EditorCommand,
 	type EditScope,
@@ -176,6 +177,13 @@ export function useCommandStack(input: {
 				return;
 			}
 			if (current === base) return;
+			/* A server reply commits the scope it resolved: a new object with the same
+			 * content. That is not a panel edit, and recording it would add an empty
+			 * undo step and clear redo. */
+			if (scopeEqual(current, base)) {
+				baselineRef.current = current;
+				return;
+			}
 			// Already applied by the panel that wrote it: recorded, not executed again.
 			ledger.record(replaceScope(current), base, undefined, {
 				scope: current,

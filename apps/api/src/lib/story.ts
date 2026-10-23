@@ -143,7 +143,6 @@ export const STORY_TIMELINE_LANES = {
 	sfx: 1,
 	music: 2,
 	introMotion: 3,
-	data: 4,
 } as const;
 
 /** Planning-only draft duration from word count. NOT final timing. */
@@ -959,8 +958,7 @@ export function buildStorySceneAccentHits(
 			const durationSec =
 				Math.round(Math.min(LONGFORM_ACCENT_SEC, scene.durationSec) * 1000) / 1000;
 			hits.push({
-				// Keep this band outside infographic SFX (40m..60m), whose refresh
-				// intentionally replaces every clip in its reserved range.
+				// Ids start at 60m so they stay clear of the auto text bands (40m..50m).
 				id: (opts.startId ?? 60_000_000) + hits.length,
 				kind: "sfx",
 				origin: "stock",

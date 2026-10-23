@@ -1,8 +1,8 @@
 import { promptIdsFor } from "../prompt-definitions.ts";
 /* Longform-assets service — the generation engine for a long-form piece: voice +
  * measure + image each section, expand toward the target length, then assemble
- * the timeline (scenes, voiceover/music/accent overlays, chapter titles,
- * infographic sfx). Also the single-section regenerate/improve flows.
+ * the timeline (scenes, voiceover/music/accent overlays, chapter titles).
+ * Also the single-section regenerate/improve flows.
  *
  * Pure flows over the AgentJob: every collaborator (frame gen, ref resolution,
  * retry, overlay builders, plan-state, persistence, notes, style-lock) is a
@@ -26,7 +26,8 @@ import {
 	bindingIdentity,
 	buildStoryBeatIntent,
 	materializedEntityId,
-	onlyNoDataRepairableDirectionErrors,
+	onlyStoredInfographicDirectionErrors,
+	storyEditorialDecisionSchema,
 	recordMaterializedReference,
 	replaceStoryDraft,
 	stableInputHash,
@@ -88,13 +89,6 @@ import {
 import { recordAssetProvenance } from "../../../../lib/agent-trace.ts";
 import { synthesizeBilledTts } from "../../../../lib/generation/billed-tts.ts";
 import { storeManagedMedia } from "../../../../lib/media-storage.ts";
-import {
-	replaceAutoInfographics,
-	buildInfographicsForSections,
-	refreshInfographicSfx,
-	applyInfographicSfx,
-	resolveInfographicSfxUrls,
-} from "../overlays.ts";
 import {
 	generateSceneFrame,
 	lockedConstraintsFor,
@@ -1593,15 +1587,6 @@ export async function regenerateLongformSectionFlow(
 	];
 	job.audioOverlays = audioOverlays;
 	job.textOverlays = templateTitleOverlays(job, ready);
-	job.infographicOverlays = replaceAutoInfographics(
-		job.infographicOverlays,
-		job.timelineTemplate?.useData === false ? [] : buildInfographicsForSections(placed),
-	);
-	if (job.timelineTemplate?.useData === false)
-		job.audioOverlays = job.audioOverlays.filter(
-			(overlay) => overlay.kind !== "sfx" || !overlay.content.startsWith("graphic:"),
-		);
-	else await refreshInfographicSfx(job);
 	const totalSec = storyTotalDurationSec(ready, policy.pauseSec, policy.leadInSec);
 	emitPlanTable(job, merged, `Story · ${Math.round(totalSec)}s · ${scenes.length} sections`);
 	job.events.push({ kind: "storyboard_patch" });
@@ -1765,15 +1750,6 @@ export async function improveStorySectionFlow(
 	];
 	job.audioOverlays = audioOverlays;
 	job.textOverlays = templateTitleOverlays(job, ready);
-	job.infographicOverlays = replaceAutoInfographics(
-		job.infographicOverlays,
-		job.timelineTemplate?.useData === false ? [] : buildInfographicsForSections(placed),
-	);
-	if (job.timelineTemplate?.useData === false)
-		job.audioOverlays = job.audioOverlays.filter(
-			(overlay) => overlay.kind !== "sfx" || !overlay.content.startsWith("graphic:"),
-		);
-	else await refreshInfographicSfx(job);
 	const totalSec = storyTotalDurationSec(ready, policy.pauseSec, policy.leadInSec);
 	emitPlanTable(job, merged, `Story · ${Math.round(totalSec)}s · ${scenes.length} sections`);
 	job.events.push({ kind: "storyboard_patch" });
@@ -1786,26 +1762,22 @@ export async function improveStorySectionFlow(
 
 // ── Full-plan asset generation ──────────────────────────────────────────────
 
-/** Old drafts can predate template-aware direction. Removing unsupported data
- * treatment is deterministic, so it does not need another model pass or another
- * approval; narration, evidence, timing, and visual concepts stay unchanged. */
-export function normalizeNoDataStoryDirection(sections: readonly StorySection[]): StorySection[] {
+/** Plans stored before infographics were removed may hold an `infographic`
+ * presentation and a motion graphic. Reading each beat through the schema maps
+ * it to `narrative` and drops the graphic; narration, evidence, timing and
+ * visual concepts stay unchanged. */
+export function normalizeStoredInfographicDirection(
+	sections: readonly StorySection[],
+): StorySection[] {
 	return sections.map((section) => {
-		let editorial = section.editorial;
-		if (editorial?.presentation === "infographic") {
-			const { motionGraphic: _motionGraphic, ...rest } = editorial;
-			editorial = { ...rest, presentation: "explainer" };
-		}
-		return {
-			...section,
-			editorial,
-			motionGraphic: {
-				needed: false,
-				kind: "none",
-				purpose: "none",
-				reason: "Timeline template disables data overlays.",
-			},
+		// SAFETY: a stored section may carry the removed key; widening to name it
+		// claims nothing about the section's other fields.
+		const { motionGraphic: _motionGraphic, ...rest } = section as StorySection & {
+			motionGraphic?: unknown;
 		};
+		if (!rest.editorial) return rest;
+		const read = storyEditorialDecisionSchema.safeParse(rest.editorial);
+		return read.success ? { ...rest, editorial: read.data } : rest;
 	});
 }
 
@@ -1822,12 +1794,8 @@ export async function generateStoryAssetsFlow(
 	let plan = inputs.plan;
 	if (!plan) return { note: "No story plan yet — run plan_story first." };
 	await refreshTimelineTemplateForGeneration(job);
-	if (
-		plan.needsDirection &&
-		job.timelineTemplate?.useData === false &&
-		onlyNoDataRepairableDirectionErrors(plan.directionErrors)
-	) {
-		const normalized = normalizeNoDataStoryDirection(plan.sections);
+	if (plan.needsDirection && onlyStoredInfographicDirectionErrors(plan.directionErrors)) {
+		const normalized = normalizeStoredInfographicDirection(plan.sections);
 		const violations = storySequenceDirectionViolations(
 			normalized.map((section) => ({
 				id: section.semanticBeatId ?? section.sectionId ?? section.id ?? "",
@@ -1853,7 +1821,7 @@ export async function generateStoryAssetsFlow(
 	const approvedSnapshot = approved?.payload;
 	if (!approved || !approvedSnapshot) return { note: NOT_APPROVED_NOTE };
 	let sections = approvedStorySections(plan, approvedSnapshot);
-	if (job.timelineTemplate?.useData === false) sections = normalizeNoDataStoryDirection(sections);
+	sections = normalizeStoredInfographicDirection(sections);
 	const target = plan.targetSec;
 	const planningBrief = plan.planningBrief ?? job.brief;
 	if (!job.styleImageUrl && !plan.visualStyle) {
@@ -1941,12 +1909,6 @@ export async function generateStoryAssetsFlow(
 		policy.sceneEntrySfxCue,
 	);
 	const directedAccents = await resolveDirectedAccents(sections, policy);
-	// Entry-sound urls for the plan's motion-graphic kinds, pre-resolved so the sync
-	// assembleTimeline below can place them per rebuilt infographic.
-	const graphicSfxUrls =
-		job.timelineTemplate?.useData === false
-			? new Map()
-			: await resolveInfographicSfxUrls(sections.map((s) => s.motionGraphic?.kind));
 
 	// Circuit breaker: when the voice/image backend is DOWN (vs a transient blip),
 	// every section fails — and with per-asset retries that grind is slow enough to
@@ -1994,11 +1956,6 @@ export async function generateStoryAssetsFlow(
 			),
 		];
 		job.audioOverlays = audioOverlays;
-		job.infographicOverlays = replaceAutoInfographics(
-			job.infographicOverlays,
-			job.timelineTemplate?.useData === false ? [] : buildInfographicsForSections(placed),
-		);
-		applyInfographicSfx(job, graphicSfxUrls);
 		// One animated title card per section boundary (chapter beats).
 		job.textOverlays = templateTitleOverlays(job, ready);
 		return storyTotalDurationSec(ready, policy.pauseSec, policy.leadInSec);

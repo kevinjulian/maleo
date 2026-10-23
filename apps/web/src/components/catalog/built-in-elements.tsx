@@ -15,18 +15,15 @@
  */
 import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 import type { JSX, ReactNode } from "react";
-import { defaultInfographicPayload } from "@models/presets/generation-defaults.ts";
 import {
 	BASIC_ELEMENTS,
 	BUILT_IN_TEXT_PRESETS,
-	INFOGRAPHIC_KINDS,
 	MOTION_ITEMS,
 	textPresetLabel,
 	textPresetSample,
 	textPresetSampleOr,
 } from "@models/timeline/element-catalogue.ts";
 import { TextPresetPreview } from "@components/timeline/timeline-editor-panels.tsx";
-import { InfographicTypePreview } from "@components/timeline/infographics/infographics-panel.tsx";
 import { LazyPreview } from "./lazy-preview.tsx";
 
 /** A catalogue tile: a preview, a name, and the family it belongs to. */
@@ -126,29 +123,12 @@ export function BuiltInMotionTiles({ query }: { query: string }): JSX.Element {
 	);
 }
 
-export function BuiltInDataTiles({ query }: { query: string }): JSX.Element {
-	const items = INFOGRAPHIC_KINDS.filter((kind) => matches(query, kind.label));
-	return (
-		<div className="catalog-el-tiles">
-			{items.map((kind) => (
-				<ElementTile
-					key={kind.type}
-					label={kind.label}
-					meta="Data"
-					preview={() => <InfographicTypePreview payload={defaultInfographicPayload(kind.type)} />}
-				/>
-			))}
-		</div>
-	);
-}
-
 /** How many built-ins each family contributes for a query, for the group counts. */
 export interface BuiltInCounts {
 	basic: number;
 	shapes: number;
 	text: number;
 	motion: number;
-	data: number;
 }
 
 export function builtInCounts(query: string): BuiltInCounts {
@@ -157,6 +137,5 @@ export function builtInCounts(query: string): BuiltInCounts {
 		basic: BASIC_ELEMENTS.filter((item) => matches(query, item.label, item.kind)).length,
 		text: BUILT_IN_TEXT_PRESETS.filter((preset) => matches(query, textPresetLabel(preset))).length,
 		motion: MOTION_ITEMS.filter((item) => matches(query, item.label, item.intent)).length,
-		data: INFOGRAPHIC_KINDS.filter((kind) => matches(query, kind.label)).length,
 	};
 }

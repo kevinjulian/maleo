@@ -9,7 +9,6 @@ export function storyboardSeconds(props: {
 	scenes: DurScene[];
 	videoOverlays?: Span[];
 	textOverlays?: Span[];
-	infographicOverlays?: Span[];
 	audioOverlays?: Span[];
 	visualTimeline?: Span[];
 }): number {
@@ -24,7 +23,6 @@ export function storyboardSeconds(props: {
 	for (const o of [
 		...(props.videoOverlays ?? []),
 		...(props.textOverlays ?? []),
-		...(props.infographicOverlays ?? []),
 		...(props.audioOverlays ?? []),
 		...(props.visualTimeline ?? []),
 	]) {

@@ -71,7 +71,6 @@ function videoJob(projectId: string): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -7,7 +7,6 @@ import { STORY_ARCS, VIDEO_PLAN_KINDS, storyEditorialDecisionSchema } from "@mal
 
 const text = z.coerce.string();
 const number = z.coerce.number().finite();
-const object = z.record(z.string(), z.unknown());
 const layout = z
 	.object({
 		xPct: number.optional(),
@@ -142,27 +141,6 @@ export const overlayArgs = z
 	.refine((value) => Boolean(value.prompt?.trim() || value.url?.trim()), {
 		message: "prompt or url is required",
 	});
-export const infographicArgs = z
-	.object({
-		type: z.enum(["stat_reveal", "bar_chart", "table_build", "price_tag"]),
-		title: text.min(1),
-		startSec: number.nonnegative(),
-		durationSec: number.positive(),
-		value: text.optional(),
-		suffix: text.optional(),
-		comparison: text.optional(),
-		unit: text.optional(),
-		price: text.optional(),
-		compareAt: text.optional(),
-		note: text.optional(),
-		rows: z.array(object).optional(),
-		columns: z.array(text).optional(),
-		tableRows: z.array(z.array(text)).optional(),
-		highlight: object.optional(),
-		track: z.coerce.number().int().nonnegative().optional(),
-		layout: layout.optional(),
-	})
-	.strict();
 export const characterArgs = z.object({ name: text.min(1), description: text.min(1) }).strict();
 export const styleArgs = z.object({ brief: text.optional() }).strict();
 
@@ -185,7 +163,6 @@ const sceneFields = {
 	analogy: text.optional(),
 	visualType: text.optional(),
 	onScreenText: text.optional(),
-	motionGraphic: object.optional(),
 	// Cast ids (from the project roster) that appear in this scene. Validated
 	// against the roster in the handler; unknown ids are dropped.
 	refIds: z.array(text).optional(),
@@ -201,7 +178,6 @@ export const updateSectionArgs = z
 		title: text.optional(),
 		narration: text.optional(),
 		visualPrompt: text.optional(),
-		motionGraphic: object.optional(),
 		editorial: storyEditorialDecisionSchema.optional(),
 	})
 	.strict()

@@ -4,9 +4,9 @@
  * (`p1-media-library`).
  *
  * Storyboard edits reach the server as commands through the project command
- * log (`use-command-log.ts`); nothing here posts a whole document. The three
- * stored fields outside the editable scope — pacing devices, infographic style,
- * presentation — are written alone onto the head on their own debounce
+ * log (`use-command-log.ts`); nothing here posts a whole document. The two
+ * stored fields outside the editable scope — pacing devices and presentation —
+ * are written alone onto the head on their own debounce
  * (`p1-command-log` D4). Editor state and meta keep their debounces. */
 import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { saveEditorState, updateProjectMeta } from "@api/projects.ts";
@@ -17,7 +17,6 @@ import type { CommandLog } from "./use-command-log.ts";
 import type {
 	Config,
 	ContentType,
-	InfographicStyle,
 	PacingDevices,
 	TrackFlags,
 	RenderPresentation,
@@ -33,7 +32,6 @@ import type { ConversationDecision } from "@maleo/shared";
 /** The stored fields outside the editable scope. */
 interface PresentationBundle {
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	presentation: RenderPresentation;
 }
 
@@ -101,37 +99,26 @@ export function useContentPersistence(input: {
 			.then(() =>
 				savePresentation(projectId, {
 					pacingDevices: pres.pacingDevices,
-					infographicStyle: pres.infographicStyle,
 					presentation: pres.presentation,
 				}),
 			);
 		pendingPresentation.current = write;
 		return write;
 	};
-	useDebouncedSave(
-		!!type,
-		[pres.pacingDevices, pres.infographicStyle, pres.presentation, projectId, type],
-		1200,
-		() => {
-			setSaveState("saving");
-			void writePresentation()
-				.then(() => setSaveState("saved"))
-				.catch((err) => {
-					presentationDirty.current = true;
-					setSaveState("failed");
-					setSaveError(`Auto-save failed: ${errMsg(err)}`);
-				});
-		},
-	);
+	useDebouncedSave(!!type, [pres.pacingDevices, pres.presentation, projectId, type], 1200, () => {
+		setSaveState("saving");
+		void writePresentation()
+			.then(() => setSaveState("saved"))
+			.catch((err) => {
+				presentationDirty.current = true;
+				setSaveState("failed");
+				setSaveError(`Auto-save failed: ${errMsg(err)}`);
+			});
+	});
 	// Marked before the debounce fires, so an immediate flush does not miss it.
-	useDebouncedSave(
-		!!type,
-		[pres.pacingDevices, pres.infographicStyle, pres.presentation],
-		0,
-		() => {
-			presentationDirty.current = true;
-		},
-	);
+	useDebouncedSave(!!type, [pres.pacingDevices, pres.presentation], 0, () => {
+		presentationDirty.current = true;
+	});
 
 	const writeStoryboard = async (): Promise<{ id: string }> => {
 		if (presentationDirty.current) await writePresentation();

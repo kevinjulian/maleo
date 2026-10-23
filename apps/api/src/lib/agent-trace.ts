@@ -172,7 +172,6 @@ export async function recordPipelineCheckpoint(
 					slides: slidesOf(job),
 					posts: postsOf(job),
 					textOverlays: job.textOverlays,
-					infographicOverlays: job.infographicOverlays,
 					videoOverlays: job.videoOverlays,
 					audioOverlays: job.audioOverlays,
 					characters: job.characters,

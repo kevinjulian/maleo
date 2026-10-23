@@ -33,11 +33,6 @@ function SectionRow({ index, section }: { index: number; section: StorySectionMs
 				.filter((r): r is NonNullable<typeof r> => Boolean(r)) ?? [],
 		),
 	);
-	const mg = section.motionGraphic;
-	const motion =
-		mg?.needed && mg.kind && mg.kind !== "none"
-			? `${mg.kind}${mg.reason?.trim() ? ` · ${mg.reason.trim()}` : ""}`
-			: null;
 	return (
 		<li className="fc-plan-row">
 			<div className="fc-plan-row-h">
@@ -75,7 +70,6 @@ function SectionRow({ index, section }: { index: number; section: StorySectionMs
 					Shot roles: {povRoles.map((r) => r.replace(/_/g, " ")).join(", ")}
 				</div>
 			)}
-			{motion && <div className="fc-output-muted">Motion graphic: {motion}</div>}
 			{section.needsDrafting && (
 				<div className="fc-output-finding warn">
 					Needs drafting — kept empty rather than filled with substitute text.

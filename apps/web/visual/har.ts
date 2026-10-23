@@ -61,6 +61,39 @@ export async function replayApi(context: BrowserContext, har: string): Promise<v
 			await route.fulfill({ json: { storyboard: { id: "fixture-saved-storyboard", version: 2 } } });
 		else await route.fallback();
 	});
+	/* Edits reach the server as commands (`p1-command-log`), and the recording has
+	 * no command log. Every submission is accepted and discarded here; specs that
+	 * assert on what was saved serve a stateful log (`command-log.ts`), whose
+	 * handlers run first. */
+	let seq = 0;
+	await context.route(/\/api\/operations\/projects\/[^/]+\/commands(\?|$)/, async (route) => {
+		if (route.request().method() === "GET") {
+			await route.fulfill({
+				json: {
+					headSeq: seq,
+					headVersion: seq + 1,
+					headStoryboardId: "fixture-saved-storyboard",
+					entries: [],
+				},
+			});
+			return;
+		}
+		const body = route.request().postDataJSON() as { commands: { clientCommandId: string }[] };
+		const accepted = body.commands.map(({ clientCommandId }) => {
+			seq += 1;
+			return { clientCommandId, seq, version: seq + 1 };
+		});
+		await route.fulfill({
+			json: { headSeq: seq, headVersion: seq + 1, accepted, rejected: [], delivered: [] },
+		});
+	});
+	await context.route(
+		/\/api\/operations\/projects\/[^/]+\/storyboard-presentation(\?|$)/,
+		async (route) => {
+			seq += 1;
+			await route.fulfill({ json: { ok: true, version: seq + 1 } });
+		},
+	);
 	// Media import did not exist in the recording. Keep ready/empty GET states
 	// deterministic; upload/processing suites override these with their own jobs.
 	await context.route(

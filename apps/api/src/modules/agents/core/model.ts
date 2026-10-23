@@ -15,8 +15,6 @@ export type {
 	AgentCharacter,
 	AgentClipLayout,
 	AgentEvent,
-	AgentInfographicOverlay,
-	AgentInfographicPayload,
 	AgentPost,
 	AgentScene,
 	AgentSlide,
@@ -55,7 +53,6 @@ import type {
 	AgentAudioOverlay,
 	AgentCharacter,
 	AgentEvent,
-	AgentInfographicOverlay,
 	AgentScene,
 	AgentTextOverlay,
 	AgentVideoOverlay,
@@ -173,7 +170,6 @@ export interface AgentJob {
 	pendingActionId?: string;
 	scenes: AgentScene[];
 	textOverlays: AgentTextOverlay[];
-	infographicOverlays: AgentInfographicOverlay[];
 	videoOverlays: AgentVideoOverlay[];
 	audioOverlays: AgentAudioOverlay[];
 	characters: AgentCharacter[];

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { motionGraphicSchema, type MotionGraphicDecision } from "./video-blueprint.ts";
 import { PRESENTATION_CATEGORIES } from "./video-presentation.ts";
 import { storyPlannedReferenceSchema } from "./story-plan.ts";
 import {
@@ -17,21 +16,32 @@ export const STORY_EDITORIAL_PURPOSES = [
 ] as const;
 export type StoryEditorialPurpose = (typeof STORY_EDITORIAL_PURPOSES)[number];
 
-export const storyEditorialDecisionSchema = z
-	.object({
-		purpose: z.enum(STORY_EDITORIAL_PURPOSES),
-		presentation: z.enum(PRESENTATION_CATEGORIES),
-		visualConcept: z.string().trim().min(1).max(500),
-		noveltyKey: z.string().trim().min(1).max(120),
-		onScreenText: z.string().trim().min(1).max(160).optional(),
-		motionGraphic: motionGraphicSchema.optional(),
-		sfxCue: z.string().trim().min(1).max(160).nullable().default(null),
-		/* Per planned shot: what it shows and which references it binds. Optional
-		 * because plans persisted before visual direction carry none, and a read must
-		 * not invent them. New canonical plans require it (see storyVisualDirection). */
-		shots: z.array(storyPlannedShotDirectionSchema).optional(),
-	})
-	.strict();
+/* Plans stored before infographics were removed may carry the `infographic`
+ * presentation and a `motionGraphic` decision. The read keeps the beat: the
+ * presentation reads as `narrative` and the motion graphic is dropped. */
+function dropStoredInfographicDecision(value: unknown): unknown {
+	if (typeof value !== "object" || value === null || Array.isArray(value)) return value;
+	const rest = Object.fromEntries(Object.entries(value).filter(([key]) => key !== "motionGraphic"));
+	return rest.presentation === "infographic" ? { ...rest, presentation: "narrative" } : rest;
+}
+
+export const storyEditorialDecisionSchema = z.preprocess(
+	dropStoredInfographicDecision,
+	z
+		.object({
+			purpose: z.enum(STORY_EDITORIAL_PURPOSES),
+			presentation: z.enum(PRESENTATION_CATEGORIES),
+			visualConcept: z.string().trim().min(1).max(500),
+			noveltyKey: z.string().trim().min(1).max(120),
+			onScreenText: z.string().trim().min(1).max(160).optional(),
+			sfxCue: z.string().trim().min(1).max(160).nullable().default(null),
+			/* Per planned shot: what it shows and which references it binds. Optional
+			 * because plans persisted before visual direction carry none, and a read must
+			 * not invent them. New canonical plans require it (see storyVisualDirection). */
+			shots: z.array(storyPlannedShotDirectionSchema).optional(),
+		})
+		.strict(),
+);
 export type StoryEditorialDecision = z.infer<typeof storyEditorialDecisionSchema>;
 
 export const storySequenceDirectionSchema = z
@@ -56,7 +66,6 @@ export type StorySequenceDirectionInvariant =
 	| "missing_direction"
 	| "repeated_treatment"
 	| "repeated_sfx"
-	| "invalid_infographic"
 	| "native_text_in_image";
 
 export interface StorySequenceDirectionViolation {
@@ -75,34 +84,6 @@ function normalized(value: string): string {
 		.toLocaleLowerCase()
 		.replace(/[^\p{L}\p{N}]+/gu, " ")
 		.trim();
-}
-
-function hasNumber(value: string | undefined): boolean {
-	return /\d/.test(value ?? "");
-}
-
-function invalidMotionGraphic(graphic: MotionGraphicDecision | undefined): string | null {
-	if (!graphic?.needed || graphic.kind === "none")
-		return "infographic presentation needs structured data";
-	if (graphic.kind === "stat_reveal" && !hasNumber(graphic.value))
-		return "stat reveal needs a numeric source value";
-	if (graphic.kind === "price_tag" && !hasNumber(graphic.value))
-		return "price tag needs a numeric source value";
-	if (
-		graphic.kind === "bar_chart" &&
-		(!graphic.rows ||
-			graphic.rows.length < 2 ||
-			graphic.rows.some((row) => !Number.isFinite(row.value)))
-	)
-		return "bar chart needs at least two finite source rows";
-	if (
-		graphic.kind === "table_build" &&
-		(!graphic.columns?.length ||
-			!graphic.tableRows?.length ||
-			graphic.tableRows.some((row) => !row.length))
-	)
-		return "table needs explicit columns and rows";
-	return null;
 }
 
 /** Exact structural checks only. All-absent input is legacy unless direction is required. */
@@ -125,15 +106,6 @@ export function storySequenceDirectionViolations(
 		const beat = beats[index]!;
 		const editorial = beat.editorial;
 		if (!editorial) continue;
-		if (editorial.presentation === "infographic") {
-			const detail = invalidMotionGraphic(editorial.motionGraphic);
-			if (detail)
-				violations.push({
-					invariant: "invalid_infographic",
-					beatIds: [beat.id],
-					detail: `${beat.id}: ${detail}`,
-				});
-		}
 		if (editorial.onScreenText) {
 			const text = normalized(editorial.onScreenText);
 			if (text && normalized(editorial.visualConcept).includes(text))
@@ -172,9 +144,11 @@ export function storySequenceDirectionViolations(
 	return violations;
 }
 
-/** Errors generation can repair on its own when the template disables data overlays.
- *  Approval lets these through; generation re-checks before any provider spend. */
-export function onlyNoDataRepairableDirectionErrors(
+/** True when every recorded error is an `invalid_infographic` error. Plans stored
+ *  before infographics were removed may carry only those; the read maps their
+ *  beats to `narrative`, so approval lets them through and generation re-checks
+ *  the plan before any provider spend. */
+export function onlyStoredInfographicDirectionErrors(
 	errors: readonly string[] | undefined,
 ): boolean {
 	return !!errors?.length && errors.every((error) => error.startsWith("invalid_infographic:"));

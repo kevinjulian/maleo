@@ -4,8 +4,9 @@ import { withGeneratedNarrationCaptions } from "@maleo/shared";
  *
  * Two passes, and the difference between them matters: while the run streams,
  * only the scenes are patched, so the editor stays responsive and the user can
- * watch it fill in. On completion a full pass upserts the overlays, audio,
- * infographics and characters the agent produced.
+ * watch it fill in. On completion a full pass upserts the overlays, audio and
+ * characters the agent produced. A job result stored before infographics were
+ * removed may still carry `infographicOverlays`; the merge does not read it.
  *
  * Pure merges live in `apply-agent-job.ts`. Settled video output reads the live
  * document and commits one command; streaming scene updates retain their existing
@@ -18,7 +19,6 @@ import type { MutableRefObject, Dispatch, SetStateAction } from "react";
 import {
 	mergeAgentAudioOverlays,
 	mergeAgentCharacters,
-	mergeAgentInfographics,
 	mergeAgentScenes,
 	mergeAgentTextOverlays,
 	mergeAgentVideoOverlays,
@@ -98,7 +98,6 @@ export interface AgentApplyInput {
 	setScenes: Dispatch<SetStateAction<Scene[]>>;
 	setOverlays: DocumentWriters["setOverlays"];
 	setVideoOverlays: DocumentWriters["setVideoOverlays"];
-	setInfographicOverlays: DocumentWriters["setInfographicOverlays"];
 	setAudioOverlays: DocumentWriters["setAudioOverlays"];
 	setPool: Dispatch<SetStateAction<RefImage[]>>;
 	runCommand: (cmd: EditorCommand, before?: EditScope) => string | null;
@@ -183,8 +182,7 @@ export function useAgentApply(input: AgentApplyInput): AgentApplyBinding {
 			!job.scenes.length &&
 			!job.textOverlays.length &&
 			!job.videoOverlays.length &&
-			!job.audioOverlays.length &&
-			!job.infographicOverlays?.length
+			!job.audioOverlays.length
 		) {
 			if (job.characters.length) setPool((prev) => mergeAgentCharacters(prev, job.characters));
 			return { status: "applied", touched: [], undoable: false };
@@ -225,10 +223,6 @@ export function useAgentApply(input: AgentApplyInput): AgentApplyBinding {
 							ensureMediaAsset,
 						)
 					: views.videoOverlays,
-				infographicOverlays:
-					job.infographicOverlays !== undefined
-						? mergeAgentInfographics(views.infographicOverlays, job.infographicOverlays, idSeed)
-						: views.infographicOverlays,
 				audioOverlays: job.audioOverlays.length
 					? mergeAgentAudioOverlays(
 							views.audioOverlays,

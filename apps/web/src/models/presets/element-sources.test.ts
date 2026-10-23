@@ -63,7 +63,12 @@ describe("parsing a source map tolerates anything a blob can hold", () => {
 
 describe("parsing render overrides", () => {
 	test("values stay opaque, including falsy ones", () => {
-		const raw = { maxVisualBeatSec: 6, useData: false, sceneTransition: "cut", musicVolume: 0 };
+		const raw = {
+			maxVisualBeatSec: 6,
+			staticSceneMovement: false,
+			sceneTransition: "cut",
+			musicVolume: 0,
+		};
 		expect(parseRenderOverrides(raw)).toEqual(raw);
 	});
 
@@ -71,8 +76,10 @@ describe("parsing render overrides", () => {
 	 * keeping the key would make "is this overridden?" answer yes with nothing to
 	 * show for it. */
 	test("an undefined value is dropped, not kept as an empty override", () => {
-		expect(parseRenderOverrides({ maxVisualBeatSec: undefined, useData: true })).toEqual({
-			useData: true,
+		expect(
+			parseRenderOverrides({ maxVisualBeatSec: undefined, staticSceneMovement: true }),
+		).toEqual({
+			staticSceneMovement: true,
 		});
 	});
 

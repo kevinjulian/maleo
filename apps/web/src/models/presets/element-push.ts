@@ -28,7 +28,7 @@ import {
 	type ProjectSelection,
 	type StyleKnobs,
 } from "@maleo/shared";
-import type { InfographicStyle, PacingDevices } from "@maleo/shared";
+import type { PacingDevices } from "@maleo/shared";
 import type { GlobalSettings } from "./creative-settings.ts";
 import { withSources, type ElementSourceMap } from "./element-sources.ts";
 
@@ -58,13 +58,11 @@ export function planPushUp(input: {
 	projectReferences: ProjectSelection;
 	settings: GlobalSettings;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	settingsPaths: Readonly<Record<keyof GlobalSettings, string>>;
 	axisPaths: {
 		config: string;
 		projectReferences: string;
 		pacingDevices: string;
-		infographicStyle: string;
 	};
 }): PushUpPlan {
 	// The bundle's `settings` is already `Record<string, unknown>` — the schema
@@ -88,8 +86,6 @@ export function planPushUp(input: {
 			bundle = { ...bundle, projectRefs: { ...input.projectReferences } };
 		} else if (path === input.axisPaths.pacingDevices) {
 			bundle = { ...bundle, pacingDevices: { ...input.pacingDevices } };
-		} else if (path === input.axisPaths.infographicStyle) {
-			bundle = { ...bundle, infographicStyle: { ...input.infographicStyle } };
 		} else {
 			// Not an element this plan knows how to promote. Skipping it keeps `pushed`
 			// truthful, which matters because the caller records sources from it.

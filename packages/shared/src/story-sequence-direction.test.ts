@@ -23,21 +23,9 @@ describe("story sequence direction", () => {
 				id: "b",
 				editorial: editorial({
 					purpose: "explain",
-					presentation: "infographic",
+					presentation: "explainer",
 					visualConcept: "Flow of customer funds",
 					noveltyKey: "fund-route",
-					motionGraphic: {
-						needed: true,
-						kind: "table_build",
-						purpose: "evidence",
-						reason: "show route",
-						title: "Fund route",
-						columns: ["Step", "Destination"],
-						tableRows: [
-							["1", "FTX"],
-							["2", "Alameda"],
-						],
-					},
 				}),
 			},
 		];
@@ -71,36 +59,20 @@ describe("story sequence direction", () => {
 		]);
 	});
 
-	test("rejects prose stats and incomplete charts or tables", () => {
-		const cases = [
-			{
+	test("reads a stored infographic beat as narrative without a motion graphic", () => {
+		const stored = editorial({
+			presentation: "infographic",
+			motionGraphic: {
 				needed: true,
 				kind: "stat_reveal",
-				purpose: "stat",
-				reason: "cause",
-				value: "panic becomes evidence",
+				purpose: "prove",
+				reason: "show growth",
+				value: "42%",
 			},
-			{
-				needed: true,
-				kind: "bar_chart",
-				purpose: "comparison",
-				reason: "compare",
-				rows: [{ label: "Only", value: 42 }],
-			},
-			{
-				needed: true,
-				kind: "table_build",
-				purpose: "evidence",
-				reason: "route",
-				columns: ["Step"],
-			},
-		] as const;
-		for (const motionGraphic of cases) {
-			const violations = storySequenceDirectionViolations([
-				{ id: "a", editorial: editorial({ presentation: "infographic", motionGraphic }) },
-			]);
-			expect(violations.map((item) => item.invariant)).toEqual(["invalid_infographic"]);
-		}
+		});
+		expect(stored.presentation).toBe("narrative");
+		expect(stored).not.toHaveProperty("motionGraphic");
+		expect(storySequenceDirectionViolations([{ id: "a", editorial: stored }])).toEqual([]);
 	});
 
 	test("keeps native text out of image concept", () => {

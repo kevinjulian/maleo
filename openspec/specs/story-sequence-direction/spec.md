@@ -34,17 +34,19 @@ The stage SHALL remain internal to `plan_story`. The system SHALL NOT expose a s
 
 ### Requirement: Editorial decisions use existing story and presentation ownership
 
-Each directed semantic beat SHALL record its stable beat id, editorial purpose, existing presentation category, visual concept, novelty key, optional native on-screen text, optional existing structured motion-graphic decision, and nullable SFX cue. The containing section's existing emotion SHALL remain music intent.
+Each directed semantic beat SHALL record its stable beat id, editorial purpose, existing presentation category, visual concept, novelty key, optional native on-screen text, and nullable SFX cue. The containing section's existing emotion SHALL remain music intent. The presentation categories SHALL be `narrative`, `headline`, `explainer` and `transition`. A beat SHALL NOT carry a motion-graphic decision.
 
 The beat's visual concept and novelty key SHALL remain the beat-level editorial treatment used by adjacency validation. Each planned-shot direction SHALL depict that concept concretely; it SHALL NOT introduce a second, competing treatment for the beat. Visual distinctness between individual images SHALL remain enforced on measured beats.
 
-`null` SFX SHALL mean intentional silence. Direction SHALL NOT select concrete media URLs or introduce another infographic, music, or rendering vocabulary.
+`null` SFX SHALL mean intentional silence. Direction SHALL NOT select concrete media URLs or introduce another music or rendering vocabulary.
+
+A stored beat whose presentation is `infographic` SHALL read as `narrative`, and a stored motion-graphic decision SHALL be dropped on read.
 
 #### Scenario: Directed beat is reviewable
 
 - **WHEN** sequence direction succeeds
 - **THEN** every canonical beat carries purpose, presentation, visual concept, novelty key, and an explicit nullable SFX cue
-- **AND** optional text and infographic data remain structured fields rather than image-prompt prose
+- **AND** optional native text remains a structured field rather than image-prompt prose
 
 #### Scenario: Silence is valid
 
@@ -58,9 +60,15 @@ The beat's visual concept and novelty key SHALL remain the beat-level editorial 
 - **THEN** each shot's visual intent depicts the beat's visual concept
 - **AND** adjacency validation compares beats by presentation and novelty key, not shots
 
+#### Scenario: A stored infographic beat is read
+
+- **WHEN** a plan stored before infographics were removed has a beat with the `infographic` presentation and a stat motion graphic
+- **THEN** the beat reads with the `narrative` presentation and no motion-graphic decision
+- **AND** the plan validates without an infographic error
+
 ### Requirement: Sequence validation rejects structural engagement failures
 
-The system SHALL validate direction using exact structural rules without semantic similarity scores or tunable taste thresholds. Every canonical beat SHALL have one decision. Adjacent beats SHALL NOT repeat the same normalized presentation and novelty key. Infographic presentation SHALL require an existing structured motion-graphic decision. Identical non-null SFX cues SHALL NOT occur on adjacent beats.
+The system SHALL validate direction using exact structural rules without semantic similarity scores or tunable taste thresholds. Every canonical beat SHALL have one decision. Adjacent beats SHALL NOT repeat the same normalized presentation and novelty key. Identical non-null SFX cues SHALL NOT occur on adjacent beats.
 
 Native on-screen text SHALL remain separate from the generated-image visual concept. Direction SHALL NOT require an image model to reproduce readable text.
 
@@ -81,22 +89,6 @@ Native on-screen text SHALL remain separate from the generated-image visual conc
 - **WHEN** a beat presents a factual label using native on-screen text
 - **THEN** that text remains in the native text field
 - **AND** generated-image instructions do not require reproducing it as pixels
-
-### Requirement: Infographic direction never fabricates data
-
-A directed stat or price graphic SHALL contain a source value with a numeric token. A directed chart SHALL contain at least two explicit finite source rows. A directed table SHALL contain explicit columns and rows. Missing or invalid data SHALL result in no infographic decision, never sample values or prose presented as a statistic.
-
-#### Scenario: Prose is not a statistic
-
-- **WHEN** a proposed stat value is a causal phrase without a numeric token
-- **THEN** sequence validation rejects that motion graphic
-- **AND** generation emits no stat infographic for it
-
-#### Scenario: Missing chart rows do not fabricate comparison
-
-- **WHEN** a proposed chart lacks two finite supplied rows
-- **THEN** no chart decision is accepted
-- **AND** fallback values such as A/B or 38/74 are not created
 
 ### Requirement: Direction failure is visible and retryable before spend
 

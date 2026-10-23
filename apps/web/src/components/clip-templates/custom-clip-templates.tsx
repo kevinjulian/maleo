@@ -1,10 +1,10 @@
-/* Custom clip templates — user-authored items that appear in the Motion, Text,
- * and Data sidebar menus next to the built-ins. Built-ins are read-only; these
- * add Create + Edit + Delete on top of the same renderers.
+/* Custom clip templates — user-authored items that appear in the Motion and
+ * Text sidebar menus next to the built-ins. Built-ins are read-only; these add
+ * Create + Edit + Delete on top of the same renderers.
  *
  * A custom item is a saved variant of a base built-in: it reuses the base's
- * renderer (TextPreset id or infographic type) and field schema, storing only
- * the custom label/category/intent and default content. */
+ * renderer (TextPreset id) and field schema, storing only the custom
+ * label/category/intent and default content. */
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DragEvent, JSX, ReactNode } from "react";
 import { createPortal } from "react-dom";
@@ -18,19 +18,11 @@ import type {
 import { CLIP_TEMPLATE_CATEGORIES, oneOf } from "@maleo/shared";
 import { CLIP_TEMPLATE_DND_MIME } from "@models/timeline/editor-media.ts";
 import { isCommitEnter } from "@models/core/keys.ts";
-import {
-	defaultInfographicPayload,
-	infographicPayloadFrom,
-} from "@models/presets/generation-defaults.ts";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { MediaCard, MediaGrid } from "@design-system/patterns/media.tsx";
 import { PanelHeader } from "@design-system/patterns/panel-header.tsx";
 import { TEMPLATE_ITEMS, type TemplateItem } from "@models/clip-templates/registry.ts";
 import { TemplateFieldsEditor } from "./template-fields-editor.tsx";
-import {
-	InfographicFields,
-	InfographicTypePreview,
-} from "@components/timeline/infographics/infographics-panel.tsx";
 import { TextPresetPreview } from "@components/timeline/timeline-editor-panels.tsx";
 import type { TemplateDropInfo } from "@models/timeline/timeline-drops.ts";
 import {
@@ -54,7 +46,6 @@ import { Field } from "@design-system/components/field.tsx";
 import { Input } from "@design-system/components/input.tsx";
 
 const CATEGORY_LABEL = {
-	data: "Charts & Data",
 	text: "Text",
 	intro: "Intro & Outro",
 	logo: "Logo & Branding",
@@ -62,44 +53,27 @@ const CATEGORY_LABEL = {
 
 const textBases = (): Array<Extract<TemplateItem, { kind: "text" }>> =>
 	TEMPLATE_ITEMS.filter((i): i is Extract<TemplateItem, { kind: "text" }> => i.kind === "text");
-const dataBases = (): Array<Extract<TemplateItem, { kind: "data" }>> =>
-	TEMPLATE_ITEMS.filter((i): i is Extract<TemplateItem, { kind: "data" }> => i.kind === "data");
 
 function baseTextItem(preset: string): Extract<TemplateItem, { kind: "text" }> | undefined {
 	return textBases().find((i) => i.preset === preset);
 }
-function baseDataItem(type: string): Extract<TemplateItem, { kind: "data" }> | undefined {
-	return dataBases().find((i) => i.type === type);
-}
 
 /** Rebuild a placeable TemplateItem from a stored custom template, inheriting
  * the base renderer's field schema. Returns null if the base no longer exists. */
-function reconstructCustomItem(ct: ClipTemplate): TemplateItem | null {
-	if (ct.kind === "text") {
-		const base = baseTextItem(ct.base);
-		if (!base) return null;
-		// The registry lookup IS the narrowing: `base.preset` is the same id as
-		// `ct.base`, but typed, because it came from a `TemplateItem`. Asserting
-		// `ct.base as TextPreset` claimed what the line above had already proved.
-		return {
-			kind: "text",
-			preset: base.preset,
-			label: ct.label,
-			category: ct.category,
-			intent: ct.intent,
-			fields: base.fields,
-			defaultParams: ct.config,
-		};
-	}
-	const base = baseDataItem(ct.base);
+function reconstructCustomItem(ct: ClipTemplate & { kind: "text" }): TemplateItem | null {
+	const base = baseTextItem(ct.base);
 	if (!base) return null;
+	// The registry lookup IS the narrowing: `base.preset` is the same id as
+	// `ct.base`, but typed, because it came from a `TemplateItem`. Asserting
+	// `ct.base as TextPreset` claimed what the line above had already proved.
 	return {
-		kind: "data",
-		type: base.type,
+		kind: "text",
+		preset: base.preset,
 		label: ct.label,
 		category: ct.category,
 		intent: ct.intent,
-		payload: infographicPayloadFrom(base.type, ct.config),
+		fields: base.fields,
+		defaultParams: ct.config,
 	};
 }
 
@@ -108,22 +82,17 @@ function reconstructCustomItem(ct: ClipTemplate): TemplateItem | null {
  * null for kinds that cannot be reconstructed (missing base). */
 function customDragPayload(t: ClipTemplate): TemplateDropInfo | null {
 	if (t.kind === "composition") return { kind: "composition", config: t.config, label: t.label };
-	if (t.kind === "text") {
-		/* Looked up rather than asserted, which also aligns the drag path with the
-		 * placement path: `reconstructCustomItem` already returns null for a base
-		 * no longer in the registry, and this function's own contract says it
-		 * returns null for one. Asserting `t.base` was a `TextPreset` claimed the
-		 * lookup's answer without asking it. */
-		const preset = baseTextItem(t.base)?.preset;
-		return preset ? { kind: "text", preset, params: t.config } : null;
-	}
-	const item = reconstructCustomItem(t);
-	return item?.kind === "data" && item.payload ? { kind: "data", payload: item.payload } : null;
+	/* Looked up rather than asserted, which also aligns the drag path with the
+	 * placement path: `reconstructCustomItem` already returns null for a base
+	 * no longer in the registry, and this function's own contract says it
+	 * returns null for one. Asserting `t.base` was a `TextPreset` claimed the
+	 * lookup's answer without asking it. */
+	const preset = baseTextItem(t.base)?.preset;
+	return preset ? { kind: "text", preset, params: t.config } : null;
 }
 
 /** Visual thumbnail for a custom item, matching the built-in preset tiles: a
- * live text-preset preview (compositions preview their first layer) or an
- * infographic preview for data items. */
+ * live text-preset preview (compositions preview their first layer). */
 function CustomTilePreview({
 	template,
 	brand,
@@ -145,26 +114,14 @@ function CustomTilePreview({
 			/>
 		);
 	}
-	if (template.kind === "text") {
-		// Same lookup the placement path uses. A base that is no longer in the
-		// registry cannot be placed (`reconstructCustomItem` returns null), so the
-		// tile previews as the default rather than rendering an unknown preset id.
-		return (
-			<TextPresetPreview
-				preset={baseTextItem(template.base)?.preset ?? "title"}
-				content={template.label}
-				params={template.config}
-				brand={brand}
-				compact={compact}
-			/>
-		);
-	}
+	// Same lookup the placement path uses. A base that is no longer in the
+	// registry cannot be placed (`reconstructCustomItem` returns null), so the
+	// tile previews as the default rather than rendering an unknown preset id.
 	return (
-		<InfographicTypePreview
-			payload={infographicPayloadFrom(
-				baseDataItem(template.base)?.type ?? "stat_reveal",
-				template.config,
-			)}
+		<TextPresetPreview
+			preset={baseTextItem(template.base)?.preset ?? "title"}
+			content={template.label}
+			params={template.config}
 			brand={brand}
 			compact={compact}
 		/>
@@ -175,9 +132,8 @@ function CustomTilePreview({
  *  saved by `saveCompositionTemplate`; this draft has no fields for one. */
 type DraftKind = Exclude<ClipTemplateKind, "composition">;
 
-/* One buffer for either editable kind. Both configs are JSON — a text draft
- * holds the preset's field params, a data draft an infographic payload — so the
- * TYPE is shared and only the shape differs, which is `base`'s business. */
+/* The draft buffer. A text draft holds the preset's field params, whose shape is
+ * `base`'s business. */
 interface Draft {
 	id?: string;
 	kind: DraftKind;
@@ -189,42 +145,27 @@ interface Draft {
 }
 
 function newDraft(kind: DraftKind): Draft {
-	if (kind === "text") {
-		const base = textBases()[0];
-		return {
-			kind,
-			label: "",
-			intent: "",
-			category: "text",
-			base: base?.preset ?? "",
-			config: { ...base?.defaultParams },
-		};
-	}
-	const base = dataBases()[0];
-	const type = base?.type ?? "stat_reveal";
+	const base = textBases()[0];
 	return {
 		kind,
 		label: "",
 		intent: "",
-		category: "data",
-		base: type,
-		config: { ...(base?.payload ?? defaultInfographicPayload(type)) },
+		category: "text",
+		base: base?.preset ?? "",
+		config: { ...base?.defaultParams },
 	};
 }
 
 function draftFromTemplate(ct: ClipTemplate & { kind: DraftKind }): Draft {
-	const common = {
+	return {
 		id: ct.id,
+		kind: "text",
 		label: ct.label,
 		intent: ct.intent,
 		category: ct.category,
 		base: ct.base,
+		config: { ...ct.config },
 	};
-	// Built per arm rather than spread: a spread flattens `kind` and `config`
-	// into two independent fields, and the union is the whole point.
-	return ct.kind === "text"
-		? { ...common, kind: "text", config: { ...ct.config } }
-		: { ...common, kind: "data", config: { ...ct.config } };
 }
 
 interface MenuState {
@@ -299,12 +240,9 @@ export function CustomTemplatesBlock({
 		onCount?.(filtered.length);
 	}, [filtered.length, onCount]);
 
-	const bases =
-		kind === "text"
-			? textBases().map((b) => ({ id: b.preset, label: b.label }))
-			: dataBases().map((b) => ({ id: b.type, label: b.label }));
+	const bases = textBases().map((b) => ({ id: b.preset, label: b.label }));
 	const baseFields = useMemo(
-		() => (draft && draft.kind === "text" ? (baseTextItem(draft.base)?.fields ?? []) : []),
+		() => (draft ? (baseTextItem(draft.base)?.fields ?? []) : []),
 		[draft],
 	);
 
@@ -318,10 +256,7 @@ export function CustomTemplatesBlock({
 			category: draft.category,
 			base: draft.base,
 		};
-		const input =
-			draft.kind === "text"
-				? { ...common, kind: "text" as const, config: draft.config }
-				: { ...common, kind: "data" as const, config: draft.config };
+		const input = { ...common, kind: "text" as const, config: draft.config };
 		const op = draft.id ? updateClipTemplate(draft.id, input) : createClipTemplate(input);
 		op.then(() => {
 			setDraft(null);
@@ -371,22 +306,14 @@ export function CustomTemplatesBlock({
 
 	const onBaseChange = (base: string): void => {
 		if (!draft) return;
-		if (draft.kind === "text") {
-			setDraft({ ...draft, base, config: { ...baseTextItem(base)?.defaultParams } });
-			return;
-		}
-		// The Select's options are exactly `dataBases()`, so the lookup always hits
-		// and its `type` is the narrowed id — no assertion needed to seed a default.
-		const item = baseDataItem(base);
-		const seed = item ? (item.payload ?? defaultInfographicPayload(item.type)) : undefined;
-		setDraft({ ...draft, base, config: { ...seed } });
+		setDraft({ ...draft, base, config: { ...baseTextItem(base)?.defaultParams } });
 	};
 
 	const createButton = (
 		<Button
 			variant={heading ? "ghost" : "primary"}
 			size="sm"
-			aria-label={`New ${kind === "data" ? "data" : "motion"}`}
+			aria-label="New motion"
 			style={!heading && placeable ? { width: "100%", justifyContent: "center" } : undefined}
 			onClick={() => {
 				setError(null);
@@ -394,7 +321,7 @@ export function CustomTemplatesBlock({
 				else setDraft(newDraft(kind));
 			}}
 		>
-			{Ic.plus(ICON.sm)} {heading ? "New" : `New ${kind === "data" ? "data" : "motion"}`}
+			{Ic.plus(ICON.sm)} {heading ? "New" : "New motion"}
 		</Button>
 	);
 	return (
@@ -468,7 +395,7 @@ export function CustomTemplatesBlock({
 					<div role="presentation" className="tl2-ct-modal-scrim" onClick={() => setDraft(null)}>
 						<div role="presentation" className="tl2-ct-modal" onClick={(e) => e.stopPropagation()}>
 							<PanelHeader
-								title={`${draft.id ? "Edit" : "New"} ${kind === "data" ? "data item" : "motion"}`}
+								title={`${draft.id ? "Edit" : "New"} motion`}
 								onClose={() => setDraft(null)}
 							/>
 							<div className="tl2-ct-modal-body">
@@ -520,21 +447,11 @@ export function CustomTemplatesBlock({
 									</Field>
 								</div>
 								<div className="tl2-ct-fields">
-									{draft.kind === "text" ? (
-										<TemplateFieldsEditor
-											fields={baseFields}
-											values={draft.config}
-											onChange={(config) => setDraft({ ...draft, config })}
-										/>
-									) : (
-										<InfographicFields
-											payload={infographicPayloadFrom(
-												baseDataItem(draft.base)?.type ?? "stat_reveal",
-												draft.config,
-											)}
-											onChange={(payload) => setDraft({ ...draft, config: { ...payload } })}
-										/>
-									)}
+									<TemplateFieldsEditor
+										fields={baseFields}
+										values={draft.config}
+										onChange={(config) => setDraft({ ...draft, config })}
+									/>
 								</div>
 								{error && <p className="tl2-ct-err">{error}</p>}
 								<div className="tl2-ct-modal-actions">

@@ -33,6 +33,7 @@ import { useChatSession, type ContentChat } from "@hooks/editor/use-chat-session
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import { useCreativeSettings } from "@hooks/editor/use-creative-settings.ts";
 import { useReferenceLibrary } from "@hooks/editor/use-reference-library.ts";
+import type { StoredLayout } from "@models/editor/sync-bridge.ts";
 import { useMediaReconcile } from "@hooks/editor/use-media-reconcile.ts";
 import { type ChatAgentContext } from "@api/chat.ts";
 import { saveStoryboard } from "@api/projects.ts";
@@ -130,11 +131,10 @@ export function CreateContent({
 		liveLists: () => ({ slides: slidesRef.current, posts: postsRef.current }),
 	});
 	const { store, slides, setSlides, posts, setPosts, scenes } = doc;
-	const { overlays, audioOverlays, videoOverlays, infographicOverlays } = doc;
+	const { overlays, audioOverlays, videoOverlays } = doc;
 	const { effects, projectReferences, trackFlags, writers } = doc;
 	const { runCommand, isLatest, doUndo } = doc;
-	const { setScenes, setOverlays, setAudioOverlays, setVideoOverlays, setInfographicOverlays } =
-		writers;
+	const { setScenes, setOverlays, setAudioOverlays, setVideoOverlays } = writers;
 
 	/* The net under the writers: any clip holding a media URL with no asset
 	 * identity is admitted and the identity written back. Expected to find
@@ -151,7 +151,7 @@ export function CreateContent({
 	});
 
 	/* The project's creative choices — global settings, direction, A/B hook takes,
-	 * retention devices, infographic style. One value because they are always read
+	 * retention devices. One value because they are always read
 	 * and written together (preset, template, load, save); destructured here so the
 	 * container's own call sites stay unchanged. */
 	const creative = useCreativeSettings();
@@ -161,7 +161,6 @@ export function CreateContent({
 		direction,
 		hookVariants,
 		pacingDevices,
-		infographicStyle,
 		elementSources,
 		renderOverrides,
 		activePresetId,
@@ -206,6 +205,7 @@ export function CreateContent({
 	const [projectLoaded, setProjectLoaded] = useState(false);
 	// The command log sequence of the loaded version; null until a project loads.
 	const [loadedSeq, setLoadedSeq] = useState<number | null>(null);
+	const storedLayoutRef = useRef<StoredLayout | undefined>(undefined);
 	const [agentFailed, setAgentFailed] = useShellChromeField(chrome, "agentFailed");
 
 	/* Live mirrors for the agent loop: a multi-minute run's closure would
@@ -272,6 +272,7 @@ export function CreateContent({
 			 * reload, which is how one project reached 262 messages for a run that
 			 * emitted 32 events. */
 			setProjectLoaded(true);
+			storedLayoutRef.current = p.storedLayout;
 			setLoadedSeq(p.commandSeq);
 			// The media library, plus the project's own entities (generated images,
 			// notes, voices) merged back in so they survive reloads.
@@ -332,7 +333,6 @@ export function CreateContent({
 		setScenes,
 		setOverlays,
 		setVideoOverlays,
-		setInfographicOverlays,
 		setAudioOverlays,
 		setPool,
 		runCommand,
@@ -359,6 +359,7 @@ export function CreateContent({
 	const commandLog = useCommandLog({
 		projectId: projectId ?? "",
 		loadedSeq: projectId ? loadedSeq : null,
+		storedLayout: () => storedLayoutRef.current,
 		executor,
 		log: doc.log,
 		scope: () => ({
@@ -432,7 +433,7 @@ export function CreateContent({
 		projectId,
 		type,
 		commandLog,
-		presentation: { pacingDevices, infographicStyle, presentation },
+		presentation: { pacingDevices, presentation },
 		editorState: {
 			chatMessages: chat.messages,
 			settings,
@@ -504,7 +505,6 @@ export function CreateContent({
 		videoOverlays,
 		audioOverlays,
 		textOverlays: overlays,
-		infographicOverlays,
 		effects,
 		agentRunning: chat.running,
 		rendering,

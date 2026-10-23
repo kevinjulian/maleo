@@ -35,7 +35,6 @@ function videoJob(projectId: string): AgentJob {
 		scenes: [],
 
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -15,6 +15,7 @@
  * `media.update` of the whole list otherwise. */
 import {
 	admitMedia,
+	deepEqual,
 	setMediaAssets,
 	type EditorCommand,
 	type EditScope,
@@ -22,9 +23,18 @@ import {
 } from "@maleo/shared/editor";
 import type { CommandSync } from "./command-sync.ts";
 
+/** What the server holds for the parts of the document a load migration rewrites. */
+export interface StoredLayout {
+	clips: EditScope["doc"]["clips"];
+	markers: EditScope["doc"]["markers"];
+	trackFlags?: EditScope["doc"]["trackFlags"];
+}
+
 export interface SyncBridge {
-	/** Start submitting, from the scope the editor holds now. */
-	attach: (sync: CommandSync) => void;
+	/** Start submitting, from the scope the editor holds now. With `stored`, the
+	 *  parts a load migration rewrote start from what the server holds instead,
+	 *  so the next catch-up submits the migration. */
+	attach: (sync: CommandSync, stored?: StoredLayout) => void;
 	detach: () => void;
 	sync: () => CommandSync | null;
 	/** The stack ran `command` on `before`. */
@@ -46,6 +56,27 @@ export interface SyncBridge {
 
 const sameStoryboard = (a: EditScope, b: EditScope): boolean =>
 	a.doc === b.doc && a.slides === b.slides && a.posts === b.posts;
+
+/* The scope as the server holds it: `current`, with the migrated parts put back
+ * to their stored form. `current` itself when the load migrated nothing. */
+function asStored(current: EditScope, stored: StoredLayout | undefined): EditScope {
+	if (
+		!stored ||
+		(deepEqual(current.doc.clips, stored.clips) &&
+			deepEqual(current.doc.markers, stored.markers) &&
+			deepEqual(current.doc.trackFlags ?? {}, stored.trackFlags ?? {}))
+	)
+		return current;
+	return {
+		...current,
+		doc: {
+			...current.doc,
+			clips: stored.clips,
+			markers: stored.markers,
+			trackFlags: stored.trackFlags,
+		},
+	};
+}
 
 const sameLibrary = (a: MediaAsset[], b: MediaAsset[]): boolean =>
 	a === b || JSON.stringify(a) === JSON.stringify(b);
@@ -99,9 +130,9 @@ export function createSyncBridge(input: {
 	};
 
 	return {
-		attach(next) {
+		attach(next, stored) {
 			sync = next;
-			synced = input.scope();
+			synced = asStored(input.scope(), stored);
 		},
 		detach() {
 			sync = null;

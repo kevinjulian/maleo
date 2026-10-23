@@ -32,10 +32,7 @@ export function TimelineChatPanel({
 	onClose,
 	onShowEditor,
 }: TimelineChatPanelProps): JSX.Element {
-	const { scenes, audioOverlays, infographicOverlays } = useDocumentSelector(
-		store,
-		selectDerivedArrays,
-	);
+	const { scenes, audioOverlays, textOverlays } = useDocumentSelector(store, selectDerivedArrays);
 	const { setAudioOverlays, setVideoOverlays } = writers;
 	const jumpToClip: typeof ops.jumpToClip = (ref) => {
 		onShowEditor?.();
@@ -45,7 +42,6 @@ export function TimelineChatPanel({
 		<ChatPanel
 			scenes={scenes}
 			audioOverlays={audioOverlays}
-			infographicOverlays={infographicOverlays}
 			messages={chat.messages}
 			setMessages={chat.setMessages}
 			onRunCommand={chat.run}
@@ -74,7 +70,7 @@ export function TimelineChatPanel({
 					findings: critiqueStoryboard(
 						inputs,
 						timedScenes,
-						infographicOverlays.map((g) => ({ start: g.start, dur: g.dur })),
+						textOverlays.map((t) => ({ start: t.start, dur: t.dur })),
 					),
 				};
 			}}

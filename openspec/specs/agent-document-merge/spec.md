@@ -27,12 +27,19 @@ same input produces the same output.
 
 The system SHALL treat a still-running agent job differently from a settled one:
 a running job updates only the scenes, while a settled job also merges overlays,
-infographics, audio and characters.
+audio and characters. A settled job SHALL NOT merge an infographic family. A job
+result that carries infographic data SHALL be applied without it.
 
 #### Scenario: A running job leaves overlays alone
 
 - **WHEN** the merge is applied while the job is still running
 - **THEN** scenes are updated and the other families are left as they were
+
+#### Scenario: A stored job result carries infographics
+
+- **WHEN** a settled job result recorded before infographics were removed carries infographic overlays
+- **THEN** the merge applies its scenes, overlays, audio and characters
+- **AND** no infographic clip is added to the document
 
 ### Requirement: Scene identity survives a merge
 

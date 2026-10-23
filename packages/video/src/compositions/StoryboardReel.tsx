@@ -8,7 +8,6 @@ import { TransitionSeries } from "@remotion/transitions";
 import { StoryboardScene } from "../scenes/StoryboardScene";
 import { CameraMotion } from "../components/CameraMotion";
 import { Captions } from "../components/Captions";
-import { InfographicRenderer } from "../components/InfographicRenderer";
 import { ChapterPill } from "../components/ChapterPill";
 import { ProgressBar } from "../components/ProgressBar";
 import { resolveTransition } from "../lib/transitions";
@@ -776,29 +775,6 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 							) : (
 								entered
 							)}
-						</AbsoluteFill>
-					</Sequence>
-				);
-			})}
-
-			{/* Structured infographic overlays: charts, tables, stat reveals. Same
-          row→layer rule as video overlays: lower editor row renders in front. */}
-			{storyboard.infographicOverlays?.map((block, i) => {
-				const frames = Math.max(1, Math.floor(block.durationSec * fps));
-				return (
-					<Sequence
-						key={`iov-${i}`}
-						from={Math.floor(block.startSec * fps)}
-						durationInFrames={frames}
-					>
-						<AbsoluteFill style={{ zIndex: 10 + (block.track ?? 0) }}>
-							<InfographicRenderer
-								block={block}
-								accentColor={storyboard.accentColor}
-								fgColor={storyboard.fgColor}
-								durationInFrames={frames}
-								infographicStyle={{ ...storyboard.infographicStyle, ...block.style }}
-							/>
 						</AbsoluteFill>
 					</Sequence>
 				);

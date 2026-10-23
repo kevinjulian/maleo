@@ -33,7 +33,7 @@ export type RenderElementField = keyof TimelineTemplateInput;
 /** Resolve one render-scope element: the project's override if it has one, else the
  *  selected template's value, else the shipped default.
  *
- *  Presence is tested with `in`, not truthiness — `useData: false` and
+ *  Presence is tested with `in`, not truthiness — `staticSceneMovement: false` and
  *  `musicVolume: 0` are legitimate overrides that a falsy check would discard, and
  *  discarding them would silently hand the value back to the template. */
 export function resolveRenderElement<K extends RenderElementField>(

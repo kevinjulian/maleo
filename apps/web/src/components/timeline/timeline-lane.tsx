@@ -38,7 +38,6 @@ import {
 } from "@models/timeline/timeline-clips.ts";
 import { MIN_CLIP_PX, TOUCH_MIN_CLIP_PX, TOUCH_TRIM_MIN_PX } from "@models/timeline/clip-layout.ts";
 import {
-	readDataCalloutDrop,
 	readTemplateDrop,
 	hasTimelineExternalDrag,
 	type MediaDropInfo,
@@ -114,7 +113,6 @@ export interface LaneEnv {
 	startMarquee: (e: ReactPointerEvent<HTMLDivElement>) => void;
 	setEditTarget: ChromeSetter<"editTarget">;
 	setEffectEdit: ChromeSetter<"effectEdit">;
-	setInfographicEditId: ChromeSetter<"infographicEditId">;
 	setTransitionEditId: ChromeSetter<"transitionEditId">;
 }
 
@@ -176,7 +174,7 @@ interface ClipProps {
 
 /* ── The VUI seam ── */
 
-/* The remove control on an effect or infographic clip is a pointer shortcut, not
+/* The remove control on an effect clip is a pointer shortcut, not
  * a button: the clip itself is a `<button role="option">`, and a button inside a
  * button is invalid HTML that React reports on every load. Delete and the clip's
  * context menu remove the same clip from the keyboard. */
@@ -238,70 +236,6 @@ const EffectClipView = memo(function EffectClipView({
 						e.stopPropagation();
 						if (locked) return;
 						env.ops.removeEffect(c.refId);
-					}}
-				>
-					{Ic.x(ICON.xs)}
-				</span>
-			}
-		/>
-	);
-});
-
-const InfographicClipView = memo(function InfographicClipView({
-	clip: c,
-	pxPerSec,
-	total,
-	coarse,
-	locked,
-	hidden,
-	colliding,
-	dragging,
-}: ClipProps): JSX.Element {
-	countRender("clip");
-	const env = useLaneEnv();
-	const selected = useClipSelected(env.selection, c.id);
-	const geom = clipGeom(c, pxPerSec, coarse);
-	return (
-		<FreeClipRange
-			geometry={geom}
-			nudge={(patch) => env.ops.setFreeClipPos(c.source, c.refId, patch)}
-			clip={c}
-			kind="infographic"
-			total={total}
-			pxPerSec={pxPerSec}
-			coarse={coarse}
-			locked={locked}
-			selected={selected}
-			className={`tl2-clip tl2-clip-data tl2-clip-compact ${selected ? "on" : ""} ${dragging ? "dragging" : ""} ${locked ? "locked" : ""} ${hidden ? "hidden" : ""} ${colliding ? "collide" : ""} ${geom.cls}`}
-			title={`${c.label} · double-click to edit`}
-			onSelect={(e) => {
-				if (e.shiftKey) env.ops.toggleFreeClip("infographic", c.refId);
-				else env.ops.selectFreeClip("infographic", c.refId, c.start);
-			}}
-			onDoubleClick={(e) => {
-				e.stopPropagation();
-				if (locked) return;
-				env.ops.selectFreeClip("infographic", c.refId, c.start);
-				env.setInfographicEditId(c.refId);
-				env.setTransitionEditId(null);
-				env.setEffectEdit(null);
-				env.setEditTarget(null);
-			}}
-			onContextMenu={(e) => env.ops.openClipMenu(c, e)}
-			/* Fill only, like the text clip: icon, type tag, mini-chart and label all
-			   competed for a strip too small to hold any of them. The label stays
-			   reachable through the clip's title. */
-			body={<span className="tl2-clip-body tl2-clip-databody" aria-label={c.label} />}
-			extra={
-				<span
-					className="tl2-clip-del"
-					aria-hidden="true"
-					title="Remove infographic"
-					onPointerDown={(e) => e.stopPropagation()}
-					onClick={(e) => {
-						e.stopPropagation();
-						if (locked) return;
-						env.ops.setInfographicOverlays((items) => items.filter((x) => x.id !== c.refId));
 					}}
 				>
 					{Ic.x(ICON.xs)}
@@ -592,20 +526,13 @@ export const TimelineLane = memo(
 				e.preventDefault();
 				if (templateDrop.kind === "text")
 					env.ops.addOverlay(t, env.laneFor("text", row), templateDrop.preset, templateDrop.params);
-				else if (templateDrop.kind === "composition")
+				else
 					env.ops.placeComposition(
 						templateDrop.config,
 						templateDrop.label,
 						t,
 						env.laneFor("text", row),
 					);
-				else env.ops.addInfographicPayload(templateDrop.payload, t, env.laneFor("data", row), 4);
-				return;
-			}
-			const dataPayload = readDataCalloutDrop(e);
-			if (dataPayload) {
-				e.preventDefault();
-				env.ops.addInfographicPayload(dataPayload, t, env.laneFor("data", row), 4);
 				return;
 			}
 		};
@@ -676,9 +603,7 @@ export const TimelineLane = memo(
 					(group ? (
 						<span className="tl2-lane-hint ghost">{laneLabel(group, row).label}</span>
 					) : (
-						last && (
-							<span className="tl2-lane-hint">Drop media, audio, text, data, or effect here</span>
-						)
+						last && <span className="tl2-lane-hint">Drop media, audio, text, or effect here</span>
 					))}
 				{clips.map((c) => {
 					const shared = {
@@ -693,8 +618,6 @@ export const TimelineLane = memo(
 					};
 					if (c.source === "caption") return <CaptionClipView key={c.id} {...shared} clip={c} />;
 					if (c.source === "effect") return <EffectClipView key={c.id} {...shared} clip={c} />;
-					if (c.source === "infographic")
-						return <InfographicClipView key={c.id} {...shared} clip={c} />;
 					return (
 						<MediaClipView
 							key={c.id}

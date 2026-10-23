@@ -14,14 +14,7 @@ import { applyCommand, diffScopeToCommand, type EditorDoc } from "@maleo/shared/
  * scene clip type was a ternary with the same branch twice, and its markers
  * omitted the `startSec`/`endSec` the SceneMarker contract requires, which only
  * type-checked because the whole array was cast to `never` at the write. */
-import type {
-	AudioOverlay,
-	InfographicOverlay,
-	Scene,
-	TextOverlay,
-	VideoOverlay,
-	EditorViews,
-} from "@maleo/shared";
+import type { AudioOverlay, Scene, TextOverlay, VideoOverlay, EditorViews } from "@maleo/shared";
 import type { Clip } from "@maleo/shared";
 import {
 	EMOTIONS,
@@ -41,7 +34,7 @@ import type { AgentJob } from "./model.ts";
  *  reach the document as carried-through client clips, never from a job. */
 export type AgentEditorViews = Pick<
 	EditorViews,
-	"scenes" | "videoOverlays" | "textOverlays" | "audioOverlays" | "infographicOverlays"
+	"scenes" | "videoOverlays" | "textOverlays" | "audioOverlays"
 >;
 
 /* An id minter that starts above every id already in the family. A clip seeded
@@ -133,7 +126,6 @@ function sceneOf(s: AgentJob["scenes"][number], id: number, editor: Scene | unde
 		sourceEvidence: s.sourceEvidence?.length ? s.sourceEvidence : undefined,
 		analogy: s.analogy,
 		onScreenText: s.onScreenText,
-		motionGraphic: s.motionGraphic,
 		sceneKind: s.sceneKind,
 		sceneKey: s.sceneKey,
 		logicalSceneId: s.logicalSceneId,
@@ -152,7 +144,6 @@ function sceneOf(s: AgentJob["scenes"][number], id: number, editor: Scene | unde
 export function agentEditorViews(job: AgentJob): AgentEditorViews {
 	const nextVideoId = freshId(job.videoOverlays.map((v) => v.id));
 	const nextTextId = freshId(job.textOverlays.map((t) => t.id));
-	const nextInfographicId = freshId(job.infographicOverlays.map((g) => g.id));
 	const nextSceneId = freshId(job.scenes.map((s) => s.id));
 
 	const videoOverlays: VideoOverlay[] = job.videoOverlays
@@ -208,16 +199,6 @@ export function agentEditorViews(job: AgentJob): AgentEditorViews {
 		...(a.duckUnderVoice == null ? {} : { duckUnderVoice: a.duckUnderVoice }),
 		...(a.mediaAssetId ? { mediaAssetId: a.mediaAssetId } : {}),
 	}));
-	const infographicOverlays: InfographicOverlay[] = job.infographicOverlays.map((g) => ({
-		id: g.id ?? nextInfographicId(),
-		start: g.startSec,
-		dur: g.durationSec,
-		track: g.track ?? 0,
-		// SAFETY: the agent wire's `AgentClipLayout`, carried as in `asSceneUnions` above.
-		layout: g.layout as InfographicOverlay["layout"],
-		animation: g.animation,
-		payload: g.payload,
-	}));
 
 	const editorById = new Map((job.editorScenes ?? []).map((scene) => [scene.id, scene]));
 	return {
@@ -227,7 +208,6 @@ export function agentEditorViews(job: AgentJob): AgentEditorViews {
 		videoOverlays,
 		textOverlays,
 		audioOverlays,
-		infographicOverlays,
 	};
 }
 
@@ -246,10 +226,6 @@ export function agentTimelineDoc(
 		views.videoOverlays,
 		views.textOverlays,
 		views.audioOverlays,
-		[],
-		[],
-		undefined,
-		views.infographicOverlays,
 	);
 	const keyIssues = clipControlBlockers(doc);
 	if (keyIssues.length) throw new Error(keyIssues.join(" "));

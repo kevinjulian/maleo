@@ -443,17 +443,17 @@ test.describe("chat flows", () => {
 		const server = await openVideoRun(page);
 		server.nextJobIds.push("agent-h1");
 		server.jobs.set("agent-h1", job("running", []));
-		await send(page, "lengthen the infographic");
+		await send(page, "lengthen the text overlay");
 		await expect(page.locator('.fc-run[data-phase="running"]')).toBeVisible();
 
 		// The user removes the clip the run is about to change.
-		await page.locator('[data-clipid="infographic:1"]').click();
+		await page.locator('[data-clipid="text:1"]').click();
 		await page.keyboard.press("Delete");
-		await expect(page.locator('[data-clipid="infographic:1"]')).toHaveCount(0);
+		await expect(page.locator('[data-clipid="text:1"]')).toHaveCount(0);
 		server.jobs.set(
 			"agent-h1",
-			job("done", [{ kind: "final", text: "Lengthened the infographic." }], {
-				commands: [{ type: "clip.update", id: "infographic:1", patch: { durationSec: 6 } }],
+			job("done", [{ kind: "final", text: "Lengthened the text overlay." }], {
+				commands: [{ type: "clip.update", id: "text:1", patch: { durationSec: 6 } }],
 			}),
 		);
 
@@ -466,13 +466,13 @@ test.describe("chat flows", () => {
 		await expect(page.locator(".fc-run").last().getByRole("button", { name: "Undo" })).toHaveCount(
 			0,
 		);
-		await expect(page.locator('[data-clipid="infographic:1"]')).toHaveCount(0);
+		await expect(page.locator('[data-clipid="text:1"]')).toHaveCount(0);
 		await expect(page.locator(".tl2-panel")).toHaveScreenshot("chat-held-result-1440.png");
 		await page.screenshot({ path: `${OUT}/held.png` });
 
 		await held.getByRole("button", { name: "Re-plan with my edits" }).click();
 		await expect.poll(() => server.starts.length).toBe(2);
-		expect(server.starts[1]!.instruction).toBe("lengthen the infographic");
+		expect(server.starts[1]!.instruction).toBe("lengthen the text overlay");
 		// The re-plan is the newer instruction: the held run is history now, and
 		// every control it offered is gone.
 		await expect(held.getByRole("button")).toHaveCount(0);

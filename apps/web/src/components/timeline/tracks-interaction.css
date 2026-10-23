@@ -143,15 +143,6 @@
 	.tl2-clip-textbody {
 		background: oklch(0.64 0.13 255 / 0.16);
 	}
-	.tl2-clip-databody {
-		width: 100%;
-		height: 100%;
-		justify-content: center;
-		background: linear-gradient(90deg, oklch(0.72 0.15 82 / 0.22), oklch(0.72 0.12 110 / 0.12));
-	}
-	.tl2-clip-databody .tl2-clip-ic {
-		display: none;
-	}
 	.tl2-clip-audio .tl2-clip-ic {
 		display: flex;
 		flex-shrink: 0;

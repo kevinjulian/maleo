@@ -61,9 +61,8 @@ impl PendingQueue {
     }
 
     /// Undo pending in reverse, apply `delivered`, re-apply pending in order.
-    /// A pending command that no longer applies is dropped and reported. On
-    /// success the ledger's redo stack is cleared, since the document under it
-    /// changed.
+    /// A pending command that no longer applies is dropped and reported. When
+    /// that changed the document, the ledger's redo stack is cleared.
     pub fn rebase(&mut self, scope: &EditScope, delivered: &[EditorCommand], ledger: &mut Ledger) -> Result<Rebased, RebaseError> {
         self.resolve(scope, delivered, &[], &[], ledger)
     }
@@ -74,6 +73,10 @@ impl PendingQueue {
     /// re-apply where the server placed them, after the delivered ones. A
     /// rejected id is not reported as dropped; the caller already has its reason.
     /// Nothing changes on error.
+    ///
+    /// The redo stack is cleared only when the document under it changed: a
+    /// command was delivered, rejected or dropped. A reply that only accepts the
+    /// client's own commands leaves the document as it was, so redo stays valid.
     pub fn resolve(
         &mut self,
         scope: &EditScope,
@@ -105,7 +108,9 @@ impl PendingQueue {
             }
         }
         self.items = kept;
-        ledger.clear_redo();
+        if !delivered.is_empty() || !rejected.is_empty() || !dropped.is_empty() {
+            ledger.clear_redo();
+        }
         Ok(Rebased { scope: state, dropped })
     }
 

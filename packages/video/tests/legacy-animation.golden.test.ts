@@ -49,7 +49,7 @@ describe("legacy animation parity", () => {
 		>;
 
 	it("reads the legacy fixture with nothing uninterpreted and no legacy field left", () => {
-		expect(read.diagnostic).toEqual({ unknownKeys: [], defaulted: [], legacy: false });
+		expect(read.diagnostic).toEqual({ unknownKeys: [], defaulted: [], legacy: false, dropped: [] });
 		for (const clip of read.doc.clips) if (clip.text) expect(clip.text).not.toHaveProperty("anim");
 	});
 

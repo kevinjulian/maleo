@@ -17,7 +17,6 @@ const SCOPE = {
 const MOVE = { type: "clip.move", id: "text:1", patch: { startSec: 4 } };
 const EMPTY = {
 	overlayId: null,
-	infographicId: null,
 	audioId: null,
 	videoOverlayId: null,
 	effectId: null,

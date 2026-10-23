@@ -58,7 +58,6 @@ import type { Scene, TextOverlay, TextPreset, TrackFlags, TemplateParams } from 
 import type { ChatLogMessage } from "@models/chat/chat-log.ts";
 import { useAudioOps } from "@hooks/timeline/use-audio-ops.ts";
 import { useVideoOverlayOps } from "@hooks/timeline/use-video-overlay-ops.ts";
-import { useInfographicOps } from "@hooks/timeline/use-infographic-ops.ts";
 import { useEffectOps } from "@hooks/timeline/use-effect-ops.ts";
 import { useTransitionOps } from "@hooks/timeline/use-transition-ops.ts";
 import { useSceneOps } from "@hooks/timeline/use-scene-ops.ts";
@@ -72,7 +71,6 @@ import { usePreviewComposition } from "@hooks/timeline/use-preview-composition.t
 
 type AudioApi = ReturnType<typeof useAudioOps>;
 type VideoApi = ReturnType<typeof useVideoOverlayOps>;
-type InfographicApi = ReturnType<typeof useInfographicOps>;
 type EffectApi = ReturnType<typeof useEffectOps>;
 type TransitionApi = ReturnType<typeof useTransitionOps>;
 type SceneOpsApi = ReturnType<typeof useSceneOps>;
@@ -115,9 +113,6 @@ export interface TimelineStageOps {
 	updateAudio: AudioApi["updateAudio"];
 	regenAudio: AudioApi["regenAudio"];
 	updateVideoOverlay: VideoApi["updateVideoOverlay"];
-	addInfographic: InfographicApi["addInfographic"];
-	updateInfographicPayload: InfographicApi["updateInfographicPayload"];
-	removeInfographic: InfographicApi["removeInfographic"];
 	addEffect: EffectApi["addEffect"];
 	removeEffect: EffectApi["removeEffect"];
 	upsertTransition: TransitionApi["upsertTransition"];
@@ -165,9 +160,6 @@ export interface TimelineStageView {
 	selectedOverlay: TextOverlay | null;
 	selectedAudio: AudioApi["selectedAudio"];
 	selectedVideoOverlay: VideoApi["selectedVideoOverlay"];
-	selectedInfographic: InfographicApi extends never
-		? never
-		: ReturnType<typeof selectDerivedArrays>["infographicOverlays"][number] | null;
 	selectedEffectId?: number | null;
 	selectedTransition?: number | null;
 	selectedFreeIds: Set<string>;
@@ -235,7 +227,6 @@ export function TimelineStage({
 		selectedClipLocked,
 		selectedOverlay,
 		selectedVideoOverlay,
-		selectedInfographic,
 		aspect,
 	} = view;
 	const selectedKey = selectedClip ? `${selectedClip.target.source}:${selectedClip.target.id}` : "";
@@ -261,8 +252,6 @@ export function TimelineStage({
 		library: materialLibrary,
 		reload: reloadMaterials,
 	} = useProjectMaterialsContext(activePresetId);
-	const infographicOverlays = derived.infographicOverlays;
-
 	/* The preview's subscription to the playhead — and deliberately not to the
 	 * TIME.
 	 *
@@ -285,9 +274,8 @@ export function TimelineStage({
 				...sceneSpans(scenes),
 				...videoOverlays.map((v) => ({ start: v.start, end: v.start + v.dur })),
 				...overlays.map((o) => ({ start: o.start, end: o.start + o.dur })),
-				...infographicOverlays.map((g) => ({ start: g.start, end: g.start + g.dur })),
 			]),
-		[scenes, videoOverlays, overlays, infographicOverlays],
+		[scenes, videoOverlays, overlays],
 	);
 	const selectSegment = useCallback(
 		(sec: number) => segmentIndexAt(segmentBoundaries, sec),
@@ -315,25 +303,13 @@ export function TimelineStage({
 				{
 					overlays,
 					videoOverlays,
-					infographicOverlays,
 					trackFlags,
 					selectedOverlayId: selectedOverlay?.id ?? null,
-					selectedInfographicId: selectedInfographic?.id ?? null,
 					selectedVideoOvId: selectedVideoOverlay?.id ?? null,
 				},
 				playhead.get(),
 			),
-		[
-			overlays,
-			videoOverlays,
-			infographicOverlays,
-			trackFlags,
-			selectedOverlay,
-			selectedInfographic,
-			selectedVideoOverlay,
-			segment,
-			playhead,
-		],
+		[overlays, videoOverlays, trackFlags, selectedOverlay, selectedVideoOverlay, segment, playhead],
 	);
 	const preloadAssets = useMemo(
 		() => collectPreloadAssets(scenes, videoOverlays, audioOverlays),

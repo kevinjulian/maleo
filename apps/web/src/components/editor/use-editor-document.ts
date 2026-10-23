@@ -5,6 +5,7 @@
  * Split out of `create-content.tsx`.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { DocumentLog } from "@hooks/editor/use-command-log.ts";
 import type { Dispatch, SetStateAction } from "react";
 import { type Post, type Slide } from "@models/content/content-types.ts";
 import { EMPTY_PROJECT_SELECTION } from "@maleo/shared";
@@ -40,7 +41,6 @@ export interface EditorDocument {
 	overlays: Derived["textOverlays"];
 	audioOverlays: Derived["audioOverlays"];
 	videoOverlays: Derived["videoOverlays"];
-	infographicOverlays: Derived["infographicOverlays"];
 	effects: Derived["effects"];
 	transitions: Derived["transitions"];
 	projectReferences: NonNullable<Derived["projectReferences"]>;
@@ -56,14 +56,7 @@ export interface EditorDocument {
 	writers: DocumentWriters;
 	trackFlags: ReturnType<typeof selectDocTrackFlags>;
 	/** What the command log needs from the document (`use-command-log.ts`). */
-	log: {
-		bridge: SyncBridge;
-		ledgerHandle: number;
-		/** Write a resolved scope back onto the editor. */
-		commit: (scope: EditScope) => void;
-		/** Called whenever something is enqueued; the log hook schedules the flush. */
-		onEnqueued: { current: () => void };
-	};
+	log: DocumentLog;
 }
 
 const selectDoc = (store: TimelineDocumentStore): EditorDoc => store.getDoc();
@@ -253,7 +246,6 @@ export function useEditorDocument(input: {
 		overlays: derived.textOverlays,
 		audioOverlays: derived.audioOverlays,
 		videoOverlays: derived.videoOverlays,
-		infographicOverlays: derived.infographicOverlays,
 		effects: derived.effects,
 		transitions: derived.transitions,
 		projectReferences: derived.projectReferences ?? EMPTY_PROJECT_SELECTION,

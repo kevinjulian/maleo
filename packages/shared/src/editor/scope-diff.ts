@@ -85,7 +85,7 @@ export function deepEqual(a: unknown, b: unknown): boolean {
  * is not merely diffed coarsely — an edit that touches only that field compares
  * equal, `diffScopeToCommand` returns `noop`, and the commit is DROPPED. The
  * writer looks correct at its call site and the change never lands. */
-function scopeEqual(a: EditScope, b: EditScope): boolean {
+export function scopeEqual(a: EditScope, b: EditScope): boolean {
 	return (
 		deepEqual(a.doc.clips, b.doc.clips) &&
 		deepEqual(a.doc.markers, b.doc.markers) &&

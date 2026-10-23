@@ -64,7 +64,6 @@ function job(): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -11,8 +11,6 @@ import type {
 	Config,
 	ContentType,
 	EffectClip,
-	InfographicOverlay,
-	InfographicStyle,
 	PacingDevices,
 	ProjectSelection,
 	RefsState,
@@ -60,13 +58,11 @@ export interface StoryboardJsonExtra {
 	overlays?: TextOverlay[];
 	audioOverlays?: AudioOverlay[];
 	videoOverlays?: VideoOverlay[];
-	infographicOverlays?: InfographicOverlay[];
 	effects?: EffectClip[];
 	transitions?: TransitionClip[];
 	captions?: CaptionConfig;
 	captionSet?: CaptionSet;
 	pacingDevices?: PacingDevices;
-	infographicStyle?: InfographicStyle;
 	projectReferences?: ProjectSelection;
 	materials?: ProjectMaterials;
 	markers?: SceneMarker[];
@@ -109,7 +105,6 @@ export function storyboardJson(
 					extra?.effects ?? [],
 					extra?.transitions ?? [],
 					extra?.projectReferences,
-					extra?.infographicOverlays ?? [],
 				);
 		// One writer for the persisted document. The editor holds no agent bookkeeping,
 		// so it passes those through as absent — a caller that DOES hold them (the
@@ -133,7 +128,6 @@ export function storyboardJson(
 			captions: extra?.captions ?? null,
 			captionSet: extra?.captionSet ?? null,
 			pacingDevices: extra?.pacingDevices ?? null,
-			infographicStyle: extra?.infographicStyle ?? null,
 			// Render-affecting presentation versions with the document: restoring this
 			// storyboard has to reproduce what it rendered, and track visibility and the
 			// aspect/brand decide what a render contains.

@@ -8,7 +8,7 @@ import {
 	type StyleKnobs,
 } from "@maleo/shared";
 import type { Config } from "@maleo/shared";
-import { DEFAULT_PACING_DEVICES, DEFAULT_INFOGRAPHIC_STYLE } from "./generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "./generation-defaults.ts";
 import { DEFAULT_SETTINGS, type GlobalSettings } from "./creative-settings.ts";
 import {
 	seedConfigStyle,
@@ -41,7 +41,6 @@ const bundle: ContentPresetBundle = presetBundle({
 	},
 	settings: { aspectRatio: "16:9", voice: "Kore" },
 	pacingDevices: { chapterPills: true, progressBar: false, variant: "pill" },
-	infographicStyle: { bgColor: "#123456" },
 });
 
 function targets(over: Partial<PresetTargets> = {}): PresetTargets {
@@ -50,7 +49,6 @@ function targets(over: Partial<PresetTargets> = {}): PresetTargets {
 		projectReferences: { ...EMPTY_PROJECT_SELECTION },
 		settings: { ...DEFAULT_SETTINGS },
 		pacingDevices: { ...DEFAULT_PACING_DEVICES },
-		infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE },
 		...over,
 	};
 }
@@ -63,7 +61,6 @@ function allCodeDefault(): ElementSourceMap {
 			[AXIS_ELEMENT_PATHS.config, { layer: "code-default", defaulterId: null }],
 			[AXIS_ELEMENT_PATHS.projectReferences, { layer: "code-default", defaulterId: null }],
 			[AXIS_ELEMENT_PATHS.pacingDevices, { layer: "code-default", defaulterId: null }],
-			[AXIS_ELEMENT_PATHS.infographicStyle, { layer: "code-default", defaulterId: null }],
 			...Object.values(SETTINGS_ELEMENT_PATHS).map((path) => [
 				path,
 				{ layer: "code-default", defaulterId: null },
@@ -121,14 +118,12 @@ describe("seedFromPreset", () => {
 			projectRefs: {},
 			settings: {},
 			pacingDevices: {},
-			infographicStyle: {},
 		});
 		const out = seedFromPreset(targets(), empty);
 		expect(out.config.style).toBeUndefined();
 		expect(out.projectReferences).toEqual(EMPTY_PROJECT_SELECTION);
 		expect(out.settings).toEqual(DEFAULT_SETTINGS);
 		expect(out.pacingDevices).toEqual(DEFAULT_PACING_DEVICES);
-		expect(out.infographicStyle).toEqual(DEFAULT_INFOGRAPHIC_STYLE);
 	});
 	test("seeds every unset axis", () => {
 		const out = seedFromPreset(targets(), bundle);
@@ -136,7 +131,6 @@ describe("seedFromPreset", () => {
 		expect(out.projectReferences.entityIds).toEqual(["img-1"]);
 		expect(out.settings.aspectRatio).toBe("16:9");
 		expect(out.pacingDevices.chapterPills).toBe(true);
-		expect(out.infographicStyle.bgColor).toBe("#123456");
 	});
 });
 
@@ -163,15 +157,10 @@ describe("seedFromPresetSourced", () => {
 	test("re-seeds an axis supplied by an earlier preset instead of freezing it by object comparison", () => {
 		const current = targets({
 			pacingDevices: { chapterPills: false, progressBar: true, variant: "minimal" },
-			infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE, bgColor: "#abcdef" },
 		});
 		const sources = {
 			...allCodeDefault(),
 			[AXIS_ELEMENT_PATHS.pacingDevices]: {
-				layer: "project-preset" as const,
-				defaulterId: "cp_earlier",
-			},
-			[AXIS_ELEMENT_PATHS.infographicStyle]: {
 				layer: "project-preset" as const,
 				defaulterId: "cp_earlier",
 			},
@@ -183,7 +172,6 @@ describe("seedFromPresetSourced", () => {
 			progressBar: false,
 			variant: "pill",
 		});
-		expect(out.targets.infographicStyle.bgColor).toBe("#123456");
 		expect(out.sources[AXIS_ELEMENT_PATHS.pacingDevices]).toEqual({
 			layer: "project-preset",
 			defaulterId: PRESET_META.id,
@@ -210,7 +198,6 @@ describe("applyPresetOverride", () => {
 		expect(out.projectReferences.entityIds).toEqual(["img-1"]);
 		expect(out.settings.voice).toBe("Kore");
 		expect(out.pacingDevices.chapterPills).toBe(true);
-		expect(out.infographicStyle.bgColor).toBe("#123456");
 	});
 	test("clears style when the preset carries none", () => {
 		expect(
@@ -262,7 +249,6 @@ describe("seedProjectRefs reads either persisted shape", () => {
 			projectRefs: { prompt: "warm", entityIds: ["e1", "e2"] },
 			settings: {},
 			pacingDevices: {},
-			infographicStyle: {},
 		});
 		expect(seedProjectRefs({ ...EMPTY_PROJECT_SELECTION }, flat)).toEqual({
 			prompt: "warm",
@@ -281,7 +267,6 @@ describe("seedProjectRefs reads either persisted shape", () => {
 			},
 			settings: {},
 			pacingDevices: {},
-			infographicStyle: {},
 		});
 		expect(seedProjectRefs({ ...EMPTY_PROJECT_SELECTION }, legacy).entityIds).toEqual(["e1", "p1"]);
 	});

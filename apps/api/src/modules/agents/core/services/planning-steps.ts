@@ -443,7 +443,6 @@ export async function draftPlannedStory(
 		return await planStoryFromFrame(draftBrief, setup.targetSec, framed.frame, framed.shape, {
 			...planOpts,
 			research: evidence,
-			allowInfographics: job.timelineTemplate?.useData !== false,
 			direction: await directionOptionsFor(job),
 		});
 	} catch (err) {
@@ -459,25 +458,12 @@ export function materializePlan(
 	grounded: boolean,
 ): StorySection[] {
 	const budgets = distributeWordBudget(wordBudget, plan.sections.length);
-	const allowData = job.timelineTemplate?.useData !== false;
 	return materializePlannedSections(
 		plan.sections,
 		0,
 		evidenceOf(heldResearch(job, hold.researchKey)),
 		grounded,
 		budgets,
-	).map((section) =>
-		allowData
-			? section
-			: {
-					...section,
-					motionGraphic: {
-						needed: false,
-						kind: "none" as const,
-						purpose: "none" as const,
-						reason: "Timeline template disables data overlays.",
-					},
-				},
 	);
 }
 

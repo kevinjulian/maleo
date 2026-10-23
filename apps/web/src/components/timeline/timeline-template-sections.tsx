@@ -461,16 +461,6 @@ export function TemplateInspectorSections({
 			)}
 			{openSection === "visual" && (
 				<AccordionSection label="Visual framework" defaultOpen focusKey={focusKey}>
-					<label className="tl2-template-editor-check">
-						<input
-							type="checkbox"
-							checked={draft.useData}
-							onChange={(event) =>
-								setDraft((value) => ({ ...value, useData: event.target.checked }))
-							}
-						/>
-						<span>Allow data and infographic overlays</span>
-					</label>
 					<label>
 						<span>Image guidance prompt</span>
 						<MentionTextarea

@@ -77,16 +77,6 @@ const job = (over: Partial<AgentJob> = {}): AgentJob => ({
 			track: 1,
 		},
 	],
-	infographicOverlays: [
-		{
-			id: 4,
-			startSec: 0,
-			durationSec: 3,
-			track: 0,
-			layout: { xPct: 1 },
-			payload: { type: "stat_reveal", value: "1", label: "x" } as never,
-		},
-	],
 	videoOverlays: [
 		{
 			id: 5,
@@ -129,7 +119,6 @@ const job = (over: Partial<AgentJob> = {}): AgentJob => ({
 const families = (j: AgentJob) => ({
 	scenes: j.scenes,
 	textOverlays: j.textOverlays,
-	infographicOverlays: j.infographicOverlays,
 	videoOverlays: j.videoOverlays,
 	audioOverlays: j.audioOverlays,
 });

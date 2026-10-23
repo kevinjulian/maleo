@@ -9,7 +9,7 @@ import {
 	type EditScope,
 } from "@maleo/shared/editor";
 import { mediaUrl, mintMediaId, type Clip } from "@maleo/shared";
-import type { CommandLogRead, SubmitCommandsReply } from "@api/project-commands.ts";
+import type { CommandLogRead, SubmitCommandsReply } from "@models/editor/command-log-wire.ts";
 import { testEngine as engine } from "@models/editor-engine/engine-fixture.ts";
 import { createCommandLedger } from "@models/chat/command-ledger.ts";
 import { createCommandSync, type SyncProblem } from "./command-sync.ts";

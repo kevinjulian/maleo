@@ -12,10 +12,7 @@ import {
 	type LoadedProjectDetail,
 	type StoryboardJson,
 } from "@models/storyboard/parse-loaded-project.ts";
-import {
-	DEFAULT_INFOGRAPHIC_STYLE,
-	DEFAULT_PACING_DEVICES,
-} from "@models/presets/generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "@models/presets/generation-defaults.ts";
 import { DEFAULT_SETTINGS } from "@models/presets/creative-settings.ts";
 import {
 	EMPTY_CREATIVE_DIRECTION,
@@ -27,13 +24,7 @@ import {
 	type CreativeDirection,
 	type StyleKnobs,
 } from "@maleo/shared";
-import type {
-	Config,
-	InfographicStyle,
-	PacingDevices,
-	ProjectSelection,
-	RefsState,
-} from "@maleo/shared";
+import type { Config, PacingDevices, ProjectSelection, RefsState } from "@maleo/shared";
 
 const knobs = (styleId: string): StyleKnobs => findPresetFixture(styleId)!.bundle.style!;
 
@@ -79,11 +70,6 @@ const PRESET = {
 	} as ProjectSelection,
 	settings: { ...DEFAULT_SETTINGS, aspectRatio: "9:16", timelineTemplateId: "tpl-editorial" },
 	pacingDevices: { chapterPills: true, progressBar: true, variant: "minimal" } as PacingDevices,
-	infographicStyle: {
-		...DEFAULT_INFOGRAPHIC_STYLE,
-		bgColor: "#120018",
-		borderRadius: 20,
-	} as InfographicStyle,
 };
 
 /** Run `createProject` against a stubbed transport and return the POSTed body. */
@@ -145,7 +131,6 @@ describe("a preset-seeded project survives a reload before the first autosave", 
 			editorState: { chat: [], settings: PRESET.settings, direction: PRESET.direction },
 			projectReferences: PRESET.projectReferences,
 			pacingDevices: PRESET.pacingDevices,
-			infographicStyle: PRESET.infographicStyle,
 			materials: SEEDED_MATERIALS,
 		});
 		const parsed = parseLoadedProject(detailFromCreateBody(body));
@@ -154,7 +139,6 @@ describe("a preset-seeded project survives a reload before the first autosave", 
 		expect(parsed.projectReferences).toEqual(PRESET.projectReferences);
 		expect(parsed.settings.timelineTemplateId).toBe("tpl-editorial");
 		expect(parsed.pacingDevices).toEqual(PRESET.pacingDevices);
-		expect(parsed.infographicStyle).toEqual(PRESET.infographicStyle);
 	});
 
 	test("a project created with no preset loads back with the defaults", async () => {
@@ -173,7 +157,6 @@ describe("a preset-seeded project survives a reload before the first autosave", 
 		expect(parsed.projectReferences).toEqual(EMPTY_PROJECT_SELECTION);
 		expect(parsed.settings).toEqual(DEFAULT_SETTINGS);
 		expect(parsed.pacingDevices).toEqual(DEFAULT_PACING_DEVICES);
-		expect(parsed.infographicStyle).toEqual(DEFAULT_INFOGRAPHIC_STYLE);
 	});
 
 	test("a project created before this change still loads", () => {
@@ -201,7 +184,6 @@ describe("a preset-seeded project survives a reload before the first autosave", 
 		expect(parsed.direction).toEqual(EMPTY_CREATIVE_DIRECTION);
 		expect(parsed.projectReferences).toEqual(EMPTY_PROJECT_SELECTION);
 		expect(parsed.pacingDevices).toEqual(DEFAULT_PACING_DEVICES);
-		expect(parsed.infographicStyle).toEqual(DEFAULT_INFOGRAPHIC_STYLE);
 		expect(parsed.clips).toEqual([]);
 	});
 });

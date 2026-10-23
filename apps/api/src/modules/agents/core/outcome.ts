@@ -352,12 +352,7 @@ function evaluateTimeline(job: AgentJob, findings: OutcomeFinding[]): void {
 	const invalidScenes = job.scenes.filter(
 		(scene) => !Number.isFinite(scene.durationSec) || scene.durationSec <= 0,
 	).length;
-	const invalidOverlays = [
-		...job.textOverlays,
-		...job.infographicOverlays,
-		...job.videoOverlays,
-		...job.audioOverlays,
-	].filter(
+	const invalidOverlays = [...job.textOverlays, ...job.videoOverlays, ...job.audioOverlays].filter(
 		(clip) =>
 			!Number.isFinite(clip.startSec) ||
 			clip.startSec < 0 ||
@@ -413,13 +408,6 @@ function attentionSpans(job: AgentJob): AttentionSpan[] {
 			start: overlay.startSec,
 			dur: overlay.durationSec,
 			content: overlay.content,
-		});
-	for (const overlay of job.infographicOverlays)
-		spans.push({
-			kind: "infographic",
-			start: overlay.startSec,
-			dur: overlay.durationSec,
-			content: overlay.payload.title,
 		});
 	for (const audio of job.audioOverlays) {
 		if (audio.kind === "voiceover") {

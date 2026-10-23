@@ -22,18 +22,9 @@ import { routeToLane } from "./lane-bookkeeping.ts";
 
 /** Every clip type the lane vocabulary classifies, resolved once. */
 const CLIP_TYPE_GROUPS = new Map<string, LaneGroup | undefined>(
-	(
-		[
-			"image",
-			"video",
-			"audio",
-			"text",
-			"caption",
-			"infographic",
-			"effect",
-			"transition",
-		] satisfies ClipType[]
-	).map((type) => [type, laneGroupOfType(type)]),
+	(["image", "video", "audio", "text", "caption", "effect", "transition"] satisfies ClipType[]).map(
+		(type) => [type, laneGroupOfType(type)],
+	),
 );
 
 /** Row heights by tier, matching the base tokens in `tracks.css`
@@ -46,8 +37,7 @@ export const LANE_HEIGHT_FALLBACK_PX = { scene: 46, visual: 40, audio: 30, short
  *  any free clip, so it takes the visual height. */
 export function laneHeightFallbackPx(group: LaneGroup | undefined): number {
 	if (group === "audio" || group === "caption") return LANE_HEIGHT_FALLBACK_PX.audio;
-	if (group === "text" || group === "data" || group === "effect")
-		return LANE_HEIGHT_FALLBACK_PX.short;
+	if (group === "text" || group === "effect") return LANE_HEIGHT_FALLBACK_PX.short;
 	return LANE_HEIGHT_FALLBACK_PX.visual;
 }
 
@@ -159,32 +149,27 @@ export const LANE_ACCEPTANCE: ReadonlyArray<{
 	{
 		group: "visual",
 		accepts: ["image", "video"],
-		refuses: ["audio", "text", "infographic", "effect", "transition"],
+		refuses: ["audio", "text", "effect", "transition"],
 	},
 	{
 		group: "audio",
 		accepts: ["audio"],
-		refuses: ["image", "video", "text", "infographic", "effect", "transition"],
+		refuses: ["image", "video", "text", "effect", "transition"],
 	},
 	{
 		group: "text",
 		accepts: ["text"],
-		refuses: ["image", "video", "audio", "infographic", "effect", "transition"],
+		refuses: ["image", "video", "audio", "effect", "transition"],
 	},
 	{
 		group: "caption",
 		accepts: ["caption"],
-		refuses: ["image", "video", "audio", "text", "infographic", "effect", "transition"],
-	},
-	{
-		group: "data",
-		accepts: ["infographic"],
 		refuses: ["image", "video", "audio", "text", "effect", "transition"],
 	},
 	{
 		group: "effect",
 		accepts: ["effect"],
-		refuses: ["image", "video", "audio", "text", "infographic", "transition"],
+		refuses: ["image", "video", "audio", "text", "transition"],
 	},
 	/* An untyped lane — one migration has not reached — accepts nothing on its
 	 * own account. The editor's router relocates a clip dropped there to a lane
@@ -193,7 +178,7 @@ export const LANE_ACCEPTANCE: ReadonlyArray<{
 	 * vocabulary; the lane check adds the declaration. */
 	{
 		group: undefined,
-		accepts: ["image", "video", "audio", "text", "infographic", "effect"],
+		accepts: ["image", "video", "audio", "text", "effect"],
 		refuses: ["transition"],
 	},
 ];

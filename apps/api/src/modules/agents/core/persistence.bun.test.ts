@@ -28,7 +28,6 @@ describe("what the agent carries forward across its writes", () => {
 			captions: prior.captions,
 			captionSet: prior.captionSet,
 			pacingDevices: prior.pacingDevices,
-			infographicStyle: prior.infographicStyle,
 			unitLifecycle: null,
 			artifacts: [],
 		});
@@ -40,7 +39,6 @@ describe("what the agent carries forward across its writes", () => {
 			projectReferences: { prompt: "@Sketch", entityIds: ["sketch"] },
 			captions: { enabled: true },
 			pacingDevices: { chapterPills: true },
-			infographicStyle: { bgColor: "#080a10" },
 		};
 		const first = carry(clientState);
 		const second = carry(first);

@@ -26,7 +26,6 @@ import type { SetFreeClipPos } from "@hooks/timeline/use-clip-position.ts";
 import type { useClipOps } from "@hooks/timeline/use-clip-ops.ts";
 import type { useAudioOps } from "@hooks/timeline/use-audio-ops.ts";
 import type { useVideoOverlayOps } from "@hooks/timeline/use-video-overlay-ops.ts";
-import type { useInfographicOps } from "@hooks/timeline/use-infographic-ops.ts";
 import type { useVisualClipOps } from "@hooks/timeline/use-visual-clip-ops.ts";
 import type { useSceneOps } from "@hooks/timeline/use-scene-ops.ts";
 import type { useTransitionOps } from "@hooks/timeline/use-transition-ops.ts";
@@ -44,7 +43,6 @@ import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 type ClipOpsApi = ReturnType<typeof useClipOps>;
 type AudioApi = ReturnType<typeof useAudioOps>;
 type VideoApi = ReturnType<typeof useVideoOverlayOps>;
-type InfographicApi = ReturnType<typeof useInfographicOps>;
 type VisualClipApi = ReturnType<typeof useVisualClipOps>;
 type SceneOpsApi = ReturnType<typeof useSceneOps>;
 type TransitionApi = ReturnType<typeof useTransitionOps>;
@@ -67,7 +65,7 @@ export interface TimelineTracksOps {
 		start: number,
 	) => void;
 	toggleFreeClip: (
-		source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+		source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 		refId: number | string,
 	) => void;
 	isClipSelected: (id: string) => boolean;
@@ -101,7 +99,6 @@ export interface TimelineTracksOps {
 		preset?: TextPreset,
 		paramsOverride?: TemplateParams,
 	) => void;
-	addInfographicPayload: InfographicApi["addInfographicPayload"];
 	removeEffect: EffectApi["removeEffect"];
 	placeComposition: (
 		config: CompositionConfig,
@@ -126,7 +123,6 @@ export interface TimelineTracksOps {
 	zoomOut: ZoomApi["zoomOut"];
 	setZoomPercent: ZoomApi["setZoomPercent"];
 	setSelectedFreeIds: Dispatch<SetStateAction<ReadonlySet<string>>>;
-	setInfographicOverlays: DocumentWriters["setInfographicOverlays"];
 	/** Where a clip ends up when a drag commits. Owned by the editor because the
 	 *  keyboard nudge and the clip operations write through it too. */
 	setFreeClipPos: SetFreeClipPos;

@@ -66,7 +66,7 @@ function harnessScript(clipTarget: number): string {
 				const dup = JSON.parse(JSON.stringify(seed));
 				dup.id = source + ":" + nextId;
 				dup.startSec = (seed.startSec ?? 0) + copy * ((seed.durationSec ?? 1) + 0.2);
-				for (const key of ["video", "text", "audio", "infographic", "effect"]) {
+				for (const key of ["video", "text", "audio", "effect"]) {
 					if (dup[key]) { dup[key].id = nextId; dup[key].start = dup.startSec; }
 				}
 				out.push(dup);

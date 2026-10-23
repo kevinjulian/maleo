@@ -54,7 +54,6 @@ describe("PresetsLibrary", () => {
 			"style: legacy?.style",
 			"projectRefs: legacy?.projectRefs",
 			"pacingDevices: legacy?.pacingDevices",
-			"infographicStyle: legacy?.infographicStyle",
 			"direction: legacy?.direction",
 		]) {
 			expect(src).toContain(field);

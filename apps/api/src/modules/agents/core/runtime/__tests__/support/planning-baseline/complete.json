@@ -118,7 +118,7 @@
             "directionFingerprint": "2321w0jl57v",
             "directionInputs": {
               "materials": "{\"visual\":\"\",\"rules\":\"\"}",
-              "templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+              "templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
             },
             "clarification": {
               "stage": "pre_research",
@@ -263,7 +263,6 @@
     "baseFingerprints": [],
     "baseRevisionId": null,
     "textOverlays": [],
-    "infographicOverlays": [],
     "videoOverlays": [],
     "audioOverlays": [],
     "characters": [],
@@ -337,7 +336,7 @@
           "directionFingerprint": "2321w0jl57v",
           "directionInputs": {
             "materials": "{\"visual\":\"\",\"rules\":\"\"}",
-            "templateConstraints": "{\"useData\":true,\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+            "templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
           },
           "clarification": {
             "stage": "pre_research",
@@ -531,7 +530,6 @@
       "staticSceneMovement": false,
       "overrideSceneTransition": false,
       "sceneTransition": "fade",
-      "useData": true,
       "imageGuidancePrompt": "Illustrate {{section.title}} in direct support of this narration: {{section.narration}}",
       "slug": "timeline-default-documentary",
       "source": "fixture",

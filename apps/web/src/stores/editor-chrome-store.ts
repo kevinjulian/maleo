@@ -112,7 +112,6 @@ export interface EditorChrome {
 	transitionEditId: number | null;
 	animationInspector: AnimationInspectorTarget | null;
 	effectEdit: { id: number } | null;
-	infographicEditId: number | null;
 }
 
 export const DEFAULT_CHROME: EditorChrome = {
@@ -141,7 +140,6 @@ export const DEFAULT_CHROME: EditorChrome = {
 	transitionEditId: null,
 	animationInspector: null,
 	effectEdit: null,
-	infographicEditId: null,
 };
 
 export type ChromeUpdater = (chrome: EditorChrome) => EditorChrome;

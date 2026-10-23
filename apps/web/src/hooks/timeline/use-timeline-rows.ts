@@ -44,7 +44,7 @@ export interface TimelineRowsInput {
 	clipDrag: ContentDragView | null;
 	dropAltRef: { current: boolean };
 	setFreeClipPos: (
-		source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+		source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 		refId: number | string,
 		patch: { start?: number; track?: number; dur?: number },
 	) => void;

@@ -245,7 +245,6 @@ describe("parseLoadedProject · clip-native seed (5.3)", () => {
 			p.effects,
 			p.transitions,
 			p.projectReferences,
-			p.infographicOverlays,
 		);
 		expect(p.clips).toEqual(reference.clips);
 		expect(p.markers).toEqual(mergeMarkerMetadata(reference.markers, []));

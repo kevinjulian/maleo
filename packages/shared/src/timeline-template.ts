@@ -109,6 +109,8 @@ const RETIRED_TEMPLATE_KEYS = [
 	// against the project's ROSTER and nothing attached a template's references to
 	// one, so the field never reached a render.
 	"referenceIds",
+	// Allowed or suppressed generated infographics, which are removed.
+	"useData",
 ] as const;
 
 /* Fields renamed because they named the wrong entity: both resolve through
@@ -178,7 +180,6 @@ const timelineTemplateFieldsSchema = z
 		staticSceneMovement: z.boolean().default(false),
 		overrideSceneTransition: z.boolean().default(false),
 		sceneTransition: z.enum(TIMELINE_SCENE_TRANSITIONS).default("fade"),
-		useData: z.boolean().default(true),
 		imageGuidancePrompt: z.string().trim().max(2000).default(""),
 	})
 	.strict();
@@ -210,7 +211,7 @@ export const ANIMATED_SYSTEMS_EXPLAINER_TEMPLATE_ID = "timeline-animated-systems
 export const STORY_TITLE_ID_BASE = 51_000_000;
 export const DEFAULT_TIMELINE_TEMPLATE: TimelineTemplateInput = {
 	name: "Documentary flow",
-	description: "Narration-first sections with chapter motion, entry accents, and data when useful.",
+	description: "Narration-first sections with chapter motion and entry accents.",
 	introTextPreset: "chapter",
 	introEntrySfx: "subtle transition stinger",
 	introEntrySfxUrl: "",
@@ -238,7 +239,6 @@ export const DEFAULT_TIMELINE_TEMPLATE: TimelineTemplateInput = {
 	staticSceneMovement: false,
 	overrideSceneTransition: false,
 	sceneTransition: "fade",
-	useData: true,
 	imageGuidancePrompt:
 		"Illustrate {{section.title}} in direct support of this narration: {{section.narration}}",
 };
@@ -271,7 +271,6 @@ export const ANIMATED_SYSTEMS_EXPLAINER_TEMPLATE: TimelineTemplateInput = {
 	staticSceneMovement: false,
 	overrideSceneTransition: true,
 	sceneTransition: "slide",
-	useData: true,
 	imageGuidancePrompt:
 		"Create flat editorial animation for {{section.title}}. Use diagrams, maps, flows, scales, timelines, or object metaphors that directly explain this narration: {{section.narration}}",
 };

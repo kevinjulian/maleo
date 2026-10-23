@@ -1,6 +1,7 @@
 import { getContentProject } from "@maleo/db/project-detail";
 import { addContentStoryboard, type ContentStoryboardRow } from "@maleo/db/storyboards";
 import {
+	onlyStoredInfographicDirectionErrors,
 	stableStringify,
 	approvedPlanArtifact,
 	artifactRefOf,
@@ -14,7 +15,6 @@ import {
 	applyStoryboardCommand,
 	approveStoryDraft,
 	canonicalizeLegacyStoryPlan,
-	onlyNoDataRepairableDirectionErrors,
 	readLegacyStoryDraft,
 	readStoryboardDocument,
 	STORYBOARD_LEGACY_REVISION_ID,
@@ -397,7 +397,6 @@ export async function repairStoryboardDirection(projectId: string): Promise<void
 		visual: inputs.visual,
 		rules: inputs.rules,
 		templateConstraints: inputs.templateConstraints,
-		allowInfographics: inputs.templateConstraints?.useData !== false,
 		plannedReferences: plan.plannedReferences,
 	});
 	const repaired: StoryPlan = directed.ok
@@ -484,7 +483,7 @@ export async function approveStoryboard(
 	if (
 		!directed &&
 		value.found.plan.needsDirection &&
-		!onlyNoDataRepairableDirectionErrors(value.found.plan.directionErrors)
+		!onlyStoredInfographicDirectionErrors(value.found.plan.directionErrors)
 	) {
 		const detail = value.found.plan.directionErrors?.[0];
 		const message = `Story sequence direction needs review before approval${detail ? `: ${detail}` : "."}`;

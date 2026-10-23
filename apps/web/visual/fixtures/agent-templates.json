@@ -3415,7 +3415,7 @@
 			"aliases": [],
 			"output": ["Output rules and response schemas appear in the fixed instruction fragments."],
 			"instructions": [
-				"You are the video agent for an maleo project. You build and edit a video storyboard with the tools provided, one call at a time, observing each result.\n\n- FIRST, call view_timeline and read_skill to see the timeline and the story format.\n- PLAN FIRST (a new video with no scenes yet, any length): call workflow-plan_story. It frames the story, researches when the topic is factual, may ask the user its story decisions, and drafts the plan for review; it generates no assets. Pass the requested length as targetDurationSec (e.g. \"2 minute video\" is 120). Pass planKind only when the user names one (story, explainer, product demo, tutorial, documentary, listicle, comparison). For factual work you may call research_topic first.\n- GENERATE: once a plan exists, call workflow-generate_story_assets. It puts the plan to the user for approval, then generates the scenes, frames and voice from the plan the user approved.\n- STORY FOLLOW-UPS (a plan exists): for a section edit call update_section; for \"improve section N\" call improve_section rather than regenerate_section. For a style retry on an existing plan call generate_style; it neither re-plans nor generates assets.\n- EDIT (scenes exist): add_scene, update_scene and remove_scene for targeted changes; generate_frame for a scene missing its frame; generate_voiceover for one scene's voice, generate_voiceover_clip for one narration across several scenes; add_text, add_overlay, add_infographic and add_audio for on-screen elements; set_clip_layout to place a clip and set_keyframes to animate one over time (a zoom, slide or fade becomes keyframes the user can adjust on the timeline).\n- A request to make or change the video must change the storyboard; describing scenes in your answer instead is not doing the work.\n- ASK ONLY WHEN TRULY AMBIGUOUS: if the request gives no usable direction, or a real fork blocks progress, call ask_user with the question and 2-4 concrete options; the run pauses for the answer. Do not ask when the request implies action or an obvious default exists. Ask at most once per run.\n- A tool that reports \"not configured\", \"skipped\" or an error still counts as attempted: say so, adapt, and carry on with what can run.\n- Do not repeat a tool that already succeeded for the same target.\n- When the project reflects the request, answer with a short summary of what changed. If you changed nothing, say why."
+				"You are the video agent for an maleo project. You build and edit a video storyboard with the tools provided, one call at a time, observing each result.\n\n- FIRST, call view_timeline and read_skill to see the timeline and the story format.\n- PLAN FIRST (a new video with no scenes yet, any length): call workflow-plan_story. It frames the story, researches when the topic is factual, may ask the user its story decisions, and drafts the plan for review; it generates no assets. Pass the requested length as targetDurationSec (e.g. \"2 minute video\" is 120). Pass planKind only when the user names one (story, explainer, product demo, tutorial, documentary, listicle, comparison). For factual work you may call research_topic first.\n- GENERATE: once a plan exists, call workflow-generate_story_assets. It puts the plan to the user for approval, then generates the scenes, frames and voice from the plan the user approved.\n- STORY FOLLOW-UPS (a plan exists): for a section edit call update_section; for \"improve section N\" call improve_section rather than regenerate_section. For a style retry on an existing plan call generate_style; it neither re-plans nor generates assets.\n- EDIT (scenes exist): add_scene, update_scene and remove_scene for targeted changes; generate_frame for a scene missing its frame; generate_voiceover for one scene's voice, generate_voiceover_clip for one narration across several scenes; add_text, add_overlay and add_audio for on-screen elements; set_clip_layout to place a clip and set_keyframes to animate one over time (a zoom, slide or fade becomes keyframes the user can adjust on the timeline).\n- A request to make or change the video must change the storyboard; describing scenes in your answer instead is not doing the work.\n- ASK ONLY WHEN TRULY AMBIGUOUS: if the request gives no usable direction, or a real fork blocks progress, call ask_user with the question and 2-4 concrete options; the run pauses for the answer. Do not ask when the request implies action or an obvious default exists. Ask at most once per run.\n- A tool that reports \"not configured\", \"skipped\" or an error still counts as attempted: say so, adapt, and carry on with what can run.\n- Do not repeat a tool that already succeeded for the same target.\n- When the project reflects the request, answer with a short summary of what changed. If you changed nothing, say why."
 			],
 			"variables": [
 				{
@@ -5717,172 +5717,6 @@
 					}
 				},
 				"required": ["startSec", "durationSec"],
-				"additionalProperties": false,
-				"$schema": "http://json-schema.org/draft-07/schema#"
-			},
-			"output": [
-				"Tool result note; optional media artifacts, editor commands, proposal, or suspension as declared by the handler."
-			],
-			"promptMode": "none",
-			"provenance": {
-				"*": {
-					"kind": "declared",
-					"source": "apps/api/src/modules/agents/core/registry.ts"
-				},
-				"input": {
-					"kind": "derived",
-					"source": "apps/api/src/modules/agents/core/registry.ts"
-				},
-				"exposure": {
-					"kind": "derived",
-					"source": "apps/api/src/modules/agents/core/registry.ts"
-				},
-				"effect": {
-					"kind": "derived",
-					"source": "apps/api/src/modules/agents/core/registry.ts"
-				},
-				"aliases": {
-					"kind": "derived",
-					"source": "apps/api/src/modules/agents/core/registry.ts"
-				}
-			}
-		},
-		{
-			"id": "tool:add_infographic",
-			"kind": "tool",
-			"label": "Add infographic",
-			"description": "add_infographic { type, title, startSec, durationSec, value?, suffix?, comparison?, unit?, price?, compareAt?, note?, rows?, columns?, tableRows?, highlight?, track?, layout? } - add a structured Remotion clip (JSON only, never JSX/CSS animation) rendered as a timeline overlay. Remotion timing comes from startSec + durationSec; animation is frame-derived in the renderer. type: stat_reveal (title,value,suffix?,comparison?), bar_chart (title,rows:[{label,value,color?}],unit?), table_build (title,columns,tableRows:string[][],highlight?), price_tag (title,price,compareAt?,note?). Use for moving charts, tables, metric reveals, price/offer callouts, and data explainers.",
-			"summary": "add a structured Remotion clip (JSON only, never JSX/CSS animation) rendered as a timeline overlay.",
-			"capabilities": ["Overlays and effects"],
-			"source": "apps/api/src/modules/agents/core/registry.ts",
-			"revision": "19e6878c566d825e",
-			"contentTypes": ["video"],
-			"steps": [],
-			"conditions": [
-				"input.title: coerced to string before validation.",
-				"input.startSec: coerced to number before validation.",
-				"input.durationSec: coerced to number before validation.",
-				"input.value: coerced to string before validation.",
-				"input.suffix: coerced to string before validation.",
-				"input.comparison: coerced to string before validation.",
-				"input.unit: coerced to string before validation.",
-				"input.price: coerced to string before validation.",
-				"input.compareAt: coerced to string before validation.",
-				"input.note: coerced to string before validation.",
-				"input.columns[]: coerced to string before validation.",
-				"input.tableRows[][]: coerced to string before validation.",
-				"input.track: coerced to number before validation.",
-				"input.layout.xPct: coerced to number before validation.",
-				"input.layout.yPct: coerced to number before validation.",
-				"input.layout.widthPct: coerced to number before validation.",
-				"input.layout.heightPct: coerced to number before validation.",
-				"input.layout.opacity: coerced to number before validation.",
-				"input.layout.rotationDeg: coerced to number before validation."
-			],
-			"composition": [],
-			"aliases": [],
-			"exposure": "Direct agent tool for the declared content types; subject to existing validation and approval.",
-			"effect": "mutate",
-			"input": {
-				"type": "object",
-				"properties": {
-					"type": {
-						"type": "string",
-						"enum": ["stat_reveal", "bar_chart", "table_build", "price_tag"]
-					},
-					"title": {
-						"type": "string",
-						"minLength": 1
-					},
-					"startSec": {
-						"type": "number",
-						"minimum": 0
-					},
-					"durationSec": {
-						"type": "number",
-						"exclusiveMinimum": 0
-					},
-					"value": {
-						"type": "string"
-					},
-					"suffix": {
-						"type": "string"
-					},
-					"comparison": {
-						"type": "string"
-					},
-					"unit": {
-						"type": "string"
-					},
-					"price": {
-						"type": "string"
-					},
-					"compareAt": {
-						"type": "string"
-					},
-					"note": {
-						"type": "string"
-					},
-					"rows": {
-						"type": "array",
-						"items": {
-							"type": "object",
-							"additionalProperties": {}
-						}
-					},
-					"columns": {
-						"type": "array",
-						"items": {
-							"type": "string"
-						}
-					},
-					"tableRows": {
-						"type": "array",
-						"items": {
-							"type": "array",
-							"items": {
-								"type": "string"
-							}
-						}
-					},
-					"highlight": {
-						"type": "object",
-						"additionalProperties": {}
-					},
-					"track": {
-						"type": "integer",
-						"minimum": 0
-					},
-					"layout": {
-						"type": "object",
-						"properties": {
-							"xPct": {
-								"type": "number"
-							},
-							"yPct": {
-								"type": "number"
-							},
-							"widthPct": {
-								"type": "number"
-							},
-							"heightPct": {
-								"type": "number"
-							},
-							"fit": {
-								"type": "string",
-								"enum": ["contain", "cover", "stretch"]
-							},
-							"opacity": {
-								"type": "number"
-							},
-							"rotationDeg": {
-								"type": "number"
-							}
-						},
-						"additionalProperties": false
-					}
-				},
-				"required": ["type", "startSec", "durationSec"],
 				"additionalProperties": false,
 				"$schema": "http://json-schema.org/draft-07/schema#"
 			},
@@ -17365,16 +17199,6 @@
 		},
 		{
 			"from": "workflow:plan_story",
-			"to": "tool:add_infographic",
-			"kind": "available",
-			"label": "Agent-selectable; not a required pipeline step.",
-			"provenance": {
-				"kind": "declared",
-				"source": "apps/api/src/modules/agents/core/runtime/workflows/video-planning.ts"
-			}
-		},
-		{
-			"from": "workflow:plan_story",
 			"to": "tool:set_clip_layout",
 			"kind": "available",
 			"label": "Agent-selectable; not a required pipeline step.",
@@ -17701,16 +17525,6 @@
 		{
 			"from": "workflow:generate_story_assets",
 			"to": "tool:add_text",
-			"kind": "available",
-			"label": "Agent-selectable; not a required pipeline step.",
-			"provenance": {
-				"kind": "declared",
-				"source": "apps/api/src/modules/agents/core/runtime/workflows/story-assets.ts"
-			}
-		},
-		{
-			"from": "workflow:generate_story_assets",
-			"to": "tool:add_infographic",
 			"kind": "available",
 			"label": "Agent-selectable; not a required pipeline step.",
 			"provenance": {

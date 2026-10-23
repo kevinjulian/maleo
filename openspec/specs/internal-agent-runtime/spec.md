@@ -290,11 +290,11 @@ The internal agent SHALL be able to use tools from operator-configured MCP serve
 
 The agent's video tools that edit an existing timeline — `update_scene`,
 `remove_scene`, `set_clip_layout`, `set_keyframes`, and the placement of a text,
-infographic, audio or overlay clip by `add_text`, `add_infographic`, `add_audio` and
-`add_overlay` — SHALL express each change as editor commands of the vocabulary direct
-manipulation uses, executed by the shared command executor against the run's document.
-Generating media for a placement (`add_overlay` with a prompt) SHALL remain a
-generation step; only the placement is a command.
+audio or overlay clip by `add_text`, `add_audio` and `add_overlay` — SHALL express
+each change as editor commands of the vocabulary direct manipulation uses, executed
+by the shared command executor against the run's document. Generating media for a
+placement (`add_overlay` with a prompt) SHALL remain a generation step; only the
+placement is a command. The agent SHALL NOT expose an `add_infographic` tool.
 
 A tool SHALL address an entity by the same numbering `view_timeline` presents, and the
 command it emits SHALL be the one the editor commits for the same change by hand,
@@ -342,3 +342,8 @@ otherwise.
 
 - **WHEN** a run calls `plan_story` or `generate_frame`
 - **THEN** the run carries no commands and its result is applied as generation output
+
+#### Scenario: The infographic tool is gone
+
+- **WHEN** the agent's tool list is built for a video project
+- **THEN** it contains no `add_infographic` tool

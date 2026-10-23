@@ -4,7 +4,7 @@
  * is deliberate and stays that way — see `screens.ts` on why a small project was
  * chosen — but it leaves four surfaces unreachable, and an unreachable surface
  * is one no baseline can watch. The story chat, the run cards, the audit panel
- * and the infographic controls were all extracted from inline styles with
+ * and the clip inspector were all extracted from inline styles with
  * nothing able to say whether the pixels moved.
  *
  * Authored, not recorded. `fixture-data.ts` says why for the first fixture and
@@ -50,12 +50,11 @@ const FRAME_ONE = fixtureFrame(210, "FIXTURE 1");
 const FRAME_TWO = fixtureFrame(150, "FIXTURE 2");
 const FRAME_THREE = fixtureFrame(30, "FIXTURE 3");
 
-/* ── The document: three scenes and one infographic clip ──
+/* ── The document: three scenes and one text clip ──
  *
  * Three scenes rather than one, because the Studio's scene strip and the chat's
  * script table both render a list and a list of one does not show that it is a
- * list. The infographic clip is what makes the clip inspector's data fields
- * reachable: they render for a selected infographic and for nothing else.
+ * list.
  */
 
 interface FixtureScene {
@@ -102,7 +101,7 @@ export const SCENES: FixtureScene[] = [
 	},
 ];
 
-/** Scene clips, their markers, and the one infographic clip, in schemaVersion 2.
+/** Scene clips, their markers, and the one text clip, in schemaVersion 2.
  *
  *  Written as clips rather than as the legacy per-type arrays because that is
  *  what the document is: `toTimelineDoc` projects one way and `fromTimelineDoc`
@@ -154,38 +153,29 @@ function sceneMarkers(): Array<Record<string, unknown>> {
 	});
 }
 
-/** One stat callout, on its own track above the scenes.
- *
- *  `stat_reveal` rather than a chart: its payload has the fewest fields, so the
- *  inspector's data editor renders every one of them in a capture that stays
- *  legible at 320px. */
-const INFOGRAPHIC_CLIP = {
-	id: "infographic:1",
-	type: "infographic",
+/** One text clip, on its own track above the scenes. It is what makes the clip
+ *  inspector's text, transform and blending groups reachable. */
+const TEXT_CLIP = {
+	id: "text:1",
+	type: "text",
 	startSec: 4,
 	durationSec: 4,
 	track: 1,
-	infographic: {
+	text: {
 		id: 1,
+		content: "Fixture measure 42%",
 		start: 4,
 		dur: 4,
 		track: 1,
+		preset: "title",
 		layout: { xPct: 6, yPct: 12, widthPct: 88, fit: "contain" },
-		animation: { in: "slide_up", main: "count", out: "fade" },
-		payload: {
-			type: "stat_reveal",
-			title: "Fixture measure",
-			value: "42",
-			suffix: "%",
-			comparison: "vs the fixture baseline",
-		},
 	},
 };
 
 export const editorChatStoryboardJson = {
 	schemaVersion: 2,
 	sceneTextClipMigrationVersion: 1,
-	clips: [...sceneClips(), INFOGRAPHIC_CLIP],
+	clips: [...sceneClips(), TEXT_CLIP],
 	markers: sceneMarkers(),
 	captions: [],
 	pacingDevices: [],
@@ -264,26 +254,22 @@ export const editorChatLog: Array<Record<string, unknown>> = [
 				// advisory structure warnings — which is a state worth photographing.
 				chapterFunction: i === 0 ? "setup" : i === 1 ? "rising_action" : "climax",
 				chapterObligation: "Fixture obligation for this beat.",
-				motionGraphic:
-					i === 1
-						? { needed: true, kind: "stat_reveal", reason: "the beat states a number" }
-						: { needed: false, kind: "none" },
 				sourceNotes: i === 1 ? "Fixture source note, unverified." : undefined,
 			})),
 		}),
 	},
-	{ id: 5, role: "user", text: "Add a stat callout to the second beat." },
+	{ id: 5, role: "user", text: "Add a text overlay to the second beat." },
 	{
 		id: 6,
 		role: "assistant",
 		note: {
-			title: "Placing the callout",
-			body: "Mined the second beat for a numeric claim and placed one stat callout over it.",
+			title: "Placing the overlay",
+			body: "Mined the second beat for a numeric claim and placed one text overlay over it.",
 			elapsedSec: 4,
 			startedAt: at(6),
 		},
 	},
-	{ id: 7, role: "assistant", text: "Added a stat callout over the second beat." },
+	{ id: 7, role: "assistant", text: "Added a text overlay over the second beat." },
 ];
 
 /* ── The audit trace ──
@@ -398,12 +384,12 @@ export const editorChatTrace = {
 			toolCalls: [
 				{
 					id: "fixture-call-04",
-					tool: "add_infographic",
+					tool: "add_text",
 					ok: true,
 					durationMs: 320,
 					at: at(6),
-					args: { type: "stat_reveal", scene: 2 },
-					result: "Placed 1 callout.",
+					args: { content: "Fixture measure 42%", scene: 2 },
+					result: "Placed 1 overlay.",
 					assets: [],
 				},
 				{

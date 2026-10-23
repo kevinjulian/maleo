@@ -57,7 +57,7 @@ export function applyEdgePreset(
 }
 
 /** Any clip or overlay the inspector can key. */
-export type ClipAnimationTarget = SourceEditTarget | { source: "text" | "infographic"; id: number };
+export type ClipAnimationTarget = SourceEditTarget | { source: "text"; id: number };
 
 export function animationTargetForId(doc: EditorDoc, id: string): ClipAnimationTarget | undefined {
 	const clip = doc.clips.find((c) => c.id === id);
@@ -70,7 +70,6 @@ export function animationTargetForId(doc: EditorDoc, id: string): ClipAnimationT
 	if (clip?.video) return { source: "video", id: clip.video.id };
 	if (clip?.audio) return { source: "audio", id: clip.audio.id };
 	if (clip?.text) return { source: "text", id: clip.text.id };
-	if (clip?.infographic) return { source: "infographic", id: clip.infographic.id };
 	return undefined;
 }
 
@@ -107,9 +106,7 @@ function staticValue(
 			? views.videoOverlays.find((v) => v.id === target.id)
 			: target.source === "text"
 				? views.textOverlays.find((t) => t.id === target.id)
-				: target.source === "infographic"
-					? views.infographicOverlays.find((g) => g.id === target.id)
-					: undefined;
+				: undefined;
 	const layout = scene ? { ...scene.layout, ...visual?.layout } : overlay?.layout;
 	const style =
 		target.source === "text"
@@ -247,8 +244,6 @@ export function selectedClipAnimationTarget(
 	if (selection.videoOverlayId !== null) return { source: "video", id: selection.videoOverlayId };
 	if (selection.audioId !== null) return { source: "audio", id: selection.audioId };
 	if (selection.overlayId !== null) return { source: "text", id: selection.overlayId };
-	if (selection.infographicId !== null)
-		return { source: "infographic", id: selection.infographicId };
 	const scene = fromTimelineDoc(doc).scenes.find((s) => s.id === selection.sceneId);
 	if (!scene) return undefined;
 	const visuals = normalizeSceneClips(scene).visualClips;

@@ -21,7 +21,7 @@ export interface ClipPositionInput {
 }
 
 export type SetFreeClipPos = (
-	source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+	source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 	refId: number | string,
 	patch: { start?: number; track?: number; dur?: number; durMode?: SceneDurationMode },
 ) => void;
@@ -39,7 +39,7 @@ export function useClipPosition({ writers, setScenes }: ClipPositionInput): SetF
 	 * would leave the others' implicit timing implicit and persist different bytes.
 	 * A scene move is a sequence operation, so it keeps the array path. */
 	const setFreeClipPos = (
-		source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+		source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 		refId: number | string,
 		patch: { start?: number; track?: number; dur?: number; durMode?: SceneDurationMode },
 	): void => {

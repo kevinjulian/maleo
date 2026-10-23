@@ -85,7 +85,6 @@ describe("global timeline templates", () => {
 			staticSceneMovement: true,
 			overrideSceneTransition: true,
 			sceneTransition: "pixel",
-			useData: false,
 			imageGuidancePrompt: "Show {{section.title}} with @Kitchen",
 		};
 		const created = await server.request("/timeline-templates", {
@@ -100,10 +99,13 @@ describe("global timeline templates", () => {
 		const updated = await server.request(`/timeline-templates/${item.id}`, {
 			method: "PUT",
 			headers: { "content-type": "application/json" },
-			body: JSON.stringify({ ...input, useData: true }),
+			body: JSON.stringify({ ...input, staticSceneMovement: false }),
 		});
 		expect(updated.status).toBe(200);
-		expect(((await updated.json()) as { item: { useData: boolean } }).item.useData).toBe(true);
+		expect(
+			((await updated.json()) as { item: { staticSceneMovement: boolean } }).item
+				.staticSceneMovement,
+		).toBe(false);
 
 		expect(
 			(await server.request(`/timeline-templates/${item.id}`, { method: "DELETE" })).status,

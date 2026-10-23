@@ -325,7 +325,6 @@ export const submitCommandsBody = z
 export const presentationPatchBody = z
 	.object({
 		pacingDevices: jsonObject.nullable().optional(),
-		infographicStyle: jsonObject.nullable().optional(),
 		presentation: jsonObject.nullable().optional(),
 	})
 	.strict();

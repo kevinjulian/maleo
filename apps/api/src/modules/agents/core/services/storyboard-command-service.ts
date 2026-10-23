@@ -55,7 +55,6 @@ export async function directionOptionsFor(job: AgentJob) {
 		rules: job.direction?.rules,
 		templateConstraints: template
 			? {
-					useData: template.useData,
 					maxVisualBeatSec: template.maxVisualBeatSec,
 					staticSceneMovement: template.staticSceneMovement,
 					overrideSceneTransition: template.overrideSceneTransition,

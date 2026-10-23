@@ -40,7 +40,6 @@ function job(): AgentJob {
 		],
 		videoOverlays: [{ url: "b.mp4", kind: "video", startSec: 1, durationSec: 3 }],
 		audioOverlays: [],
-		infographicOverlays: [],
 	} as unknown as AgentJob;
 }
 const run = (j: AgentJob, args: unknown) =>

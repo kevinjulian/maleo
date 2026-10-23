@@ -181,7 +181,6 @@ export function materializePlannedSections(
 					? "verified"
 					: "unsupported"
 				: "not_required",
-			motionGraphic: p.motionGraphic,
 			...(p.editorial ? { editorial: p.editorial } : {}),
 			...(p.requiredReferences?.length ? { requiredReferences: p.requiredReferences } : {}),
 			...(p.teachingMove ? { teachingMove: p.teachingMove } : {}),

@@ -23,7 +23,7 @@ export const TEMPLATE_PREVIEW_FPS = RENDER_FPS;
 export const TEMPLATE_TIMEBASE: Timebase = timebase(rational(TEMPLATE_PREVIEW_FPS, 1));
 
 /** How a preview range reads. Colour only; the library never interprets it. */
-export type TemplateRangeTone = "section" | "hold" | "scene" | "voice" | "audio" | "data";
+export type TemplateRangeTone = "section" | "hold" | "scene" | "voice" | "audio";
 
 /** One bar on the preview timeline, and the setting its edges stand for. */
 export interface TemplateRange {

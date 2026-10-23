@@ -175,7 +175,6 @@ export async function buildAgentJob(input: AgentJobInput): Promise<AgentJob> {
 		baseFingerprints,
 		baseRevisionId,
 		textOverlays: prior.textOverlays,
-		infographicOverlays: prior.infographicOverlays,
 		videoOverlays: prior.videoOverlays,
 		audioOverlays: prior.audioOverlays,
 		characters: [],

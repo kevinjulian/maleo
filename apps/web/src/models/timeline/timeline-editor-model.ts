@@ -238,7 +238,6 @@ export type ClipInspectorKind =
 	| "text"
 	| "shape"
 	| "broll"
-	| "infographic"
 	| "effect"
 	| "transition"
 	| "scene";
@@ -260,7 +259,6 @@ export function inspectorSubjectLabel(input: {
 	if (!input.kind) return "No selection";
 	if (input.kind === "scene") return "Scene";
 	if (input.kind === "broll") return "Media overlay";
-	if (input.kind === "infographic") return "Data callout";
 	return input.kind[0]!.toUpperCase() + input.kind.slice(1);
 }
 

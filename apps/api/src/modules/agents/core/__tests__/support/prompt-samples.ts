@@ -86,10 +86,9 @@ export async function promptSamples(): Promise<Record<string, string>> {
 		sequenceCorrection: storySequenceDirectionPrompt(
 			[],
 			{
-				allowInfographics: false,
 				visual: "ink sketch",
 				rules: "no text",
-				templateConstraints: { useData: false },
+				templateConstraints: { maxVisualBeatSec: 6 },
 			},
 			"Change the repeated camera angle",
 		),

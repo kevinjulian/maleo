@@ -6,7 +6,7 @@
  *
  * The old rules decide "did the operator touch this?" by comparing the current value
  * against the code default — per field for settings, and by `JSON.stringify` over the
- * whole object for pacing and infographic style. Both readings are wrong in a way that
+ * whole object for pacing. Both readings are wrong in a way that
  * loses work:
  *
  *   - a value deliberately set to something that happens to equal the default reads as
@@ -25,8 +25,8 @@ import {
 	type ProjectSelection,
 	type StyleKnobs,
 } from "@maleo/shared";
-import type { PacingDevices, InfographicStyle } from "@maleo/shared";
-import { DEFAULT_PACING_DEVICES, DEFAULT_INFOGRAPHIC_STYLE } from "./generation-defaults.ts";
+import type { PacingDevices } from "@maleo/shared";
+import { DEFAULT_PACING_DEVICES } from "./generation-defaults.ts";
 import { presetSettings, type GlobalSettings } from "./creative-settings.ts";
 import { AXIS_ELEMENT_PATHS, SETTINGS_ELEMENT_PATHS } from "./element-paths.ts";
 import { seedElementValue, overwriteElementValue } from "./element-writes.ts";
@@ -148,9 +148,8 @@ export function seedFromPresetSourced(
 	}
 	next.settings = settings;
 
-	// Pacing devices and infographic style: one source each, because each is edited as
-	// one control group. Unlike the old rules, a partially-edited axis still receives
-	// the fields the operator has not claimed — the merge is over the CURRENT value, so
+	// Pacing devices: one source, because it is edited as one control group. Unlike the
+	// old rules, a partially-edited axis still receives the fields the operator has not claimed — the merge is over the CURRENT value, so
 	// nothing they set is discarded.
 	const incomingPacing = bundle.pacingDevices;
 	if (Object.keys(incomingPacing).length) {
@@ -164,20 +163,6 @@ export function seedFromPresetSourced(
 		);
 		nextSources = write.sources;
 		next.pacingDevices = write.value;
-	}
-
-	const incomingInfographic = bundle.infographicStyle;
-	if (Object.keys(incomingInfographic).length) {
-		const write = seedElementValue<InfographicStyle>(
-			AXIS_ELEMENT_PATHS.infographicStyle,
-			targets.infographicStyle,
-			{ ...DEFAULT_INFOGRAPHIC_STYLE, ...incomingInfographic },
-			nextSources,
-			PRESET_LAYER,
-			meta.id,
-		);
-		nextSources = write.sources;
-		next.infographicStyle = write.value;
 	}
 
 	return { targets: next, sources: nextSources };
@@ -222,10 +207,6 @@ export function applyPresetSourced(
 		pacingDevices: claim(AXIS_ELEMENT_PATHS.pacingDevices, {
 			...DEFAULT_PACING_DEVICES,
 			...bundle.pacingDevices,
-		}),
-		infographicStyle: claim(AXIS_ELEMENT_PATHS.infographicStyle, {
-			...DEFAULT_INFOGRAPHIC_STYLE,
-			...bundle.infographicStyle,
 		}),
 	};
 

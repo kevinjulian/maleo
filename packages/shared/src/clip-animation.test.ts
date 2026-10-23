@@ -400,11 +400,4 @@ test("export collections retain their animation kinds and reject invalid keys", 
 			audioOverlays: [{ dur: 4, animation: { tracks: { volume: [{ t: 0, v: 1 }] } } }],
 		}),
 	).toEqual([]);
-	expect(
-		clipAnimationBlockers({
-			infographicOverlays: [
-				{ dur: 4, layout: { animation: { tracks: { volume: [{ t: 0, v: 1 }] } } } },
-			],
-		}),
-	).toHaveLength(1);
 });

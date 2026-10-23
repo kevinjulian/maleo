@@ -54,7 +54,6 @@ function videoJob(projectId: string, brief: string): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

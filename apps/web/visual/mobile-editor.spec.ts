@@ -2412,7 +2412,7 @@ test.describe("one surface per gesture", () => {
  *
  * The limit is the fixture, and it is worth stating rather than leaving for
  * someone to assume away: this project holds a text clip and an effect clip, so
- * the scene, b-roll, audio and infographic kinds — and the groups only they
+ * the scene, b-roll and audio kinds — and the groups only they
  * carry, including the Timing group b-roll gained for the frame steppers — are
  * not walked here. Their markup is the same tree from the same source list, but
  * "same code path" is exactly the argument that was wrong four times in the
@@ -2459,7 +2459,7 @@ test.describe("the contextual bar", () => {
 	 *
 	 * Two kinds, because the fixture holds two clips. The same limit the
 	 * property-group walk states above: a fixture with one clip of every kind
-	 * would close it, and the scene, b-roll, audio and infographic bars are
+	 * would close it, and the scene, b-roll and audio bars are
 	 * unasserted until it does.
 	 */
 	const CLIP_BARS = [

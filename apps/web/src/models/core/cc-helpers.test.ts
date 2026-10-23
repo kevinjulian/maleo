@@ -18,7 +18,6 @@ describe("render export preflight", () => {
 			videoOverlays: [{ url: "/image.png", layout }],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
@@ -64,7 +63,6 @@ describe("render export preflight", () => {
 			videoOverlays: [],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
@@ -102,7 +100,6 @@ describe("render export preflight", () => {
 			videoOverlays: [{ url: mediaUrl(id) }],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
@@ -130,7 +127,6 @@ describe("render export preflight", () => {
 			],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
@@ -149,13 +145,12 @@ describe("render export preflight", () => {
 			videoOverlays: [],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
 		});
 
-		expect(result.blockers).toContain("Add media, text, data, or generate a storyboard.");
+		expect(result.blockers).toContain("Add media, text, or generate a storyboard.");
 		expect(result.summary).toBe("1 blocker");
 	});
 
@@ -165,7 +160,6 @@ describe("render export preflight", () => {
 			videoOverlays: [{ url: "" }],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [{}],
 			agentRunning: true,
 			rendering: false,
@@ -185,7 +179,6 @@ describe("render export preflight", () => {
 			videoOverlays: [],
 			audioOverlays: [{ url: "/voice.wav", kind: "voiceover" }],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,
@@ -213,7 +206,6 @@ describe("render export preflight", () => {
 			videoOverlays: [{ url: asset.url, mediaAssetId: asset.id }],
 			audioOverlays: [],
 			textOverlays: [],
-			infographicOverlays: [],
 			effects: [],
 			agentRunning: false,
 			rendering: false,

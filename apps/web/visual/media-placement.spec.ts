@@ -86,13 +86,7 @@ async function fixture(context: BrowserContext): Promise<void> {
 			route.fulfill({
 				json: {
 					...editorChatProjectDetail,
-					project: {
-						...editorChatProjectDetail.project,
-						editor_state_json: {
-							...editorChatProjectDetail.project.editor_state_json,
-							media_assets: assets,
-						},
-					},
+					mediaAssets: assets,
 				},
 			}),
 	);

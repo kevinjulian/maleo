@@ -20,7 +20,6 @@ import {
 	clipId,
 	type AudioOverlay,
 	type EffectClip,
-	type InfographicOverlay,
 	type Scene,
 	type SceneVisualClip,
 	type TextOverlay,
@@ -30,15 +29,7 @@ import {
 import { mergeMarkerMetadata } from "./timeline-markers.ts";
 import type { ProjectSelection } from "./project-selection.ts";
 
-export type ClipType =
-	| "image"
-	| "video"
-	| "text"
-	| "audio"
-	| "effect"
-	| "transition"
-	| "infographic"
-	| "caption";
+export type ClipType = "image" | "video" | "text" | "audio" | "effect" | "transition" | "caption";
 
 export interface Clip {
 	id: string;
@@ -50,7 +41,6 @@ export interface Clip {
 	video?: VideoOverlay;
 	text?: TextOverlay;
 	audio?: AudioOverlay;
-	infographic?: InfographicOverlay;
 	effect?: EffectClip;
 	transition?: TransitionClip;
 	caption?: CaptionCue;
@@ -115,7 +105,6 @@ export interface EditorViews {
 	videoOverlays: VideoOverlay[];
 	textOverlays: TextOverlay[];
 	audioOverlays: AudioOverlay[];
-	infographicOverlays: InfographicOverlay[];
 	effects: EffectClip[];
 	transitions: TransitionClip[];
 	projectReferences?: ProjectSelection;
@@ -154,16 +143,6 @@ function audioClipOf(a: AudioOverlay): Clip {
 		durationSec: a.dur,
 		track: a.track ?? 0,
 		audio: a,
-	};
-}
-export function infographicClipOf(g: InfographicOverlay): Clip {
-	return {
-		id: clipId("infographic", g.id),
-		type: "infographic",
-		startSec: g.start,
-		durationSec: g.dur,
-		track: g.track ?? 0,
-		infographic: g,
 	};
 }
 export function effectClipOf(e: EffectClip): Clip {
@@ -209,11 +188,6 @@ function docAudioOverlays(doc: TimelineDoc): AudioOverlay[] {
 	return doc.clips
 		.filter((c) => c.audio)
 		.map((c) => ({ ...c.audio!, start: c.startSec, dur: c.durationSec, track: c.track }));
-}
-function docInfographics(doc: TimelineDoc): InfographicOverlay[] {
-	return doc.clips
-		.filter((c) => c.infographic)
-		.map((c) => ({ ...c.infographic!, start: c.startSec, dur: c.durationSec, track: c.track }));
 }
 export function docEffects(doc: TimelineDoc): EffectClip[] {
 	return doc.clips
@@ -394,7 +368,6 @@ export function toTimelineDoc(
 	effects: EffectClip[] = [],
 	transitions: TransitionClip[] = [],
 	projectReferences?: ProjectSelection,
-	infographicOverlays: InfographicOverlay[] = [],
 	captionState: Pick<EditorViews, "captionClips" | "captionSet"> = {},
 ): TimelineDoc {
 	const { sceneClips, markers } = projectScenes(scenes);
@@ -405,7 +378,6 @@ export function toTimelineDoc(
 			...videoOverlays.map(videoClipOf),
 			...textOverlays.map(textClipOf),
 			...audioOverlays.map(audioClipOf),
-			...infographicOverlays.map(infographicClipOf),
 			...effects.map(effectClipOf),
 			...transitions.map(transitionClipOf),
 			...(captionState.captionClips ?? []),
@@ -422,7 +394,6 @@ export function fromTimelineDoc(doc: TimelineDoc): EditorViews {
 		videoOverlays: docVideoOverlays(doc),
 		textOverlays: docTextOverlays(doc),
 		audioOverlays: docAudioOverlays(doc),
-		infographicOverlays: docInfographics(doc),
 		effects: docEffects(doc),
 		transitions: docTransitions(doc),
 		projectReferences: doc.projectReferences,
@@ -480,7 +451,6 @@ export function withMirroredTiming(clip: Clip): Clip {
 	if (clip.video) return { ...clip, video: mirror(clip.video, timing) };
 	if (clip.text) return { ...clip, text: mirror(clip.text, timing) };
 	if (clip.audio) return { ...clip, audio: mirror(clip.audio, timing) };
-	if (clip.infographic) return { ...clip, infographic: mirror(clip.infographic, timing) };
 	if (clip.effect) return { ...clip, effect: mirror(clip.effect, timing) };
 	if (clip.transition)
 		return { ...clip, transition: mirror(clip.transition, { dur: clip.durationSec }) };
@@ -502,7 +472,6 @@ export function rebuildDocWith<D extends TimelineDoc>(doc: D, over: FamilyOverri
 		...(over.videoOverlays ?? docVideoOverlays(doc)).map(videoClipOf),
 		...(over.textOverlays ?? docTextOverlays(doc)).map(textClipOf),
 		...(over.audioOverlays ?? docAudioOverlays(doc)).map(audioClipOf),
-		...(over.infographicOverlays ?? docInfographics(doc)).map(infographicClipOf),
 		...(over.effects ?? docEffects(doc)).map(effectClipOf),
 		...(over.transitions ?? docTransitions(doc)).map(transitionClipOf),
 		...(over.captionClips ?? doc.clips.filter((clip) => clip.type === "caption")),

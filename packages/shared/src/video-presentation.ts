@@ -5,11 +5,10 @@ export const PRESENTATION_CATEGORIES = [
 	"narrative",
 	"headline",
 	"explainer",
-	"infographic",
 	"transition",
 ] as const;
 export type PresentationCategory = (typeof PRESENTATION_CATEGORIES)[number];
-export type PresentationClipFamily = "none" | "text" | "infographic";
+export type PresentationClipFamily = "none" | "text";
 
 export interface PresentationTemplateMapping {
 	category: PresentationCategory;
@@ -39,25 +38,6 @@ export const PRESENTATION_TEMPLATE_MAP: Readonly<
 		defaultTemplateId: "explainer-card",
 		compatibleTemplateIds: ["explainer-card", "rve-quote-card", "rve-floating-bubble-text"],
 	},
-	infographic: {
-		category: "infographic",
-		clipFamily: "infographic",
-		defaultTemplateId: "stat_reveal",
-		compatibleTemplateIds: [
-			"stat_reveal",
-			"bar_chart",
-			"line_chart",
-			"area_chart",
-			"pie_chart",
-			"donut_chart",
-			"progress_bars",
-			"circular_progress",
-			"table_build",
-			"price_tag",
-			"social_proof",
-			"urgency",
-		],
-	},
 	transition: {
 		category: "transition",
 		clipFamily: "text",
@@ -73,18 +53,11 @@ export interface PresentationSource {
 	evidence?: string;
 	analogy?: string;
 	sectionTransition?: { text?: string };
-	motionGraphic?: { needed?: boolean; kind?: string };
 }
 
-/** Pick one primary visual explanation. Data wins when explicitly requested;
- * otherwise concise headline, explainer, and transition are mutually exclusive. */
+/** Pick one primary visual explanation. Headline, explainer, and transition are
+ * mutually exclusive. */
 export function presentationFor(source: PresentationSource): PresentationTemplateMapping {
-	if (
-		source.motionGraphic?.needed &&
-		source.motionGraphic.kind &&
-		source.motionGraphic.kind !== "none"
-	)
-		return PRESENTATION_TEMPLATE_MAP.infographic;
 	if (
 		source.claim?.trim() ||
 		source.evidence?.trim() ||

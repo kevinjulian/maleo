@@ -2,7 +2,7 @@
  *
  * The preview is a single surface with several clip families layered on it, so
  * "the selected clip" has to be resolved by priority — b-roll overlay, then
- * infographic, then text, then the base scene — and each family needs its own
+ * text, then the base scene — and each family needs its own
  * writer for the layout the bounding box drags. That resolution is here rather
  * than in the stage because the timeline reads the same answer.
  *
@@ -13,20 +13,15 @@
  */
 import type { ClipKind, ClipLayout } from "@models/timeline/clip-layout.ts";
 import type { Scene, TextOverlay } from "@maleo/shared";
-import type { selectDerivedArrays } from "@stores/timeline-document-store.ts";
 import type { useAudioOps } from "./use-audio-ops.ts";
 import type { useVideoOverlayOps } from "./use-video-overlay-ops.ts";
 import { patchCanvasLayout, type CanvasTarget } from "@models/timeline/canvas-transform.ts";
 import type { DocUpdater } from "@models/storyboard/editor-doc.ts";
 
-type Derived = ReturnType<typeof selectDerivedArrays>;
-
 export interface CanvasSelectionInput {
 	mutateDoc: (edit: DocUpdater) => void;
 	scenes: Scene[];
-	infographicOverlays: Derived["infographicOverlays"];
 	selectedSceneId?: number;
-	selectedInfographicId?: number | null;
 	selectedOverlay: TextOverlay | null;
 	selectedAudio: ReturnType<typeof useAudioOps>["selectedAudio"];
 	selectedVideoOverlay: ReturnType<typeof useVideoOverlayOps>["selectedVideoOverlay"];
@@ -36,7 +31,6 @@ export interface CanvasSelectionInput {
 export interface CanvasSelection {
 	setSceneLayout: (id: number, patch: Partial<ClipLayout>) => void;
 	selectedScene: Scene | null;
-	selectedInfographic: Derived["infographicOverlays"][number] | null;
 	selectedClip: {
 		target: CanvasTarget;
 		kind: ClipKind;
@@ -49,53 +43,38 @@ export interface CanvasSelection {
 
 export function useCanvasSelection({
 	scenes,
-	infographicOverlays,
 	mutateDoc,
 	selectedSceneId,
-	selectedInfographicId,
 	selectedOverlay,
 	selectedAudio,
 	selectedVideoOverlay,
 	trackLocked,
 }: CanvasSelectionInput): CanvasSelection {
 	// Unified clip layout: one selected visual clip whose placement the canvas
-	// bounding box + Controls panel edit. Priority: video overlay → infographic → text → scene.
+	// bounding box + Controls panel edit. Priority: video overlay → text → scene.
 	const setSceneLayout = (id: number, patch: Partial<ClipLayout>): void =>
 		mutateDoc((doc) => patchCanvasLayout(doc, { source: "scene", id }, patch));
 	const selectedScene =
 		selectedSceneId != null ? (scenes.find((s) => s.id === selectedSceneId) ?? null) : null;
-	const selectedInfographic =
-		infographicOverlays.find((g) => g.id === selectedInfographicId) ?? null;
 	const selected = selectedVideoOverlay
 		? {
 				target: { source: "video" as const, id: selectedVideoOverlay.id },
 				kind: selectedVideoOverlay.kind,
 				layout: selectedVideoOverlay.layout,
 			}
-		: selectedInfographic
+		: selectedOverlay
 			? {
-					target: { source: "infographic" as const, id: selectedInfographic.id },
-					kind: "image" as const,
-					layout: selectedInfographic.layout ?? {
-						xPct: 8,
-						yPct: 16,
-						widthPct: 84,
-						fit: "contain" as const,
-					},
+					target: { source: "text" as const, id: selectedOverlay.id },
+					kind: "text" as const,
+					layout: selectedOverlay.layout,
 				}
-			: selectedOverlay
+			: selectedScene
 				? {
-						target: { source: "text" as const, id: selectedOverlay.id },
-						kind: "text" as const,
-						layout: selectedOverlay.layout,
+						target: { source: "scene" as const, id: selectedScene.id },
+						kind: "scene" as const,
+						layout: selectedScene.layout,
 					}
-				: selectedScene
-					? {
-							target: { source: "scene" as const, id: selectedScene.id },
-							kind: "scene" as const,
-							layout: selectedScene.layout,
-						}
-					: null;
+				: null;
 	const selectedClip = selected
 		? {
 				...selected,
@@ -107,15 +86,13 @@ export function useCanvasSelection({
 	// locked clip can be viewed but not dragged/resized/edited (mirrors the timeline).
 	const selectedClipLocked = selectedVideoOverlay
 		? trackLocked(selectedVideoOverlay.track ?? 0)
-		: selectedInfographic
-			? trackLocked(selectedInfographic.track ?? 0)
-			: selectedOverlay
-				? trackLocked(selectedOverlay.track ?? 0)
-				: selectedAudio
-					? trackLocked(selectedAudio.track ?? 0)
-					: selectedScene
-						? trackLocked(-1)
-						: false;
+		: selectedOverlay
+			? trackLocked(selectedOverlay.track ?? 0)
+			: selectedAudio
+				? trackLocked(selectedAudio.track ?? 0)
+				: selectedScene
+					? trackLocked(-1)
+					: false;
 
-	return { setSceneLayout, selectedScene, selectedInfographic, selectedClip, selectedClipLocked };
+	return { setSceneLayout, selectedScene, selectedClip, selectedClipLocked };
 }

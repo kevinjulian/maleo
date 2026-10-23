@@ -37,7 +37,6 @@ export function agentSceneFromScene(s: Scene): AgentScene {
 		analogy: s.analogy,
 		visualType: s.visualType,
 		onScreenText: s.onScreenText,
-		motionGraphic: s.motionGraphic,
 		sectionTransition: s.sectionTransition,
 		sceneKind: s.sceneKind,
 		sceneKey: s.sceneKey,

@@ -55,10 +55,7 @@ const blankTemplate = (): TimelineTemplateInput => ({
 });
 
 function summarise(template: TimelineTemplate): string {
-	return (
-		template.description ||
-		`${template.introTextPreset || "No title"} · data ${template.useData ? "on" : "off"}`
-	);
+	return template.description || template.introTextPreset || "No title";
 }
 
 export function TemplatesLibrary(): JSX.Element {

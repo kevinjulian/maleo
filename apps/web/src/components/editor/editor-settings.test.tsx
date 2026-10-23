@@ -9,7 +9,6 @@ describe("the panel groups by product domain", () => {
 			"Creative direction",
 			"Style reference",
 			"Brand",
-			"Data callout",
 		]);
 		expect(SETTINGS_PANEL_GROUPS.map((g) => g.title)).toEqual(["Output", "Audio"]);
 		expect(ALL_PANEL_GROUPS).toEqual([...STYLE_PANEL_GROUPS, ...SETTINGS_PANEL_GROUPS]);

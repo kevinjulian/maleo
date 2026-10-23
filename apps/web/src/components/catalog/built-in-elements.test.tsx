@@ -1,10 +1,10 @@
 import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 import { describe, expect, test } from "vite-plus/test";
 import { readFileSync } from "node:fs";
+import { builtInCounts } from "./built-in-elements.tsx";
 import {
 	BASIC_ELEMENTS,
 	BUILT_IN_TEXT_PRESETS,
-	INFOGRAPHIC_KINDS,
 	MOTION_ITEMS,
 } from "@models/timeline/element-catalogue.ts";
 
@@ -49,7 +49,17 @@ describe("the element catalogue is populated", () => {
 		expect(SHAPE_ELEMENTS.map((item) => item.preset)).toEqual(["shape-rect", "shape-circle"]);
 		expect(BUILT_IN_TEXT_PRESETS.length).toBeGreaterThan(0);
 		expect(MOTION_ITEMS.length).toBeGreaterThan(0);
-		expect(INFOGRAPHIC_KINDS.length).toBeGreaterThan(0);
+	});
+
+	/* Infographics are removed: no Data family, tab or group survives in either surface. */
+	test("neither the rail nor the library offers a Data family", () => {
+		expect(Object.keys(builtInCounts(""))).toEqual(["shapes", "basic", "text", "motion"]);
+		const rail = read("../timeline/elements-panel.tsx");
+		const library = read("elements-library.tsx");
+		for (const src of [rail, library]) {
+			expect(src).not.toMatch(/id: "data"/);
+			expect(src).not.toMatch(/infographic/i);
+		}
 	});
 
 	/* Motion owns the presets it backs, so a preset must not be offered twice

@@ -9,11 +9,7 @@
  * the dashboard; only the render/persistence-relevant shape lives here.
  */
 import type { Emotion, StoryBeat, StyleKnobs } from "./video-style.ts";
-import type {
-	ExplainerVisualType,
-	MotionGraphicDecision,
-	SceneInformation,
-} from "./video-blueprint.ts";
+import type { ExplainerVisualType, SceneInformation } from "./video-blueprint.ts";
 import type { MotionEasing } from "./motion-preset.ts";
 import type { KeyframeEasing } from "./animation-properties.ts";
 import type { ReferenceUse } from "./generation-cast.ts";
@@ -309,7 +305,6 @@ export interface Scene {
 	analogy?: string;
 	visualType?: ExplainerVisualType;
 	onScreenText?: string;
-	motionGraphic?: MotionGraphicDecision;
 	sceneKind?: "section_intro" | "storyboard";
 	sceneKey?: string;
 	logicalSceneId?: string;
@@ -435,112 +430,6 @@ export interface TextOverlay {
 	params?: TemplateParams;
 }
 
-/* ── Infographic overlay ── */
-
-export type TableCellMark = "tick" | "cross" | "none";
-
-export type InfographicPayload =
-	| {
-			type: "price_tag";
-			title: string;
-			price: string;
-			compareAt?: string;
-			note?: string;
-			badge?: string;
-			dropAnimation?: boolean;
-	  }
-	| { type: "stat_reveal"; title: string; value: string; suffix?: string; comparison?: string }
-	| {
-			type: "bar_chart";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "line_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "area_chart";
-			title: string;
-			points: Array<{ label: string; value: number }>;
-			unit?: string;
-	  }
-	| {
-			type: "pie_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "donut_chart";
-			title: string;
-			slices: Array<{ label: string; value: number; color?: string }>;
-			centerLabel?: string;
-			unit?: string;
-	  }
-	| {
-			type: "progress_bars";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| { type: "circular_progress"; title: string; value: number; label?: string; unit?: string }
-	| {
-			type: "table_build";
-			title: string;
-			columns: string[];
-			rows: string[][];
-			highlight?: { row?: number; col?: number };
-			marks?: TableCellMark[][];
-			rowSfx?: { tickUrl?: string; crossUrl?: string };
-	  }
-	| {
-			type: "social_proof";
-			title: string;
-			rating?: number;
-			reviewCount?: string;
-			soldCount?: string;
-			badge?: string;
-	  }
-	| {
-			type: "urgency";
-			title: string;
-			stockCount?: number;
-			stockLabel?: string;
-			deadlineText?: string;
-			note?: string;
-	  };
-
-export interface InfographicStyle {
-	bgColor: string;
-	bgOpacity: number;
-	borderColor: string;
-	borderOpacity: number;
-	borderRadius: number;
-	blur: number;
-	dataColor?: string;
-	labelColor?: string;
-}
-
-export interface InfographicOverlay {
-	id: number;
-	start: number;
-	dur: number;
-	revealAt?: number;
-	track?: number;
-	layout?: ClipLayout;
-	animation?: {
-		in?: "fade" | "slide_up" | "scale";
-		main?: "build" | "count" | "highlight";
-		out?: "fade";
-	};
-	payload: InfographicPayload;
-	style?: Partial<InfographicStyle>;
-}
-
 /* ── Video overlay ── */
 
 export interface VideoOverlay {
@@ -657,7 +546,7 @@ export interface PacingDevices {
  * `migrateLaneGroups` fills it on load. Readers of a free lane's group should go
  * through that migration's output rather than defaulting inline. */
 
-export type LaneGroup = "visual" | "audio" | "text" | "caption" | "data" | "effect";
+export type LaneGroup = "visual" | "audio" | "text" | "caption" | "effect";
 
 /* Canonical vertical order. Visual on top because it carries the base render;
  * audio under it because that is where an editor looks for it; the three label
@@ -667,7 +556,6 @@ export const LANE_GROUP_ORDER: readonly LaneGroup[] = [
 	"audio",
 	"text",
 	"caption",
-	"data",
 	"effect",
 ];
 
@@ -781,14 +669,7 @@ export interface Config {
 
 /* ── Clip id helpers (source:refId) ── */
 
-export type ClipSource =
-	| "scene"
-	| "video"
-	| "text"
-	| "audio"
-	| "effect"
-	| "infographic"
-	| "caption";
+export type ClipSource = "scene" | "video" | "text" | "audio" | "effect" | "caption";
 
 export function clipId(source: ClipSource, refId: number): string {
 	return `${source}:${refId}`;
@@ -804,7 +685,6 @@ export function parseClipId(id: string | null): { source: ClipSource; refId: num
 		s === "text" ||
 		s === "audio" ||
 		s === "effect" ||
-		s === "infographic" ||
 		s === "caption"
 	)
 		return { source: s, refId };

@@ -32,10 +32,9 @@ describe("timeline template WYSIWYG preview", () => {
 	/* The template no longer owns a background — the project's settings do, and they
 	 * are what reaches a render. The preview uses a fixed neutral so it stays
 	 * legible without implying the template decides it. */
-	it("renders data policy through StoryboardReel input on a neutral background", () => {
-		const preview = buildTimelineTemplatePreview({ ...DEFAULT_TIMELINE_TEMPLATE, useData: false });
+	it("renders through StoryboardReel input on a neutral background", () => {
+		const preview = buildTimelineTemplatePreview(DEFAULT_TIMELINE_TEMPLATE);
 		expect(preview.bgColor).toBe("#0B0B0F");
-		expect(preview.infographicOverlays).toEqual([]);
 	});
 
 	it("removes only the opening overlay when opening motion is disabled", () => {
@@ -116,11 +115,8 @@ describe("timeline template WYSIWYG preview", () => {
 		expect(preview.textOverlays?.[1]?.durationSec).toBe(30);
 	});
 
-	it("hides the data lane when template data is disabled", () => {
-		const lanes = buildTimelineTemplateTimelineLanes({
-			...DEFAULT_TIMELINE_TEMPLATE,
-			useData: false,
-		});
+	it("shows no data lane", () => {
+		const lanes = buildTimelineTemplateTimelineLanes(DEFAULT_TIMELINE_TEMPLATE);
 		expect(lanes.map((lane) => lane.id)).not.toContain("data");
 	});
 
@@ -152,7 +148,6 @@ describe("timeline template WYSIWYG preview", () => {
 	it("maps selected ranges to inspector ownership", () => {
 		expect(timelineTemplateInspectorSection("intro-title")).toBe("opening");
 		expect(timelineTemplateInspectorSection("section-gap")).toBe("entries");
-		expect(timelineTemplateInspectorSection("data")).toBe("visual");
 		expect(timelineTemplateInspectorSection("visual-beat")).toBe("scene");
 	});
 

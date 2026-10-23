@@ -61,7 +61,6 @@ function reviewJob(step: ReviewStep) {
 		slides: [],
 		posts: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -25,7 +25,6 @@ export const MEDIA_DND_AUDIO_KIND = "text/maleo-media-audio-kind";
  *  drop admits can record where it came from. */
 export const MEDIA_DND_REF_ENTITY = "text/maleo-media-ref-entity";
 
-export const DATA_CALLOUT_DND_MIME = "text/maleo-data-callout";
 // Drag-and-drop payload for dragging a clip template (Templates panel) onto the
 // timeline. Carries the same discriminated shape as ClipTemplateDef so the drop
 // handler can create the right overlay kind without re-deriving it.

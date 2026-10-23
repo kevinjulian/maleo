@@ -17,7 +17,6 @@ import type { ChatLogMessage } from "@models/chat/chat-log.ts";
 import type {
 	Config,
 	ContentType,
-	InfographicStyle,
 	PacingDevices,
 	ProjectSelection,
 	RefImage,
@@ -44,7 +43,6 @@ export interface CreateProjectRequest {
 	/** The Video Template the project is built to, or "" for none. */
 	videoTemplateId: string;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	/** Which layer supplied each element at creation. Written WITH the row: the
 	 *  editor-state autosave is debounced, so a reload that races it would otherwise
 	 *  open a project whose values came from a preset with nothing recording that. */
@@ -93,7 +91,6 @@ export function useCreateProject(): CreateProjectFlow {
 			projectReferences: request.projectReferences,
 			materials: request.materials,
 			pacingDevices: request.pacingDevices,
-			infographicStyle: request.infographicStyle,
 		})
 			.then((id) => {
 				if (!id) throw new Error("project was not created");

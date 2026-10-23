@@ -3,7 +3,7 @@
  * Source records live in ONE sidecar map keyed by these paths, rather than inline
  * beside each value. The values themselves are spread across three persisted blobs
  * with three different writers and lifecycles — `brief_json` (style), the
- * schemaVersion-2 `storyboard_json` (references, pacing, infographic), and
+ * schemaVersion-2 `storyboard_json` (references, pacing), and
  * `editor_state_json` (settings, direction) — so inlining would mean changing all
  * three schemas, including a strict shared wire type, and making every existing
  * reader of e.g. `settings.aspectRatio` unwrap a wrapper object.
@@ -52,7 +52,6 @@ export const AXIS_ELEMENT_PATHS = {
 	projectReferences: "projectReferences",
 	settings: "settings",
 	pacingDevices: "pacingDevices",
-	infographicStyle: "infographicStyle",
 } as const satisfies Record<keyof PresetTargets, string>;
 
 export type SettingsElementPath =

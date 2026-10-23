@@ -32,15 +32,13 @@ import {
 // Re-exported so this panel stays the import site its consumers already use.
 export { DEFAULT_BACKGROUND_FILL, DEFAULT_SETTINGS, settingsWithPresentation };
 export type { GlobalSettings };
-import type { InfographicStyle, PacingDevices, RefImage, TtsStatus } from "@maleo/shared";
-import { InfographicStyleControls } from "@components/timeline/infographics/infographics-panel.tsx";
+import type { PacingDevices, RefImage, TtsStatus } from "@maleo/shared";
 import { AlphaColorControl } from "@design-system/components/color-control.tsx";
 import { get } from "@api/client.ts";
 import { VIDEO_ASPECTS } from "@models/timeline/timeline-editor-model.ts";
 import { Select, onSelect } from "@design-system/components/select.tsx";
 import {
 	BRAND_GROUP,
-	DATA_CALLOUT_GROUP,
 	DIRECTION_GROUP,
 	STYLE_REFERENCE_GROUP,
 	type PanelGroupDef,
@@ -129,15 +127,6 @@ interface StylePanelProps extends PanelProvenance {
 	 *  in storyboard_json, applied to preview + render. */
 	pacingDevices?: PacingDevices;
 	onPacingChange?: (next: PacingDevices) => void;
-	/** Data-callout style. `effective` is the style to show (selected clip's override
-	 *  merged over the default); `clipOwn` says whether the clip set one itself, which is
-	 *  what the Selected Clip detail reports as inherited-from-Project or not. */
-	dataStyle?: {
-		effective: InfographicStyle;
-		selected: boolean;
-		clipOwn?: boolean;
-		onChange: (next: InfographicStyle) => void;
-	};
 	/** Apply a preset. `meta.id` is recorded as the source of everything it supplies,
 	 *  so a surface can later name and open the preset an element came from. */
 	onApplyPreset?: (
@@ -164,7 +153,6 @@ export function StylePanel(props: StylePanelProps): JSX.Element {
 		styleRefs = [],
 		pacingDevices: pacing,
 		onPacingChange,
-		dataStyle,
 		onApplyPreset,
 		describeApply,
 		direction,
@@ -400,31 +388,6 @@ export function StylePanel(props: StylePanelProps): JSX.Element {
 						</div>
 					</PropertyRow>
 				</InspectorSection>
-
-				{dataStyle && (
-					<InspectorSection
-						title={DATA_CALLOUT_GROUP.title}
-						collapsible
-						action={
-							dataStyle.selected ? undefined : sectionActions(DATA_CALLOUT_GROUP, "Data callout")
-						}
-					>
-						{/* With a clip selected the controls edit that clip's own style; the
-						    project default is what it inherits until then. */}
-						{dataStyle.selected && (
-							<p className="fc-cap-desc">
-								{dataStyle.clipOwn
-									? "Editing this clip's own style."
-									: "This clip inherits the project default until you edit it here."}
-							</p>
-						)}
-						<InfographicStyleControls
-							style={dataStyle.effective}
-							selected={dataStyle.selected}
-							onChange={dataStyle.onChange}
-						/>
-					</InspectorSection>
-				)}
 			</div>
 		</>
 	);

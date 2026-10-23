@@ -44,7 +44,7 @@ describe("legacy preset rows still load", () => {
 	test("a pre-materials bundle parses without loss", () => {
 		const bundle = contentPresetBundleSchema.parse(LEGACY_BUNDLE);
 		expect(bundle.pacingDevices).toEqual({ zoom: true });
-		expect(bundle.infographicStyle).toEqual({ accent: "#f00" });
+		expect(bundle).not.toHaveProperty("infographicStyle");
 		expect(bundle.direction?.visual).toBe("stickman");
 	});
 

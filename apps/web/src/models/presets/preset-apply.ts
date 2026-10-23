@@ -1,8 +1,8 @@
 /* Maleo — Content-First Create · pure content-preset seeding + override.
  *
- * A preset bundles five project axes: style direction, project references
+ * A preset bundles four project axes: style direction, project references
  * (generation lock), settings (GlobalSettings — spans the Style + Settings
- * menus), pacing devices, and data-callout (infographic) style.
+ * menus), and pacing devices.
  *
  * Two operations:
  *  - seedFromPreset: fill only UNSET axes (creation-time, non-destructive).
@@ -17,8 +17,8 @@ import {
 	type ProjectSelection,
 	type StyleKnobs,
 } from "@maleo/shared";
-import type { Config, PacingDevices, InfographicStyle } from "@maleo/shared";
-import { DEFAULT_PACING_DEVICES, DEFAULT_INFOGRAPHIC_STYLE } from "./generation-defaults.ts";
+import type { Config, PacingDevices } from "@maleo/shared";
+import { DEFAULT_PACING_DEVICES } from "./generation-defaults.ts";
 import { DEFAULT_SETTINGS, presetSettings, type GlobalSettings } from "./creative-settings.ts";
 
 export interface PresetTargets {
@@ -26,7 +26,6 @@ export interface PresetTargets {
 	projectReferences: ProjectSelection;
 	settings: GlobalSettings;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 }
 
 /** The bundle's knobs, or null when it seeds no style. There is nothing to
@@ -104,15 +103,6 @@ function seedPacing(current: PacingDevices, bundle: ContentPresetBundle): Pacing
 		: current;
 }
 
-/** Seed data-callout style when still at the default. */
-function seedInfographic(current: InfographicStyle, bundle: ContentPresetBundle): InfographicStyle {
-	const preset = bundle.infographicStyle;
-	const isDefault = JSON.stringify(current) === JSON.stringify(DEFAULT_INFOGRAPHIC_STYLE);
-	return isDefault && Object.keys(preset).length > 0
-		? { ...DEFAULT_INFOGRAPHIC_STYLE, ...preset }
-		: current;
-}
-
 /** Seed every unset axis from a preset bundle (non-destructive). */
 export function seedFromPreset(
 	targets: PresetTargets,
@@ -124,7 +114,6 @@ export function seedFromPreset(
 		projectReferences: seedProjectRefs(targets.projectReferences, bundle),
 		settings: seedSettings(targets.settings, presetSettings(bundle.settings)),
 		pacingDevices: seedPacing(targets.pacingDevices, bundle),
-		infographicStyle: seedInfographic(targets.infographicStyle, bundle),
 	};
 }
 
@@ -146,6 +135,5 @@ export function applyPresetOverride(
 		projectReferences: normalizeProjectSelection(bundle.projectRefs),
 		settings: { ...targets.settings, ...presetSettings(bundle.settings) },
 		pacingDevices: { ...DEFAULT_PACING_DEVICES, ...bundle.pacingDevices },
-		infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE, ...bundle.infographicStyle },
 	};
 }

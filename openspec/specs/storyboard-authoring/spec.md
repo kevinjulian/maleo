@@ -8,7 +8,7 @@ Define direct storyboard creation and editing, revision conflict behavior, gener
 
 ### Requirement: Storyboard exposes sequence direction on existing beat rows
 
-Each directed beat row SHALL show editorial purpose, primary presentation, visual concept, novelty key, native on-screen text, infographic intent, SFX intent or silence, and containing-section emotion. These fields SHALL remain visibly associated with narration, references, and generated outputs.
+Each directed beat row SHALL show editorial purpose, primary presentation, visual concept, novelty key, native on-screen text, SFX intent or silence, and containing-section emotion. These fields SHALL remain visibly associated with narration, references, and generated outputs. A beat row SHALL NOT show infographic intent.
 
 Operators SHALL edit direction through the existing revision-checked storyboard command boundary and controller. The system SHALL NOT add a separate Director screen, local plan copy, or persistence route.
 
@@ -29,6 +29,12 @@ Operators SHALL edit direction through the existing revision-checked storyboard 
 - **WHEN** Storyboard loads a beat without sequence direction
 - **THEN** existing narration, visual intent, and media controls remain usable
 - **AND** UI does not invent direction on read
+
+#### Scenario: A stored beat carries an infographic decision
+
+- **WHEN** Storyboard loads a beat whose stored direction has the `infographic` presentation or a motion-graphic decision
+- **THEN** the row shows the beat with the `narrative` presentation and no motion-graphic decision
+- **AND** the beat stays editable
 
 ### Requirement: Storyboard authoring has a revision-checked HTTP boundary
 

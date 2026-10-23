@@ -13,7 +13,6 @@ import { useSceneGeneration } from "@hooks/timeline/use-scene-generation.ts";
 import { useTransitionOps } from "@hooks/timeline/use-transition-ops.ts";
 import { useEffectOps } from "@hooks/timeline/use-effect-ops.ts";
 import { useAudioOps } from "@hooks/timeline/use-audio-ops.ts";
-import { useInfographicOps } from "@hooks/timeline/use-infographic-ops.ts";
 import { useVideoOverlayOps } from "@hooks/timeline/use-video-overlay-ops.ts";
 import { useSceneOps } from "@hooks/timeline/use-scene-ops.ts";
 import { useSceneTiming } from "@hooks/timeline/use-scene-timing.ts";
@@ -58,8 +57,7 @@ export function useTimelineEditorState({
 }: TimelineEditorProps) {
 	// The creative group arrives as one prop and is read here field by field, so
 	// the panels below keep the call sites they had when it was ten props.
-	const { settings, setSettings, hookVariants, setHookVariants, pacingDevices, infographicStyle } =
-		creative;
+	const { settings, setSettings, hookVariants, setHookVariants, pacingDevices } = creative;
 	const { refs, setRefs, pool, setPool, ensureMediaAsset, mediaAssets } = library;
 	const imports = useProjectMediaImport(projectId, library, store, writers);
 	// Per-type editor views, projected from the canonical clip document (source of
@@ -74,7 +72,6 @@ export function useTimelineEditorState({
 		setOverlays,
 		setAudioOverlays,
 		setVideoOverlays,
-		setInfographicOverlays,
 		setEffects,
 		setProjectReferences,
 		mutate: mutateDoc,
@@ -86,7 +83,6 @@ export function useTimelineEditorState({
 		textOverlays: overlays,
 		audioOverlays,
 		videoOverlays,
-		infographicOverlays,
 		effects,
 		transitions,
 	} = derived;
@@ -184,16 +180,7 @@ export function useTimelineEditorState({
 		trackFlags,
 		captions,
 		pacingDevices,
-		infographicStyle,
-		deps: [
-			scenes,
-			overlays,
-			audioOverlays,
-			videoOverlays,
-			infographicOverlays,
-			effects,
-			transitions,
-		],
+		deps: [scenes, overlays, audioOverlays, videoOverlays, effects, transitions],
 	});
 	const { stepRate } = usePlaybackRate(chromeStore);
 	/* One selection, one set of transitions — see `selection/selection-model.ts`.
@@ -206,7 +193,6 @@ export function useTimelineEditorState({
 		slot: selectionSlot,
 	} = useSelection(EMPTY_SELECTION, selectionStore);
 	const selectedOverlayId = selection.overlayId;
-	const selectedInfographicId = selection.infographicId;
 	const selectedAudioId = selection.audioId;
 	const selectedVideoOvId = selection.videoOverlayId;
 	const selectedEffectId = selection.effectId;
@@ -226,11 +212,6 @@ export function useTimelineEditorState({
 	// Selected transition clip id — click selects, double-click opens the edit popover.
 
 	// Effect clip edit popover (type / duration / intensity).
-	// Infographic clip edit popover (payload fields + entrance) — opened by double-click.
-	const [infographicEditId, setInfographicEditId] = useChromeField(
-		chromeStore,
-		"infographicEditId",
-	);
 	// Controls/inspector drawer opens only on demand (Controls button), not on
 	// single click — clip-first click = select + preview only.
 	const [, setInspectorOpen] = useChromeField(chromeStore, "inspectorOpen");
@@ -263,7 +244,6 @@ export function useTimelineEditorState({
 	const { insightsOn, setInsightsOn, buildPacingInputs, pacing } = usePacingInsights({
 		scenes,
 		overlays,
-		infographicOverlays,
 		videoOverlays,
 		audioOverlays,
 		effects,
@@ -340,18 +320,6 @@ export function useTimelineEditorState({
 	 * the selection. */
 	const selectionSpansRef = useRef<{ start: number; end: number }[]>([]);
 
-	const { addInfographic, addInfographicPayload, updateInfographicPayload, removeInfographic } =
-		useInfographicOps({
-			mutateDoc,
-			playhead,
-			total,
-			infographicStyle,
-			selectedInfographicId,
-			setSelectedInfographicId: selectionSlot("infographicId"),
-			infographicEditId,
-			setInfographicEditId,
-			seekPreview,
-		});
 	const { updateOverlay, removeOverlay, selectedOverlay } = useTextOverlayOps({
 		overlays,
 		setOverlays,
@@ -428,18 +396,15 @@ export function useTimelineEditorState({
 	 * to write its layout (see use-canvas-selection.ts). The hit boxes that let a
 	 * clip be picked on the preview used to come from here too; they follow the
 	 * playhead, so they are derived in the stage that draws them. */
-	const { setSceneLayout, selectedScene, selectedInfographic, selectedClip, selectedClipLocked } =
-		useCanvasSelection({
-			scenes,
-			infographicOverlays,
-			mutateDoc,
-			selectedSceneId,
-			selectedInfographicId,
-			selectedOverlay,
-			selectedAudio,
-			selectedVideoOverlay,
-			trackLocked,
-		});
+	const { setSceneLayout, selectedScene, selectedClip, selectedClipLocked } = useCanvasSelection({
+		scenes,
+		mutateDoc,
+		selectedSceneId,
+		selectedOverlay,
+		selectedAudio,
+		selectedVideoOverlay,
+		trackLocked,
+	});
 
 	// Effects: add at the playhead. Remotion Player previews the active effect from
 	// the same storyboard object used by export.
@@ -483,13 +448,11 @@ export function useTimelineEditorState({
 		setOverlays,
 		setAudioOverlays,
 		setVideoOverlays,
-		setInfographicOverlays,
 		setEffects,
 		scenes,
 		overlays,
 		audioOverlays,
 		videoOverlays,
-		infographicOverlays,
 		effects,
 		transitions,
 		projectReferences,
@@ -538,7 +501,6 @@ export function useTimelineEditorState({
 		setSelection,
 		selectionSlot,
 		selectedOverlayId,
-		selectedInfographicId,
 		selectedAudioId,
 		selectedVideoOvId,
 		selectedEffectId,
@@ -583,10 +545,6 @@ export function useTimelineEditorState({
 		canvasRef,
 		clampMenuToViewport,
 		selectionSpansRef,
-		addInfographic,
-		addInfographicPayload,
-		updateInfographicPayload,
-		removeInfographic,
 		updateOverlay,
 		removeOverlay,
 		selectedOverlay,
@@ -609,7 +567,6 @@ export function useTimelineEditorState({
 		animateScene,
 		setSceneLayout,
 		selectedScene,
-		selectedInfographic,
 		selectedClip,
 		selectedClipLocked,
 		addEffect,

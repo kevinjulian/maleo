@@ -75,7 +75,7 @@ export interface TimelineEditorProps {
 	 *  from the timeline's own voiceover clips, not passed in. */
 	/** The project's creative choices as one value (see `use-creative-settings.ts`):
 	 *  global settings (aspect, style ref, voice, background fill), creative
-	 *  direction, A/B hook takes, retention devices, infographic style. Owned by the
+	 *  direction, A/B hook takes, retention devices. Owned by the
 	 *  container because a preset, a template and a reload all write them together. */
 	creative: CreativeSettings;
 	/** The workspace's timeline templates: list, in-flight state, and the
@@ -146,7 +146,6 @@ export function TimelineEditor(props: TimelineEditorProps): JSX.Element {
 		genEnd,
 		genFrame,
 		selectedScene,
-		selectedInfographic,
 	} = editor;
 	const {
 		clearSelection,
@@ -176,7 +175,6 @@ export function TimelineEditor(props: TimelineEditorProps): JSX.Element {
 		videoOverlay: selectedVideoOverlay,
 		audio: selectedAudio,
 		text: selectedOverlay,
-		infographic: selectedInfographic,
 		effectId: selectedEffectId,
 		transitionId: selectedTransition,
 		scene: selectedScene,

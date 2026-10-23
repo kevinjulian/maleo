@@ -179,7 +179,7 @@
      `--tl2-lane-h-visual` a visual lane's thumbnails; `--tl2-lane-h-audio`
      about two thirds of that, enough for a waveform to read (half was too
      thin), which also fits a caption lane's one line of cue text;
-     `--tl2-lane-h-short` text, data and effect, which are a bare fill.
+     `--tl2-lane-h-short` text and effect, which are a bare fill.
      Every density rule sets all four so the ladder scales together, and the
      cross axis MEASURES each row rather than copying these numbers. */
 		/* Clips and markers share ONE corner radius. They sit in the same column of
@@ -363,12 +363,8 @@
 	.tl2-gutter-row:is([data-lane-group="audio"], [data-lane-group="caption"]) {
 		--tl2-row-h: var(--tl2-lane-h-audio);
 	}
-	.tl2-lane:is([data-lane-group="text"], [data-lane-group="data"], [data-lane-group="effect"]),
-	.tl2-gutter-row:is(
-		[data-lane-group="text"],
-		[data-lane-group="data"],
-		[data-lane-group="effect"]
-	) {
+	.tl2-lane:is([data-lane-group="text"], [data-lane-group="effect"]),
+	.tl2-gutter-row:is([data-lane-group="text"], [data-lane-group="effect"]) {
 		--tl2-row-h: var(--tl2-lane-h-short);
 	}
 	.tl2-lane[data-lane-base],

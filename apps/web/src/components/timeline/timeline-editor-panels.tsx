@@ -55,12 +55,10 @@ import {
 } from "@models/timeline/element-catalogue.ts";
 export { TEXT_PRESET_OPTIONS, TEXT_PRESET_LABELS, TEXT_PRESET_SAMPLES };
 
-// Brand palette + the infographics/data-callout panel now live in their own
-// modules; re-export the data panels so existing importers keep their path.
+// The brand palette lives in its own module.
 import { DEFAULT_BRAND, type BrandPalette } from "@models/timeline/panel-brand.ts";
 import { Button } from "@design-system/components/button.tsx";
 import { Input } from "@design-system/components/input.tsx";
-export { InfographicFields } from "@components/timeline/infographics/infographics-panel.tsx";
 
 /* Explicit still frames and reduced-motion preferences show an arrived preview.
  * Normal catalogue browsing uses the production Player's autoplay loop. */
@@ -134,7 +132,6 @@ export function TextPresetPreview({
 			audioOverlays: [],
 			videoOverlays: [],
 			effects: [],
-			infographicOverlays: [],
 		}),
 		[content, preset, params, style, brand.accentColor, brand.bgColor, brand.fgColor],
 	);

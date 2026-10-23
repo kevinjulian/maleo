@@ -211,12 +211,6 @@
 	.tl2-clip-video {
 		border-color: color-mix(in oklch, var(--clip-video) 45%, transparent);
 	}
-	/* Data callouts (infographics). */
-	.tl2-clip-data {
-		background: var(--clip-data);
-		border-color: color-mix(in oklch, var(--clip-data) 72%, black);
-		cursor: grab;
-	}
 	.tl2-clip-audio.tl2-clip-compact {
 		background: var(--clip-audio);
 		border-color: color-mix(in oklch, var(--clip-audio) 72%, black);
@@ -224,13 +218,11 @@
 	}
 	/* Solid fills need light content: labels, icons, and waveform bars go white. */
 	.tl2-clip-text,
-	.tl2-clip-data,
 	.tl2-clip-effect,
 	.tl2-clip-audio.tl2-clip-compact {
 		color: #fff;
 	}
 	.tl2-clip-text .tl2-clip-ic,
-	.tl2-clip-data .tl2-clip-ic,
 	.tl2-clip-audio.tl2-clip-compact .tl2-clip-ic {
 		color: rgba(255, 255, 255, 0.88);
 	}
@@ -250,9 +242,7 @@
 		height: 82%;
 		min-height: 0;
 	}
-	.tl2-clip-text .tl2-clip-textbody,
-	.tl2-clip-data .tl2-clip-textbody,
-	.tl2-clip-data .tl2-clip-databody {
+	.tl2-clip-text .tl2-clip-textbody {
 		background: transparent;
 	}
 	.tl2-clip-compact {

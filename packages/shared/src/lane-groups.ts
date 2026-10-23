@@ -21,7 +21,6 @@ export function laneGroupOfType(type: ClipType): LaneGroup | undefined {
 	if (type === "audio") return "audio";
 	if (type === "text") return "text";
 	if (type === "caption") return "caption";
-	if (type === "infographic") return "data";
 	if (type === "effect") return "effect";
 	return undefined;
 }
@@ -147,7 +146,6 @@ function withLaneTrack(clip: Clip, track: number): Clip {
 	if (clip.video) return { ...moved, video: { ...clip.video, track } };
 	if (clip.text) return { ...moved, text: { ...clip.text, track } };
 	if (clip.audio) return { ...moved, audio: { ...clip.audio, track } };
-	if (clip.infographic) return { ...moved, infographic: { ...clip.infographic, track } };
 	if (clip.effect) return { ...moved, effect: { ...clip.effect, track } };
 	return moved;
 }

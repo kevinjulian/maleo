@@ -5,8 +5,8 @@
  * "Elements" and showed none of the elements that ship with the product, so the
  * page contradicted its own label and was empty in a fresh workspace.
  *
- * It now lists every placeable family — built-in Text, built-in Motion, built-in
- * Data, the operator's own Custom Elements, and Motion presets — with Custom
+ * It now lists every placeable family — built-in Text, built-in Motion, the
+ * operator's own Custom Elements, and Motion presets — with Custom
  * Elements as one group inside it rather than the name of the whole thing.
  *
  * Nothing here places anything. Placing needs a timeline and a playhead and the
@@ -22,7 +22,6 @@ import { MotionPresetLibraryBlock } from "@components/timeline/motion/motion-edi
 import {
 	BuiltInBasicTiles,
 	BuiltInShapeTiles,
-	BuiltInDataTiles,
 	BuiltInMotionTiles,
 	BuiltInTextTiles,
 	builtInCounts,
@@ -34,16 +33,15 @@ import { Chip } from "@design-system/components/chip.tsx";
 /* Hoisted, not inline. The block memoises its loader on `kinds`, so an array literal in
  * the JSX gives it a new identity every render — which re-ran the fetch, set state, and
  * re-rendered, until the browser ran out of sockets. A module constant is stable. */
-const CUSTOM_KINDS: ClipTemplateKind[] = ["text", "data", "composition"];
+const CUSTOM_KINDS: ClipTemplateKind[] = ["text", "composition"];
 
-type ElementGroup = "basic" | "shapes" | "text" | "motion" | "data" | "custom" | "motion-presets";
+type ElementGroup = "basic" | "shapes" | "text" | "motion" | "custom" | "motion-presets";
 
 const GROUPS = [
 	{ id: "basic", label: "Basic" },
 	{ id: "shapes", label: "Shapes" },
 	{ id: "text", label: "Text" },
 	{ id: "motion", label: "Motion" },
-	{ id: "data", label: "Data" },
 	{ id: "custom", label: "Custom Elements" },
 	{ id: "motion-presets", label: "Motion presets" },
 ] as const satisfies ReadonlyArray<{ id: ElementGroup; label: string }>;
@@ -87,7 +85,6 @@ export function ElementsLibrary(): JSX.Element {
 		builtIn.shapes +
 		builtIn.text +
 		builtIn.motion +
-		builtIn.data +
 		(counts.custom ?? 0) +
 		(counts.motionPresets ?? 0);
 
@@ -133,15 +130,6 @@ export function ElementsLibrary(): JSX.Element {
 						count={builtIn.motion}
 					>
 						<BuiltInMotionTiles query={query} />
-					</Group>
-				)}
-				{shows("data") && (
-					<Group
-						title="Data"
-						hint="Charts and callouts that render a number or a series."
-						count={builtIn.data}
-					>
-						<BuiltInDataTiles query={query} />
 					</Group>
 				)}
 				{shows("custom") && (

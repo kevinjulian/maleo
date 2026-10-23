@@ -24,7 +24,7 @@ import type {
 	CommandLogEntry,
 	CommandLogRead,
 	SubmitCommandsReply,
-} from "@api/project-commands.ts";
+} from "@models/editor/command-log-wire.ts";
 import { awaitsImport } from "@models/core/pending-media-sources.ts";
 
 /** A local edit the server will not hold: refused by it, or no longer applying

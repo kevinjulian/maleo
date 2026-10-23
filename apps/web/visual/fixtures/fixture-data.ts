@@ -94,20 +94,9 @@ export const storyboardAuthoringState = {
 						pacing: "measured",
 						editorial: {
 							purpose: "explain",
-							presentation: "infographic",
+							presentation: "explainer",
 							visualConcept: "Cutaway diagram showing two measured stages",
 							noveltyKey: "measured cutaway",
-							motionGraphic: {
-								needed: true,
-								kind: "bar_chart",
-								purpose: "prove",
-								reason: "Compare supplied measurements",
-								title: "Measured change",
-								rows: [
-									{ label: "Before", value: 12 },
-									{ label: "After", value: 19 },
-								],
-							},
 							sfxCue: "single wooden latch snap",
 							shots: [
 								{
@@ -153,20 +142,9 @@ export const storyboardAuthoringState = {
 						visualPrompt: "Simple fixture diagram",
 						editorial: {
 							purpose: "explain",
-							presentation: "infographic",
+							presentation: "explainer",
 							visualConcept: "Cutaway diagram showing two measured stages",
 							noveltyKey: "measured cutaway",
-							motionGraphic: {
-								needed: true,
-								kind: "bar_chart",
-								purpose: "prove",
-								reason: "Compare supplied measurements",
-								title: "Measured change",
-								rows: [
-									{ label: "Before", value: 12 },
-									{ label: "After", value: 19 },
-								],
-							},
 							sfxCue: "single wooden latch snap",
 						},
 					},

@@ -19,7 +19,6 @@ import type {
 	AgentAudioOverlay as _AgentAudioOverlay,
 	AgentCharacter as _AgentCharacter,
 	AgentClipLayout as _AgentClipLayout,
-	AgentInfographicOverlay as _AgentInfographicOverlay,
 	AgentPost as _AgentPost,
 	AgentScene as _AgentScene,
 	AgentSlide as _AgentSlide,
@@ -65,7 +64,6 @@ export type OutcomeFindingOut = _OutcomeFinding;
 export type OutcomeContractOut = _OutcomeContract;
 export type OutcomeEvaluationOut = _OutcomeEvaluation;
 export type AgentTextOverlayOut = _AgentTextOverlay;
-export type AgentInfographicOverlayOut = _AgentInfographicOverlay;
 export type AgentVideoOverlayOut = _AgentVideoOverlay;
 export type AgentAudioOverlayOut = _AgentAudioOverlay;
 export type AgentCharacterOut = _AgentCharacter;
@@ -91,7 +89,6 @@ export interface AgentJobState {
 	slides: AgentSlideOut[];
 	posts: AgentPostOut[];
 	textOverlays: AgentTextOverlayOut[];
-	infographicOverlays?: AgentInfographicOverlayOut[];
 	videoOverlays: AgentVideoOverlayOut[];
 	audioOverlays: AgentAudioOverlayOut[];
 	generatedCaptionSources?: import("@maleo/shared").GeneratedCaptionSources;

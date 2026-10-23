@@ -2,7 +2,7 @@
 
 use maleo_app_core::selection::{Action, ClipSource, Selection, apply, clip_key, is_clip_selected, is_empty, primary_clip_key, selections_equal};
 
-use ClipSource::{Audio, Effect, Infographic, Scene, Text, Video};
+use ClipSource::{Audio, Effect, Scene, Text, Video};
 
 fn act(current: &Selection, action: Action) -> Selection {
     apply(current, &action).expect("applies")
@@ -53,13 +53,11 @@ fn a_clip_replaces_a_scene_selection() {
 }
 
 #[test]
-fn each_clip_family_clears_the_other_three() {
+fn each_clip_family_clears_the_others() {
     let text = select_clip(Text, 1.0);
-    assert_eq!([text.video_overlay_id, text.audio_id, text.infographic_id], [None; 3]);
+    assert_eq!([text.video_overlay_id, text.audio_id], [None; 2]);
     let audio = select_clip(Audio, 2.0);
-    assert_eq!([audio.video_overlay_id, audio.overlay_id, audio.infographic_id], [None; 3]);
-    let info = select_clip(Infographic, 3.0);
-    assert_eq!([info.video_overlay_id, info.overlay_id, info.audio_id], [None; 3]);
+    assert_eq!([audio.video_overlay_id, audio.overlay_id], [None; 2]);
 }
 
 #[test]
@@ -67,7 +65,7 @@ fn an_effect_selects_like_any_other_clip_family() {
     let next = select_clip(Effect, 6.0);
     assert_eq!(next.effect_id, Some(6.0));
     assert_eq!(primary(&next).as_deref(), Some("effect:6"));
-    assert_eq!([next.video_overlay_id, next.overlay_id, next.audio_id, next.infographic_id], [None; 4]);
+    assert_eq!([next.video_overlay_id, next.overlay_id, next.audio_id], [None; 3]);
 }
 
 #[test]
@@ -122,14 +120,6 @@ fn toggling_clears_the_scene_selection_and_the_drawer() {
     assert_eq!(next.editor_scene_id, None);
 }
 
-/// Recorded, not corrected: the toggle path keeps a primary infographic.
-#[test]
-fn toggling_does_not_clear_a_primary_infographic_unlike_single_click() {
-    let next = toggle(&select_clip(Infographic, 5.0), Video, 1.0);
-    assert_eq!(next.infographic_id, Some(5.0));
-    assert_eq!(next.video_overlay_id, Some(1.0));
-}
-
 // What counts as selected.
 
 #[test]
@@ -144,7 +134,7 @@ fn a_clip_is_selected_when_primary_or_in_the_set() {
 
 #[test]
 fn the_primary_key_follows_a_fixed_family_order() {
-    for (source, key) in [(Video, "video:1"), (Text, "text:1"), (Audio, "audio:1"), (Infographic, "infographic:1")] {
+    for (source, key) in [(Video, "video:1"), (Text, "text:1"), (Audio, "audio:1")] {
         assert_eq!(primary(&select_clip(source, 1.0)).as_deref(), Some(key));
     }
 }

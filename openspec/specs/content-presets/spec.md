@@ -8,7 +8,7 @@ Named, workspace-scoped bundles of style knobs, references, settings, pacing, da
 
 ### Requirement: Content presets bundle the editor's creative surfaces
 
-A content preset SHALL be presented to operators as a Project Preset. A Project Preset SHALL be a named, described, workspace-scoped bundle of Project Materials plus one Video Template selection. It SHALL NOT be presented as an independent bundle of style, references, settings, pacing, data-callout style, and creative direction.
+A content preset SHALL be presented to operators as a Project Preset. A Project Preset SHALL be a named, described, workspace-scoped bundle of Project Materials plus one Video Template selection. It SHALL NOT be presented as an independent bundle of style, references, settings, pacing, and creative direction.
 
 The preset MAY persist normalized internal fields needed for compatibility, but every user-facing create, library, and editor surface SHALL explain the preset as:
 
@@ -16,7 +16,7 @@ The preset MAY persist normalized internal fields needed for compatibility, but 
 Project Preset = Project Materials + Video Template
 ```
 
-Style and creative direction SHALL be represented as material content or generated material summary, not as a separate top-level style selection inside the preset.
+Style and creative direction SHALL be represented as material content or generated material summary, not as a separate top-level style selection inside the preset. A preset SHALL NOT carry an infographic style. A stored infographic style SHALL be dropped on read and SHALL NOT be written.
 
 #### Scenario: Preset stores the full bundle
 
@@ -31,8 +31,14 @@ Style and creative direction SHALL be represented as material content or generat
 
 #### Scenario: A preset saved before project materials is read
 
-- **WHEN** a preset whose stored bundle uses older style, reference, settings, pacing, infographic, or creative-direction fields is loaded
+- **WHEN** a preset whose stored bundle uses older style, reference, settings, pacing, or creative-direction fields is loaded
 - **THEN** the system presents those values through Project Materials, Video Template, or project settings according to ownership
+
+#### Scenario: A preset with an infographic style is read
+
+- **WHEN** a preset whose stored bundle carries `infographicStyle` is loaded
+- **THEN** the loaded preset has no infographic style
+- **AND** applying it to a project changes no infographic setting
 
 #### Scenario: Operator tunes material content
 
@@ -102,7 +108,7 @@ Fixture presets SHALL be listed before the workspace's own presets, in their aut
 
 ### Requirement: Built-in Project Presets seed material-first starting points
 
-Built-in Project Presets SHALL be persisted as fixture Project Preset rows. A fixture Project Preset SHALL seed useful Project Materials and a selected Video Template by naming persisted Material and Video Template rows through local ids resolved during fixture bootstrap. A built-in SHALL NOT be considered complete when it only supplies legacy style, settings, pacing, infographic, creative-direction fields, or virtual material fallback content.
+Built-in Project Presets SHALL be persisted as fixture Project Preset rows. A fixture Project Preset SHALL seed useful Project Materials and a selected Video Template by naming persisted Material and Video Template rows through local ids resolved during fixture bootstrap. A built-in SHALL NOT be considered complete when it only supplies legacy style, settings, pacing, creative-direction fields, or virtual material fallback content. A fixture SHALL NOT carry an infographic style.
 
 #### Scenario: Fixture preset seeds materials
 

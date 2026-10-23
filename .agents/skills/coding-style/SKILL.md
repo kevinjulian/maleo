@@ -91,7 +91,7 @@ Note: the legacy standalone image package and the old combined `dashboard` packa
 - All content types use the same chat-agent path through `useContentAgent` and the API server agent pipeline.
 - Project-local All Media and global Reference Library remain distinct. Copy global refs into project-local media before project references point at them.
 - Timeline preview is WYSIWYG by default: Remotion `Player` uses the same `buildRenderStoryboard`/`StoryboardReel` path as export.
-- Timeline/editor state must preserve client-owned fields across agent snapshots: references, captions, pacing devices, infographic style, clip placement, and content duration.
+- Timeline/editor state must preserve client-owned fields across agent snapshots: references, captions, pacing devices, clip placement, and content duration.
 - Runtime state lives under `data/`; generated media, DB snapshots, and other local artifacts are not source files.
 - Video output is driven by `packages/video/schema.ts` and the render-storyboard mapping. The API produces the plan/storyboard/timeline data that feeds it.
 - Tests are unit files close to package ownership boundaries: Vitest (`vite-plus/test`) by default, `bun:test` in `*.bun.test.ts` only when exercised production code needs the Bun runtime.

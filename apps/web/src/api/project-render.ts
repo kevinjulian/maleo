@@ -7,7 +7,6 @@ import { post } from "./client.ts";
 import type {
 	BrandKit,
 	Config,
-	InfographicStyle,
 	PacingDevices,
 	RefsState,
 	TrackFlags,
@@ -62,7 +61,6 @@ export interface VideoRenderRequest {
 	trackFlags?: TrackFlags;
 	captions?: CaptionConfig;
 	pacingDevices?: PacingDevices;
-	infographicStyle?: InfographicStyle;
 	brand?: BrandKit;
 	backgroundFill?: string;
 }

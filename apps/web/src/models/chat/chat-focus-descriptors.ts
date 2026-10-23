@@ -78,7 +78,7 @@ export function postRef(key: string): ChatEntityRef {
  *
  * The inverse of the descriptors above: a scene ref or a scene/video/audio/text
  * clip maps onto the jump the timeline already offers for chat links. Effects,
- * infographics, sections and anything off the timeline have no jump. */
+ * sections and anything off the timeline have no jump. */
 export function timelineJumpFor(ref: ChatEntityRef): NonNullable<ChatLogMessage["ref"]> | null {
 	if (ref.kind === "scene") {
 		const id = Number(ref.id);

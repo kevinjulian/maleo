@@ -51,7 +51,6 @@ const job = (): AgentJob => ({
 		},
 	],
 	textOverlays: [],
-	infographicOverlays: [],
 	videoOverlays: [],
 	audioOverlays: [],
 	characters: [],

@@ -15,8 +15,8 @@ import { keysOf } from "./object-keys.ts";
  * This is one surface over inputs that were previously four unrelated shapes with
  * four different owners — `projectReferences` (the entity lock), `direction` (the
  * routed story/visual/voice channels), the generated style bible (a project
- * reference note written by the agent), and the preset bundle's style/pacing/
- * infographic blobs. Operators had to know which internal record held which knob
+ * reference note written by the agent), and the preset bundle's style and
+ * pacing blobs. Operators had to know which internal record held which knob
  * before they could steer a generation.
  *
  * Four groups, chosen to match what a person is actually deciding:

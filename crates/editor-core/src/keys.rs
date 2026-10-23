@@ -16,7 +16,7 @@ use crate::schema::{Clip, EditScope, Passthrough};
 use crate::source::js_truthy;
 use crate::window::scene_visual_source_duration;
 
-const BOX: &[&str] = &["image", "video", "text", "infographic"];
+const BOX: &[&str] = &["image", "video", "text"];
 const TEXT: &[&str] = &["text"];
 
 /// One numeric entry of `NUMERIC_ANIMATION_PROPERTIES`.
@@ -232,7 +232,7 @@ fn key_target(scope: &EditScope, clip: &Clip) -> EngineResult<Option<KeyTarget>>
             write: Writer::Audio,
         }));
     }
-    let key = ["video", "text", "infographic"].into_iter().find(|key| js_truthy(clip.extra.get(*key)));
+    let key = ["video", "text"].into_iter().find(|key| js_truthy(clip.extra.get(*key)));
     let Some(key) = key else { return Ok(None) };
     let payload = clip.payload(key).ok_or_else(|| EngineError::InvalidInput(format!("clip {} has a non-object {key} payload", clip.id)))?;
     let kind = match key {

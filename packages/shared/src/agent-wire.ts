@@ -13,11 +13,7 @@ import type { ClipLayout, SceneVisualClip } from "./timeline-model.ts";
  * Types only, no runtime: importing this pulls in no code and can never cycle.
  * The server's `AgentJob` (its in-flight run state) is NOT here — that is the
  * agent's private business, not part of the contract. */
-import type {
-	SceneInformation,
-	SectionTransition,
-	MotionGraphicDecision,
-} from "./video-blueprint.ts";
+import type { SceneInformation, SectionTransition } from "./video-blueprint.ts";
 import type {
 	ExplainerContract,
 	ExplainerTeachingMove,
@@ -231,8 +227,6 @@ export interface StorySection {
 	error?: string;
 	/** Absolute timeline start, assigned by placeSections from measured audio. */
 	startSec?: number;
-	/** Editorial blueprint decision for whether this section needs infographic. */
-	motionGraphic?: MotionGraphicDecision;
 }
 
 // Narration word budget for a target duration. ~2.6 words/sec → ~1560 words for
@@ -314,7 +308,6 @@ export interface AgentScene {
 	 *  required-field version this used to declare was a claim neither side kept.
 	 *  Unifying the two copies of the contract is what surfaced it. */
 	sectionTransition?: Partial<SectionTransition>;
-	motionGraphic?: MotionGraphicDecision;
 	/** Section-first provenance survives flattening into editor/render scenes. */
 	sceneKind?: "section_intro" | "storyboard";
 	sceneKey?: string;
@@ -414,35 +407,6 @@ export interface AgentVideoOverlay {
 	label?: string;
 	layout?: AgentClipLayout;
 	track?: number;
-}
-export type AgentInfographicPayload =
-	| { type: "stat_reveal"; title: string; value: string; suffix?: string; comparison?: string }
-	| {
-			type: "bar_chart";
-			title: string;
-			rows: Array<{ label: string; value: number; color?: string }>;
-			unit?: string;
-	  }
-	| {
-			type: "table_build";
-			title: string;
-			columns: string[];
-			rows: string[][];
-			highlight?: { row?: number; col?: number };
-	  }
-	| { type: "price_tag"; title: string; price: string; compareAt?: string; note?: string };
-export interface AgentInfographicOverlay {
-	id?: number;
-	startSec: number;
-	durationSec: number;
-	track?: number;
-	layout?: AgentClipLayout;
-	animation?: {
-		in?: "fade" | "slide_up" | "scale";
-		main?: "build" | "count" | "highlight";
-		out?: "fade";
-	};
-	payload: AgentInfographicPayload;
 }
 /* `id` is the persisted reference_entity id. It exists so the client binds to a
  * durable identity instead of minting `char-${Date.now()}` on every apply — which

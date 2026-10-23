@@ -30,7 +30,7 @@ export interface CanvasHitBox {
 }
 
 export interface CanvasHitClip {
-	source: "video" | "text" | "infographic";
+	source: "video" | "text";
 	id: number;
 	start: number;
 	box: CanvasHitBox;
@@ -39,9 +39,7 @@ export interface CanvasHitClip {
 export interface CanvasHitClipsInput {
 	overlays: Derived["textOverlays"];
 	videoOverlays: Derived["videoOverlays"];
-	infographicOverlays: Derived["infographicOverlays"];
 	selectedOverlayId?: number | null;
-	selectedInfographicId?: number | null;
 	selectedVideoOvId?: number | null;
 	trackFlags: TrackFlags;
 }
@@ -51,9 +49,7 @@ export function canvasHitClipsAt(
 	{
 		overlays,
 		videoOverlays,
-		infographicOverlays,
 		selectedOverlayId,
-		selectedInfographicId,
 		selectedVideoOvId,
 		trackFlags,
 	}: CanvasHitClipsInput,
@@ -77,9 +73,6 @@ export function canvasHitClipsAt(
 	for (const v of videoOverlays)
 		if (v.id !== selectedVideoOvId && isLive(v.start, v.dur) && pickable(v.track))
 			hits.push({ source: "video", id: v.id, start: v.start, box: boxOf(v.layout, v.kind) });
-	for (const g of infographicOverlays)
-		if (g.id !== selectedInfographicId && isLive(g.start, g.dur) && pickable(g.track))
-			hits.push({ source: "infographic", id: g.id, start: g.start, box: boxOf(g.layout, "image") });
 	for (const o of overlays)
 		if (o.id !== selectedOverlayId && isLive(o.start, o.dur) && pickable(o.track))
 			hits.push({ source: "text", id: o.id, start: o.start, box: boxOf(o.layout, "text") });

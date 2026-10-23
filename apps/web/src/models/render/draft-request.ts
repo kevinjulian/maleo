@@ -47,10 +47,7 @@ export function timelineTotalSec(clips: Clip[]): number {
 
 /** Whether there is anything a render could contain. */
 export function hasRenderableVisual(clips: Clip[]): boolean {
-	return clips.some(
-		(c) =>
-			c.type === "image" || c.type === "video" || c.type === "text" || c.type === "infographic",
-	);
+	return clips.some((c) => c.type === "image" || c.type === "video" || c.type === "text");
 }
 
 export function buildDraftRequest(input: DraftRequestInput): DraftRequest {

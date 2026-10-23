@@ -12,7 +12,7 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   A scene may carry multiple `visualClips` (multi-image beat).
 - **Free clips** ride generic rows above the base track: `videoOverlays`
   (b-roll), `overlays` (text), `audioOverlays` (voiceover/music/sfx/ambient/
-  accent_hit), `infographicOverlays`, `effects`. Each has `start`/`dur`
+  accent_hit), `effects`. Each has `start`/`dur`
   seconds and a `track` row index. `timeline-clips.ts: buildFreeClips`
   projects them into `TimelineClip { id: "<source>:<refId>", ... }`.
 - **Persistence** is storyboard schemaVersion 2 (`timeline-doc.ts:
@@ -143,7 +143,7 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   the loaded version's `commandSeq` and reads the log on window focus and
   when an agent run settles; a rejected or dropped edit is reported, a
   divergence reloads the saved project.
-- Pacing devices, infographic style and presentation are outside the editable
+- Pacing devices and presentation are outside the editable
   scope; `use-content-persistence.ts` writes them alone through
   `PATCH /projects/:id/storyboard-presentation`.
 - Command behavior is pinned by the golden fixtures in
@@ -170,5 +170,5 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
 3. Group drag preserves relative spacing (single snapped delta).
 4. Every edit is a data command with an exact inverse; direct panel edits to
    slides/posts coalesce into one `scope.replace` after 400ms of quiet.
-5. Agent-generated (auto) infographic overlays use reserved ids; user-authored
+5. Agent-generated (auto) text overlays use reserved ids; user-authored
    clips must survive rebuild/regenerate.

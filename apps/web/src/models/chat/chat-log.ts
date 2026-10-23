@@ -5,7 +5,6 @@ import type {
 	ChatFocusSource,
 	Emotion,
 	ExplainerTeachingMove,
-	MotionGraphicDecision,
 	PovShot,
 	PovStage,
 	StoryClarificationBatch,
@@ -92,7 +91,6 @@ export interface StorySectionMsg {
 	imageUrl?: string;
 	error?: string;
 	startSec?: number;
-	motionGraphic?: MotionGraphicDecision;
 	editorial?: StoryEditorialDecision;
 }
 

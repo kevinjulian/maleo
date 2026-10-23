@@ -55,14 +55,14 @@ How a story plan is produced. Five ordered production stages, sequenced by
 `planStoryFlow` in `apps/api/src/modules/agents/core/services/planning.ts` — the layer
 that may do IO. Three call a model, and none generates media assets.
 
-| Stage     | Where                                                                       | Kind                              | Produces                                                                                                                                                                          |
-| --------- | --------------------------------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Frame     | `planStoryFrame` in `apps/api/src/lib/content-generator.ts`                 | model, short timeout              | `planKind`, `arc`, narration language, the `engagement` spine, planned references, and the **grounding decision** (`needed` + the research questions). No narration.              |
-| Research  | `runResearch` in `apps/api/src/modules/agents/core/services/research.ts`    | network, only when the frame asks | the cited `ResearchBundle` the draft grounds claims in. Free — `costsAssets: false`, gates nothing. Which service retrieves is `lib/research/registry.ts`'s decision.             |
-| Skeleton  | `storySkeleton` in `content-generator.ts`                                   | pure                              | one identified section/semantic-beat slot: opaque ids, chapter function, obligation, default emotion, word budget                                                                 |
-| Draft     | `draftStorySections`, same file                                             | model, per plan then per slot     | narration, shots, motion graphic and source evidence filled into the slots                                                                                                        |
-| Direction | `directStorySequence`, same file                                            | model, full ordered draft         | purpose, presentation, visual concept, novelty, native overlay text, structured infographic decision, sparse SFX/silence, and ordered visual/reference direction per planned shot |
-| Report    | `storyArcCoverageViolations` in `packages/shared/src/story-arc-coverage.ts` | pure                              | five counted invariants, reported for review — never a gate                                                                                                                       |
+| Stage     | Where                                                                       | Kind                              | Produces                                                                                                                                                              |
+| --------- | --------------------------------------------------------------------------- | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Frame     | `planStoryFrame` in `apps/api/src/lib/content-generator.ts`                 | model, short timeout              | `planKind`, `arc`, narration language, the `engagement` spine, planned references, and the **grounding decision** (`needed` + the research questions). No narration.  |
+| Research  | `runResearch` in `apps/api/src/modules/agents/core/services/research.ts`    | network, only when the frame asks | the cited `ResearchBundle` the draft grounds claims in. Free — `costsAssets: false`, gates nothing. Which service retrieves is `lib/research/registry.ts`'s decision. |
+| Skeleton  | `storySkeleton` in `content-generator.ts`                                   | pure                              | one identified section/semantic-beat slot: opaque ids, chapter function, obligation, default emotion, word budget                                                     |
+| Draft     | `draftStorySections`, same file                                             | model, per plan then per slot     | narration, shots and source evidence filled into the slots                                                                                                            |
+| Direction | `directStorySequence`, same file                                            | model, full ordered draft         | purpose, presentation, visual concept, novelty, native overlay text, sparse SFX/silence, and ordered visual/reference direction per planned shot                      |
+| Report    | `storyArcCoverageViolations` in `packages/shared/src/story-arc-coverage.ts` | pure                              | five counted invariants, reported for review — never a gate                                                                                                           |
 
 `planStorySections` composes frame → skeleton → draft → direction for callers
 that do not ground; `planStoryFromFrame` is the skeleton-through-direction half
@@ -166,9 +166,8 @@ Load-bearing details:
   only public planning tool. Direction lives on each semantic beat; exact logical
   bindings, aliases, final planned-reference definitions, and its input
   fingerprint are frozen into the approved snapshot. Visual authoring and frame
-  hashes consume them; native text becomes editor text overlays, infographics
-  require explicit data, and `sfxCue: null` suppresses generic accents unless a
-  template pins an asset.
+  hashes consume them; native text becomes editor text overlays, and
+  `sfxCue: null` suppresses generic accents unless a template pins an asset.
 - `pov_lifecycle` is the promoted form of the old POV lifecycle stages;
   `POV_CHAPTER_FUNCTIONS` and `POV_LIFECYCLE_STAGES` are `satisfies`-checked
   against that arc, so a drift is a compile error. POV is now a selectable arc, not

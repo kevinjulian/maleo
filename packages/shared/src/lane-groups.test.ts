@@ -6,7 +6,7 @@ import {
 	occupiesFreeLane,
 } from "./lane-groups.ts";
 import type { Clip, ClipType } from "./timeline-doc.ts";
-import type { TrackFlags } from "./timeline-model.ts";
+import { LANE_GROUP_ORDER, type TrackFlags } from "./timeline-model.ts";
 
 function clip(
 	id: string,
@@ -34,8 +34,20 @@ describe("laneGroupOfType", () => {
 		expect(laneGroupOfType("audio")).toBe("audio");
 		expect(laneGroupOfType("text")).toBe("text");
 		expect(laneGroupOfType("caption")).toBe("caption");
-		expect(laneGroupOfType("infographic")).toBe("data");
 		expect(laneGroupOfType("effect")).toBe("effect");
+	});
+
+	test("every lane-occupying clip resolves to one of five groups", () => {
+		const types: ClipType[] = ["image", "video", "text", "audio", "effect", "caption"];
+		const groups = new Set(types.map(laneGroupOfType));
+		expect([...groups].sort((a, b) => String(a).localeCompare(String(b)))).toEqual([
+			"audio",
+			"caption",
+			"effect",
+			"text",
+			"visual",
+		]);
+		expect(LANE_GROUP_ORDER).toEqual(["visual", "audio", "text", "caption", "effect"]);
 	});
 
 	test("a transition has no lane of its own", () => {

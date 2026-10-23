@@ -92,7 +92,6 @@ exports[`every persisted generation loads unchanged > preV2Full loads to its bas
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "quick cut lalu subtle push-in",
         "name": "Hook Cepat: Suapan Pertama",
         "noteIds": [],
@@ -162,7 +161,6 @@ exports[`every persisted generation loads unchanged > preV2Full loads to its bas
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "redacted text 8",
         "name": "Reaksi Ditahan: Senyum Palsu",
         "noteIds": [],
@@ -367,15 +365,6 @@ exports[`every persisted generation loads unchanged > preV2Full loads to its bas
       "track": 4,
     },
   ],
-  "infographicOverlays": [],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -457,7 +446,6 @@ exports[`every persisted generation loads unchanged > preV2Full loads to its bas
       "layout": undefined,
       "logicalSceneId": undefined,
       "motion": null,
-      "motionGraphic": undefined,
       "move": "quick cut lalu subtle push-in",
       "name": "Hook Cepat: Suapan Pertama",
       "noteIds": [],
@@ -517,7 +505,6 @@ exports[`every persisted generation loads unchanged > preV2Full loads to its bas
       "layout": undefined,
       "logicalSceneId": undefined,
       "motion": null,
-      "motionGraphic": undefined,
       "move": "redacted text 8",
       "name": "Reaksi Ditahan: Senyum Palsu",
       "noteIds": [],
@@ -671,7 +658,6 @@ exports[`every persisted generation loads unchanged > preV2Minimal loads to its 
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "Static",
         "name": "scene_1",
         "noteIds": [],
@@ -703,15 +689,6 @@ exports[`every persisted generation loads unchanged > preV2Minimal loads to its 
     },
   ],
   "effects": [],
-  "infographicOverlays": [],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -761,7 +738,6 @@ exports[`every persisted generation loads unchanged > preV2Minimal loads to its 
       "layout": undefined,
       "logicalSceneId": undefined,
       "motion": null,
-      "motionGraphic": undefined,
       "move": "Static",
       "name": "scene_1",
       "noteIds": [],
@@ -825,15 +801,6 @@ exports[`every persisted generation loads unchanged > preV2Snake loads to its ba
   },
   "clips": [],
   "effects": [],
-  "infographicOverlays": [],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [],
   "mediaAssets": [],
   "overlays": [],
@@ -986,87 +953,8 @@ exports[`every persisted generation loads unchanged > v2 loads to its baseline 1
       "track": 1,
       "type": "audio",
     },
-    {
-      "durationSec": 68,
-      "id": "infographic:20000000",
-      "infographic": {
-        "animation": {
-          "in": "slide_up",
-          "main": "build",
-          "out": "fade",
-        },
-        "dur": 68,
-        "id": 20000000,
-        "layout": {
-          "fit": "contain",
-          "widthPct": 86,
-          "xPct": 7,
-          "yPct": 13,
-        },
-        "payload": {
-          "columns": [
-            "Beat",
-            "Point",
-          ],
-          "rows": [
-            [
-              "1",
-              "first",
-            ],
-          ],
-          "title": "A",
-          "type": "table_build",
-        },
-        "start": 0.8,
-        "track": 3,
-      },
-      "startSec": 0.8,
-      "track": 3,
-      "type": "infographic",
-    },
   ],
   "effects": [],
-  "infographicOverlays": [
-    {
-      "animation": {
-        "in": "slide_up",
-        "main": "build",
-        "out": "fade",
-      },
-      "dur": 68,
-      "id": 20000000,
-      "layout": {
-        "fit": "contain",
-        "widthPct": 86,
-        "xPct": 7,
-        "yPct": 13,
-      },
-      "payload": {
-        "columns": [
-          "Beat",
-          "Point",
-        ],
-        "rows": [
-          [
-            "1",
-            "first",
-          ],
-        ],
-        "title": "A",
-        "type": "table_build",
-      },
-      "start": 0.8,
-      "track": 3,
-    },
-  ],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -1345,15 +1233,6 @@ exports[`every persisted generation loads unchanged > v2Flat loads to its baseli
     },
   ],
   "effects": [],
-  "infographicOverlays": [],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -1530,7 +1409,6 @@ exports[`what the editor writes for a loaded document > preV2Full writes to its 
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "quick cut lalu subtle push-in",
         "name": "Hook Cepat: Suapan Pertama",
         "noteIds": [],
@@ -1600,7 +1478,6 @@ exports[`what the editor writes for a loaded document > preV2Full writes to its 
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "redacted text 8",
         "name": "Reaksi Ditahan: Senyum Palsu",
         "noteIds": [],
@@ -1795,14 +1672,6 @@ exports[`what the editor writes for a loaded document > preV2Full writes to its 
       "type": "transition",
     },
   ],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -1903,7 +1772,6 @@ exports[`what the editor writes for a loaded document > preV2Minimal writes to i
         "layout": undefined,
         "logicalSceneId": undefined,
         "motion": null,
-        "motionGraphic": undefined,
         "move": "Static",
         "name": "scene_1",
         "noteIds": [],
@@ -1934,14 +1802,6 @@ exports[`what the editor writes for a loaded document > preV2Minimal writes to i
       "useGlobalReferences": undefined,
     },
   ],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -2002,14 +1862,6 @@ exports[`what the editor writes for a loaded document > preV2Snake writes to its
     "weight": "Black",
   },
   "clips": [],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [],
   "pacingDevices": {
     "chapterPills": false,
@@ -2146,53 +1998,7 @@ exports[`what the editor writes for a loaded document > v2 writes to its baselin
       "track": 1,
       "type": "audio",
     },
-    {
-      "durationSec": 68,
-      "id": "infographic:20000000",
-      "infographic": {
-        "animation": {
-          "in": "slide_up",
-          "main": "build",
-          "out": "fade",
-        },
-        "dur": 68,
-        "id": 20000000,
-        "layout": {
-          "fit": "contain",
-          "widthPct": 86,
-          "xPct": 7,
-          "yPct": 13,
-        },
-        "payload": {
-          "columns": [
-            "Beat",
-            "Point",
-          ],
-          "rows": [
-            [
-              "1",
-              "first",
-            ],
-          ],
-          "title": "A",
-          "type": "table_build",
-        },
-        "start": 0.8,
-        "track": 3,
-      },
-      "startSec": 0.8,
-      "track": 3,
-      "type": "infographic",
-    },
   ],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,
@@ -2388,14 +2194,6 @@ exports[`what the editor writes for a loaded document > v2Flat writes to its bas
       "type": "audio",
     },
   ],
-  "infographicStyle": {
-    "bgColor": "#080a10",
-    "bgOpacity": 0.72,
-    "blur": 10,
-    "borderColor": "#ffffff",
-    "borderOpacity": 0.18,
-    "borderRadius": 8,
-  },
   "markers": [
     {
       "beat": undefined,

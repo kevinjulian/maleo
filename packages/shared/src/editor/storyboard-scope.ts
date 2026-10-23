@@ -6,7 +6,7 @@
  *
  * The scope owns what the editor's commands write: clips, markers, chapters,
  * bookmarks, references, materials, captions, track flags, slides and posts.
- * Everything else — pacing devices, infographic style, presentation, the agent's
+ * Everything else — pacing devices, presentation, the agent's
  * artifacts and unit lifecycle — stays the head's. Media assets are not part of a
  * storyboard: the server holds them as library rows (`p1-media-library`), and the
  * caller passes them in. */

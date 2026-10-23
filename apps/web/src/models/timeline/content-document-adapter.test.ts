@@ -348,7 +348,7 @@ describe("content cross axis", () => {
 			LANE_ACCEPTANCE.filter((entry) => entry.group !== undefined)
 				.map((entry) => entry.group)
 				.sort((a, b) => (a ?? "").localeCompare(b ?? "")),
-		).toEqual(["audio", "caption", "data", "effect", "text", "visual"]);
+		).toEqual(["audio", "caption", "effect", "text", "visual"]);
 	});
 
 	test("the scene row takes scenes and refuses overlay kinds", () => {

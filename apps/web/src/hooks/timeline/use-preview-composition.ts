@@ -12,7 +12,7 @@ import { storyboardSeconds, type Storyboard } from "@maleo/video/composition";
 import { buildRenderStoryboardFromDoc, type CaptionConfig } from "@maleo/shared";
 import { aspectOf } from "@models/core/measures.ts";
 import { decodableAudioUrl } from "@models/timeline/audio-decode-url.ts";
-import type { InfographicStyle, PacingDevices, TrackFlags } from "@maleo/shared";
+import type { PacingDevices, TrackFlags } from "@maleo/shared";
 import { FORMAT_DIMS } from "@models/timeline/timeline-editor-model.ts";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import { useRemotionPlayhead, type RemotionPlayhead } from "./use-remotion-playhead.ts";
@@ -57,7 +57,6 @@ export function usePreviewComposition(args: {
 	trackFlags: TrackFlags;
 	captions: CaptionConfig;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	/** The derived arrays are dependencies only: they mirror the same store, so
 	 *  listing them is what makes a document mutation recompute the memo. */
 	deps: unknown[];
@@ -78,7 +77,6 @@ export function usePreviewComposition(args: {
 		trackFlags,
 		captions,
 		pacingDevices,
-		infographicStyle,
 		deps,
 		onPlayheadReady,
 	} = args;
@@ -95,7 +93,6 @@ export function usePreviewComposition(args: {
 				trackFlags,
 				captions,
 				pacingDevices,
-				infographicStyle,
 				brand:
 					settings.brandAccent || settings.brandFont || settings.brandLogoUrl
 						? {
@@ -132,7 +129,6 @@ export function usePreviewComposition(args: {
 			trackFlags,
 			captions,
 			pacingDevices,
-			infographicStyle,
 			settings.brandAccent,
 			settings.brandFont,
 			settings.brandLogoUrl,

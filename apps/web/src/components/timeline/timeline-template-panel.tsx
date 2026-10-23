@@ -154,7 +154,7 @@ export function TimelineTemplateEditorModal({
 		[draft, width, height, sectionPreview.audio, scenePreview.audio, musicPreview.audio],
 	);
 	const durationFrames = rendererProps.durationInFrames;
-	const previewKey = `${draft.introTextPreset}:${draft.sectionTextPreset}:${draft.sceneEntrySfx}:${draft.staticSceneMovement}:${draft.overrideSceneTransition}:${draft.sceneTransition}:${draft.introLeadInSec}:${draft.introTitleDurationSec}:${draft.useData}:${sectionPreview.audio?.url ?? "no-section-audio"}:${scenePreview.audio?.url ?? "no-scene-audio"}:${musicPreview.audio?.url ?? "no-music"}:${draft.musicPolicy}:${draft.musicVolume}:${width}:${height}`;
+	const previewKey = `${draft.introTextPreset}:${draft.sectionTextPreset}:${draft.sceneEntrySfx}:${draft.staticSceneMovement}:${draft.overrideSceneTransition}:${draft.sceneTransition}:${draft.introLeadInSec}:${draft.introTitleDurationSec}:${sectionPreview.audio?.url ?? "no-section-audio"}:${scenePreview.audio?.url ?? "no-scene-audio"}:${musicPreview.audio?.url ?? "no-music"}:${draft.musicPolicy}:${draft.musicVolume}:${width}:${height}`;
 	/* The ref comes from the hook: it has to observe the player ARRIVING, which a
 	   ref created here cannot report. See use-remotion-playhead.ts. */
 	const { playhead, playing, seek, togglePlay, playerRef } = useRemotionPlayhead(
@@ -388,9 +388,6 @@ export function TimelineTemplateEditorModal({
 							<span>{draft.maxVoiceoverSegmentSec.toFixed(1)}s max VO</span>
 							<span>{draft.sentenceVoiceoverPauseSec.toFixed(2)}s sentence breath</span>
 							<span>{Math.round(draft.introEntrySfxVolume * 100)}% SFX</span>
-							<span>
-								{Ic.chart(ICON.xs)} Data {draft.useData ? "allowed" : "disabled"}
-							</span>
 						</div>
 					</section>
 				}
@@ -587,8 +584,7 @@ export function TimelineTemplatesPanel({
 										<span>
 											<b>{template.name}</b>
 											<small>
-												{template.description ||
-													`${template.introTextPreset || "No title"} · data ${template.useData ? "on" : "off"}`}
+												{template.description || template.introTextPreset || "No title"}
 											</small>
 										</span>
 										{selected && (

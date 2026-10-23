@@ -90,8 +90,6 @@ for (const width of [1440, 320])
 					else await page.keyboard.press("Alt+Digit5");
 				} else await page.goto("/library/elements");
 				await page.evaluate(() => document.fonts.ready);
-				await category("Data");
-				await expectPlayback(preview(surface === "tools" ? "Stat data callout" : "Stat"));
 				await category("Motion");
 				const motion = preview("Countdown Intro");
 				if (surface === "library")

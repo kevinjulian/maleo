@@ -5,8 +5,10 @@ import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { DEFAULT_MEDIA_IMPORT_LIMITS, type ImportedMediaKind } from "@maleo/shared";
+import type { EditScope, EditorCommand } from "@maleo/shared/editor";
 import { itemGeometry, EDITOR_TIMELINE } from "./vui-timeline.ts";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
@@ -61,7 +63,10 @@ test.beforeAll(() => {
 	]);
 });
 
-async function fixture(context: BrowserContext) {
+async function fixture(
+	context: BrowserContext,
+	options: { fail?: (commands: readonly EditorCommand[]) => boolean } = {},
+) {
 	await replayApi(context, HAR);
 	const jobs = new Map<
 		string,
@@ -75,7 +80,7 @@ async function fixture(context: BrowserContext) {
 		}
 	>();
 	const attempts = new Map<string, number>();
-	const writes: unknown[] = [];
+	const writes: EditScope["mediaAssets"][] = [];
 	let cancelled = 0;
 	const result = (id: string) => {
 		const job = jobs.get(id)!;
@@ -131,13 +136,33 @@ async function fixture(context: BrowserContext) {
 				job?.kind === "video" ? "video/mp4" : job?.kind === "audio" ? "audio/mp4" : "image/png",
 		});
 	});
-	await context.route(
-		new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/editor-state(\\?|$)`),
-		async (route) => {
-			if (route.request().method() === "PUT")
-				writes.push(route.request().postDataJSON().editor_state.media_assets);
-			await route.fulfill({ json: { ok: true } });
+	/* The project's media library as the server holds it; each admitted write is recorded. */
+	let storyboard = editorChatProjectDetail.storyboards[0]!.storyboard_json;
+	let library: EditScope["mediaAssets"] = [];
+	await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+		stored: () => storyboard,
+		onSave: (next) => {
+			storyboard = next;
 		},
+		media: () => library,
+		onMedia: (next) => {
+			library = next;
+			writes.push(next);
+		},
+		fail: options.fail,
+	});
+	await context.route(
+		new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
+		(route) =>
+			route.fulfill({
+				json: {
+					...editorChatProjectDetail,
+					mediaAssets: library,
+					storyboards: [
+						{ ...editorChatProjectDetail.storyboards[0]!, storyboard_json: storyboard },
+					],
+				},
+			}),
 	);
 	await context.route(
 		new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/media/import`),
@@ -198,6 +223,12 @@ async function fixture(context: BrowserContext) {
 		attempts,
 		jobs,
 		writes,
+		get library() {
+			return library;
+		},
+		get storyboard() {
+			return storyboard;
+		},
 		get cancelled() {
 			return cancelled;
 		},
@@ -636,13 +667,7 @@ test("unsupported source stays visible, blocks placement and exposes details; br
 			route.fulfill({
 				json: {
 					...editorChatProjectDetail,
-					project: {
-						...editorChatProjectDetail.project,
-						editor_state_json: {
-							...editorChatProjectDetail.project.editor_state_json,
-							media_assets: assets,
-						},
-					},
+					mediaAssets: assets,
 				},
 			}),
 	);
@@ -700,41 +725,15 @@ for (const width of [1440, 320])
 			reducedMotion: "reduce",
 		});
 		try {
-			const proof = await fixture(context);
 			let failures = 0;
-			let saved: typeof editorChatProjectDetail.project.editor_state_json & {
-				media_assets?: unknown[];
-			} = editorChatProjectDetail.project.editor_state_json;
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/editor-state(\\?|$)`),
-				async (route) => {
-					if (route.request().method() !== "PUT") {
-						await route.fallback();
-						return;
-					}
-					const state = route.request().postDataJSON().editor_state;
-					if (
-						state.media_assets.some((asset: { label: string }) => asset.label === "durable.mp4") &&
-						!failures
-					) {
-						failures++;
-						await route.fulfill({ status: 503, json: { error: "Save temporarily unavailable" } });
-						return;
-					}
-					saved = state;
-					await route.fulfill({ json: { ok: true } });
+			const proof = await fixture(context, {
+				/* The first save that admits durable.mp4 fails once. */
+				fail: (commands) => {
+					if (failures || !JSON.stringify(commands).includes('"label":"durable.mp4"')) return false;
+					failures++;
+					return true;
 				},
-			);
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
-				(route) =>
-					route.fulfill({
-						json: {
-							...editorChatProjectDetail,
-							project: { ...editorChatProjectDetail.project, editor_state_json: saved },
-						},
-					}),
-			);
+			});
 			const page = await context.newPage();
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
@@ -753,7 +752,7 @@ for (const width of [1440, 320])
 			expect(proof.attempts.get("durable.mp4")).toBe(1);
 			await page.getByRole("button", { name: "Retry save", exact: true }).click();
 			await expect(page.getByRole("button", { name: "Retry save", exact: true })).toHaveCount(0);
-			const identity = JSON.stringify(saved.media_assets);
+			const identity = JSON.stringify(proof.library);
 			expect(identity).toContain('"originalFilename":"durable.mp4"');
 			await page.reload();
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
@@ -765,7 +764,7 @@ for (const width of [1440, 320])
 					dialog.locator("video").evaluate((element: HTMLVideoElement) => element.readyState),
 				)
 				.toBeGreaterThanOrEqual(2);
-			expect(JSON.stringify(saved.media_assets)).toBe(identity);
+			expect(JSON.stringify(proof.library)).toBe(identity);
 			expect(proof.attempts.get("durable.mp4")).toBe(1);
 		} finally {
 			await context.close();
@@ -853,32 +852,6 @@ for (const width of [1440, 320])
 		});
 		try {
 			const proof = await fixture(context);
-			let saved: typeof editorChatProjectDetail.project.editor_state_json & {
-				media_assets?: Array<{
-					id: string;
-					label: string;
-					metadata?: { originalFilename: string };
-					importedSource?: { revision: string };
-				}>;
-			} = editorChatProjectDetail.project.editor_state_json;
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/editor-state(\\?|$)`),
-				async (route) => {
-					if (route.request().method() === "PUT")
-						saved = route.request().postDataJSON().editor_state;
-					await route.fulfill({ json: { ok: true } });
-				},
-			);
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
-				(route) =>
-					route.fulfill({
-						json: {
-							...editorChatProjectDetail,
-							project: { ...editorChatProjectDetail.project, editor_state_json: saved },
-						},
-					}),
-			);
 			const page = await context.newPage();
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			const assets = page
@@ -900,11 +873,11 @@ for (const width of [1440, 320])
 			await expect
 				.poll(
 					() =>
-						saved.media_assets?.find((asset) => asset.label === "Renamed footage")?.metadata
+						proof.library.find((asset) => asset.label === "Renamed footage")?.metadata
 							?.originalFilename,
 				)
 				.toBe("Zed.mp4");
-			const identity = saved.media_assets!.find((asset) => asset.label === "Renamed footage")!;
+			const identity = proof.library.find((asset) => asset.label === "Renamed footage")!;
 			await dialog.getByRole("button", { name: "Close", exact: true }).click();
 			await page.reload();
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
@@ -912,7 +885,7 @@ for (const width of [1440, 320])
 			await expect(
 				page.getByRole("checkbox", { name: "Select Renamed footage", exact: true }),
 			).toBeVisible();
-			expect(saved.media_assets!.find((asset) => asset.label === "Renamed footage")!.id).toBe(
+			expect(proof.library.find((asset) => asset.label === "Renamed footage")!.id).toBe(
 				identity.id,
 			);
 			expect(proof.attempts.get("Zed.mp4")).toBe(1);
@@ -1109,7 +1082,7 @@ for (const width of [1440, 320])
 					},
 				],
 			};
-			const media_assets = [
+			const mediaAssets = [
 				{ id: "image", kind: "image", label: "Scene source", url, source: "upload" },
 				{
 					id: "video",
@@ -1132,13 +1105,7 @@ for (const width of [1440, 320])
 					route.fulfill({
 						json: {
 							...editorChatProjectDetail,
-							project: {
-								...editorChatProjectDetail.project,
-								editor_state_json: {
-									...editorChatProjectDetail.project.editor_state_json,
-									media_assets,
-								},
-							},
+							mediaAssets,
 							storyboards: [{ ...first, storyboard_json: doc }],
 						},
 					}),
@@ -1186,26 +1153,7 @@ for (const width of [1440, 320])
 			reducedMotion: "reduce",
 		});
 		try {
-			await fixture(context);
-			let saved = editorChatProjectDetail.project.editor_state_json;
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/editor-state(\\?|$)`),
-				async (route) => {
-					if (route.request().method() === "PUT")
-						saved = route.request().postDataJSON().editor_state;
-					await route.fulfill({ json: { ok: true } });
-				},
-			);
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
-				(route) =>
-					route.fulfill({
-						json: {
-							...editorChatProjectDetail,
-							project: { ...editorChatProjectDetail.project, editor_state_json: saved },
-						},
-					}),
-			);
+			const proof = await fixture(context);
 			const page = await context.newPage();
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			const assets = page
@@ -1217,23 +1165,7 @@ for (const width of [1440, 320])
 			await page
 				.getByLabel("Choose media files", { exact: true })
 				.setInputFiles({ name: "original.mp4", mimeType: "video/mp4", buffer: video });
-			const admitted = () =>
-				(
-					saved as {
-						media_assets?: Array<{
-							id: string;
-							label: string;
-							url: string;
-							metadata: { originalFilename: string };
-							importedSource: {
-								revision: string;
-								history?: Array<{
-									url: string;
-								}>;
-							};
-						}>;
-					}
-				).media_assets?.find((asset) => asset.label === "original.mp4");
+			const admitted = () => proof.library.find((asset) => asset.label === "original.mp4");
 			await expect.poll(() => admitted()?.url).toContain("/api/media/");
 			const original = structuredClone(admitted()!);
 			await page.getByRole("button", { name: "Media details: original.mp4", exact: true }).click();
@@ -1252,10 +1184,10 @@ for (const width of [1440, 320])
 			await expect(
 				page.getByRole("button", { name: "Media details: original.mp4", exact: true }),
 			).toBeFocused();
-			await expect.poll(() => admitted()?.metadata.originalFilename).toBe("replacement.mp4");
+			await expect.poll(() => admitted()?.metadata?.originalFilename).toBe("replacement.mp4");
 			expect(admitted()!.id).toBe(original.id);
 			expect(admitted()!.url).not.toBe(original.url);
-			expect(admitted()!.importedSource.history).toEqual([
+			expect(admitted()!.importedSource?.history).toEqual([
 				{ url: original.url, metadata: original.metadata, source: original.importedSource },
 			]);
 			const repaired = structuredClone(admitted()!);
@@ -1425,14 +1357,27 @@ for (const width of [1440, 320])
 					video?: { mediaStartSec?: number };
 				}>;
 			}> = [];
-			await context.route(
-				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}/storyboards(\\?|$)`),
-				async (route) => {
-					if (route.request().method() === "POST")
-						writes.push(route.request().postDataJSON().storyboard_json);
-					await route.fallback();
+			const trimSource = {
+				id: "trim-source",
+				label: "Trim source",
+				kind: "video",
+				source: "upload",
+				url,
+				dur: 8,
+				metadata: {
+					kind: "video",
+					byteSize: source.length,
+					originalFilename: "source.mp4",
+					duration: 8,
 				},
-			);
+			};
+			await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+				stored: () => writes.at(-1) ?? doc,
+				onSave: (next) => {
+					writes.push(next);
+				},
+				media: () => [trimSource] as EditScope["mediaAssets"],
+			});
 			let locked = false;
 			await context.route(
 				new RegExp(`/api/operations/projects/${EDITOR_CHAT_PROJECT_ID}(\\?|$)`),
@@ -1440,28 +1385,7 @@ for (const width of [1440, 320])
 					route.fulfill({
 						json: {
 							...editorChatProjectDetail,
-							project: {
-								...editorChatProjectDetail.project,
-								editor_state_json: {
-									...editorChatProjectDetail.project.editor_state_json,
-									media_assets: [
-										{
-											id: "trim-source",
-											label: "Trim source",
-											kind: "video",
-											source: "upload",
-											url,
-											dur: 8,
-											metadata: {
-												kind: "video",
-												byteSize: source.length,
-												originalFilename: "source.mp4",
-												duration: 8,
-											},
-										},
-									],
-								},
-							},
+							mediaAssets: [trimSource],
 							storyboards: [
 								{
 									...first,
@@ -1533,7 +1457,7 @@ for (const width of [1440, 320])
 			const beforeStudio = JSON.stringify(writes.at(-1)?.clips);
 			await page.keyboard.press("q");
 			await page.keyboard.press("w");
-			await page.waitForTimeout(500); // Allow parent autosave debounce to expose any leaked shortcut.
+			await page.waitForTimeout(1500); // Outlast the 1200ms submit debounce so a leaked shortcut would save.
 			expect(JSON.stringify(writes.at(-1)?.clips)).toBe(beforeStudio);
 			if (width === 320) await page.locator(".tl2-studio .tl2-editor-heading-back").click();
 			else
@@ -1571,11 +1495,15 @@ for (const width of [1440, 320])
 				},
 			});
 			await expect(page.locator('[data-transport="timecode"]').first()).toContainText("00:03:00");
-			const beforeLocked = JSON.stringify(writes.at(-1)?.clips);
+			/* With nothing selected, Q and W trim the scene under the playhead; only the
+			 * locked clip itself must not change. */
+			const lockedClip = () =>
+				JSON.stringify(writes.at(-1)?.clips.find((clip) => clip.id === "video:98"));
+			const beforeLocked = lockedClip();
 			await page.keyboard.press("q");
 			await page.keyboard.press("w");
-			await page.waitForTimeout(500); // Locked cuts must not reach persistence.
-			expect(JSON.stringify(writes.at(-1)?.clips)).toBe(beforeLocked);
+			await page.waitForTimeout(1500); // Outlast the submit debounce: locked cuts must not reach persistence.
+			expect(lockedClip()).toBe(beforeLocked);
 		} finally {
 			await context.close().catch(() => {});
 		}

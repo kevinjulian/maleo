@@ -48,13 +48,6 @@ export function emitStoryboardTable(job: AgentJob): void {
 			content: `Text: ${t.content}`,
 			kind: "text",
 		});
-	for (const g of job.infographicOverlays)
-		rows.push({
-			startSec: g.startSec,
-			endSec: g.startSec + g.durationSec,
-			content: `Infographic: ${g.payload.title}`,
-			kind: "effect",
-		});
 	// Real timeline clips (cross-beat voiceover/music, b-roll) — table reads clips, not
 	// just scene beats, so a voiceover spanning beats shows its true span.
 	for (const a of job.audioOverlays)

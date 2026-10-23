@@ -12,7 +12,6 @@
  * it from the ToolDef) rather than being looked up by name. */
 import type { AgentJob } from "./model.ts";
 import type { ToolEffect } from "./types.ts";
-import { motionGraphicSchema, type MotionGraphicDecision } from "@maleo/shared";
 import { recordAgentToolEvent } from "../../../lib/agent-trace.ts";
 import { classifyAgentError } from "@maleo/shared/agent-errors";
 
@@ -63,10 +62,4 @@ export async function emitToolCall(
 	});
 	await recordAgentToolEvent(job, { toolCallId, tool, args, note, ok, startedAt });
 	return { note, ok, thumbs, suspended };
-}
-
-export function parseMotionGraphic(value: unknown): MotionGraphicDecision | undefined {
-	if (!value || typeof value !== "object") return undefined;
-	const parsed = motionGraphicSchema.safeParse(value);
-	return parsed.success ? parsed.data : undefined;
 }

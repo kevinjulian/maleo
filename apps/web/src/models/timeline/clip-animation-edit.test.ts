@@ -139,7 +139,7 @@ test("every key builder constructs clip.setKeys at the call site", () => {
 	);
 });
 
-test("text and infographic overlays key through the same builders", () => {
+test("text overlays key through the same builders", () => {
 	const withOverlays = toTimelineDoc(
 		[],
 		[],
@@ -155,20 +155,7 @@ test("text and infographic overlays key through the same builders", () => {
 		],
 	);
 	const textScope: EditScope = {
-		doc: {
-			...withOverlays,
-			clips: [
-				...withOverlays.clips,
-				{
-					id: "infographic:6",
-					type: "infographic",
-					startSec: 0,
-					durationSec: 2,
-					track: 3,
-					infographic: { id: 6, start: 0, dur: 2 } as never,
-				},
-			],
-		},
+		doc: withOverlays,
 		slides: [],
 		posts: [],
 		mediaAssets: [],
@@ -180,12 +167,6 @@ test("text and infographic overlays key through the same builders", () => {
 	]);
 	expect(clipAnimationInfo(sized.doc, text)?.properties).toContain("letterSpacing");
 	expect(() => editClipKey(textScope, text, "volume", 0, 1)).toThrow("no source volume");
-	const chart: ClipAnimationTarget = { source: "infographic", id: 6 };
-	const faded = applyCommand(textScope, editClipKey(textScope, chart, "opacity", 1, 0.4));
-	expect(clipAnimationInfo(faded.doc, chart)?.animation?.tracks.opacity).toEqual([
-		{ t: 1, v: 0.4, easing: "linear" },
-	]);
-	expect(() => editClipKey(textScope, chart, "fontSize", 0, 40)).toThrow("not valid");
 });
 
 test("row and canvas edits near an existing key update it instead of adding one", () => {

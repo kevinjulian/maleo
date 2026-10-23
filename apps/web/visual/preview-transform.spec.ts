@@ -194,7 +194,7 @@ for (const viewport of [
 	});
 }
 
-test("infographic transform controls change rendered rotation and opacity", async ({
+test("text clip transform controls change rendered rotation and opacity", async ({
 	page,
 	context,
 }, testInfo) => {
@@ -202,7 +202,7 @@ test("infographic transform controls change rendered rotation and opacity", asyn
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto(`/content/${EDITOR_CHAT_FIXTURE_PROJECT_ID}`);
 	await page.getByRole("tab", { name: "Timeline", exact: true }).click();
-	await page.locator('[data-clipid="infographic:1"]').click();
+	await page.locator('[data-clipid="text:1"]').click();
 	const inspector = page.locator(".tl2-clippanel");
 	await inspector.getByRole("button", { name: "Transform", exact: true }).click();
 	await inspector
@@ -231,7 +231,7 @@ test("infographic transform controls change rendered rotation and opacity", asyn
 		})
 		.toBe(true);
 	await page.getByRole("button", { name: "Pause", exact: true }).click();
-	await page.screenshot({ path: testInfo.outputPath("infographic-transform.png") });
+	await page.screenshot({ path: testInfo.outputPath("text-transform.png") });
 });
 
 for (const viewport of [
@@ -267,10 +267,10 @@ for (const viewport of [
 			const page = await context.newPage();
 			await page.goto(`/content/${EDITOR_CHAT_FIXTURE_PROJECT_ID}`);
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
-			const clip = page.locator('[data-clipid="infographic:1"]');
+			const clip = page.locator('[data-clipid="text:1"]');
 			await expect(clip).toHaveAttribute("aria-disabled", "true");
 			/* A landscape phone leaves the timeline ~120px; with lane heights following
-			 * lane groups the data lane sits below that, so bring it into view first. */
+			 * lane groups the text lane sits below that, so bring it into view first. */
 			await clip.scrollIntoViewIfNeeded();
 			const rect = (await clip.boundingBox())!;
 			const session = await context.newCDPSession(page);

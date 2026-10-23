@@ -15,7 +15,6 @@ import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import type {
 	AudioOverlay,
 	EffectClip,
-	InfographicOverlay,
 	Scene,
 	SceneDurationMode,
 	TextOverlay,
@@ -30,11 +29,10 @@ export type ClipboardItem =
 	| { source: "video"; data: VideoOverlay }
 	| { source: "text"; data: TextOverlay }
 	| { source: "audio"; data: AudioOverlay }
-	| { source: "infographic"; data: InfographicOverlay }
 	| { source: "effect"; data: EffectClip }
 	| { source: "caption"; data: Clip };
 
-type ClipSource = "video" | "text" | "audio" | "effect" | "scene" | "infographic";
+type ClipSource = "video" | "text" | "audio" | "effect" | "scene";
 
 interface ClipOpsOptions {
 	openAnimationPair: (fromClipId: string, toClipId: string) => void;
@@ -47,7 +45,6 @@ interface ClipOpsOptions {
 	videoOverlays: VideoOverlay[];
 	overlays: TextOverlay[];
 	audioOverlays: AudioOverlay[];
-	infographicOverlays: InfographicOverlay[];
 	effects: EffectClip[];
 	selectedFreeIds: Set<string>;
 	selectedFreeId: string | null;
@@ -56,7 +53,6 @@ interface ClipOpsOptions {
 	setVideoOverlays: Dispatch<SetStateAction<VideoOverlay[]>>;
 	setOverlays: Dispatch<SetStateAction<TextOverlay[]>>;
 	setAudioOverlays: Dispatch<SetStateAction<AudioOverlay[]>>;
-	setInfographicOverlays: Dispatch<SetStateAction<InfographicOverlay[]>>;
 	setEffects: Dispatch<SetStateAction<EffectClip[]>>;
 	setScenes: Dispatch<SetStateAction<Scene[]>>;
 	setPreviewSceneId: Dispatch<SetStateAction<number | undefined>>;
@@ -80,11 +76,7 @@ interface ClipOpsOptions {
 		refId: number,
 		patch: { start?: number; track?: number; dur?: number; durMode?: SceneDurationMode },
 	) => void;
-	selectFreeClip: (
-		source: "video" | "text" | "audio" | "infographic",
-		refId: number,
-		start: number,
-	) => void;
+	selectFreeClip: (source: "video" | "text" | "audio", refId: number, start: number) => void;
 	sceneAt: (t: number) => Scene | undefined;
 	sceneStart: (id: number) => number;
 	trackLocked: (row?: number) => boolean;
@@ -115,7 +107,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 		videoOverlays,
 		overlays,
 		audioOverlays,
-		infographicOverlays,
 		effects,
 		selectedFreeIds,
 		selectedFreeId,
@@ -123,7 +114,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 		setVideoOverlays,
 		setOverlays,
 		setAudioOverlays,
-		setInfographicOverlays,
 		setEffects,
 		setScenes,
 		setPreviewSceneId,
@@ -176,10 +166,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 			const d = audioOverlays.find((x) => x.id === refId);
 			return d ? { source: "audio", data: d } : null;
 		}
-		if (s === "infographic") {
-			const d = infographicOverlays.find((x) => x.id === refId);
-			return d ? { source: "infographic", data: d } : null;
-		}
 		if (s === "effect") {
 			const d = effects.find((x) => x.id === refId);
 			return d ? { source: "effect", data: d } : null;
@@ -204,7 +190,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 		const nv: VideoOverlay[] = [],
 			nt: TextOverlay[] = [],
 			na: AudioOverlay[] = [],
-			ng: InfographicOverlay[] = [],
 			nf: EffectClip[] = [];
 		const ids: string[] = [];
 		items.forEach((it, i) => {
@@ -244,9 +229,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 			} else if (it.source === "audio") {
 				na.push({ ...it.data, id, start, ...row });
 				ids.push(clipId("audio", id));
-			} else if (it.source === "infographic") {
-				ng.push({ ...it.data, id, start, ...row });
-				ids.push(clipId("infographic", id));
 			} else {
 				nf.push({ ...it.data, id, start, ...row });
 				ids.push(`effect:${id}`);
@@ -255,7 +237,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 		if (nv.length) setVideoOverlays((v) => [...v, ...nv]);
 		if (nt.length) setOverlays((o) => [...o, ...nt]);
 		if (na.length) setAudioOverlays((a) => [...a, ...na]);
-		if (ng.length) setInfographicOverlays((g) => [...g, ...ng]);
 		if (nf.length) setEffects((e) => [...e, ...nf]);
 		setSelectedVideoOvId(null);
 		setSelectedOverlayId(null);
@@ -339,16 +320,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 						setOverlays((o) => [...o, { ...d, id: nid, start: rightStart, dur: rightDur }]);
 						setSelectedOverlayId(nid);
 						setSelectedFreeIds(new Set([clipId("text", nid)]));
-					}
-				} else if (c.source === "infographic") {
-					const d = infographicOverlays.find((g) => g.id === c.refId);
-					if (d) {
-						setFreeClipPos("infographic", d.id, { dur: leftDur });
-						setInfographicOverlays((g) => [
-							...g,
-							{ ...d, id: nid, start: rightStart, dur: rightDur },
-						]);
-						setSelectedFreeIds(new Set([clipId("infographic", nid)]));
 					}
 				} else if (c.source === "effect") {
 					const d = effects.find((x) => x.id === c.refId);
@@ -476,11 +447,6 @@ export function useClipOps(opts: ClipOpsOptions): ClipOps {
 		setAudioOverlays((arr) =>
 			arr
 				.filter((o) => !gone.has(clipId("audio", o.id)))
-				.map((o) => ({ ...o, start: Math.max(0, o.start - shiftFor(o.track ?? 0, o.start)) })),
-		);
-		setInfographicOverlays((arr) =>
-			arr
-				.filter((o) => !gone.has(clipId("infographic", o.id)))
 				.map((o) => ({ ...o, start: Math.max(0, o.start - shiftFor(o.track ?? 0, o.start)) })),
 		);
 		setEffects((arr) =>

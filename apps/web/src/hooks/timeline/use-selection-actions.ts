@@ -40,10 +40,8 @@ export interface SelectionActionsInput {
 	overlays: Derived["textOverlays"];
 	audioOverlays: Derived["audioOverlays"];
 	videoOverlays: Derived["videoOverlays"];
-	infographicOverlays: Derived["infographicOverlays"];
 	effects: Derived["effects"];
 	setScenes: Dispatch<SetStateAction<Scene[]>>;
-	setInfographicOverlays: Dispatch<SetStateAction<Derived["infographicOverlays"]>>;
 	setSelection: Dispatch<SetStateAction<Selection>>;
 	setPreviewSceneId: (id: number | undefined) => void;
 	setInspectorOpen: (open: boolean) => void;
@@ -69,7 +67,7 @@ export interface SelectionActions {
 		start: number,
 	) => void;
 	toggleFreeClip: (
-		source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+		source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 		refId: number | string,
 	) => void;
 	clearSelection: () => void;
@@ -87,10 +85,8 @@ export function useSelectionActions({
 	overlays,
 	audioOverlays,
 	videoOverlays,
-	infographicOverlays,
 	effects,
 	setScenes,
-	setInfographicOverlays,
 	setSelection,
 	setPreviewSceneId,
 	setInspectorOpen,
@@ -132,12 +128,8 @@ export function useSelectionActions({
 			return;
 		}
 		if (typeof refId !== "number") throw new Error("Clip identity must be numeric");
-		/* Every family this can be handed is looked up in its own collection.
-		 * `effect` used to be missing from the signature entirely, and the
-		 * timeline's click handler asserted the narrowing away — so clicking an
-		 * effect clip fell through to the final `infographicOverlays` arm and took
-		 * its duration from whichever infographic happened to share the refId,
-		 * which decided the seek below. */
+		/* Every family this can be handed is looked up in its own collection, so
+		 * the duration that decides the seek below is the clicked clip's own. */
 		const selected =
 			source === "video"
 				? videoOverlays.find((v) => v.id === refId)
@@ -145,9 +137,7 @@ export function useSelectionActions({
 					? overlays.find((o) => o.id === refId)
 					: source === "audio"
 						? audioOverlays.find((a) => a.id === refId)
-						: source === "infographic"
-							? infographicOverlays.find((g) => g.id === refId)
-							: effects.find((e) => e.id === refId);
+						: effects.find((e) => e.id === refId);
 		const dur = selected?.dur ?? 0;
 		setSelection(selectClipIn(source, refId));
 		const at = playhead.get();
@@ -155,7 +145,7 @@ export function useSelectionActions({
 	};
 	// Shift-click: toggle a free clip in the multi-select set + make it primary.
 	const toggleFreeClip = (
-		source: "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption",
+		source: "video" | "text" | "audio" | "effect" | "scene" | "caption",
 		refId: number | string,
 	): void => {
 		if (source === "caption") {
@@ -190,8 +180,6 @@ export function useSelectionActions({
 		else if (p.source === "text") removeOverlay(p.refId);
 		else if (p.source === "audio") removeAudio(p.refId);
 		else if (p.source === "effect") removeEffect(p.refId);
-		else if (p.source === "infographic")
-			setInfographicOverlays((items) => items.filter((x) => x.id !== p.refId));
 	};
 	const openSceneEditor = (sceneId: number): void => {
 		setSelection(openSceneEditorIn(sceneId));

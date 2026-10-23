@@ -317,14 +317,14 @@ test.describe("lane heights follow lane groups", () => {
 			return { lanes: byKey, aligned };
 		});
 
-	test("scene > visual > audio > data, with every gutter row beside its lane, in both densities", async ({
+	test("scene > visual > audio > text, with every gutter row beside its lane, in both densities", async ({
 		page,
 	}) => {
 		for (const pass of ["comfortable", "compact"]) {
 			const { lanes, aligned } = await heights(page);
 			expect(lanes.scene, pass).toBeGreaterThan(lanes.visual!);
 			expect(lanes.visual, pass).toBeGreaterThan(lanes.audio!);
-			expect(lanes.audio, pass).toBeGreaterThan(lanes.data!);
+			expect(lanes.audio, pass).toBeGreaterThan(lanes.text!);
 			expect(lanes.audio! / lanes.visual!, pass).toBeGreaterThan(0.6);
 			expect(aligned, pass).toBe(true);
 			if (pass === "comfortable")
@@ -336,7 +336,7 @@ test.describe("lane heights follow lane groups", () => {
 	test("a clip dragged across lanes of different heights lands on the lane under the pointer", async ({
 		page,
 	}) => {
-		const clip = page.locator(".tl2-lanes [data-clipid='infographic:1']");
+		const clip = page.locator(".tl2-lanes [data-clipid='text:1']");
 		const from = (await clip.boundingBox())!;
 		const target = (await page.locator(".tl2-lanes [data-vui-row='lane-3']").boundingBox())!;
 		await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
@@ -352,7 +352,7 @@ test.describe("lane heights follow lane groups", () => {
 		}
 		await page.mouse.up();
 		await expect(
-			page.locator(".tl2-lanes [data-vui-row='lane-3'] [data-clipid='infographic:1']"),
+			page.locator(".tl2-lanes [data-vui-row='lane-3'] [data-clipid='text:1']"),
 		).toHaveCount(1);
 	});
 });

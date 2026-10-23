@@ -24,14 +24,14 @@ export interface CritiqueSceneInput {
 }
 
 /** VO sentences that assert a number/price/superlative — claims that convert
- *  better when backed by an on-screen proof overlay. */
+ *  better when backed by on-screen text. */
 const CLAIM_PATTERN =
 	/(\d+(?:[.,]\d+)?\s*(?:%|jt|rb|k\b|jam|hari|hours?|days?|stars?|reviews?|sold))|(\$|Rp\s?\d)|(best.?sell|top.?rated|no\.?\s?1|#1|terlaris)/i;
 
 export function critiqueStoryboard(
 	pacing: PacingInputs,
 	scenes: CritiqueSceneInput[],
-	infographicSpans: Array<{ start: number; dur: number }>,
+	textSpans: Array<{ start: number; dur: number }>,
 ): CritiqueFinding[] {
 	const findings: CritiqueFinding[] = lintPacing(pacing).map((f) => ({
 		startSec: f.startSec,
@@ -39,19 +39,17 @@ export function critiqueStoryboard(
 		severity: f.severity,
 		message: f.message,
 	}));
-	// Claims without proof: numeric/superlative VO with no data callout on screen
+	// Claims without proof: numeric/superlative VO with no text overlay on screen
 	// anywhere in the scene window.
 	for (const s of scenes) {
 		if (!s.vo || !CLAIM_PATTERN.test(s.vo)) continue;
-		const covered = infographicSpans.some(
-			(g) => g.start < s.start + s.dur && g.start + g.dur > s.start,
-		);
+		const covered = textSpans.some((g) => g.start < s.start + s.dur && g.start + g.dur > s.start);
 		if (!covered) {
 			findings.push({
 				startSec: s.start,
 				endSec: s.start + s.dur,
 				severity: "warn",
-				message: `${s.name || "Scene"} makes a claim in VO ("${s.vo.slice(0, 60)}${s.vo.length > 60 ? "…" : ""}") with no on-screen proof — add a stat/price/social-proof callout.`,
+				message: `${s.name || "Scene"} makes a claim in VO ("${s.vo.slice(0, 60)}${s.vo.length > 60 ? "…" : ""}") with no on-screen proof — add a text overlay that shows the number.`,
 			});
 		}
 	}

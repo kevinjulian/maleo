@@ -37,7 +37,6 @@ function job(): AgentJob {
 		slides: [],
 		posts: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

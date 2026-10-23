@@ -2,7 +2,7 @@ import { afterEach, describe, expect, test } from "bun:test";
 import { buildToolContext } from "../tool-executor.ts";
 import { setSceneFrameGeneratorForTests } from "../visual-gen.ts";
 import { addText } from "./overlay/add-text.ts";
-import { addInfographic } from "./overlay/add-infographic.ts";
+import { toolsForContentType } from "../registry.ts";
 import { addAudio } from "./audio/add-audio.ts";
 import { addOverlay } from "./visual/add-overlay.ts";
 import type { AgentJob } from "../model.ts";
@@ -28,7 +28,6 @@ const job = (): AgentJob => ({
 	],
 	textOverlays: [{ id: 2, content: "Hi", startSec: 0, durationSec: 2, track: 0 }],
 	videoOverlays: [],
-	infographicOverlays: [],
 	audioOverlays: [],
 	characters: [],
 	artifacts: [],
@@ -67,21 +66,10 @@ describe("placements are clip inserts", () => {
 		expect(j.textOverlays.map((t) => t.content)).toEqual(["Hi", "Chapter 2"]);
 	});
 
-	test("add_infographic", async () => {
-		const j = job();
-		await call(addInfographic, j, {
-			type: "stat_reveal",
-			title: "Growth",
-			value: "40",
-			suffix: "%",
-			startSec: 0,
-			durationSec: 3,
-		});
-		expect(inserted(j)![0]).toMatchObject({
-			type: "infographic",
-			infographic: { payload: { type: "stat_reveal", title: "Growth" } },
-		});
-		expect(j.infographicOverlays).toHaveLength(1);
+	test("the video tool list has no add_infographic", () => {
+		const names = toolsForContentType("video").map((tool) => tool.name);
+		expect(names).toContain("add_text");
+		expect(names).not.toContain("add_infographic");
 	});
 
 	test("add_audio with a url", async () => {

@@ -4,7 +4,6 @@ import { parseElementSources, parseRenderOverrides } from "./element-sources.ts"
 import { AXIS_ELEMENT_PATHS, SETTINGS_ELEMENT_PATHS } from "./element-paths.ts";
 type GlobalSettingsLike = Record<string, unknown>;
 type PacingLike = Record<string, unknown>;
-type InfographicLike = Record<string, unknown>;
 import {
 	clearRenderOverride,
 	foldPresentationOverSettings,
@@ -154,27 +153,29 @@ describe("render overrides are per-field and never touch the shared template", (
 	});
 
 	test("a falsy override is stored, not skipped", () => {
-		expect(writeRenderOverride("useData", false, {}).overrides).toEqual({ useData: false });
+		expect(writeRenderOverride("staticSceneMovement", false, {}).overrides).toEqual({
+			staticSceneMovement: false,
+		});
 	});
 
 	test("clearing an override drops just that field", () => {
 		const out = clearRenderOverride(
 			"maxVisualBeatSec",
-			parseRenderOverrides({ maxVisualBeatSec: 6, useData: false }),
+			parseRenderOverrides({ maxVisualBeatSec: 6, staticSceneMovement: false }),
 		);
 
-		expect(out.overrides).toEqual({ useData: false });
+		expect(out.overrides).toEqual({ staticSceneMovement: false });
 	});
 
 	test("clearing an absent override changes nothing", () => {
-		const overrides = parseRenderOverrides({ useData: false });
+		const overrides = parseRenderOverrides({ staticSceneMovement: false });
 		expect(clearRenderOverride("nope", overrides).overrides).toEqual(overrides);
 	});
 
 	test("writing never mutates the map it was given", () => {
-		const overrides = parseRenderOverrides({ useData: false });
+		const overrides = parseRenderOverrides({ staticSceneMovement: false });
 		writeRenderOverride("maxVisualBeatSec", 6, overrides);
-		expect(overrides).toEqual({ useData: false });
+		expect(overrides).toEqual({ staticSceneMovement: false });
 	});
 });
 
@@ -238,13 +239,12 @@ describe("resetting a section clears the claim and restores defaults", () => {
 			progressBar: false,
 			variant: "pill",
 		} as unknown as PacingLike,
-		infographicStyle: { bgColor: "#080a10" } as unknown as InfographicLike,
 	};
 	const SETTINGS_PATHS = {
 		aspectRatio: "settings.aspectRatio",
 		voice: "settings.voice",
 	} as unknown as Readonly<Record<string, string>>;
-	const AXIS_PATHS = { pacingDevices: "pacingDevices", infographicStyle: "infographicStyle" };
+	const AXIS_PATHS = { pacingDevices: "pacingDevices" };
 
 	const run = (paths: string[], over: Partial<Parameters<typeof resetSectionToDefaults>[0]> = {}) =>
 		resetSectionToDefaults({
@@ -255,7 +255,6 @@ describe("resetting a section clears the claim and restores defaults", () => {
 				progressBar: true,
 				variant: "minimal",
 			} as unknown as PacingLike,
-			infographicStyle: { bgColor: "#123456" } as unknown as InfographicLike,
 			sources: parseElementSources({
 				"settings.aspectRatio": { layer: "operator", defaulterId: null },
 				"settings.voice": { layer: "operator", defaulterId: null },
@@ -370,9 +369,6 @@ describe("resetting a section clears the claim and restores defaults", () => {
 				true,
 			);
 			expect(ask("pacingDevices", { id: "cp_1", pacingDevices: {} })).toBe(false);
-			expect(ask("infographicStyle", { id: "cp_1", infographicStyle: { bgColor: "#fff" } })).toBe(
-				true,
-			);
 		});
 
 		test("no supplier at all supplies nothing", () => {
@@ -399,7 +395,6 @@ describe("resetting a section clears the claim and restores defaults", () => {
 					settingsPaths: SETTINGS_ELEMENT_PATHS,
 					axisPaths: {
 						pacingDevices: AXIS_ELEMENT_PATHS.pacingDevices,
-						infographicStyle: AXIS_ELEMENT_PATHS.infographicStyle,
 					},
 					supplier,
 				});
@@ -410,7 +405,6 @@ describe("resetting a section clears the claim and restores defaults", () => {
 					id: preset.slug,
 					settings: preset.bundle.settings,
 					pacingDevices: preset.bundle.pacingDevices,
-					infographicStyle: preset.bundle.infographicStyle,
 				} as never;
 				expect(askReal(SETTINGS_ELEMENT_PATHS.aspectRatio, supplier)).toBe(true);
 				expect(askReal(SETTINGS_ELEMENT_PATHS.language, supplier)).toBe(true);
@@ -428,14 +422,8 @@ describe("resetting a section clears the claim and restores defaults", () => {
 				id: "cp_1",
 				settings: { aspectRatio: "1:1" },
 				pacingDevices: {},
-				infographicStyle: { bgColor: "#fff" },
 			};
-			for (const path of [
-				"settings.aspectRatio",
-				"settings.voice",
-				"pacingDevices",
-				"infographicStyle",
-			]) {
+			for (const path of ["settings.aspectRatio", "settings.voice", "pacingDevices"]) {
 				const out = run([path], { supplier });
 				const recordedAsSupplied = out.sources[path]?.layer === "project-preset";
 				expect(ask(path, supplier)).toBe(recordedAsSupplied);
@@ -514,7 +502,6 @@ describe("handing a section back to an active preset", () => {
 			progressBar: false,
 			variant: "pill",
 		} as unknown as PacingLike,
-		infographicStyle: { bgColor: "#080a10" } as unknown as InfographicLike,
 	};
 	const PATHS = {
 		aspectRatio: "settings.aspectRatio",
@@ -530,14 +517,13 @@ describe("handing a section back to an active preset", () => {
 				progressBar: true,
 				variant: "minimal",
 			} as unknown as PacingLike,
-			infographicStyle: { bgColor: "#ffffff" } as unknown as InfographicLike,
 			sources: parseElementSources({
 				"settings.aspectRatio": { layer: "operator", defaulterId: null },
 				"settings.voice": { layer: "operator", defaulterId: null },
 				pacingDevices: { layer: "operator", defaulterId: null },
 			}),
 			settingsPaths: PATHS as never,
-			axisPaths: { pacingDevices: "pacingDevices", infographicStyle: "infographicStyle" },
+			axisPaths: { pacingDevices: "pacingDevices" },
 			defaults: DEFAULTS as never,
 			supplier,
 		} as never);

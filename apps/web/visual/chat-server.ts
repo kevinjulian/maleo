@@ -15,7 +15,6 @@ const EMPTY_JOB = {
 	slides: [],
 	posts: [],
 	textOverlays: [],
-	infographicOverlays: [],
 	videoOverlays: [],
 	audioOverlays: [],
 	characters: [],

@@ -1,11 +1,9 @@
 /* Maleo — timeline drag-and-drop payload parsers. Pure readers over a
- * DragEvent's dataTransfer: media assets, data callouts, and clip-template
- * payloads, plus a cheap type-probe. No component state, so they live apart
+ * DragEvent's dataTransfer: media assets and clip-template payloads, plus a cheap type-probe. No component state, so they live apart
  * from the editor. */
 import type { DragEvent } from "react";
 import {
 	CLIP_TEMPLATE_DND_MIME,
-	DATA_CALLOUT_DND_MIME,
 	MEDIA_DND_AUDIO_KIND,
 	MEDIA_DND_DUR,
 	MEDIA_DND_ID,
@@ -17,8 +15,7 @@ import {
 	MEDIA_DND_THUMB,
 	type MediaAsset,
 } from "./editor-media.ts";
-import { defaultInfographicPayload } from "@models/presets/generation-defaults.ts";
-import type { InfographicPayload, TextPreset, TemplateParams } from "@maleo/shared";
+import type { TextPreset, TemplateParams } from "@maleo/shared";
 import type { CompositionConfig } from "@models/clip-templates/composition-config.ts";
 import { isAudioOverlayKind, normalizeAudioOrigin } from "@maleo/shared/audio-overlays";
 import type { AudioOrigin, AudioOverlayKind } from "@maleo/shared/audio-overlays";
@@ -74,39 +71,12 @@ export function readMediaDrop(e: DragEvent): MediaDropInfo | null {
 	};
 }
 
-const dataCalloutTypes: InfographicPayload["type"][] = [
-	"stat_reveal",
-	"bar_chart",
-	"line_chart",
-	"area_chart",
-	"pie_chart",
-	"donut_chart",
-	"progress_bars",
-	"circular_progress",
-	"table_build",
-	"price_tag",
-	"social_proof",
-	"urgency",
-];
-export function readDataCalloutDrop(e: DragEvent): InfographicPayload | null {
-	const raw = e.dataTransfer.getData(DATA_CALLOUT_DND_MIME);
-	if (!raw) return null;
-	try {
-		const parsed = JSON.parse(raw) as Partial<InfographicPayload>;
-		const type = oneOf(parsed.type, dataCalloutTypes);
-		return type ? defaultInfographicPayload(type) : null;
-	} catch {
-		return null;
-	}
-}
-
 // Clip Templates panel drag payload: a text preset (optionally with custom
-// params), a fully-formed infographic payload, or a saved layered composition —
+// params) or a saved layered composition —
 // tagged by `kind` so the drop handler routes it to the right overlay system
 // without re-deriving the template.
 export type TemplateDropInfo =
 	| { kind: "text"; preset: TextPreset; params?: TemplateParams }
-	| { kind: "data"; payload: InfographicPayload }
 	| { kind: "composition"; config: CompositionConfig; label?: string };
 export function readTemplateDrop(e: DragEvent): TemplateDropInfo | null {
 	const raw = e.dataTransfer.getData(CLIP_TEMPLATE_DND_MIME);
@@ -125,8 +95,6 @@ export function readTemplateDrop(e: DragEvent): TemplateDropInfo | null {
 				params: parsed.params as TemplateParams | undefined,
 			};
 		}
-		if (parsed.kind === "data" && parsed.payload)
-			return { kind: "data", payload: parsed.payload as InfographicPayload };
 		if (parsed.kind === "composition" && parsed.config)
 			return {
 				kind: "composition",
@@ -143,7 +111,6 @@ export function hasTimelineExternalDrag(e: DragEvent): boolean {
 	return (
 		e.dataTransfer.types.includes("Files") ||
 		e.dataTransfer.types.includes(MEDIA_DND_MIME) ||
-		e.dataTransfer.types.includes(DATA_CALLOUT_DND_MIME) ||
 		e.dataTransfer.types.includes(CLIP_TEMPLATE_DND_MIME)
 	);
 }

@@ -44,7 +44,6 @@ export function timelineTemplateInspectorSection(rangeId: string): TemplateInspe
 		rangeId === "section-entry-sfx"
 	)
 		return "entries";
-	if (rangeId === "data") return "visual";
 	return "scene";
 }
 
@@ -77,7 +76,6 @@ export function templateInput(template: TimelineTemplate): TimelineTemplateInput
 		staticSceneMovement: template.staticSceneMovement ?? false,
 		overrideSceneTransition: template.overrideSceneTransition ?? false,
 		sceneTransition: template.sceneTransition ?? "fade",
-		useData: template.useData,
 		imageGuidancePrompt: template.imageGuidancePrompt,
 	};
 }
@@ -251,26 +249,6 @@ export function buildTimelineTemplatePreview(
 		],
 		videoOverlays: [],
 		effects: [],
-		infographicOverlays: template.useData
-			? [
-					{
-						startSec: 2.4,
-						durationSec: 3.2,
-						track: 1,
-						layout: { xPct: 58, yPct: 62, widthPct: 34, fit: "contain" },
-						animation: { in: "slide_up", main: "count", out: "fade" },
-						payload: { type: "stat_reveal", title: "Audience retained", value: "84", suffix: "%" },
-					},
-					{
-						startSec: secondStartSec + 2.4,
-						durationSec: 3.2,
-						track: 1,
-						layout: { xPct: 58, yPct: 62, widthPct: 34, fit: "contain" },
-						animation: { in: "slide_up", main: "count", out: "fade" },
-						payload: { type: "stat_reveal", title: "Completion rate", value: "72", suffix: "%" },
-					},
-				]
-			: [],
 	};
 }
 

@@ -3,7 +3,7 @@
  * (WebCodecs) — zero server queue. This is a fast preview artifact, not the
  * production render:
  *   - base-track images with the renderer's camera motion (Ken Burns presets)
- *   - hard cuts (no transitions), no infographics/effects/text overlays
+ *   - hard cuts (no transitions), no effects/text overlays
  *   - fixed authored caption cues; caption styling and animation are omitted
  *   - full audio mix (voiceover/music/sfx with volume + fades + trim)
  * The server Remotion render remains the production path (WYSIWYG). */

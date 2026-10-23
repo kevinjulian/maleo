@@ -19,7 +19,6 @@ import {
 	VIDEO_PLAN_KINDS,
 	defaultGroundingFor,
 	explainerContractSchema,
-	motionGraphicSchema,
 	povLifecycleSchema,
 	povShotSchema,
 	povStageSchema,
@@ -276,7 +275,6 @@ const longformSectionSchema = z.object({
 	sourceEvidence: z
 		.array(z.object({ url: z.string(), quote: z.string().min(20).max(180) }))
 		.optional(),
-	motionGraphic: motionGraphicSchema.optional(),
 	editorial: storyEditorialDecisionSchema.optional(),
 	requiredReferences: z
 		.array(
@@ -359,8 +357,6 @@ export interface StoryPlanOpts {
 	sectionCount?: number;
 	wordBudget?: number;
 	research?: StoryResearchEvidence;
-	/** False when the selected timeline template cannot render data overlays. */
-	allowInfographics?: boolean;
 	/** Narration language when the job pins one. Unset means "follow the brief". */
 	language?: string;
 	/** Beat-driven or narration-driven, so density guidance matches the structure. */
@@ -1186,7 +1182,6 @@ export async function planStoryFromFrame(
 			? { sections }
 			: await directStorySequence(sections, {
 					...opts?.direction,
-					allowInfographics: opts?.allowInfographics,
 					authoritativeReferences: true,
 					plannedReferences: frame.plannedReferences,
 				});

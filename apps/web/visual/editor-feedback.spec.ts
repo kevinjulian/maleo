@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/editor-chat-data.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
@@ -47,17 +48,11 @@ for (const width of [1440, 320])
 						return route.fulfill({ json: { ok: true } });
 					},
 				);
-				await context.route(/\/storyboards(\?|$)/, (route) => {
-					if (route.request().method() !== "POST") return route.fallback();
-					storyboard = route.request().postDataJSON().storyboard_json;
-					return route.fulfill({
-						json: {
-							storyboard: {
-								...editorChatProjectDetail.storyboards[0],
-								storyboard_json: storyboard,
-							},
-						},
-					});
+				await mockCommandLog(context, EDITOR_CHAT_PROJECT_ID, {
+					stored: () => storyboard,
+					onSave: (next) => {
+						storyboard = next;
+					},
 				});
 				const page = await context.newPage();
 				await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);

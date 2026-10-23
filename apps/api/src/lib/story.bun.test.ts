@@ -652,7 +652,6 @@ describe("buildStoryScenes — section provenance survives the flattening", () =
 			events: [],
 			scenes: buildStoryScenes(sections),
 			textOverlays: [],
-			infographicOverlays: [],
 			videoOverlays: [],
 			audioOverlays: [],
 			characters: [],

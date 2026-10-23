@@ -1,6 +1,6 @@
 # PropertyRow
 
-**Status:** Implemented and in production (OpenSpec audit-ui-system task 4.4, done): the clip inspector, the embedded item editor, the captions panel, the data callout style controls, the scene drawer and the motion keyframe editor. It replaced the `Control` primitive, which is retired. Earlier sections are the intent; [Implementation](#implementation) records the shipped contract where it is more specific.
+**Status:** Implemented and in production (OpenSpec audit-ui-system task 4.4, done): the clip inspector, the embedded item editor, the captions panel, the scene drawer and the motion keyframe editor. It replaced the `Control` primitive, which is retired. Earlier sections are the intent; [Implementation](#implementation) records the shipped contract where it is more specific.
 
 ## Purpose
 
@@ -73,7 +73,7 @@ Bad — bypasses the semantic or behavior contract:
 
 ## Implementation
 
-`PropertyRow` in [inspector.tsx](../../../apps/web/src/design-system/patterns/inspector.tsx), styled by [inspector.css](../../../apps/web/src/design-system/patterns/inspector.css); stories under `Patterns/Inspector/PropertyRow` and `Patterns/Inspector/Examples` ([source](../../../apps/web/stories/patterns/inspector/)). Production consumers: the clip inspector ([timeline-clip-inspector.tsx](../../../apps/web/src/components/timeline/timeline-clip-inspector.tsx)) and its shared `AmountRow`, `TransformSection`, audio and reveal controls in [clip-canvas.tsx](../../../apps/web/src/components/timeline/clip-canvas.tsx), driven by `apps/web/visual/clip-inspector-rows.spec.ts`; and `InfographicStyleControls` in [infographics-panel.tsx](../../../apps/web/src/components/timeline/infographics/infographics-panel.tsx), driven by `apps/web/visual/data-style-rows.spec.ts`.
+`PropertyRow` in [inspector.tsx](../../../apps/web/src/design-system/patterns/inspector.tsx), styled by [inspector.css](../../../apps/web/src/design-system/patterns/inspector.css); stories under `Patterns/Inspector/PropertyRow` and `Patterns/Inspector/Examples` ([source](../../../apps/web/stories/patterns/inspector/)). Production consumers: the clip inspector ([timeline-clip-inspector.tsx](../../../apps/web/src/components/timeline/timeline-clip-inspector.tsx)) and its shared `AmountRow`, `TransformSection`, audio and reveal controls in [clip-canvas.tsx](../../../apps/web/src/components/timeline/clip-canvas.tsx), driven by `apps/web/visual/clip-inspector-rows.spec.ts`
 
 ```tsx
 <PropertyRow label="Rotation" onReset={reset}><NumberField suffix="°" value={v} onValueChange={…} /></PropertyRow>

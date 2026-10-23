@@ -1,6 +1,6 @@
-import type { InfographicPayload, TextPreset, TemplateParams } from "@maleo/shared";
+import type { TextPreset, TemplateParams } from "@maleo/shared";
 
-export type TemplateCategory = "all" | "data" | "text" | "intro" | "logo" | "shape";
+export type TemplateCategory = "all" | "text" | "intro" | "logo" | "shape";
 
 // Which style controls the edit popover should show for a template. A template
 // only advertises the knobs its renderer actually honors, so the popover never
@@ -10,7 +10,6 @@ export type StyleKnob = "fg" | "bg" | "accent" | "body" | "scale" | "font";
 
 export const TEMPLATE_CATEGORIES: Array<{ id: TemplateCategory; label: string }> = [
 	{ id: "all", label: "All" },
-	{ id: "data", label: "Charts & Data" },
 	{ id: "text", label: "Text" },
 	{ id: "intro", label: "Intro & Outro" },
 	{ id: "logo", label: "Logo & Branding" },
@@ -27,27 +26,17 @@ export type TemplateField =
 	| { key: string; type: "image"; label: string }
 	| { key: string; type: "list"; label: string; itemLabel: string; itemFields: TemplateField[] };
 
-// One clip template = one placeable timeline item. `kind` picks which overlay
-// system consumes it on drop/click: "text" overlays route through the text
-// preset system, "data" templates route through the infographic system.
+// One clip template = one placeable timeline item. `kind: "text"` routes it
+// through the text preset system on drop/click.
 // Text templates carry a `fields` schema + `defaultParams` — the structured
 // content the edit panel and the renderer read from `TextOverlay.params`,
 // distinct from the generic `style` (color/font/align) editor.
-export type TemplateItem =
-	| {
-			kind: "text";
-			preset: TextPreset;
-			label: string;
-			category: TemplateCategory;
-			intent: string;
-			fields: TemplateField[];
-			defaultParams: TemplateParams;
-	  }
-	| {
-			kind: "data";
-			type: InfographicPayload["type"];
-			label: string;
-			category: TemplateCategory;
-			intent: string;
-			payload?: InfographicPayload;
-	  };
+export type TemplateItem = {
+	kind: "text";
+	preset: TextPreset;
+	label: string;
+	category: TemplateCategory;
+	intent: string;
+	fields: TemplateField[];
+	defaultParams: TemplateParams;
+};

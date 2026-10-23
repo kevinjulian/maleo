@@ -98,16 +98,16 @@ src/
 - `VideoBlueprint -> VideoSection[] -> SectionIntroScene + StoryboardScene[]` is
   the canonical short-form contract. Planner output supplies narrative semantics,
   structured `information`, and section `vibe`; it does not choose motion, SFX,
-  infographic templates, or concrete music assets. Keep v1 flat
+  or concrete music assets. Keep v1 flat
   `beats`/`audioPlan` parsing only at `normalizeVideoBlueprint` for persisted-data
   migration.
 - `video-editorial.ts` owns deterministic media decisions. Every semantic
-  function maps to one named pattern containing category, clip family, motion or
-  infographic template, and optional paired SFX. Section entry uses one stable
+  function maps to one named pattern containing category, clip family, motion
+  template, and optional paired SFX. Section entry uses one stable
   motion/SFX grammar. Timeline cues stay relative until measured TTS is known;
   absolute scene, cue, and per-section music timing is compiled afterward.
-- Viewer presentation categories map narrative/headline/explainer/infographic/
-  transition intent to compatible clip templates. Materializers must choose one
+- Viewer presentation categories map narrative/headline/explainer/transition
+  intent to compatible clip templates. Materializers must choose one
   primary family per beat; captions and base visuals remain supporting layers.
 - Viewer-attention analysis is pure and deterministic. Sustained overload,
   competing primary overlays, unreadable text, and long VO duplication can gate

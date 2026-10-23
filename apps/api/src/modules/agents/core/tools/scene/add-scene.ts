@@ -12,7 +12,7 @@ export const addScene = defineTool({
 	intents: ["build_short", "add_element"],
 	input: addSceneArgs,
 	description:
-		"add_scene { name, visual, voiceover, durationSec, shot, move, transition?, action?, sfx?, beat?, emotion?, intent?, question?, claim?, evidence?, analogy?, visualType?, onScreenText?, motionGraphic?, refIds? } - append a new beat (story beat / scene); add_beat is an alias. When a Style direction is given, set beat (hook|setup|conflict|twist|resolution|cta), a one-word emotion, and a short intent. For explainers also set visualType (scene|contrast|timeline|map|diagram|evidence|metaphor|joke|reveal). When Available cast is listed, set refIds to the cast ids that appear in this scene.",
+		"add_scene { name, visual, voiceover, durationSec, shot, move, transition?, action?, sfx?, beat?, emotion?, intent?, question?, claim?, evidence?, analogy?, visualType?, onScreenText?, refIds? } - append a new beat (story beat / scene); add_beat is an alias. When a Style direction is given, set beat (hook|setup|conflict|twist|resolution|cta), a one-word emotion, and a short intent. For explainers also set visualType (scene|contrast|timeline|map|diagram|evidence|metaphor|joke|reveal). When Available cast is listed, set refIds to the cast ids that appear in this scene.",
 	handler: async (ctx, args) => {
 		const job = ctx.job;
 		const h = ctx.helpers;
@@ -47,7 +47,6 @@ export const addScene = defineTool({
 			analogy: args.analogy || undefined,
 			visualType: args.visualType || undefined,
 			onScreenText: args.onScreenText || undefined,
-			motionGraphic: h.parseMotionGraphic(args.motionGraphic),
 		});
 		return { note: `Added scene ${job.scenes.length}: ${job.scenes[job.scenes.length - 1]!.name}` };
 	},

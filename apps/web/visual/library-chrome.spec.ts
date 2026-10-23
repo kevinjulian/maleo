@@ -239,7 +239,6 @@ test.describe("elements catalogue", () => {
 		"Shapes",
 		"Text",
 		"Motion",
-		"Data",
 		"Custom Elements",
 		"Motion presets",
 	] as const;
@@ -255,7 +254,7 @@ test.describe("elements catalogue", () => {
 					.filter({ hasText: new RegExp(`^${family}\\s*\\d+$`) }),
 			).toHaveCount(1);
 		}
-		// Custom Elements is one group among seven, not the whole page.
+		// Custom Elements is one group among six, not the whole page.
 		await expect(page.locator(".catalog-el-group")).toHaveCount(FAMILIES.length);
 	});
 
@@ -271,7 +270,6 @@ test.describe("elements catalogue", () => {
 			"Stat",
 			"Quote",
 			"Cinematic Title Intro",
-			"Bar",
 		]) {
 			await expect(
 				page
@@ -307,7 +305,7 @@ test.describe("elements catalogue", () => {
 		await open(page, "/library/elements");
 		await page.locator(".catalog-search input").fill("logo");
 
-		// Motion keeps its logo templates; Text and Data match nothing and say zero.
+		// Motion keeps its logo templates; Text matches nothing and says zero.
 		const countOf = (family: string) =>
 			page
 				.locator(".catalog-el-group")
@@ -320,9 +318,9 @@ test.describe("elements catalogue", () => {
 	test("library chrome: a family filter narrows to that family", async ({ page }) => {
 		await page.setViewportSize(DESKTOP);
 		await open(page, "/library/elements");
-		await page.locator(".catalog-groups button", { hasText: /^Data$/ }).click();
+		await page.locator(".catalog-groups button", { hasText: /^Motion$/ }).click();
 		await expect(page.locator(".catalog-el-group")).toHaveCount(1);
-		await expect(page.locator(".catalog-el-group > h2")).toHaveText(/^Data/);
+		await expect(page.locator(".catalog-el-group > h2")).toHaveText(/^Motion/);
 	});
 });
 

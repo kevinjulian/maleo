@@ -32,7 +32,6 @@ import {
 	EMPTY_CHAT_PROJECT_INDEX,
 	type AudioOverlay,
 	type ChatEntityRef,
-	type InfographicOverlay,
 	type Scene,
 	type StoryClarificationSubmission,
 } from "@maleo/shared";
@@ -78,7 +77,6 @@ export type { ChatCommandOption, CommandTrigger };
 interface ChatPanelProps {
 	scenes: Scene[];
 	audioOverlays?: AudioOverlay[];
-	infographicOverlays?: InfographicOverlay[];
 	// Chat log is owned by CreateContent so it persists with the storyboard.
 	messages: ChatLogMessage[];
 	setMessages: Dispatch<SetStateAction<ChatLogMessage[]>>;

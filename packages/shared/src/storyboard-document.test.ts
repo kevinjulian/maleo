@@ -54,7 +54,9 @@ describe("reading the corpus", () => {
 	test("a clip-first document keeps its clips and markers", () => {
 		const { doc, diagnostic } = readStoryboardDocument(corpus.v2!);
 		expect(doc.schemaVersion).toBe(2);
-		expect(doc.clips.length).toBe((corpus.v2!.clips as unknown[]).length);
+		// The corpus predates the infographic removal; the read drops those clips.
+		const stored = corpus.v2!.clips as Array<{ type?: string }>;
+		expect(doc.clips.length).toBe(stored.filter((clip) => clip.type !== "infographic").length);
 		expect(diagnostic.legacy).toBe(false);
 	});
 
@@ -147,7 +149,6 @@ describe("the write emits the whole document", () => {
 			"projectReferences",
 			"captions",
 			"pacingDevices",
-			"infographicStyle",
 			"sceneTextClipMigrationVersion",
 			"trackFlags",
 			"presentation",
@@ -341,7 +342,6 @@ describe("a writer cannot silently omit a field", () => {
 			captions: null,
 			captionSet: null,
 			pacingDevices: null,
-			infographicStyle: null,
 			sceneTextClipMigrationVersion: SCENE_TEXT_CLIP_MIGRATION_VERSION,
 			trackFlags: null,
 			presentation: null,
@@ -354,10 +354,82 @@ describe("a writer cannot silently omit a field", () => {
 		// recorded decision rather than a field the next writer has to guess at.
 		expect("captions" in written).toBe(true);
 		expect("pacingDevices" in written).toBe(true);
-		expect("infographicStyle" in written).toBe(true);
 		// Same for the render-affecting presentation: a version that rendered with no
 		// hidden tracks says so, rather than leaving the next reader to infer it.
 		expect("trackFlags" in written).toBe(true);
 		expect("presentation" in written).toBe(true);
+	});
+});
+
+describe("the read drops stored infographic content", () => {
+	const empty = { schemaVersion: 2, clips: [], markers: [] };
+	const textClip = {
+		id: "text:1",
+		type: "text",
+		startSec: 0,
+		durationSec: 2,
+		track: 0,
+		text: { id: 1, content: "Hello", start: 0, dur: 2, preset: "title", track: 0 },
+	};
+	const infographicClip = (id: number, track: number) => ({
+		id: `infographic:${id}`,
+		type: "infographic",
+		startSec: id,
+		durationSec: 2,
+		track,
+		infographic: {
+			id,
+			start: id,
+			dur: 2,
+			payload: { type: "stat_reveal", title: "T", value: "4" },
+		},
+	});
+	const stored = {
+		...empty,
+		clips: [textClip, infographicClip(7, 1), infographicClip(8, 1)],
+		infographicStyle: { bgColor: "#000000" },
+		infographicOverlays: [],
+		trackFlags: { 0: { group: "text" }, 1: { group: "data" } },
+	};
+
+	test("a stored document reads without its infographic clips and style", () => {
+		const { doc, diagnostic } = readStoryboardDocument(stored);
+
+		expect(doc.clips.map((clip) => clip.id)).toEqual(["text:1"]);
+		expect(doc.clips[0]).toEqual(textClip);
+		expect(doc).not.toHaveProperty("infographicStyle");
+		expect(doc.trackFlags).toEqual({ 0: { group: "text" } });
+		expect(diagnostic.dropped).toEqual(
+			expect.arrayContaining([
+				"clips[infographic:7]",
+				"clips[infographic:8]",
+				"infographicStyle",
+				"infographicOverlays",
+				"trackFlags[1]",
+			]),
+		);
+		expect(diagnostic.unknownKeys).toEqual([]);
+	});
+
+	test("the write of that read emits no infographic content", () => {
+		const written = writeStoryboardDocument(readStoryboardDocument(stored).doc);
+
+		expect(JSON.stringify(written)).not.toMatch(/infographic/i);
+		expect(written.trackFlags).toEqual({ 0: { group: "text" } });
+	});
+
+	test("a stored scene drops its motion-graphic decision", () => {
+		const sceneClip = {
+			id: "scene:1",
+			type: "image",
+			startSec: 0,
+			durationSec: 3,
+			track: -1,
+			scene: { id: 1, name: "One", motionGraphic: { needed: true, kind: "stat_reveal" } },
+		};
+		const { doc, diagnostic } = readStoryboardDocument({ ...empty, clips: [sceneClip] });
+
+		expect(doc.clips[0]?.scene).not.toHaveProperty("motionGraphic");
+		expect(diagnostic.dropped).toEqual(["clips[scene:1].scene.motionGraphic"]);
 	});
 });

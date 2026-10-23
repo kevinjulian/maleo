@@ -65,12 +65,12 @@ describe("a render-scope element resolves override, then template, then code def
 	});
 
 	test("an override of a falsy value still counts as an override", () => {
-		// `useData: false` and `musicVolume: 0` are the cases a truthiness check breaks.
+		// `staticSceneMovement: false` and `musicVolume: 0` are the cases a truthiness check breaks.
 		expect(
 			resolveRenderElement(
-				"useData",
-				parseRenderOverrides({ useData: false }),
-				template({ useData: true }),
+				"staticSceneMovement",
+				parseRenderOverrides({ staticSceneMovement: false }),
+				template({ staticSceneMovement: true }),
 			).value,
 		).toBe(false);
 		expect(

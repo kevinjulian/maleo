@@ -14,12 +14,10 @@ pub enum ClipSource {
     Text,
     Audio,
     Effect,
-    Infographic,
     Caption,
 }
 
-const SOURCES: [ClipSource; 7] =
-    [ClipSource::Scene, ClipSource::Video, ClipSource::Text, ClipSource::Audio, ClipSource::Effect, ClipSource::Infographic, ClipSource::Caption];
+const SOURCES: [ClipSource; 6] = [ClipSource::Scene, ClipSource::Video, ClipSource::Text, ClipSource::Audio, ClipSource::Effect, ClipSource::Caption];
 
 impl ClipSource {
     fn name(self) -> &'static str {
@@ -29,7 +27,6 @@ impl ClipSource {
             Self::Text => "text",
             Self::Audio => "audio",
             Self::Effect => "effect",
-            Self::Infographic => "infographic",
             Self::Caption => "caption",
         }
     }
@@ -41,7 +38,6 @@ pub struct Selection {
     /// The scene whose editor drawer is open. Cleared by every transition.
     pub editor_scene_id: Option<f64>,
     pub overlay_id: Option<f64>,
-    pub infographic_id: Option<f64>,
     pub audio_id: Option<f64>,
     pub video_overlay_id: Option<f64>,
     pub effect_id: Option<f64>,
@@ -127,7 +123,6 @@ impl Selection {
             scene_id: optional(object, "sceneId")?,
             editor_scene_id: optional(object, "editorSceneId")?,
             overlay_id: optional(object, "overlayId")?,
-            infographic_id: optional(object, "infographicId")?,
             audio_id: optional(object, "audioId")?,
             video_overlay_id: optional(object, "videoOverlayId")?,
             effect_id: optional(object, "effectId")?,
@@ -140,7 +135,6 @@ impl Selection {
     pub fn to_value(&self) -> Value {
         let mut out = json!({
             "overlayId": self.overlay_id,
-            "infographicId": self.infographic_id,
             "audioId": self.audio_id,
             "videoOverlayId": self.video_overlay_id,
             "effectId": self.effect_id,
@@ -167,7 +161,7 @@ fn only(source: ClipSource, family: ClipSource, ref_id: f64) -> Option<f64> {
 
 /// Apply one action. Selecting one kind clears the others.
 pub fn apply(current: &Selection, action: &Action) -> Result<Selection, String> {
-    use ClipSource::{Audio, Effect, Infographic, Text, Video};
+    use ClipSource::{Audio, Effect, Text, Video};
     Ok(match *action {
         Action::SelectScene { scene_id } => Selection { scene_id: Some(scene_id), ..Selection::default() },
         Action::SelectClip { source: source @ (ClipSource::Scene | ClipSource::Caption), .. } => {
@@ -175,15 +169,13 @@ pub fn apply(current: &Selection, action: &Action) -> Result<Selection, String> 
         }
         Action::SelectClip { source, ref_id } => Selection {
             overlay_id: only(source, Text, ref_id),
-            infographic_id: only(source, Infographic, ref_id),
             audio_id: only(source, Audio, ref_id),
             video_overlay_id: only(source, Video, ref_id),
             effect_id: only(source, Effect, ref_id),
             free_ids: vec![clip_key(source, ref_id)],
             ..Selection::default()
         },
-        // Shift-click. Deliberately does NOT clear `infographic_id`, as the web
-        // model never has: changing it changes what the inspector shows.
+        // Shift-click.
         Action::ToggleClip { source, ref_id } => {
             let key = clip_key(source, ref_id);
             let free_ids = if current.free_ids.contains(&key) {
@@ -195,7 +187,6 @@ pub fn apply(current: &Selection, action: &Action) -> Result<Selection, String> 
                 scene_id: None,
                 editor_scene_id: None,
                 overlay_id: only(source, Text, ref_id),
-                infographic_id: current.infographic_id,
                 audio_id: only(source, Audio, ref_id),
                 video_overlay_id: only(source, Video, ref_id),
                 effect_id: only(source, Effect, ref_id),
@@ -215,7 +206,6 @@ pub fn primary_clip_key(selection: &Selection) -> Option<String> {
         (ClipSource::Video, selection.video_overlay_id),
         (ClipSource::Text, selection.overlay_id),
         (ClipSource::Audio, selection.audio_id),
-        (ClipSource::Infographic, selection.infographic_id),
         (ClipSource::Effect, selection.effect_id),
     ]
     .into_iter()
@@ -229,7 +219,7 @@ pub fn is_clip_selected(selection: &Selection, key: &str) -> bool {
 
 /// Whether two selections say the same thing: the set compares by membership.
 pub fn selections_equal(a: &Selection, b: &Selection) -> bool {
-    let fields = |s: &Selection| (s.scene_id, s.editor_scene_id, s.overlay_id, s.infographic_id, s.audio_id, s.video_overlay_id, s.effect_id, s.transition_id);
+    let fields = |s: &Selection| (s.scene_id, s.editor_scene_id, s.overlay_id, s.audio_id, s.video_overlay_id, s.effect_id, s.transition_id);
     fields(a) == fields(b) && a.free_ids.len() == b.free_ids.len() && a.free_ids.iter().all(|id| b.free_ids.contains(id))
 }
 

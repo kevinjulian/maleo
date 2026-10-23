@@ -32,7 +32,6 @@ function roundTrip(s: Scene): Scene {
 		captions: null,
 		captionSet: null,
 		pacingDevices: null,
-		infographicStyle: null,
 		sceneTextClipMigrationVersion: null,
 		trackFlags: null,
 		presentation: null,

@@ -85,7 +85,6 @@ function makeJob(overrides: Partial<AgentJob> = {}): AgentJob {
 		},
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

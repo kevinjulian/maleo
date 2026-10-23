@@ -351,29 +351,5 @@ export function buildTimelineTemplateTimelineLanes(
 			],
 		},
 	];
-	if (template.useData) {
-		lanes.push({
-			id: "data",
-			label: "Data",
-			ranges: [
-				{
-					id: "data-1",
-					laneId: "data",
-					label: "Stat overlay",
-					startSec: 2.4,
-					durationSec: 3.2,
-					tone: "data",
-				},
-				{
-					id: "data-2",
-					laneId: "data",
-					label: "Stat overlay",
-					startSec: secondStartSec + 2.4,
-					durationSec: 3.2,
-					tone: "data",
-				},
-			],
-		});
-	}
 	return lanes.filter((lane) => lane.ranges.length > 0);
 }

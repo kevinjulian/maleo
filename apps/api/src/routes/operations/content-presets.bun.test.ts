@@ -46,7 +46,6 @@ const sample: ContentPresetInput = {
 		},
 		settings: { aspectRatio: "16:9", voice: "Kore" },
 		pacingDevices: { chapterPills: true },
-		infographicStyle: { bgColor: "#123456" },
 	}),
 };
 

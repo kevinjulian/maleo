@@ -8,7 +8,7 @@ One keyframe model for every animatable element: clip-local seconds keys, a sing
 
 ### Requirement: One animation model for every animatable element
 
-Every animatable element (scene visual, ordinary visual clip, video overlay, text overlay, infographic overlay, audio clip) SHALL carry its animation as one value: a set of per-property tracks, each an ordered list of keys with a time, a value and an optional interpolation. Numeric and colour properties SHALL live in the same value. No clip or overlay SHALL store its own box or style keyframes in any other shape. Scene camera motion and the animation inside reusable composition clips are outside this model.
+Every animatable element (scene visual, ordinary visual clip, video overlay, text overlay, audio clip) SHALL carry its animation as one value: a set of per-property tracks, each an ordered list of keys with a time, a value and an optional interpolation. Numeric and colour properties SHALL live in the same value. No clip or overlay SHALL store its own box or style keyframes in any other shape. Scene camera motion and the animation inside reusable composition clips are outside this model.
 
 #### Scenario: Scale and position keys coexist
 

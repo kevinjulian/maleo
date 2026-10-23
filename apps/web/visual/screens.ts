@@ -50,7 +50,7 @@ export interface Screen {
 	 *
 	 *  `api.har` is a project with two text clips, no scenes and no chat — small
 	 *  on purpose, see `FIXTURE_PROJECT_ID`. The screens that need a story chat,
-	 *  an audit trace or an infographic clip name the second fixture instead,
+	 *  or an audit trace name the second fixture instead,
 	 *  rather than every timeline capture paying for data it does not show. */
 	har?: string;
 }
@@ -64,12 +64,12 @@ export interface Screen {
  * versions and 2 clips, and still exercises a populated timeline. */
 export const FIXTURE_PROJECT_ID = "00000000-0000-4000-8000-000000000001";
 
-/** The project the editor's chat, audit and data surfaces are taken from.
+/** The project the editor's chat and audit surfaces are taken from.
  *
  * A second fixture rather than a bigger first one. The project above is small
  * because a long-lived one produced a 5.7 MB response, and that trade is still
  * right for the sixteen screens that only need a populated timeline. This one
- * carries three scenes, an infographic clip, a chat log and a completed audit
+ * carries three scenes, a text clip, a chat log and a completed audit
  * session, and only the screens below replay it. Authored, not recorded — see
  * `fixtures/editor-chat-data.ts`. */
 export const EDITOR_CHAT_FIXTURE_PROJECT_ID = "00000000-0000-4000-8000-000000000003";
@@ -183,7 +183,7 @@ export const SCREENS: Screen[] = [
 	 * These were the uncovered ones, and they were uncovered for a reason that was
 	 * never tooling: the replayed project has no scenes, no chat log and no audit
 	 * trace, so probing the running app for their markers returned 0, 0 and 1.
-	 * `audit-panel.tsx`, `chat-run-cards.tsx` and the infographic controls carried
+	 * `audit-panel.tsx` and `chat-run-cards.tsx` carried
 	 * 107 inline style objects between them with no baseline able to say whether
 	 * moving one moved a pixel. Added before those files are rewritten, so the
 	 * rewrite has a before to be diffed against.
@@ -227,51 +227,6 @@ export const SCREENS: Screen[] = [
 		har: EDITOR_CHAT_HAR,
 		click: '.cv-modeseg button[title="Studio editor"]',
 		ready: ".cv-studio",
-	},
-	/* Selecting the infographic clip puts the docked inspector on its data tab,
-	 * which is the only place `InfographicFields` renders in the editor. Ready on
-	 * a field inside the accordion, not on the accordion: the inspector renders a
-	 * section for every clip kind and only this one renders the data fields. */
-	{
-		name: "editor-clip-data",
-		path: EDITOR_CHAT_PATH,
-		har: EDITOR_CHAT_HAR,
-		widths: [1440],
-		click: '[data-clipid="infographic:1"]',
-		ready: ".tl2-acc .field",
-	},
-	/* Two steps, and the reason the type takes a list: the callout style controls
-	 * sit in a collapsed section of the Style rail, so the rail is one navigation and
-	 * the section toggle is another. Neither asserts anything.
-	 *
-	 * a data-style property row is 0 with the section collapsed and 4 with it open —
-	 * measured, not assumed — so it cannot go green on the row list alone. */
-	{
-		name: "editor-data-style",
-		path: EDITOR_CHAT_PATH,
-		har: EDITOR_CHAT_HAR,
-		click: [
-			'.tl2-railbtn[aria-label^="Style"]',
-			'.fc-style-panel button.ui-insp-toggle:has-text("Data callout")',
-		],
-		ready: '.fc-data-style [data-slot="property-row"]',
-	},
-
-	/* The infographic type previews, on the first fixture — they need no project
-	 * data, only the catalogue.
-	 *
-	 * A group filter rather than the unfiltered `library-elements` above, and the
-	 * difference is not cosmetic: the tiles mount on intersection, so on the full
-	 * page the data group renders only if the capture's scroll happens to reach
-	 * it before the shot. Filtering puts the twelve tiles at the top of a short
-	 * page, where they mount without racing anything. The catalogue's previews
-	 * are also the frozen ones — `still={STILL_FRAME}` — while the editor's
-	 * Elements rail autoplays the same component, which no screenshot can pin. */
-	{
-		name: "library-elements-data",
-		path: "/library/elements",
-		click: '.catalog-groups button:text-is("Data")',
-		ready: ".fc-data-preview:not(.fc-text-preview)",
 	},
 ];
 

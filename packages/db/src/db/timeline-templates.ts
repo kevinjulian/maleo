@@ -82,7 +82,6 @@ export function templateConfigJson(input: TimelineTemplateInput): string {
 		staticSceneMovement: input.staticSceneMovement,
 		overrideSceneTransition: input.overrideSceneTransition,
 		sceneTransition: input.sceneTransition,
-		useData: input.useData,
 		imageGuidancePrompt: input.imageGuidancePrompt,
 	});
 }

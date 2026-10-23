@@ -50,7 +50,7 @@ import { setAssetRetryDelayForTests, setSceneFrameGeneratorForTests } from "./vi
 import { getStoryPlan, setStoryPlan } from "./plan-state.ts";
 import {
 	generateStoryAssetsFlow,
-	normalizeNoDataStoryDirection,
+	normalizeStoredInfographicDirection,
 	regenerateLongformSectionFlow,
 } from "./services/story-assets.ts";
 import {
@@ -75,7 +75,9 @@ let imageRefIds: Array<readonly string[] | undefined> = [];
 let authoringCalls: Array<{ beats: number; plannedShots: readonly string[] }> = [];
 let ttsCalls = 0;
 
-test("disabled data template repairs stale infographic direction without rewriting story", () => {
+test("a stored infographic beat is repaired without rewriting the story", () => {
+	/* A plan stored before infographics were removed: the section was never read
+	 * through the current schema, so it still carries the removed values. */
 	const section = {
 		id: "section-1",
 		semanticBeatId: "beat-1",
@@ -83,25 +85,21 @@ test("disabled data template repairs stale infographic direction without rewriti
 		narration: "Copper stops moving.",
 		visualPrompt: "An empty Bronze Age harbor",
 		estimatedDurationSec: 5,
+		motionGraphic: { needed: false, kind: "none" },
 		editorial: {
-			purpose: "explain" as const,
-			presentation: "infographic" as const,
+			purpose: "explain",
+			presentation: "infographic",
 			visualConcept: "Trade routes fading from a map",
 			noveltyKey: "routes-fade",
 			sfxCue: null,
-			motionGraphic: {
-				needed: false as const,
-				kind: "none" as const,
-				purpose: "none" as const,
-				reason: "No exact data",
-			},
+			motionGraphic: { needed: true, kind: "stat_reveal", value: "42%" },
 		},
-	} satisfies StorySection;
-	const [normalized] = normalizeNoDataStoryDirection([section]);
+	} as unknown as StorySection;
+	const [normalized] = normalizeStoredInfographicDirection([section]);
 	expect(normalized?.narration).toBe(section.narration);
-	expect(normalized?.editorial?.presentation).toBe("explainer");
-	expect(normalized?.editorial?.motionGraphic).toBeUndefined();
-	expect(normalized?.motionGraphic?.needed).toBe(false);
+	expect(normalized?.editorial?.presentation).toBe("narrative");
+	expect(normalized?.editorial).not.toHaveProperty("motionGraphic");
+	expect(normalized).not.toHaveProperty("motionGraphic");
 });
 
 async function resetDb(): Promise<void> {
@@ -174,7 +172,6 @@ function videoJob(projectId: string): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

@@ -508,7 +508,6 @@ describe("fixture bundles match the builtins they replaced", () => {
 			expect(row.bundle.settings, fixture.slug).toEqual(fixture.bundle.settings);
 			expect(row.bundle.projectRefs, fixture.slug).toEqual(fixture.bundle.projectRefs);
 			expect(row.bundle.pacingDevices, fixture.slug).toEqual(fixture.bundle.pacingDevices);
-			expect(row.bundle.infographicStyle, fixture.slug).toEqual(fixture.bundle.infographicStyle);
 			expect(row.bundle.direction, fixture.slug).toEqual(fixture.bundle.direction);
 		}
 	});

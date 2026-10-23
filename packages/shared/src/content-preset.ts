@@ -2,7 +2,7 @@ import { z } from "zod";
 import { creativeDirectionSchema } from "./creative-direction.ts";
 import { libraryFixtureFieldsSchema } from "./library-fixture.ts";
 import { presetMaterialSelectionSchema } from "./material-record.ts";
-import type { InfographicStyle, PacingDevices } from "./timeline-model.ts";
+import type { PacingDevices } from "./timeline-model.ts";
 import { styleKnobsSchema } from "./video-style.ts";
 
 /* Content presets, presented to operators as PROJECT PRESETS.
@@ -13,7 +13,7 @@ import { styleKnobsSchema } from "./video-style.ts";
  *
  * Everything else in this bundle is legacy surface area. The bundle used to be an
  * open-ended grab bag — style knobs, references, settings, pacing devices,
- * infographic styling, creative direction — which meant a preset overlapped with
+ * creative direction — which meant a preset overlapped with
  * materials, templates AND project settings, and no operator could say what
  * picking one would change. Those fields are retained as READ-ONLY compatibility:
  * rows written before materials existed still carry them, and `materials`/
@@ -34,12 +34,12 @@ const readStyleSchema = styleKnobsSchema
 	.catch(null)
 	.transform((value) => value ?? null);
 
-/* Two of the three snapshot blocks CAN be named here, and are.
+/* One of the three snapshot blocks CAN be named here, and is.
  *
  * The comment above says `refs` and `settings` are owned by the dashboard client
  * — and they are: `GlobalSettings` lives in `apps/web`, so naming it would make
- * this package import from its own consumer. `PacingDevices` and
- * `InfographicStyle` do NOT live there. They are declared in
+ * this package import from its own consumer. `PacingDevices` does NOT live
+ * there. It is declared in
  * `./timeline-model.ts`, in THIS package, so leaving them open bought no
  * decoupling and cost every reader an assertion.
  *
@@ -49,8 +49,8 @@ const readStyleSchema = styleKnobsSchema
  *
  * The `.catch()` is PER FIELD, and the outer `.catch({})` only catches a block
  * that is not an object at all. Guarding the whole object instead discards every
- * field on one bad value: a bundle holding `{bgColor: "#101010", blur: "lots"}`
- * lost its `bgColor` too, which reads as a preset that half-applied. That is the
+ * field on one bad value: a bundle holding one bad flag lost every good one
+ * too, which reads as a preset that half-applied. That is the
  * same mistake `presetSettings` in `apps/web` made and its tests caught. This
  * schema runs at `content-presets.ts` on every preset read, so a bad field must
  * cost that field and nothing else. */
@@ -63,21 +63,15 @@ const pacingDevicesSnapshotSchema = z
 	.passthrough()
 	.catch({});
 
-const infographicStyleSnapshotSchema = z
-	.object({
-		bgColor: z.string().optional().catch(undefined),
-		bgOpacity: z.number().optional().catch(undefined),
-		borderColor: z.string().optional().catch(undefined),
-		borderOpacity: z.number().optional().catch(undefined),
-		borderRadius: z.number().optional().catch(undefined),
-		blur: z.number().optional().catch(undefined),
-		dataColor: z.string().optional().catch(undefined),
-		labelColor: z.string().optional().catch(undefined),
-	} satisfies Record<keyof InfographicStyle, z.ZodTypeAny>)
-	.passthrough()
-	.catch({});
+/* Bundles saved before infographics were removed carry `infographicStyle`. The
+ * bundle is strict, so the key is dropped before the parse, on read and on
+ * write alike, and is never stored again. */
+function dropInfographicStyle(value: unknown): unknown {
+	if (typeof value !== "object" || value === null || Array.isArray(value)) return value;
+	return Object.fromEntries(Object.entries(value).filter(([key]) => key !== "infographicStyle"));
+}
 
-export const contentPresetBundleSchema = z
+const contentPresetBundleObject = z
 	.object({
 		/* ---- The bundle, as operators see it -------------------------------- */
 
@@ -104,18 +98,24 @@ export const contentPresetBundleSchema = z
 		settings: z.record(z.unknown()).default({}),
 		/** PacingDevices snapshot (retention overlays) — part of the Style menu. */
 		pacingDevices: pacingDevicesSnapshotSchema.default({}),
-		/** InfographicStyle snapshot (data-callout styling) — part of the Style menu. */
-		infographicStyle: infographicStyleSnapshotSchema.default({}),
 		/** Creative direction (story/visual/voice) seeded into new projects. Optional
 		 *  for back-compat with bundles saved before direction existed. */
 		direction: creativeDirectionSchema.optional(),
 	})
 	.strict();
 
+export const contentPresetBundleSchema = z.preprocess(
+	dropInfographicStyle,
+	contentPresetBundleObject,
+);
+
 /** Write shape: knobs only. A caller may not persist an identifier. */
-export const contentPresetWriteBundleSchema = contentPresetBundleSchema.extend({
-	style: styleKnobsSchema.nullish().default(null),
-});
+export const contentPresetWriteBundleSchema = z.preprocess(
+	dropInfographicStyle,
+	contentPresetBundleObject.extend({
+		style: styleKnobsSchema.nullish().default(null),
+	}),
+);
 
 export const contentPresetInputSchema = z
 	.object({

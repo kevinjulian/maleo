@@ -97,20 +97,10 @@ export function keyTarget(doc: EditorDoc, id: string): KeyTarget | undefined {
 			write: (animation) => ({ ...clip, audio: withAnimation(audio, animation) }),
 		};
 	}
-	const payloadKey = clip.video
-		? "video"
-		: clip.text
-			? "text"
-			: clip.infographic
-				? "infographic"
-				: undefined;
+	const payloadKey = clip.video ? "video" : clip.text ? "text" : undefined;
 	if (!payloadKey) return undefined;
 	const payload = clip[payloadKey]!;
-	const kind: AnimationElementKind = clip.video
-		? clip.video.kind
-		: payloadKey === "text"
-			? "text"
-			: "infographic";
+	const kind: AnimationElementKind = clip.video ? clip.video.kind : "text";
 	const layout: ClipLayout = { ...VISUAL_DEFAULT, fit: "contain", ...payload.layout };
 	return {
 		kind,

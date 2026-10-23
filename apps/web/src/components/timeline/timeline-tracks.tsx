@@ -305,7 +305,6 @@ export function TimelineTracks({
 	const setEditTarget = useChromeSetter(chromeStore, "editTarget");
 	const setTransitionEditId = useChromeSetter(chromeStore, "transitionEditId");
 	const setEffectEdit = useChromeSetter(chromeStore, "effectEdit");
-	const setInfographicEditId = useChromeSetter(chromeStore, "infographicEditId");
 
 	// ── Per-gesture state. None of this is read outside this component, which is
 	// what makes the region separable at all. ──
@@ -398,7 +397,6 @@ export function TimelineTracks({
 		dropTime,
 		setEditTarget,
 		setEffectEdit,
-		setInfographicEditId,
 		setTransitionEditId,
 	};
 

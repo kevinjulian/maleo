@@ -9,7 +9,7 @@ import type { Scene } from "@maleo/shared";
 import type { ClipboardItem } from "./use-clip-ops.ts";
 import { isTypingTarget, ownsKeyboard } from "@models/timeline/editor-chrome.ts";
 
-type ClipSource = "video" | "text" | "audio" | "effect" | "scene" | "infographic" | "caption";
+type ClipSource = "video" | "text" | "audio" | "effect" | "scene" | "caption";
 
 interface KeyboardShortcutsOptions {
 	importFiles: (files: File[]) => void;

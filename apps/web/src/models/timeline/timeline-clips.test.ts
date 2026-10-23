@@ -135,7 +135,7 @@ describe("buildFreeClips", () => {
 			"opaque:run",
 		);
 		const cue = doc.clips[0]!;
-		const [projected] = buildFreeClips([], [], [], [], [], doc.clips);
+		const [projected] = buildFreeClips([], [], [], [], doc.clips);
 		expect(projected).toEqual({
 			id: cue.id,
 			refId: cue.id,
@@ -287,7 +287,6 @@ describe("lane groups", () => {
 		expect(groupOf("video", "image")).toBe("visual");
 		expect(groupOf("audio", "audio")).toBe("audio");
 		expect(groupOf("text", "text")).toBe("text");
-		expect(groupOf("infographic", "infographic")).toBe("data");
 		expect(groupOf("effect", "effect")).toBe("effect");
 	});
 
@@ -321,7 +320,6 @@ describe("lane groups", () => {
 
 	test("a lane names itself from its declared group, not from its contents", () => {
 		expect(laneLabel("audio", 0)).toEqual({ group: "Audio", label: "Audio" });
-		expect(laneLabel("data", 5)).toEqual({ group: "Visual", label: "Data" });
 	});
 
 	test("an untyped lane falls back to its index rather than guessing by position", () => {

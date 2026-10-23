@@ -6,14 +6,14 @@ import { Input, Textarea } from "@design-system/components/input.tsx";
  *     Project Preset = Project Materials + Video Template
  *
  * It used to be an open-ended bundle — style knobs, project references, settings,
- * pacing devices, infographic styling, creative direction — which meant it overlapped
+ * pacing devices, creative direction — which meant it overlapped
  * with materials, with templates AND with project settings, and no operator could say
  * what picking one would change. This editor now shows only the two things a preset
  * decides. There is deliberately no top-level Style surface: style is material content
  * or a material-derived summary, not a third reusable creative source.
  *
  * The retired fields are still CARRIED, not dropped. A preset row written before this
- * change holds style/refs/settings/pacing/infographic values that projects created from
+ * change holds style/refs/settings/pacing values that projects created from
  * it still read, so editing its name here must not silently blank them.
  *
  * Snapshot model: editing a preset here never touches projects already created from it. */
@@ -105,7 +105,7 @@ function PresetEditor({ initial, onCancel, onSaved }: EditorProps): JSX.Element 
 		setBusy(true);
 		setError(null);
 		/* Carry the retired fields through untouched. A preset written before this
-		 * change supplies style/refs/settings/pacing/infographic to the projects
+		 * change supplies style/refs/settings/pacing to the projects
 		 * seeded from it; renaming it here must not blank what it supplies. The
 		 * legacy template id is dropped from `settings` because `videoTemplateId`
 		 * now owns that selection, and two fields for one choice is how they
@@ -120,7 +120,6 @@ function PresetEditor({ initial, onCancel, onSaved }: EditorProps): JSX.Element 
 			projectRefs: legacy?.projectRefs ?? {},
 			settings: legacySettings,
 			pacingDevices: legacy?.pacingDevices ?? {},
-			infographicStyle: legacy?.infographicStyle ?? {},
 			direction: legacy?.direction,
 		});
 		try {

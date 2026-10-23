@@ -96,7 +96,6 @@ export interface RenderPreflightInput {
 	clips?: readonly Clip[];
 	processingSources?: string[];
 	textOverlays: Array<unknown>;
-	infographicOverlays: Array<unknown>;
 	effects: Array<unknown>;
 	agentRunning: boolean;
 	rendering: boolean;
@@ -112,11 +111,7 @@ export interface RenderPreflight {
 }
 
 export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflight {
-	const visualCount =
-		input.scenes.length +
-		input.videoOverlays.length +
-		input.textOverlays.length +
-		input.infographicOverlays.length;
+	const visualCount = input.scenes.length + input.videoOverlays.length + input.textOverlays.length;
 	const hasRenderableVideo = visualCount > 0;
 	const blockers: string[] = [
 		...clipControlBlockers(input),
@@ -168,7 +163,7 @@ export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflig
 		warnings.push(
 			"Simplified draft omits reverse playback. Use production export for reversed clips.",
 		);
-	if (!hasRenderableVideo) blockers.push("Add media, text, data, or generate a storyboard.");
+	if (!hasRenderableVideo) blockers.push("Add media, text, or generate a storyboard.");
 	if (input.rendering) blockers.push("Render already running.");
 	if (input.agentRunning) warnings.push("Generation still running; export may miss newer edits.");
 	const scenesWithoutVisuals = input.scenes.filter((scene) => !scene.src && !scene.img).length;

@@ -77,7 +77,6 @@ function jobWithContext(projectId: string, context: ChatContextEnvelope): AgentJ
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],

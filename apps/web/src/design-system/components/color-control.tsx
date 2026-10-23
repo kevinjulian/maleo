@@ -1,5 +1,5 @@
-/* Colour + alpha control, read by the editor, the timeline and the infographics
- * panel — three clusters, so it is a ui primitive rather than any one cluster's.
+/* Colour + alpha control, read by the editor and the timeline — two clusters, so
+ * it is a ui primitive rather than any one cluster's.
  * Its `alpha-color-*` rules live beside it in color-control.css; the timeline
  * keeps only its in-panel width override.
  *

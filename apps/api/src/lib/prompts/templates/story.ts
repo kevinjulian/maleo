@@ -246,7 +246,7 @@ export const STORY_TEMPLATES: readonly PromptTemplate[] = [
 			{ type: "when", if: embodiedPov, then: [", povShot"] },
 			"} playing in sequence under this section's voiceover, ordered to FOLLOW the narration. cue = an exact sentence or phrase from THIS slot's narration. These are the section's approved visual INTENT for review, not final image prompts — one shot per distinct thing the section shows, max ",
 			{ type: "const", name: "MAX_STORY_SHOTS_PER_SECTION" },
-			'. Prefer distinct content over many shots; 4-6 strong shots beats 8 repetitive ones. The first shot should match visualPrompt and the opening sentence.\n- motionGraphic: editorial decision on whether this section needs an infographic overlay. Use {"needed":false,"kind":"none","purpose":"none","reason":"cinematic/emotional beat"} unless the section has data, comparison, source evidence, timeline/list structure, or a claim that becomes clearer as a chart/table/stat. Allowed kind: none|stat_reveal|bar_chart|table_build|price_tag. price_tag is for a concrete price/offer (value=price, compareAt=original struck-through price). Include title/value/compareAt/rows/columns/tableRows only when needed.\n- emotion: one of ',
+			". Prefer distinct content over many shots; 4-6 strong shots beats 8 repetitive ones. The first shot should match visualPrompt and the opening sentence.\n- emotion: one of ",
 			{ type: "const", name: "EMOTIONS", filters: [{ join: "|" }] },
 			". This selects the section's background music.",
 			{
@@ -320,7 +320,7 @@ export const STORY_TEMPLATES: readonly PromptTemplate[] = [
 					',"povShot":{"cameraRole":"body_detail","location":"","bodyAction":"","propFocus":"","emotionalPressure":"","noveltyKey":""}',
 				],
 			},
-			'}],"motionGraphic":{"needed":false,"kind":"none","purpose":"none","reason":""},"emotion":"',
+			'}],"emotion":"',
 			{ type: "slot", path: "const:EMOTIONS.0" },
 			'"',
 			{ type: "when", if: explainer, then: [',"teachingMove":"define"'] },

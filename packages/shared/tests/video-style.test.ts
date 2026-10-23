@@ -6,7 +6,6 @@ import {
 	emotionForBeat,
 	contextForBeats,
 	emotionEnergy,
-	overlayMotionForEmotion,
 	rhythmTransition,
 	autoTransitionForScenes,
 	varyCamera,
@@ -205,16 +204,6 @@ describe("style knobs", () => {
 			(p) => p.slug,
 		);
 		expect(withSystem).toEqual(["animated-explainer-essay", "animated-systems-explainer"]);
-	});
-});
-
-describe("overlayMotionForEmotion", () => {
-	test("maps emotional energy to an overlay entrance preset", () => {
-		expect(overlayMotionForEmotion("calm")).toBe("fade");
-		expect(overlayMotionForEmotion("curiosity")).toBe("slide_up");
-		expect(overlayMotionForEmotion("shock")).toBe("scale");
-		expect(overlayMotionForEmotion("tension")).toBe("scale");
-		expect(overlayMotionForEmotion(undefined)).toBe("slide_up");
 	});
 });
 

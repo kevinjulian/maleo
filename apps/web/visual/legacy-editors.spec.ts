@@ -9,6 +9,7 @@ import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { replayApi } from "./har.ts";
+import { mockCommandLog } from "./command-log.ts";
 import { FIXTURE_PROJECT_ID } from "./screens.ts";
 
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api.har");
@@ -41,14 +42,14 @@ async function legacyProject(
 	);
 	/* What the editor saves, so a hand edit can be seen leaving the page. */
 	const saved: string[] = [];
-	await context.route(
-		`**/api/operations/projects/${FIXTURE_PROJECT_ID}/storyboards**`,
-		async (route) => {
-			if (route.request().method() !== "POST") return route.fallback();
-			saved.push(route.request().postData() ?? "");
-			return route.fulfill({ status: 201, json: { storyboard: { id: "saved", version: 2 } } });
+	let stored = storyboard;
+	await mockCommandLog(context, FIXTURE_PROJECT_ID, {
+		stored: () => stored,
+		onSave: (next) => {
+			stored = next;
+			saved.push(JSON.stringify(next));
 		},
-	);
+	});
 	return saved;
 }
 

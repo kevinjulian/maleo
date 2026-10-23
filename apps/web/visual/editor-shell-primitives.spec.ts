@@ -67,7 +67,7 @@ for (const width of [320, 1440]) {
 		);
 		await page.screenshot({ path: testInfo.outputPath(`editor-shell-${width}.png`) });
 
-		const clip = page.locator(".tl2-clip-data").first();
+		const clip = page.locator(`[data-clipid="text:1"]`);
 		await expect(clip).toBeVisible();
 		await clip.click();
 		await page.keyboard.press("Delete");

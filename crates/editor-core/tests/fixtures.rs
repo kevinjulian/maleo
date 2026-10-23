@@ -331,6 +331,15 @@ fn clips_of_unknown_type_are_refused_at_admission() {
     assert!(matches!(admit_scope(&scope("hologram")), Err(EngineError::InvalidInput(_))));
 }
 
+#[test]
+fn a_command_adding_an_infographic_clip_is_refused() {
+    let scope = json!({ "mediaAssets": [], "slides": [], "posts": [], "doc": { "schemaVersion": 2, "markers": [], "clips": [] } }).to_string();
+    let command = json!({ "type": "clip.insert", "clip": { "id": "infographic:1", "type": "infographic", "startSec": 0, "durationSec": 2, "track": 0, "infographic": { "id": 1, "start": 0, "dur": 2 } } }).to_string();
+    assert!(matches!(execute_json(&scope, &command), Err(EngineError::InvalidInput(_))));
+    let admitted = admit_scope(&scope).expect("admits");
+    assert!(admitted.doc.clips.is_empty(), "the document is unchanged");
+}
+
 /// The engine source names no host API: no files, network, processes,
 /// environment, clocks or threads. A host owns all of those.
 #[test]

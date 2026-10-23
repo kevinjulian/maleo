@@ -108,7 +108,7 @@ function BeatCard({
 				{
 					type: "update_beat",
 					beatId: beat.id,
-					fields: { editorial: editable, motionGraphic: next.motionGraphic },
+					fields: { editorial: editable },
 				},
 				false,
 			);
@@ -121,7 +121,7 @@ function BeatCard({
 				{
 					type: "update_beat",
 					beatId: beat.id,
-					fields: { editorial: editable, motionGraphic: editorial.motionGraphic },
+					fields: { editorial: editable },
 				},
 				false,
 			);
@@ -273,9 +273,6 @@ function BeatCard({
 							onBlur={commitEditorial}
 						/>
 					</label>
-					<span>
-						Infographic: {editorial.motionGraphic?.needed ? editorial.motionGraphic.kind : "none"}
-					</span>
 				</section>
 			)}
 			{editorial?.shots?.length ? (

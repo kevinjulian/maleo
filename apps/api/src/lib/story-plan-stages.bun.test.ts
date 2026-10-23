@@ -95,11 +95,9 @@ describe("sequence direction stage", () => {
 		setStorySequenceDirectorForTests(async () => directionResponse());
 		const result = await directStorySequence(directionSections);
 		expect(result.needsDirection).toBeUndefined();
-		expect(
-			result.sections.map(
-				({ editorial: _editorial, motionGraphic: _motionGraphic, ...section }) => section,
-			),
-		).toEqual(directionSections);
+		expect(result.sections.map(({ editorial: _editorial, ...section }) => section)).toEqual(
+			directionSections,
+		);
 		expect(result.sections.map((section) => section.editorial?.noveltyKey)).toEqual([
 			"novel-0",
 			"novel-1",
@@ -119,20 +117,20 @@ describe("sequence direction stage", () => {
 		expect(result.sections.some((section) => section.editorial)).toBe(false);
 	});
 
-	test("does not let disabled timeline data block direction", async () => {
+	test("reads a removed infographic answer as narrative", async () => {
 		setStorySequenceDirectorForTests(async () =>
 			directionResponse({
 				presentation: "infographic",
-				motionGraphic: { needed: false, kind: "none", purpose: "none", reason: "No source data" },
+				motionGraphic: { needed: true, kind: "stat_reveal", purpose: "prove", reason: "r" },
 			}),
 		);
-		const result = await directStorySequence(directionSections, { allowInfographics: false });
+		const result = await directStorySequence(directionSections);
 		expect(result.needsDirection).toBeUndefined();
 		expect(result.sections.map((section) => section.editorial?.presentation)).toEqual([
-			"explainer",
-			"explainer",
+			"narrative",
+			"narrative",
 		]);
-		expect(result.sections.every((section) => section.motionGraphic === undefined)).toBe(true);
+		expect(result.sections.every((section) => !("motionGraphic" in section))).toBe(true);
 	});
 
 	test("receives asset-free project inputs and returns complete shot direction", async () => {
@@ -155,7 +153,7 @@ describe("sequence direction stage", () => {
 			],
 			visual: "ink drawing",
 			rules: "no captions",
-			templateConstraints: { useData: false, maxVisualBeatSec: 6 },
+			templateConstraints: { maxVisualBeatSec: 6 },
 		});
 		expect(result.needsDirection).toBeUndefined();
 		expect(result.sections[0]?.editorial?.shots?.[0]?.bindings).toEqual([{ entityId: "entity-1" }]);

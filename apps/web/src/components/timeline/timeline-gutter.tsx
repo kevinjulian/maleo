@@ -28,14 +28,13 @@ import { laneGroupHue, laneGroupOf, laneLabel } from "@models/timeline/timeline-
  * group here means adding a sixth group fails to compile instead. An untyped
  * lane falls back to the neutral `layers` mark.
  *
- * `chart` and `spark` are already the in-clip icons for data and effect, so the
+ * `spark` is already the in-clip icon for effect, so the
  * gutter and the clip body agree without anyone maintaining that they do. */
 const LANE_GROUP_GLYPH = {
 	visual: "film",
 	audio: "waveform",
 	text: "type",
 	caption: "captions",
-	data: "chart",
 	effect: "spark",
 } satisfies Record<LaneGroup, string>;
 

@@ -11,10 +11,8 @@ import type {
 	AgentJob,
 	AgentScene,
 	AgentTextOverlay,
-	AgentInfographicOverlay,
 	AgentVideoOverlay,
 	AgentAudioOverlay,
-	AgentInfographicPayload,
 } from "./model.ts";
 import type { StorySection } from "../../../lib/story.ts";
 import {
@@ -46,10 +44,7 @@ import { getStoryPlan } from "./plan-state.ts";
 import { saveRun } from "./run-repository.ts";
 import { adoptJobArtifact, settleJobArtifacts } from "./artifact-store.ts";
 
-type SeededOverlays = Pick<
-	AgentJob,
-	"textOverlays" | "infographicOverlays" | "videoOverlays" | "audioOverlays"
->;
+type SeededOverlays = Pick<AgentJob, "textOverlays" | "videoOverlays" | "audioOverlays">;
 
 // ── Unit lifecycle ──────────────────────────────────────────────────────────
 
@@ -191,7 +186,7 @@ export async function persist(job: AgentJob): Promise<void> {
 				trackFlags: priorDoc.trackFlags ?? undefined,
 			},
 		);
-	// The agent holds no captions, pacing devices or infographic style — those are
+	// The agent holds no captions or pacing devices — those are
 	// the editor's. It reads the prior document and supplies them explicitly rather
 	// than spreading a hand-listed set of keys and letting absence mean "not mine".
 	const storyboard_json = {
@@ -213,7 +208,6 @@ export async function persist(job: AgentJob): Promise<void> {
 			captions: priorDoc.captions,
 			captionSet: doc.captionSet ?? captionState.captionSet ?? null,
 			pacingDevices: priorDoc.pacingDevices,
-			infographicStyle: priorDoc.infographicStyle,
 			// Render-affecting presentation is the editor's, like the style config above:
 			// carried through so an agent write does not silently un-hide a track.
 			trackFlags: { ...priorDoc.trackFlags, ...doc.trackFlags },
@@ -301,7 +295,6 @@ export async function loadPriorArtifacts(projectId: string): Promise<PipelineArt
 // audio volume/fade) so a run never re-homes or re-ids the user's clips.
 export function overlaysFromV2Clips(clips: readonly Clip[]): SeededOverlays {
 	const text: AgentTextOverlay[] = [];
-	const infographic: AgentInfographicOverlay[] = [];
 	const video: AgentVideoOverlay[] = [];
 	const audio: AgentAudioOverlay[] = [];
 	for (const c of clips) {
@@ -316,28 +309,6 @@ export function overlaysFromV2Clips(clips: readonly Clip[]): SeededOverlays {
 				preset: t.preset || undefined,
 				layout: t.layout,
 				track,
-			});
-		} else if (c.type === "infographic" && c.infographic) {
-			const g = c.infographic;
-			if (!g.payload || typeof g.payload !== "object") continue;
-			// SAFETY: `AgentInfographicPayload` is a FOUR-variant subset of the
-			// editor's eleven — the agent can author stat_reveal, bar_chart,
-			// table_build and price_tag; the editor can also author line, area, pie
-			// and donut charts, progress bars, circular progress, social proof and
-			// urgency. A seeded overlay may therefore be a variant the agent's type
-			// says is impossible. It is sound only because the agent CARRIES this
-			// payload rather than reading it: the seed goes into the job and back out
-			// through `persist` unmodified. Anything that starts branching on
-			// `payload.type` inside the agent has to widen the union first.
-			const payload = g.payload as AgentInfographicPayload;
-			infographic.push({
-				id: g.id || undefined,
-				startSec: g.start,
-				durationSec: g.dur || 3,
-				layout: g.layout,
-				track,
-				animation: g.animation,
-				payload,
 			});
 		} else if ((c.type === "image" || c.type === "video") && c.video) {
 			const v = c.video;
@@ -383,7 +354,6 @@ export function overlaysFromV2Clips(clips: readonly Clip[]): SeededOverlays {
 	}
 	return {
 		textOverlays: text,
-		infographicOverlays: infographic,
 		videoOverlays: video,
 		audioOverlays: audio,
 	};
@@ -415,7 +385,7 @@ export async function loadPriorEditorScenes(projectId: string): Promise<Scene[]>
 // the agent operates on the FULL timeline and persist() writes them back — otherwise
 // a run would drop the user's b-roll/titles. Handles v2 clips + legacy v1 arrays.
 export async function loadPriorOverlays(projectId: string): Promise<SeededOverlays> {
-	const empty = { textOverlays: [], infographicOverlays: [], videoOverlays: [], audioOverlays: [] };
+	const empty = { textOverlays: [], videoOverlays: [], audioOverlays: [] };
 	try {
 		const latest = (await getContentProject(projectId))?.storyboards?.[0]?.storyboard_json;
 		if (!latest) return empty;
@@ -439,7 +409,6 @@ export async function loadPriorOverlays(projectId: string): Promise<SeededOverla
 				layout: t.layout,
 				track: t.track ?? 0,
 			})),
-			infographicOverlays: [],
 			videoOverlays: videoOverlays.map((v): AgentVideoOverlay => ({
 				thumb: v.thumb,
 				sourceDurationSec: v.sourceDurationSec,

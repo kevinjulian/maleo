@@ -9,7 +9,6 @@ import type {
 	ConversationDecision,
 	Config,
 	ContentType,
-	InfographicStyle,
 	PacingDevices,
 	ProjectSelection,
 	RefImage,
@@ -69,7 +68,6 @@ export async function createProject(input: {
 	 *  operator override. Written with the row for the same reason as the axes above. */
 	materials?: ProjectMaterials;
 	pacingDevices?: PacingDevices;
-	infographicStyle?: InfographicStyle;
 	trackFlags?: TrackFlags;
 }): Promise<string | null> {
 	const { type, config, refs, title } = input;
@@ -88,7 +86,6 @@ export async function createProject(input: {
 				projectReferences: input.projectReferences,
 				materials: input.materials,
 				pacingDevices: input.pacingDevices,
-				infographicStyle: input.infographicStyle,
 				trackFlags: input.trackFlags,
 			},
 		);

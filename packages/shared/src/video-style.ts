@@ -206,25 +206,6 @@ export function emotionEnergy(emotion: Emotion): number {
 	return EMOTION_ENERGY[emotion];
 }
 
-/** Overlay entrance motions the renderer supports (infographics + layered visuals). */
-export type OverlayMotion = "fade" | "slide_up" | "scale";
-
-/**
- * Emotion-mapped entrance preset for overlays (infographics, callouts): calm
- * beats fade in, mid-energy beats rise, high-energy beats pop. Unknown/absent
- * emotion falls back to the neutral rise so wiring never has to special-case.
- */
-export function overlayMotionForEmotion(emotion: string | undefined | null): OverlayMotion {
-	// `EMOTION_ENERGY satisfies Record<Emotion, number>`, so `oneOf` against
-	// `EMOTIONS` is exactly the membership test the `in` check was performing —
-	// and it RETURNS the member, so the index needs no assertion.
-	const key = oneOf(emotion, EMOTIONS);
-	const energy = key ? EMOTION_ENERGY[key] : 0.5;
-	if (energy >= 0.7) return "scale";
-	if (energy < 0.4) return "fade";
-	return "slide_up";
-}
-
 /**
  * Energy-aware transition: snap (hard cut) into a high-energy beat, dissolve
  * (fade) into a calm one, otherwise keep the context-chosen transition. This is

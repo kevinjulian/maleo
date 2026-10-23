@@ -180,11 +180,4 @@ export function contentScrubDecision(input: {
 
 /** Every range kind the content timeline puts on a lane. `scene` is the base
  *  track; the rest are the free-clip families that share a row. */
-export type ContentRangeKind =
-	| "scene"
-	| "video"
-	| "text"
-	| "audio"
-	| "infographic"
-	| "effect"
-	| "caption";
+export type ContentRangeKind = "scene" | "video" | "text" | "audio" | "effect" | "caption";

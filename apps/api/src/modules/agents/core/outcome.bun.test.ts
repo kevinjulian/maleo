@@ -16,7 +16,6 @@ function job(over: Partial<AgentJob> = {}): AgentJob {
 		events: [],
 		scenes: [],
 		textOverlays: [],
-		infographicOverlays: [],
 		videoOverlays: [],
 		audioOverlays: [],
 		characters: [],
@@ -229,19 +228,7 @@ describe("outcome evaluation", () => {
 						durationSec: 3,
 						preset: "explainer-card",
 					},
-				],
-				infographicOverlays: [
-					{
-						id: 2,
-						startSec: 0,
-						durationSec: 3,
-						payload: {
-							type: "table_build",
-							title: "Five habits",
-							columns: ["Habit"],
-							rows: [["Accept"]],
-						},
-					},
+					{ id: 2, content: "Five habits", startSec: 0, durationSec: 3, preset: "title" },
 				],
 				audioOverlays: [
 					{

@@ -2,17 +2,6 @@ import type { StyleKnob, TemplateItem } from "./types.ts";
 import type { TextPreset } from "@maleo/shared";
 
 import {
-	barChart,
-	lineChart,
-	areaChart,
-	pieChart,
-	donutChart,
-	progressBars,
-	circularProgress,
-	statCounter,
-	comparisonChart,
-} from "./data-templates.ts";
-import {
 	cinematicTitleIntro,
 	lowerThird,
 	endCard,
@@ -75,16 +64,6 @@ export function styleKnobsFor(preset: string): StyleKnob[] {
 // Templates are grouped by category into sibling modules; this registry is the
 // only place that flattens them into the list the Templates panel renders.
 export const TEMPLATE_ITEMS: TemplateItem[] = [
-	barChart,
-	lineChart,
-	areaChart,
-	pieChart,
-	donutChart,
-	progressBars,
-	circularProgress,
-	statCounter,
-	comparisonChart,
-
 	cinematicTitleIntro,
 	lowerThird,
 	endCard,

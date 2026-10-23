@@ -29,7 +29,6 @@ export function hasStorySequenceDirectorOverride(): boolean {
 }
 
 export interface StoryDirectionOptions {
-	allowInfographics?: boolean;
 	/** Require per-shot direction and final reference output for a canonical plan. */
 	authoritativeReferences?: boolean;
 	roster?: readonly StoryVisualDirectionRosterEntry[];
@@ -170,14 +169,10 @@ export async function directStorySequence(
 				throw new Error(`expected beat ids in order: ${expected.join(", ")}`);
 			}
 			const byId = new Map(direction.beats.map((beat) => [beat.beatId, beat.editorial]));
-			const directed = sections.map((section) => {
-				let editorial = byId.get(section.semanticBeatId!);
-				if (options.allowInfographics === false && editorial?.presentation === "infographic") {
-					const { motionGraphic: _motionGraphic, ...rest } = editorial;
-					editorial = { ...rest, presentation: "explainer" };
-				}
-				return { ...section, editorial, motionGraphic: editorial?.motionGraphic };
-			});
+			const directed = sections.map((section) => ({
+				...section,
+				editorial: byId.get(section.semanticBeatId!),
+			}));
 			const violations = storySequenceDirectionViolations(
 				directed.map((section) => ({ id: section.semanticBeatId!, editorial: section.editorial })),
 				{ requireDirection: true },

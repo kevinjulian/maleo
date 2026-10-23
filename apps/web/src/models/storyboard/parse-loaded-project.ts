@@ -38,18 +38,13 @@ import {
 	type ProjectMaterials,
 } from "@maleo/shared";
 import { clipId, type ClipSource } from "@models/timeline/timeline-clips.ts";
-import {
-	DEFAULT_INFOGRAPHIC_STYLE,
-	DEFAULT_PACING_DEVICES,
-} from "@models/presets/generation-defaults.ts";
+import { DEFAULT_PACING_DEVICES } from "@models/presets/generation-defaults.ts";
 import { hashHue } from "@models/core/measures.ts";
 import type {
 	AudioOverlay,
 	Config,
 	ContentType,
 	EffectClip,
-	InfographicOverlay,
-	InfographicStyle,
 	Note,
 	PacingDevices,
 	ProjectSelection,
@@ -78,6 +73,7 @@ import {
 	settleChat,
 } from "./loaded-editor-state.ts";
 import { migrateSceneTextOverlays } from "./scene-text-overlays.ts";
+import type { StoredLayout } from "@models/editor/sync-bridge.ts";
 import {
 	parseElementSources,
 	parseRenderOverrides,
@@ -138,10 +134,13 @@ export interface ParsedProject {
 	agentEdit?: AgentEditMarker;
 	/** Where the editor's command log reading starts. */
 	commandSeq: number;
+	/** The stored document's clips, markers and lane flags, before the load
+	 *  migrations ran. The command log starts from these, so a migration the load
+	 *  made (lane groups, scene text) reaches the server as one write. */
+	storedLayout: StoredLayout;
 	overlays: TextOverlay[];
 	audioOverlays: AudioOverlay[];
 	videoOverlays: VideoOverlay[];
-	infographicOverlays: InfographicOverlay[];
 	effects: EffectClip[];
 	transitions: TransitionClip[];
 	/** Seed clips for the canonical document (clip-native load target): the store is
@@ -165,7 +164,6 @@ export interface ParsedProject {
 	captions: CaptionConfig;
 	captionSet?: CaptionSet;
 	pacingDevices: PacingDevices;
-	infographicStyle: InfographicStyle;
 	mediaAssets: MediaAsset[];
 	chatMessages: ChatLogMessage[];
 	trackFlags: TrackFlags;
@@ -352,7 +350,6 @@ function buildSeed(
 		videoOverlays: VideoOverlay[];
 		textOverlays: TextOverlay[];
 		audioOverlays: AudioOverlay[];
-		infographicOverlays: InfographicOverlay[];
 		effects: EffectClip[];
 		transitions: TransitionClip[];
 	},
@@ -366,7 +363,6 @@ function buildSeed(
 			videoOverlays: a.videoOverlays,
 			textOverlays: a.textOverlays,
 			audioOverlays: a.audioOverlays,
-			infographicOverlays: a.infographicOverlays,
 			effects: a.effects,
 			transitions: a.transitions,
 			projectReferences,
@@ -412,6 +408,11 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 		...(agentEdit ? { agentEdit } : {}),
 		projectId: project.id,
 		commandSeq: detail.commandSeq ?? 0,
+		storedLayout: {
+			clips: doc.clips,
+			markers: doc.markers,
+			...(doc.trackFlags === null ? {} : { trackFlags: doc.trackFlags }),
+		},
 		persistedCaptionState: captionStateFingerprint(doc),
 		type: project.type,
 		config,
@@ -427,7 +428,6 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 		overlays: [],
 		audioOverlays: [],
 		videoOverlays: [],
-		infographicOverlays: [],
 		effects: [],
 		transitions: [],
 		clips: [],
@@ -448,7 +448,6 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 		captions: { ...DEFAULT_CAPTIONS, ...doc.captions },
 		...(doc.captionSet ? { captionSet: doc.captionSet } : {}),
 		pacingDevices: { ...DEFAULT_PACING_DEVICES, ...doc.pacingDevices },
-		infographicStyle: { ...DEFAULT_INFOGRAPHIC_STYLE, ...doc.infographicStyle },
 		mediaAssets: [],
 		chatMessages: [],
 		trackFlags: {},
@@ -528,7 +527,6 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 					videoOverlays: back.videoOverlays,
 					textOverlays: overlays,
 					audioOverlays: back.audioOverlays,
-					infographicOverlays: back.infographicOverlays,
 					effects: back.effects,
 					transitions: back.transitions,
 				},
@@ -552,7 +550,6 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 				overlays: lanes.rows("text", overlays),
 				audioOverlays: lanes.rows("audio", back.audioOverlays),
 				videoOverlays: lanes.rows("video", back.videoOverlays),
-				infographicOverlays: lanes.rows("infographic", back.infographicOverlays),
 				effects: lanes.rows("effect", back.effects),
 				transitions: back.transitions,
 				clips: lanes.clips,
@@ -588,7 +585,6 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 				videoOverlays,
 				textOverlays: overlays,
 				audioOverlays,
-				infographicOverlays: [],
 				effects,
 				transitions,
 			},

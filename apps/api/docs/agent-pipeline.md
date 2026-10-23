@@ -48,7 +48,7 @@ prompt
   |-> [1] plan      -> Blueprint (beats/sections, emotion, intent, motion decisions)
       [2] scaffold  -> materialize blueprint into Units (structure, no assets)
       [3] visuals   -> frames / images per unit
-      [4] motion    -> animate + infographics
+      [4] motion    -> animate
       [5] audio     -> voiceover + music / sfx
       [6] finalize  -> captions, transitions, render-ready
 ```
@@ -157,7 +157,7 @@ draft -> proposed -> approved -> generating -> ready
 ```
 PIPELINE   (deterministic state machine)   builds/extends: plan..finalize, gates + auto
     | calls
-TOOLS      (registry, atomic ops)          produce_blueprint, scaffold, generate_frame, add_infographic, ...
+TOOLS      (registry, atomic ops)          produce_blueprint, scaffold, generate_frame, add_text, ...
     ^
 EDIT LOOP  (ReAct tool loop)               targeted edits: "regenerate scene 3", "delete section 2"
 ```

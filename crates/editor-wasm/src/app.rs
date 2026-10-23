@@ -183,7 +183,9 @@ impl AppState {
         let ids = |key: &str| -> Result<Vec<String>, String> {
             match &input[key] {
                 Value::Null => Ok(Vec::new()),
-                Value::Array(items) => items.iter().map(|item| item.as_str().map(str::to_owned).ok_or_else(|| invalid(format!("`{key}` holds a non-string id")))).collect(),
+                Value::Array(items) => {
+                    items.iter().map(|item| item.as_str().map(str::to_owned).ok_or_else(|| invalid(format!("`{key}` holds a non-string id")))).collect()
+                }
                 _ => Err(invalid(format!("`{key}` is not an array"))),
             }
         };
@@ -350,12 +352,9 @@ mod tests {
 
     #[test]
     fn a_selection_action_crosses_as_json() {
-        let empty = r#"{"overlayId":null,"infographicId":null,"audioId":null,"videoOverlayId":null,"effectId":null,"transitionId":null,"freeIds":[]}"#;
+        let empty = r#"{"overlayId":null,"audioId":null,"videoOverlayId":null,"effectId":null,"transitionId":null,"freeIds":[]}"#;
         let next = selection_apply(&format!(r#"{{"selection":{empty},"action":{{"type":"selectClip","source":"video","refId":7}}}}"#)).expect("applies");
-        assert_eq!(
-            next,
-            r#"{"overlayId":null,"infographicId":null,"audioId":null,"videoOverlayId":7,"effectId":null,"transitionId":null,"freeIds":["video:7"]}"#
-        );
+        assert_eq!(next, r#"{"overlayId":null,"audioId":null,"videoOverlayId":7,"effectId":null,"transitionId":null,"freeIds":["video:7"]}"#);
         assert_eq!(kind(&selection_apply(&format!(r#"{{"selection":{empty},"action":{{"type":"jump"}}}}"#)).expect_err("unknown")), "InvalidInput");
     }
 }

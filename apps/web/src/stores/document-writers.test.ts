@@ -293,14 +293,6 @@ describe("a positional command matches the array path, per family", () => {
 				]),
 			"effect:1",
 		],
-		[
-			"infographic",
-			(w) =>
-				w.setInfographicOverlays([
-					{ id: 1, start: 0, dur: 4, track: 0, payload: { type: "stat_reveal" } } as never,
-				]),
-			"infographic:1",
-		],
 	];
 
 	for (const [name, seed, id] of seeds) {

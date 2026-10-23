@@ -30,20 +30,11 @@ import {
 	sceneSpeechHash,
 } from "@maleo/shared";
 import { isPendingMedia } from "@models/core/pending-media-sources.ts";
-import { mergeAgentInfographicOverlays } from "@models/agent/merge-infographic-overlays.ts";
 import { preserveAgentSceneTimeline } from "@models/timeline/editor-media.ts";
-import type {
-	AudioOverlay,
-	InfographicOverlay,
-	RefImage,
-	Scene,
-	TextOverlay,
-	VideoOverlay,
-} from "@maleo/shared";
+import type { AudioOverlay, RefImage, Scene, TextOverlay, VideoOverlay } from "@maleo/shared";
 import type {
 	AgentAudioOverlayOut,
 	AgentCharacterOut,
-	AgentInfographicOverlayOut,
 	AgentJobScene,
 	AgentTextOverlayOut,
 	AgentVideoOverlayOut,
@@ -68,7 +59,6 @@ import {
 const SCENE_ID_OFFSET = 0;
 const TEXT_ID_OFFSET = 2000;
 const VIDEO_ID_OFFSET = 3000;
-const INFOGRAPHIC_ID_OFFSET = 3500;
 const AUDIO_ID_OFFSET = 4000;
 
 /** Admit a media URL to the project and answer with its identity.
@@ -138,7 +128,6 @@ export function mergeAgentScenes(
 			analogy: s.analogy ?? before?.analogy,
 			visualType: oneOf(s.visualType, VISUAL_TYPES) ?? before?.visualType,
 			onScreenText: s.onScreenText ?? before?.onScreenText,
-			motionGraphic: s.motionGraphic,
 			sceneKind: s.sceneKind ?? before?.sceneKind,
 			sceneKey: s.sceneKey ?? before?.sceneKey,
 			logicalSceneId: s.logicalSceneId ?? before?.logicalSceneId,
@@ -304,14 +293,6 @@ export function mergeAgentVideoOverlays(
 		},
 		idSeed + VIDEO_ID_OFFSET,
 	);
-}
-
-export function mergeAgentInfographics(
-	prev: InfographicOverlay[],
-	incoming: AgentInfographicOverlayOut[] | undefined,
-	idSeed: number,
-): InfographicOverlay[] {
-	return mergeAgentInfographicOverlays(prev, incoming, idSeed + INFOGRAPHIC_ID_OFFSET);
 }
 
 /** Merge audio, preferring the operator's mix. Volume and fades are theirs to
