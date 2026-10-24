@@ -1,0 +1,76 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3b4a5c",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"captionCues": [
+		{
+			"id": "italic",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 10.0,
+			"track": 0,
+			"caption": {
+				"text": "Make every video easy to watch",
+				"words": [
+					{
+						"text": "Make",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "every",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "video",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "easy",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "to",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "watch",
+						"startSec": 2.5,
+						"endSec": 2.9
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff",
+					"italic": true
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-italic",
+				"status": "current"
+			}
+		}
+	]
+}

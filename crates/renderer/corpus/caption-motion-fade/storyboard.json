@@ -1,0 +1,58 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3b4a5c",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"captionCues": [
+		{
+			"id": "m",
+			"type": "caption",
+			"startSec": 1.0,
+			"durationSec": 3.0,
+			"track": 0,
+			"caption": {
+				"text": "Motion check",
+				"words": [
+					{
+						"text": "Motion",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "check",
+						"startSec": 0.5,
+						"endSec": 0.9
+					}
+				],
+				"style": {
+					"fontSize": 72,
+					"weight": "Bold",
+					"motion": "Fade",
+					"background": "#c81e5a",
+					"verticalPosition": 60
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-m",
+				"status": "current"
+			}
+		}
+	]
+}

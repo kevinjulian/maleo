@@ -30,6 +30,19 @@ COPY rust-toolchain.toml Cargo.toml Cargo.lock ./
 COPY crates crates
 RUN rustup toolchain install && cargo build --locked --release -p maleo-editor-wasm --target wasm32-unknown-unknown
 
+# The renderer's browser module (crates/renderer-wasm, ADR 0011), served to
+# the editor's hidden compare mode at /renderer/ (apps/web/src/app/renderer-routes.ts).
+# wasm-bindgen writes the module and its JS glue; the CLI must match the
+# crate's pinned version.
+FROM rust:1.98.1-slim AS renderer-engine
+WORKDIR /src
+RUN cargo install wasm-bindgen-cli --version 0.2.129 --locked
+COPY rust-toolchain.toml Cargo.toml Cargo.lock ./
+COPY crates crates
+RUN rustup toolchain install \
+	&& cargo build --locked --release -p maleo-renderer-wasm --target wasm32-unknown-unknown \
+	&& wasm-bindgen --target web --out-dir target/renderer-wasm target/wasm32-unknown-unknown/release/maleo_renderer_wasm.wasm
+
 # whisper.cpp for local captions, built here so the runtime image needs no git,
 # compiler or GitHub access to install it; Settings then fetches only the model.
 # Built on the runtime base so the binary links against the same glibc and
@@ -71,8 +84,12 @@ RUN VP_GIT_HOOKS=0 bun install --frozen-lockfile
 
 # ffmpeg/ffprobe are shelled by API audio-duration, stock music probing, and worker
 # for authoritative import probes, thumbnails and playback normalization.
+# fonts-noto-color-emoji gives Remotion exports color emoji instead of empty
+# boxes. The Rust renderer bundles this package's font file
+# (crates/renderer/fonts/NotoColorEmoji.ttf); the golden corpus manifest pins
+# its version, so both renderers draw the same glyphs.
 RUN apt-get update \
-	&& apt-get install -y --no-install-recommends ffmpeg ca-certificates fonts-liberation \
+	&& apt-get install -y --no-install-recommends ffmpeg ca-certificates fonts-liberation fonts-noto-color-emoji \
 		libnss3 libdbus-1-3 libatk1.0-0 libgbm1 libasound2 libxrandr2 \
 		libxkbcommon0 libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0 \
 		libpango-1.0-0 libcairo2 libcups2 \
@@ -90,6 +107,7 @@ COPY . .
 
 COPY --from=editor-engine /src/target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm
 RUN bun scripts/optimize-editor-wasm.mts target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm
+COPY --from=renderer-engine /src/target/renderer-wasm target/renderer-wasm
 
 # Every setting arrives as an environment variable. Nothing reads a repository
 # .env file. The API refuses to start in production without

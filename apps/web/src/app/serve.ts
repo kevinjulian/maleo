@@ -12,6 +12,7 @@ import index from "./index.html";
 import { MAX_IMPORT_REQUEST_BYTES } from "@maleo/shared";
 import { apiUpstreams, proxyToApi } from "./api-proxy.ts";
 import { engineRoutes } from "./engine-routes.ts";
+import { rendererRoutes } from "./renderer-routes.ts";
 import tailwind from "bun-plugin-tailwind";
 
 const PORT = parseInt(process.env.MALEO_WEB_PORT ?? "3030", 10) || 3030;
@@ -106,6 +107,7 @@ const server = Bun.serve({
 		"/uploads/*": (req): Promise<Response> => proxy(req),
 		...staticRoutes(),
 		...engineRoutes(),
+		...rendererRoutes(),
 		...(await frontendRoutes()),
 	},
 	/* `false`, not `{ hmr: false }`. An object here still selects the bundler's

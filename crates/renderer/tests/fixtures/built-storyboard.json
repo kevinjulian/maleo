@@ -1,0 +1,534 @@
+{
+	"scenes": [
+		{
+			"image": "s-798fbbe4937f",
+			"endImage": null,
+			"label": "s-35a1e5c29b18",
+			"movement": "Slow Zoom In",
+			"transition": "cut",
+			"startSec": 0,
+			"durationSec": 3.209,
+			"voiceover": "s-2ce897656a88",
+			"visual": "s-919edc40328b",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"layout": {
+						"mask": null,
+						"color": {
+							"brightness": 1,
+							"contrast": 1,
+							"saturation": 1
+						},
+						"xPct": 0,
+						"yPct": 0,
+						"widthPct": 100,
+						"heightPct": 100,
+						"fit": "cover",
+						"rotationDeg": 0,
+						"aspectLocked": false,
+						"opacity": 1,
+						"flipX": false,
+						"flipY": false,
+						"playbackRate": 1,
+						"reverse": false
+					},
+					"url": "s-798fbbe4937f",
+					"primary": true,
+					"kind": "image",
+					"label": "s-35a1e5c29b18",
+					"startSec": 0,
+					"durationSec": 3.209
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-2ce897656a88",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 3.209
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-9d5cacafb3b7",
+			"endImage": null,
+			"label": "s-967356c4999e",
+			"movement": "Slight Push In",
+			"transition": "fade",
+			"startSec": 3.209,
+			"durationSec": 4.699,
+			"voiceover": "",
+			"visual": "s-d467ab160a85",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-9d5cacafb3b7",
+					"primary": true,
+					"kind": "image",
+					"label": "s-967356c4999e",
+					"startSec": 0,
+					"durationSec": 4.699
+				}
+			],
+			"audioClips": [],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-3b3fa9645d10",
+			"endImage": null,
+			"label": "s-47af5ce79258",
+			"movement": "Slow Zoom In",
+			"transition": "cut",
+			"startSec": 7.9079999999999995,
+			"durationSec": 3.563,
+			"voiceover": "s-f2492ff6b8ce",
+			"visual": "s-146ce851a2dc",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-3b3fa9645d10",
+					"primary": true,
+					"kind": "image",
+					"label": "s-47af5ce79258",
+					"startSec": 0,
+					"durationSec": 3.563
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-f2492ff6b8ce",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 3.563
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-f3a46d3c7343",
+			"endImage": null,
+			"label": "s-c8d56b764e2e",
+			"movement": "Slow Zoom Out",
+			"transition": "cut",
+			"startSec": 11.471,
+			"durationSec": 4.673,
+			"voiceover": "",
+			"visual": "s-b4ac6a19d1f6",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-f3a46d3c7343",
+					"primary": true,
+					"kind": "image",
+					"label": "s-c8d56b764e2e",
+					"startSec": 0,
+					"durationSec": 4.673
+				}
+			],
+			"audioClips": [],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-c9a9fd245d9a",
+			"endImage": null,
+			"label": "s-124744a883f5",
+			"movement": "Slow Zoom In",
+			"transition": "cut",
+			"startSec": 16.144,
+			"durationSec": 3.601,
+			"voiceover": "s-a193d1099dc9",
+			"visual": "s-fc86fb951ccb",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-c9a9fd245d9a",
+					"primary": true,
+					"kind": "image",
+					"label": "s-124744a883f5",
+					"startSec": 0,
+					"durationSec": 3.601
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-a193d1099dc9",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 3.601
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-b0840c8f8c32",
+			"endImage": null,
+			"label": "s-52ceac51739e",
+			"movement": "Slow Pan Left",
+			"transition": "cut",
+			"startSec": 19.744999999999997,
+			"durationSec": 4.09,
+			"voiceover": "s-8ead27faca12",
+			"visual": "s-b7cc9be34891",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-b0840c8f8c32",
+					"primary": true,
+					"kind": "image",
+					"label": "s-52ceac51739e",
+					"startSec": 0,
+					"durationSec": 4.09
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-8ead27faca12",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 4.09
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-a7cafed27de3",
+			"endImage": null,
+			"label": "s-c5f9c1983a26",
+			"movement": "Slow Zoom In",
+			"transition": "cut",
+			"startSec": 23.834999999999997,
+			"durationSec": 2.811,
+			"voiceover": "s-d0b5f7b55043",
+			"visual": "s-879decd696be",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-a7cafed27de3",
+					"primary": true,
+					"kind": "image",
+					"label": "s-c5f9c1983a26",
+					"startSec": 0,
+					"durationSec": 2.811
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-d0b5f7b55043",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 2.811
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "s-2373ea901325",
+			"endImage": null,
+			"label": "s-dec285c3c946",
+			"movement": "Tilt Up",
+			"transition": "fade",
+			"startSec": 26.645999999999997,
+			"durationSec": 4.032,
+			"voiceover": "s-39534f0ba827",
+			"visual": "s-f68b5e6a3efd",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "s-2373ea901325",
+					"primary": true,
+					"kind": "image",
+					"label": "s-dec285c3c946",
+					"startSec": 0,
+					"durationSec": 4.032
+				}
+			],
+			"audioClips": [
+				{
+					"kind": "voiceover",
+					"content": "s-39534f0ba827",
+					"label": "Voiceover",
+					"startSec": 0,
+					"durationSec": 4.032
+				}
+			],
+			"vignette": false,
+			"grain": false
+		}
+	],
+	"accentColor": "#FF3E6C",
+	"bgColor": "#0B0B0F",
+	"fgColor": "#FFFFFF",
+	"musicMood": "chill",
+	"showLabels": false,
+	"targetDurationSec": 30.677999999999997,
+	"textOverlays": [
+		{
+			"content": "s-35a1e5c29b18",
+			"startSec": 0,
+			"track": 5,
+			"durationSec": 4,
+			"preset": "chapter",
+			"layout": {
+				"xPct": 6,
+				"yPct": 60,
+				"widthPct": 88,
+				"heightPct": 28,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"opacity": 1,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"content": "s-47af5ce79258",
+			"startSec": 7.908,
+			"track": 5,
+			"durationSec": 4,
+			"preset": "chapter",
+			"layout": {
+				"xPct": 6,
+				"yPct": 60,
+				"widthPct": 88,
+				"heightPct": 28,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"opacity": 1,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"content": "s-124744a883f5",
+			"startSec": 16.144,
+			"track": 5,
+			"durationSec": 4,
+			"preset": "chapter",
+			"layout": {
+				"xPct": 6,
+				"yPct": 60,
+				"widthPct": 88,
+				"heightPct": 28,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"opacity": 1,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"content": "s-c5f9c1983a26",
+			"startSec": 23.835,
+			"track": 5,
+			"durationSec": 4,
+			"preset": "chapter",
+			"layout": {
+				"xPct": 6,
+				"yPct": 60,
+				"widthPct": 88,
+				"heightPct": 28,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"opacity": 1,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"content": "s-35a1e5c29b18",
+			"startSec": 0.6,
+			"track": 4,
+			"durationSec": 4,
+			"preset": "chapter",
+			"layout": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"fit": "contain"
+			}
+		},
+		{
+			"content": "s-47af5ce79258",
+			"startSec": 8.508,
+			"track": 4,
+			"durationSec": 4,
+			"preset": "chapter"
+		},
+		{
+			"content": "s-124744a883f5",
+			"startSec": 16.744,
+			"track": 4,
+			"durationSec": 4,
+			"preset": "chapter"
+		},
+		{
+			"content": "s-c5f9c1983a26",
+			"startSec": 24.435,
+			"track": 4,
+			"durationSec": 4,
+			"preset": "chapter"
+		}
+	],
+	"videoOverlays": [],
+	"audioOverlays": [
+		{
+			"kind": "voiceover",
+			"content": "s-2ce897656a88",
+			"url": "s-9eaa9867c821",
+			"startSec": 0.6,
+			"durationSec": 6.708,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "voiceover",
+			"content": "s-f2492ff6b8ce",
+			"url": "s-8d599f6e4a75",
+			"startSec": 8.508,
+			"durationSec": 7.036,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "voiceover",
+			"content": "s-a193d1099dc9",
+			"url": "s-1dabee99cef4",
+			"startSec": 16.744,
+			"durationSec": 2.651,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "voiceover",
+			"content": "s-8ead27faca12",
+			"url": "s-b7f33c3e9b87",
+			"startSec": 19.745,
+			"durationSec": 3.49,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "voiceover",
+			"content": "s-d0b5f7b55043",
+			"url": "s-68cb1f145630",
+			"startSec": 24.435,
+			"durationSec": 1.861,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "voiceover",
+			"content": "s-39534f0ba827",
+			"url": "s-1c5e8a8bb945",
+			"startSec": 26.646,
+			"durationSec": 4.032,
+			"volume": 1,
+			"fadeInSec": 0,
+			"fadeOutSec": 0,
+			"mediaStartSec": 0
+		},
+		{
+			"kind": "music",
+			"content": "s-8b91441f01d3",
+			"url": "s-4d8e77857fed",
+			"startSec": 0,
+			"durationSec": 30.678,
+			"volume": 1,
+			"fadeInSec": 1.5,
+			"fadeOutSec": 1.5
+		},
+		{
+			"kind": "sfx",
+			"content": "s-02222799483c",
+			"url": "s-323d7d27de09",
+			"startSec": 0,
+			"durationSec": 1.2,
+			"volume": 0.6,
+			"fadeInSec": 0,
+			"fadeOutSec": 1.2
+		},
+		{
+			"kind": "sfx",
+			"content": "s-bafda7ee7396",
+			"url": "s-323d7d27de09",
+			"startSec": 7.908,
+			"durationSec": 1.2,
+			"volume": 0.6,
+			"fadeInSec": 0,
+			"fadeOutSec": 1.2
+		},
+		{
+			"kind": "sfx",
+			"content": "s-214e404eb1ed",
+			"url": "s-323d7d27de09",
+			"startSec": 16.144,
+			"durationSec": 1.2,
+			"volume": 0.6,
+			"fadeInSec": 0,
+			"fadeOutSec": 1.2
+		},
+		{
+			"kind": "sfx",
+			"content": "s-acf290a0f02d",
+			"url": "s-323d7d27de09",
+			"startSec": 23.835,
+			"durationSec": 1.2,
+			"volume": 0.6,
+			"fadeInSec": 0,
+			"fadeOutSec": 1.2
+		}
+	],
+	"effects": [],
+	"captions": {
+		"enabled": true,
+		"fontFamily": "Inter",
+		"fontSize": 72,
+		"weight": "Black",
+		"italic": false,
+		"allCaps": false,
+		"style": "Standard",
+		"lines": "Single Line",
+		"chunkDuration": "1,2",
+		"maxWords": 4,
+		"maxChars": 26,
+		"maxPauseMs": 260,
+		"verticalPosition": 100,
+		"maxWidth": 86,
+		"fill": "#ffffff",
+		"activeColor": "#ffd400",
+		"stroke": "transparent",
+		"background": "transparent",
+		"shadow": "transparent",
+		"shadowOpacity": 78,
+		"shadowBlur": 18,
+		"shadowDistance": 5,
+		"shadowAngle": 90,
+		"inactiveOpacity": 55,
+		"motion": "Fade",
+		"preset": "standard"
+	}
+}

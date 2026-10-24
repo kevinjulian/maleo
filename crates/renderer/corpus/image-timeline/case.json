@@ -1,0 +1,11 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [15, 75],
+	"regions": [
+		{
+			"name": "second",
+			"rect": [30, 168, 1050, 1176]
+		}
+	]
+}

@@ -1,0 +1,13 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "linear-gradient(135deg, #F97316 0%, #E11D48 100%)",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400"
+}

@@ -1,0 +1,383 @@
+{
+	"scenes": [
+		{
+			"image": "media/portrait.jpg",
+			"endImage": null,
+			"label": "s-35a1e5c29b18",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 0,
+			"durationSec": 3.209,
+			"voiceover": "s-2ce897656a88",
+			"visual": "s-919edc40328b",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"layout": {
+						"mask": null,
+						"color": {
+							"brightness": 1,
+							"contrast": 1,
+							"saturation": 1
+						},
+						"xPct": 0,
+						"yPct": 0,
+						"widthPct": 100,
+						"heightPct": 100,
+						"fit": "cover",
+						"rotationDeg": 0,
+						"aspectLocked": false,
+						"opacity": 1,
+						"flipX": false,
+						"flipY": false,
+						"playbackRate": 1,
+						"reverse": false
+					},
+					"url": "media/portrait.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-35a1e5c29b18",
+					"startSec": 0,
+					"durationSec": 3.209
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/landscape.jpg",
+			"endImage": null,
+			"label": "s-967356c4999e",
+			"movement": "Static",
+			"transition": "fade",
+			"startSec": 3.209,
+			"durationSec": 4.699,
+			"voiceover": "",
+			"visual": "s-d467ab160a85",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-967356c4999e",
+					"startSec": 0,
+					"durationSec": 4.699
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/portrait.jpg",
+			"endImage": null,
+			"label": "s-47af5ce79258",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 7.9079999999999995,
+			"durationSec": 3.563,
+			"voiceover": "s-f2492ff6b8ce",
+			"visual": "s-146ce851a2dc",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/portrait.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-47af5ce79258",
+					"startSec": 0,
+					"durationSec": 3.563
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/landscape.jpg",
+			"endImage": null,
+			"label": "s-c8d56b764e2e",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 11.471,
+			"durationSec": 4.673,
+			"voiceover": "",
+			"visual": "s-b4ac6a19d1f6",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-c8d56b764e2e",
+					"startSec": 0,
+					"durationSec": 4.673
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/portrait.jpg",
+			"endImage": null,
+			"label": "s-124744a883f5",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 16.144,
+			"durationSec": 3.601,
+			"voiceover": "s-a193d1099dc9",
+			"visual": "s-fc86fb951ccb",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/portrait.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-124744a883f5",
+					"startSec": 0,
+					"durationSec": 3.601
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/landscape.jpg",
+			"endImage": null,
+			"label": "s-52ceac51739e",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 19.744999999999997,
+			"durationSec": 4.09,
+			"voiceover": "s-8ead27faca12",
+			"visual": "s-b7cc9be34891",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-52ceac51739e",
+					"startSec": 0,
+					"durationSec": 4.09
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/portrait.jpg",
+			"endImage": null,
+			"label": "s-c5f9c1983a26",
+			"movement": "Static",
+			"transition": "cut",
+			"startSec": 23.834999999999997,
+			"durationSec": 2.811,
+			"voiceover": "s-d0b5f7b55043",
+			"visual": "s-879decd696be",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/portrait.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-c5f9c1983a26",
+					"startSec": 0,
+					"durationSec": 2.811
+				}
+			],
+			"vignette": false,
+			"grain": false
+		},
+		{
+			"image": "media/landscape.jpg",
+			"endImage": null,
+			"label": "s-dec285c3c946",
+			"movement": "Static",
+			"transition": "fade",
+			"startSec": 26.645999999999997,
+			"durationSec": 4.032,
+			"voiceover": "s-39534f0ba827",
+			"visual": "s-f68b5e6a3efd",
+			"camera": "Medium Shot",
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"primary": true,
+					"kind": "image",
+					"label": "s-dec285c3c946",
+					"startSec": 0,
+					"durationSec": 4.032
+				}
+			],
+			"vignette": false,
+			"grain": false
+		}
+	],
+	"accentColor": "#FF3E6C",
+	"bgColor": "linear-gradient(135deg, #1E1B4B 0%, #4338CA 100%)",
+	"fgColor": "#FFFFFF",
+	"musicMood": "chill",
+	"showLabels": false,
+	"targetDurationSec": 30.677999999999997,
+	"textOverlays": [
+		{
+			"content": "Chapter one",
+			"startSec": 0,
+			"track": 5,
+			"durationSec": 4,
+			"preset": "plain",
+			"layout": {
+				"xPct": 6,
+				"yPct": 60,
+				"widthPct": 88,
+				"heightPct": 28,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"opacity": 1,
+				"playbackRate": 1,
+				"reverse": false
+			},
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 80,
+				"weight": 800,
+				"fill": "#ffffff",
+				"background": "#111827",
+				"align": "center"
+			}
+		},
+		{
+			"content": "A real project layout",
+			"startSec": 0.6,
+			"track": 4,
+			"durationSec": 4,
+			"preset": "plain",
+			"layout": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"fit": "contain"
+			},
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 48,
+				"weight": 600,
+				"fill": "#FDE68A",
+				"align": "left"
+			}
+		}
+	],
+	"videoOverlays": [
+		{
+			"url": "media/logo.png",
+			"kind": "image",
+			"track": 0,
+			"startSec": 0,
+			"durationSec": 30,
+			"layout": {
+				"xPct": 76,
+				"yPct": 3,
+				"widthPct": 20,
+				"fit": "contain",
+				"opacity": 0.9
+			}
+		}
+	],
+	"audioOverlays": [],
+	"effects": [],
+	"captions": {
+		"enabled": true,
+		"fontFamily": "Inter",
+		"fontSize": 72,
+		"weight": "Black",
+		"italic": false,
+		"allCaps": false,
+		"style": "Standard",
+		"lines": "Single Line",
+		"chunkDuration": "1,2",
+		"maxWords": 4,
+		"maxChars": 26,
+		"maxPauseMs": 260,
+		"verticalPosition": 100,
+		"maxWidth": 86,
+		"fill": "#ffffff",
+		"activeColor": "#ffd400",
+		"stroke": "transparent",
+		"background": "transparent",
+		"shadow": "transparent",
+		"shadowOpacity": 78,
+		"shadowBlur": 18,
+		"shadowDistance": 5,
+		"shadowAngle": 90,
+		"inactiveOpacity": 55,
+		"motion": "Fade",
+		"preset": "standard"
+	},
+	"captionCues": [
+		{
+			"id": "c0",
+			"type": "caption",
+			"startSec": 0.5,
+			"durationSec": 4.5,
+			"track": 0,
+			"caption": {
+				"text": "Ini proyek nyata 🎬 yang dirender ulang",
+				"words": [
+					{
+						"text": "Ini",
+						"startSec": 0.0,
+						"endSec": 0.25
+					},
+					{
+						"text": "proyek",
+						"startSec": 0.3,
+						"endSec": 0.55
+					},
+					{
+						"text": "nyata",
+						"startSec": 0.6,
+						"endSec": 0.85
+					},
+					{
+						"text": "🎬",
+						"startSec": 0.8999999999999999,
+						"endSec": 1.15
+					},
+					{
+						"text": "yang",
+						"startSec": 1.2,
+						"endSec": 1.45
+					},
+					{
+						"text": "dirender",
+						"startSec": 1.5,
+						"endSec": 1.75
+					},
+					{
+						"text": "ulang",
+						"startSec": 1.7999999999999998,
+						"endSec": 2.05
+					}
+				],
+				"style": {
+					"style": "Karaoke",
+					"shadow": "#000000"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-c0",
+				"status": "current"
+			}
+		}
+	]
+}

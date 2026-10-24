@@ -20,18 +20,20 @@ API + web + media + video ──pure contracts──> @maleo/shared
 
 ## Ownership
 
-| Path                | Role                                                               |
-| ------------------- | ------------------------------------------------------------------ |
-| `apps/web`          | Content-studio UI                                                  |
-| `apps/api`          | HTTP contracts, workspace IO, chat agent, text providers, metering |
-| `packages/db`       | Postgres schema, migrations, and entity-family access              |
-| `packages/shared`   | Browser/server-safe types and pure logic                           |
-| `packages/inngest`  | Shared client and event schemas only                               |
-| `packages/media`    | Image/TTS providers, durable generation function, worker runtime   |
-| `apps/media-worker` | Deployable media-worker shell                                      |
-| `packages/video`    | Remotion render pipeline                                           |
-| `packages/stock`    | Stock-media lookup                                                 |
-| `deploy`            | Core compose stack, self-hosted Inngest included                   |
+| Path                   | Role                                                               |
+| ---------------------- | ------------------------------------------------------------------ |
+| `apps/web`             | Content-studio UI                                                  |
+| `apps/api`             | HTTP contracts, workspace IO, chat agent, text providers, metering |
+| `packages/db`          | Postgres schema, migrations, and entity-family access              |
+| `packages/shared`      | Browser/server-safe types and pure logic                           |
+| `packages/inngest`     | Shared client and event schemas only                               |
+| `packages/media`       | Image/TTS providers, durable generation function, worker runtime   |
+| `apps/media-worker`    | Deployable media-worker shell                                      |
+| `packages/video`       | Remotion render pipeline                                           |
+| `crates/renderer`      | Rust frame renderer measured against Remotion (`renderer.md`)      |
+| `crates/renderer-wasm` | Browser build of the renderer for the editor's compare mode        |
+| `packages/stock`       | Stock-media lookup                                                 |
+| `deploy`               | Core compose stack, self-hosted Inngest included                   |
 
 Local `bun run dev` launches standalone `.bin/inngest`; `deploy/` is
 production infrastructure, not local process wrapper.

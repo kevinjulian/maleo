@@ -177,13 +177,14 @@ export function checkReleaseTree(root: string, trackedFiles?: string[]): Release
 	for (const path of files) {
 		const rel = relative(root, path).replaceAll("\\", "/");
 		/* Our own captures of our own output: visual regression baselines, the UI
-		 * audit's evidence screenshots, and the caption spike's renders of the
-		 * product's own captions. None is a third-party asset. */
+		 * audit's evidence screenshots, and the renderer's golden corpus (Remotion
+		 * renders of the product's compositions over synthetic media). None is a
+		 * third-party asset. */
 		if (
 			!ASSET_EXTENSIONS.has(extension(rel)) ||
 			rel.startsWith("apps/web/visual/baselines/") ||
 			rel.startsWith("docs/design-system/screenshots/") ||
-			rel.startsWith("spikes/rust-captions/results/")
+			rel.startsWith("crates/renderer/corpus/")
 		)
 			continue;
 		if (!notice.includes(rel))

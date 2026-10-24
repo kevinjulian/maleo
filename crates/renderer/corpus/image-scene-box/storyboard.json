@@ -1,0 +1,20 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 10,
+				"yPct": 15,
+				"widthPct": 80,
+				"heightPct": 45,
+				"opacity": 0.85
+			}
+		}
+	],
+	"bgColor": "linear-gradient(135deg, #111827 0%, #4B5563 100%)",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400"
+}

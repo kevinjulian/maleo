@@ -1,0 +1,11 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [21, 28, 30],
+	"regions": [
+		{
+			"name": "caption",
+			"rect": [52, 376, 1028, 600]
+		}
+	]
+}

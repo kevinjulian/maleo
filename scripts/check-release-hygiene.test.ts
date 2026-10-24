@@ -65,15 +65,15 @@ describe("release hygiene", () => {
 
 	test("our own renders need no inventory entry; any other tracked asset does", () => {
 		const root = fixture();
-		mkdirSync(join(root, "spikes/rust-captions/results/reference"), { recursive: true });
-		mkdirSync(join(root, "spikes/rust-captions/fixtures"), { recursive: true });
-		writeFileSync(join(root, "spikes/rust-captions/results/reference/base.png"), "png");
-		writeFileSync(join(root, "spikes/rust-captions/fixtures/photo.png"), "png");
+		mkdirSync(join(root, "crates/renderer/corpus/case/reference"), { recursive: true });
+		mkdirSync(join(root, "crates/renderer/fixtures"), { recursive: true });
+		writeFileSync(join(root, "crates/renderer/corpus/case/reference/0.png"), "png");
+		writeFileSync(join(root, "crates/renderer/fixtures/photo.png"), "png");
 		expect(
 			checkReleaseTree(root)
 				.filter((item) => item.rule === "asset-provenance")
 				.map((item) => item.file),
-		).toEqual(["spikes/rust-captions/fixtures/photo.png"]);
+		).toEqual(["crates/renderer/fixtures/photo.png"]);
 	});
 
 	test("reports missing policy and manifest license", () => {

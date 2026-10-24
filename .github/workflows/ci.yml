@@ -51,10 +51,22 @@ jobs:
       - name: Rust toolchain
         run: rustup toolchain install
 
+      # The renderer's browser module needs the wasm-bindgen CLI at exactly the
+      # crate's version (crates/renderer-wasm/Cargo.toml, ADR 0011).
+      - name: wasm-bindgen CLI
+        run: cargo install wasm-bindgen-cli --version 0.2.129 --locked
+
+      # The runner has no GPU. The renderer tests (`cargo test`, golden corpus)
+      # draw through wgpu on lavapipe, Mesa's software Vulkan driver.
+      - name: Software Vulkan
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends mesa-vulkan-drivers
+
       - name: Install Chromium
         run: bun run --cwd apps/web playwright install --with-deps chromium
 
       - name: Checks (bun run ci)
+        env:
+          WGPU_BACKEND: vulkan
         run: bun run ci
 
       - name: Upload visual diff
@@ -65,4 +77,15 @@ jobs:
           path: |
             apps/web/visual/.output
             apps/web/playwright-report
+          retention-days: 7
+
+      # The renderer's parity gate writes the Rust frame and a difference image
+      # for every frame that drifted from its Remotion reference.
+      - name: Upload golden frames
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: golden-frames
+          path: target/golden
+          if-no-files-found: ignore
           retention-days: 7

@@ -22,6 +22,8 @@ import { type PlayerRef } from "@remotion/player";
 import { StoryboardReel } from "@maleo/video/composition";
 import { VuiPreviewStage } from "@components/editor-workspace/primitives.tsx";
 import { VuiRemotionPreview } from "./remotion-preview.tsx";
+import { RustComparePanel } from "./rust-compare-panel.tsx";
+import { compareModeRequested } from "@models/timeline/rust-compare.ts";
 import { AnimatedClipBox } from "./animated-clip-box.tsx";
 import { TimelineStageMenus } from "./timeline-stage-menus.tsx";
 
@@ -290,6 +292,9 @@ export function TimelineStage({
 	/* Where the Player opens. Captured once because that is the only moment it
 	 * is read; as a live value it was a prop change on every frame event. */
 	const [initialFrame] = useState(() => Math.max(0, Math.round(playhead.get() * previewFps)));
+	/* Compare mode (`?renderer=compare`): read once per page load, as the
+	 * design says — no setting and no stored preference. */
+	const [compare] = useState(() => compareModeRequested(window.location.search));
 
 	/* Read at the moment the segment changes, and constant until it changes
 	 * again — which is what makes reading the handle inside a memo sound here. */
@@ -510,6 +515,15 @@ export function TimelineStage({
 						view={view}
 					/>
 				</div>
+				{compare && (
+					<RustComparePanel
+						storyboard={draftProps}
+						playhead={playhead}
+						fps={previewFps}
+						width={previewDims.w}
+						height={previewDims.h}
+					/>
+				)}
 			</div>
 		</>
 	);

@@ -144,6 +144,11 @@ imports. A native build exports it as a C ABI, which Kotlin reaches through
 `cinterop` and JNI. Desktop Rust links the crate directly. No `wasm-bindgen`
 or generated bindings (ADR 0010).
 
+One exception: the renderer's browser module (`crates/renderer-wasm`) uses
+`wasm-bindgen`, because wgpu reaches WebGPU only through `web-sys`. Its
+exported calls still take and return JSON strings and byte buffers, and export
+no Rust types (ADR 0011).
+
 ### D6. Clients store data in SQLite, the server stays on Postgres
 
 Desktop and mobile use SQLite plus a blob directory. The web uses SQLite on
@@ -347,7 +352,13 @@ on mobile.
    its first online client. Extract `app-core` from web logic.
 3. P2. Build the Rust renderer. Run it in web through WASM beside Remotion.
    Compare golden frames. Move export to WebCodecs on the web and to a
-   headless core in the render worker.
+   headless core in the render worker. P2 ships as four changes:
+   `p2-render-foundation` (the renderer crate with static layers and
+   captions, the golden-frame parity gate, and the web compare mode), then
+   motion (keyframes, camera motion, reveals, scene transitions, effects, text
+   templates), then media (video frames through WebCodecs, the audio mix),
+   then export (WebCodecs export in the browser, a headless core in the render
+   worker, production dual-run).
 4. P3. Build the sync service: pending queue and rebase, snapshots, media
    upload and download, device sign-in, capability handshake. Move the web
    client to a local store.

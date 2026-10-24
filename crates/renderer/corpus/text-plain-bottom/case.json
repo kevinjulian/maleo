@@ -1,0 +1,11 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "text",
+			"rect": [84, 936, 996, 1656]
+		}
+	]
+}

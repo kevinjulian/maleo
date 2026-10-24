@@ -13,8 +13,7 @@ question against pass criteria fixed before it started.
   run it, and a `Result` section with the measurements and the verdict.
 - The phase change that builds the real component deletes its spike.
 
-| Spike            | Question                                                                  |
-| ---------------- | ------------------------------------------------------------------------- |
-| `gpui-wgpu/`     | Can a gpui window show a wgpu-rendered frame at playback rate?            |
-| `kmp-core/`      | Can one shared Kotlin module call `maleo-editor-core` on Android and iOS? |
-| `rust-captions/` | Can Rust draw maleo's caption styles close enough to Remotion?            |
+| Spike        | Question                                                                  |
+| ------------ | ------------------------------------------------------------------------- |
+| `gpui-wgpu/` | Can a gpui window show a wgpu-rendered frame at playback rate?            |
+| `kmp-core/`  | Can one shared Kotlin module call `maleo-editor-core` on Android and iOS? |

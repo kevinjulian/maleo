@@ -1,0 +1,914 @@
+{
+	"cues": [
+		{
+			"id": "cue-0",
+			"startSec": 0.2,
+			"durationSec": 1.19,
+			"caption": {
+				"text": "Halo semua, ini maleo.",
+				"words": [
+					{
+						"text": "Halo",
+						"startSec": 0,
+						"endSec": 0.26
+					},
+					{
+						"text": "semua,",
+						"startSec": 0.31,
+						"endSec": 0.5700000000000001
+					},
+					{
+						"text": "ini",
+						"startSec": 0.6200000000000001,
+						"endSec": 0.8800000000000001
+					},
+					{
+						"text": "maleo.",
+						"startSec": 0.9299999999999999,
+						"endSec": 1.19
+					}
+				]
+			},
+			"type": "caption",
+			"track": 0
+		},
+		{
+			"id": "cue-1",
+			"startSec": 1.44,
+			"durationSec": 0.5699999999999998,
+			"caption": {
+				"text": "Kami membuat",
+				"words": [
+					{
+						"text": "Kami",
+						"startSec": 0,
+						"endSec": 0.26
+					},
+					{
+						"text": "membuat",
+						"startSec": 0.31000000000000005,
+						"endSec": 0.5699999999999998
+					}
+				]
+			},
+			"type": "caption",
+			"track": 0
+		},
+		{
+			"id": "cue-2",
+			"startSec": 2.76,
+			"durationSec": 2.12,
+			"caption": {
+				"text": "video pendek dengan cepat dan rapi untuk",
+				"words": [
+					{
+						"text": "video",
+						"startSec": 0,
+						"endSec": 0.2599999999999998
+					},
+					{
+						"text": "pendek",
+						"startSec": 0.3100000000000005,
+						"endSec": 0.5700000000000003
+					},
+					{
+						"text": "dengan",
+						"startSec": 0.6200000000000001,
+						"endSec": 0.8799999999999999
+					},
+					{
+						"text": "cepat",
+						"startSec": 0.9300000000000006,
+						"endSec": 1.1900000000000004
+					},
+					{
+						"text": "dan",
+						"startSec": 1.2400000000000002,
+						"endSec": 1.5
+					},
+					{
+						"text": "rapi",
+						"startSec": 1.5500000000000007,
+						"endSec": 1.8100000000000005
+					},
+					{
+						"text": "untuk",
+						"startSec": 1.8600000000000003,
+						"endSec": 2.12
+					}
+				]
+			},
+			"type": "caption",
+			"track": 0
+		},
+		{
+			"id": "cue-3",
+			"startSec": 4.930000000000001,
+			"durationSec": 0.2599999999999998,
+			"caption": {
+				"text": "kamu",
+				"words": [
+					{
+						"text": "kamu",
+						"startSec": 0,
+						"endSec": 0.2599999999999998
+					}
+				]
+			},
+			"type": "caption",
+			"track": 0
+		}
+	],
+	"frames": [
+		{
+			"frame": 0,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 1,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 2,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 3,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 4,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 5,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 6,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 7,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 8,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 9,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 10,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 11,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 12,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 13,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 14,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 15,
+			"cue": 0,
+			"word": 0
+		},
+		{
+			"frame": 16,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 17,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 18,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 19,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 20,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 21,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 22,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 23,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 24,
+			"cue": 0,
+			"word": 1
+		},
+		{
+			"frame": 25,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 26,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 27,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 28,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 29,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 30,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 31,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 32,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 33,
+			"cue": 0,
+			"word": 2
+		},
+		{
+			"frame": 34,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 35,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 36,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 37,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 38,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 39,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 40,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 41,
+			"cue": 0,
+			"word": 3
+		},
+		{
+			"frame": 42,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 43,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 44,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 45,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 46,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 47,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 48,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 49,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 50,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 51,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 52,
+			"cue": 1,
+			"word": 0
+		},
+		{
+			"frame": 53,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 54,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 55,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 56,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 57,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 58,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 59,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 60,
+			"cue": 1,
+			"word": 1
+		},
+		{
+			"frame": 61,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 62,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 63,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 64,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 65,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 66,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 67,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 68,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 69,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 70,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 71,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 72,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 73,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 74,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 75,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 76,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 77,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 78,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 79,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 80,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 81,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 82,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 83,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 84,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 85,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 86,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 87,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 88,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 89,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 90,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 91,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 92,
+			"cue": 2,
+			"word": 0
+		},
+		{
+			"frame": 93,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 94,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 95,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 96,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 97,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 98,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 99,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 100,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 101,
+			"cue": 2,
+			"word": 1
+		},
+		{
+			"frame": 102,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 103,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 104,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 105,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 106,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 107,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 108,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 109,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 110,
+			"cue": 2,
+			"word": 2
+		},
+		{
+			"frame": 111,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 112,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 113,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 114,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 115,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 116,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 117,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 118,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 119,
+			"cue": 2,
+			"word": 3
+		},
+		{
+			"frame": 120,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 121,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 122,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 123,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 124,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 125,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 126,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 127,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 128,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 129,
+			"cue": 2,
+			"word": 4
+		},
+		{
+			"frame": 130,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 131,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 132,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 133,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 134,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 135,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 136,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 137,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 138,
+			"cue": 2,
+			"word": 5
+		},
+		{
+			"frame": 139,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 140,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 141,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 142,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 143,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 144,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 145,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 146,
+			"cue": 2,
+			"word": 6
+		},
+		{
+			"frame": 147,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 148,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 149,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 150,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 151,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 152,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 153,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 154,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 155,
+			"cue": 3,
+			"word": 0
+		},
+		{
+			"frame": 156,
+			"cue": null,
+			"word": null
+		},
+		{
+			"frame": 157,
+			"cue": null,
+			"word": null
+		}
+	]
+}

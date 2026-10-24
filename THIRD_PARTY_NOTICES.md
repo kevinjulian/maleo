@@ -60,8 +60,23 @@ themselves, or use Inngest's commercial cloud, which the SSPL does not reach.
 
 - `apps/web/visual/baselines/*.png` are generated screenshots of Maleo's own UI
   and are distributed under MIT with repository source.
-- Repository contains no tracked font files, audio, stock media, generated
-  video, or customer sample media. Runtime-generated and provider-returned media
+- `crates/renderer/corpus/` holds the Rust renderer's golden corpus: Remotion
+  renders of Maleo's own compositions, and synthetic media generated for it
+  (gradients, grids and discs, no photographs). Both are distributed under MIT
+  with repository source.
+- The Rust renderer bundles its fonts (`crates/renderer/fonts/`), all under the
+  SIL Open Font License 1.1, with the license text beside them:
+  - [Inter](https://github.com/rsms/inter) v20, the files `@remotion/google-fonts`
+    serves (`Inter-OFL.txt`): `crates/renderer/fonts/inter-normal-latin.ttf`,
+    `crates/renderer/fonts/inter-normal-latin-ext.ttf`,
+    `crates/renderer/fonts/inter-italic-latin.ttf` and
+    `crates/renderer/fonts/inter-italic-latin-ext.ttf`.
+  - [Noto Color Emoji](https://github.com/googlefonts/noto-emoji)
+    (`NotoColorEmoji-OFL.txt`): `crates/renderer/fonts/NotoColorEmoji.ttf`,
+    unchanged from Debian `fonts-noto-color-emoji` 2.042-0+deb12u1, the
+    package the production image installs.
+- Repository contains no other tracked font files, and no audio, stock media,
+  generated video, or customer sample media. Runtime-generated and provider-returned media
   are not covered by Maleo's MIT grant; operators must retain and follow their
   source terms.
 

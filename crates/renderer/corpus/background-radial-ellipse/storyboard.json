@@ -1,0 +1,13 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "radial-gradient(ellipse at center, #FDE68A, #0EA5E9)",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400"
+}

@@ -1,0 +1,28 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3263E8",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"textOverlays": [
+		{
+			"content": "Centred in the frame without a box",
+			"startSec": 0,
+			"durationSec": 4,
+			"preset": "plain",
+			"track": 1,
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 700,
+				"fill": "#ffffff"
+			}
+		}
+	]
+}

@@ -1,0 +1,35 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#1E1B4B",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"textOverlays": [
+		{
+			"content": "Plain text that wraps across two lines",
+			"startSec": 0,
+			"durationSec": 4,
+			"preset": "plain",
+			"track": 1,
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 72,
+				"weight": 800,
+				"fill": "#ffffff",
+				"align": "center"
+			},
+			"layout": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22
+			}
+		}
+	]
+}

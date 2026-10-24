@@ -1,0 +1,19 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "cover",
+			"rect": [30, 72, 510, 600]
+		},
+		{
+			"name": "contain",
+			"rect": [570, 72, 1050, 600]
+		},
+		{
+			"name": "stretch",
+			"rect": [30, 744, 1050, 1176]
+		}
+	]
+}

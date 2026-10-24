@@ -46,7 +46,7 @@ function rustupDir(): string {
 	return dirname(realpathSync(rustup));
 }
 
-function cargo(args: string[], input?: string): string {
+export function cargo(args: string[], input?: string): string {
 	const dir = rustupDir();
 	const env = { ...process.env, PATH: `${dir}:${process.env.PATH ?? ""}` };
 	/* The absolute path: a runtime may resolve a bare name with its own PATH, not `env`'s. */

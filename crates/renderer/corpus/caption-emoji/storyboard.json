@@ -1,0 +1,80 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3b4a5c",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"captionCues": [
+		{
+			"id": "emoji",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 10.0,
+			"track": 0,
+			"caption": {
+				"text": "Rilis hari ini 🎬 siap tayang ✨",
+				"words": [
+					{
+						"text": "Rilis",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "hari",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "ini",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "🎬",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "siap",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "tayang",
+						"startSec": 2.5,
+						"endSec": 2.9
+					},
+					{
+						"text": "✨",
+						"startSec": 3.0,
+						"endSec": 3.4
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-emoji",
+				"status": "current"
+			}
+		}
+	]
+}

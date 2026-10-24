@@ -1,0 +1,50 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3B0764",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"videoOverlays": [
+		{
+			"url": "media/portrait.jpg",
+			"kind": "image",
+			"track": 0,
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 10,
+				"yPct": 30,
+				"widthPct": 60,
+				"heightPct": 30,
+				"fit": "cover",
+				"opacity": 0.6,
+				"crop": {
+					"xPct": 40,
+					"yPct": 25,
+					"widthPct": 40,
+					"heightPct": 50
+				}
+			}
+		},
+		{
+			"url": "media/logo.png",
+			"kind": "image",
+			"track": 1,
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 76,
+				"yPct": 3,
+				"widthPct": 20,
+				"fit": "contain",
+				"opacity": 0.9
+			}
+		}
+	]
+}

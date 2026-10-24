@@ -2,7 +2,13 @@
 # Bun remains the toolchain for every TypeScript workspace; Cargo builds only crates/.
 [workspace]
 resolver = "3"
-members = ["crates/app-core", "crates/editor-core", "crates/editor-wasm"]
+members = [
+	"crates/app-core",
+	"crates/editor-core",
+	"crates/editor-wasm",
+	"crates/renderer",
+	"crates/renderer-wasm",
+]
 
 [workspace.package]
 edition = "2024"
@@ -25,3 +31,8 @@ panic = "abort"
 # `z`: the measured command build drops from 554,857 B / 186,301 B gzip to
 # 489,369 B / 167,149 B gzip; edit latency remains enforced by engine budget tests.
 strip = true
+
+# The golden gate (crates/renderer/tests/golden) scores about 80 full-frame
+# SSIMs and draws as many frames; unoptimized it took 7.5 minutes.
+[profile.dev.package.maleo-renderer]
+opt-level = 3

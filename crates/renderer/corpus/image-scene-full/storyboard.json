@@ -1,0 +1,42 @@
+{
+	"scenes": [
+		{
+			"image": "media/portrait.jpg",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut",
+			"visualClips": [
+				{
+					"url": "media/portrait.jpg",
+					"primary": true,
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 4,
+					"layout": {
+						"mask": null,
+						"color": {
+							"brightness": 1,
+							"contrast": 1,
+							"saturation": 1
+						},
+						"xPct": 0,
+						"yPct": 0,
+						"widthPct": 100,
+						"heightPct": 100,
+						"fit": "cover",
+						"rotationDeg": 0,
+						"aspectLocked": false,
+						"opacity": 1,
+						"flipX": false,
+						"flipY": false,
+						"playbackRate": 1,
+						"reverse": false
+					}
+				}
+			]
+		}
+	],
+	"bgColor": "#16202A",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400"
+}

@@ -1,0 +1,33 @@
+/* Cascade layer: feature. Declared in src/app/index.html. */
+@layer feature {
+	/* Compare mode's panel: a column beside the preview in the stage row. */
+	.tl2-rust-compare {
+		flex: 1 1 0;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-2);
+		padding: var(--s-3);
+		background: var(--surface);
+		border-left: 1px solid var(--border-subtle);
+		overflow: auto;
+	}
+	.tl2-rust-compare-canvas {
+		display: block;
+		max-width: 100%;
+		max-height: 70%;
+		margin: 0 auto;
+		background: var(--surface-strong);
+	}
+	.tl2-rust-compare-coverage {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		display: flex;
+		flex-direction: column;
+		gap: var(--s-1);
+		font-size: var(--type-caption-size);
+		line-height: var(--type-caption-lh);
+		color: var(--fg-dim);
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "visual",
+			"rect": [84, 264, 996, 1176]
+		}
+	]
+}

@@ -90,15 +90,16 @@ Nothing here restates what lives elsewhere. The point is the reasoning, once.
 
 ## Index
 
-| #                                                                      | Decision                                                                               | Status                                     |
-| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------ |
-| [0001](./0001-inngest-durable-workflows.md)                            | Durable generation runs on Inngest workflows                                           | Accepted; agent loop superseded by 0006    |
-| [0002](./0002-content-provider-abstraction.md)                         | Media generation goes through a provider abstraction                                   | Accepted                                   |
-| [0003](./0003-reference-entity-model.md)                               | References are entities attached to a project roster                                   | Accepted                                   |
-| [0004](./0004-ai-text-provider-seam.md)                                | AI text generation sits behind a swappable provider seam                               | Accepted; CLI providers superseded by 0006 |
-| [0005](./0005-runtime-database-is-postgres.md)                         | The runtime database is Postgres, changed only by versioned migrations                 | Accepted; client stores scoped by 0007     |
-| [0006](./0006-the-agent-runs-on-mastra-with-api-models.md)             | The chat agent runs on Mastra with API-backed models; coding CLIs are MCP clients      | Accepted                                   |
-| [0007](./0007-clients-keep-a-local-sqlite-store.md)                    | Clients keep a local SQLite store; Postgres stays the server engine                    | Accepted                                   |
-| [0008](./0008-projects-sync-through-a-server-sequenced-command-log.md) | Projects sync through a server-sequenced command log, not CRDTs or replication         | Accepted                                   |
-| [0009](./0009-the-rust-engine-owns-rendering.md)                       | The Rust engine owns rendering; Remotion retires after a parity window                 | Accepted                                   |
-| [0010](./0010-the-core-reaches-every-platform-through-one-c-abi.md)    | The core reaches every platform through one hand-written C ABI, not generated bindings | Accepted                                   |
+| #                                                                      | Decision                                                                                 | Status                                     |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------ |
+| [0001](./0001-inngest-durable-workflows.md)                            | Durable generation runs on Inngest workflows                                             | Accepted; agent loop superseded by 0006    |
+| [0002](./0002-content-provider-abstraction.md)                         | Media generation goes through a provider abstraction                                     | Accepted                                   |
+| [0003](./0003-reference-entity-model.md)                               | References are entities attached to a project roster                                     | Accepted                                   |
+| [0004](./0004-ai-text-provider-seam.md)                                | AI text generation sits behind a swappable provider seam                                 | Accepted; CLI providers superseded by 0006 |
+| [0005](./0005-runtime-database-is-postgres.md)                         | The runtime database is Postgres, changed only by versioned migrations                   | Accepted; client stores scoped by 0007     |
+| [0006](./0006-the-agent-runs-on-mastra-with-api-models.md)             | The chat agent runs on Mastra with API-backed models; coding CLIs are MCP clients        | Accepted                                   |
+| [0007](./0007-clients-keep-a-local-sqlite-store.md)                    | Clients keep a local SQLite store; Postgres stays the server engine                      | Accepted                                   |
+| [0008](./0008-projects-sync-through-a-server-sequenced-command-log.md) | Projects sync through a server-sequenced command log, not CRDTs or replication           | Accepted                                   |
+| [0009](./0009-the-rust-engine-owns-rendering.md)                       | The Rust engine owns rendering; Remotion retires after a parity window                   | Accepted                                   |
+| [0010](./0010-the-core-reaches-every-platform-through-one-c-abi.md)    | The core reaches every platform through one hand-written C ABI, not generated bindings   | Accepted                                   |
+| [0011](./0011-the-renderer-reaches-webgpu-through-wasm-bindgen.md)     | The renderer reaches WebGPU through wasm-bindgen; its calls keep the ADR 0010 convention | Accepted                                   |

@@ -1,0 +1,37 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#115E59",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"textOverlays": [
+		{
+			"content": "Bottom of the box",
+			"startSec": 0,
+			"durationSec": 4,
+			"preset": "plain",
+			"track": 1,
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 700,
+				"fill": "#FDE68A",
+				"background": "#000000",
+				"bgOpacity": 0.5,
+				"align": "right"
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 50,
+				"widthPct": 80,
+				"heightPct": 35
+			}
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut",
+			"focalPoint": {
+				"xPct": 20,
+				"yPct": 70
+			}
+		}
+	],
+	"bgColor": "#16202A",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400"
+}

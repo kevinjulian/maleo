@@ -351,6 +351,34 @@ The engine preserves passthrough fields in its admitted scope; the host storyboa
 reader/writer still owns fields outside that scope.
 Never run the prior TS executor and Rust as concurrent writers.
 
+### The Rust renderer
+
+`crates/renderer` draws video frames from the render storyboard with parley
+and vello on wgpu, and is held at parity with Remotion by a golden corpus
+(`crates/renderer/AGENTS.md`). Remotion stays the only preview and export
+renderer.
+
+```bash
+cargo test -p maleo-renderer                         # unit tests and the golden parity gate
+MALEO_GOLDEN_SCORES=1 cargo test -p maleo-renderer --test golden -- --nocapture   # every score
+WGPU_BACKEND=vulkan cargo test -p maleo-renderer      # on Mesa lavapipe, as CI runs it
+bun scripts/build-renderer-wasm.ts                   # browser module → target/renderer-wasm/
+```
+
+The gate renders every case in `crates/renderer/corpus/` and compares it with
+its Remotion reference by SSIM; a failing frame leaves the Rust frame and a
+difference image in `target/golden/`. References are rendered in the
+production image by `packages/video/scripts/render-golden.ts`; the command is
+in `crates/renderer/AGENTS.md`. The browser module needs the `wasm-bindgen`
+CLI at the crate's version: `cargo install wasm-bindgen-cli --version 0.2.129 --locked`.
+
+**Compare mode.** Open a project with `?renderer=compare`
+(`/content/<id>?renderer=compare`) to see the Rust frame beside the Remotion
+Player at the same playhead, with the frame time (last, p50, p95) and the
+elements the renderer does not draw yet. It needs a browser with WebGPU and a
+built module; without WebGPU the panel says so and the preview works as usual.
+Without the parameter the editor never requests the module.
+
 Component stories run in Storybook: `bun run --cwd apps/web storybook` (port 6006) or `build-storybook`. Conventions are in `apps/web/stories/README.md`.
 
 ## The agent in development

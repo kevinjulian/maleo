@@ -1,0 +1,15 @@
+{
+	"remotion": "4.0.462",
+	"image": "maleo production image (Dockerfile runtime stage, linux/amd64) sha256:146ade4131420726457fe0540d63093764ed12122f82aca179be8e68c333a691",
+	"emojiFont": {
+		"package": "fonts-noto-color-emoji",
+		"version": "2.042-0+deb12u1",
+		"file": "crates/renderer/fonts/NotoColorEmoji.ttf",
+		"sha256": "e5899ed38b8ed83e08bd3ac5de09791e9d19d288333a796de1d35ad17396f1ec"
+	},
+	"thresholds": {
+		"frame": 0.98,
+		"region": 0.92
+	},
+	"lowered": {}
+}

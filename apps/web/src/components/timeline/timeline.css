@@ -6,6 +6,7 @@
  * the second definition is the one that renders. */
 @import "./rail.css";
 @import "./stage.css";
+@import "./rust-compare-panel.css";
 @import "./stage-layout.css";
 @import "./tracks.css";
 @import "./tracks-clips.css";

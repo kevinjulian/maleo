@@ -41,6 +41,19 @@ export function captionAt(
 	return cues.find((cue) => sec >= cue.startSec && sec < cue.startSec + cue.durationSec);
 }
 
+/** The active word at a cue-local time: the last word started, held through gaps. */
+export function captionActiveWord(
+	words: ReadonlyArray<{ startSec: number; endSec: number }>,
+	localSec: number,
+): number {
+	let active = -1;
+	for (const [index, word] of words.entries()) {
+		if (localSec >= word.startSec) active = index;
+		if (localSec >= word.startSec && localSec < word.endSec) break;
+	}
+	return active;
+}
+
 function weightValue(weight?: string): number {
 	if (weight === "Black") return 900;
 	if (weight === "Bold") return 800;
@@ -124,11 +137,7 @@ const Cue: React.FC<Omit<Props, "cues"> & { cue: RenderCaptionCue }> = ({
 		style.italic,
 		weight,
 	]);
-	let activeWord = -1;
-	for (const [index, word] of cue.caption.words.entries()) {
-		if (localSec >= word.startSec) activeWord = index;
-		if (localSec >= word.startSec && localSec < word.endSec) break;
-	}
+	const activeWord = captionActiveWord(cue.caption.words, localSec);
 	const entry = Math.min(1, Math.max(0, localSec / 0.16));
 	const fill = style.fill ?? fgColor;
 	const highlight = captionActiveColor(style, accentColor);

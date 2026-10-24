@@ -1,0 +1,113 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 10,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#3b4a5c",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"captionCues": [
+		{
+			"id": "combined-a",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 10.0,
+			"track": 0,
+			"caption": {
+				"text": "Selamat datang di maleo, editor video yang membantu kamu bercerita dengan jelas",
+				"words": [
+					{
+						"text": "Selamat",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "datang",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "di",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "maleo,",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "editor",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "video",
+						"startSec": 2.5,
+						"endSec": 2.9
+					},
+					{
+						"text": "yang",
+						"startSec": 3.0,
+						"endSec": 3.4
+					},
+					{
+						"text": "membantu",
+						"startSec": 3.5,
+						"endSec": 3.9
+					},
+					{
+						"text": "kamu",
+						"startSec": 4.0,
+						"endSec": 4.4
+					},
+					{
+						"text": "bercerita",
+						"startSec": 4.5,
+						"endSec": 4.9
+					},
+					{
+						"text": "dengan",
+						"startSec": 5.0,
+						"endSec": 5.4
+					},
+					{
+						"text": "jelas",
+						"startSec": 5.5,
+						"endSec": 5.9
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff",
+					"weight": "Bold",
+					"stroke": "#000000",
+					"shadow": "#000000",
+					"shadowBlur": 12,
+					"shadowDistance": 4,
+					"shadowOpacity": 80,
+					"style": "Karaoke",
+					"activeColor": "#ffd400"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-combined-a",
+				"status": "current"
+			}
+		}
+	]
+}

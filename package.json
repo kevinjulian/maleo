@@ -20,7 +20,7 @@
 		"check:deploy": "bun scripts/check-deploy.ts",
 		"check:release-hygiene": "bun scripts/check-release-hygiene.ts",
 		"check:fixtures": "bun run --cwd apps/web visual/fixtures/build.ts --check",
-		"check:rust": "cargo fmt --check && cargo clippy --workspace --all-targets --features maleo-editor-core/typescript -- -D warnings && cargo test --workspace --features maleo-editor-core/typescript && bun scripts/editor-engine.mts build",
+		"check:rust": "bun crates/renderer/tests/fixtures/build.ts --check && cargo fmt --check && cargo clippy --workspace --all-targets --features maleo-editor-core/typescript -- -D warnings && cargo test --workspace --features maleo-editor-core/typescript && bun scripts/editor-engine.mts build && bun scripts/build-renderer-wasm.ts",
 		"publish:ui-inventory": "bun scripts/publish-ui.ts --mode inventory",
 		"publish:ui-kit": "bun scripts/publish-ui.ts --mode kit",
 		"build": "vp run --filter '!maleo-mono' build",
