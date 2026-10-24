@@ -1,8 +1,10 @@
+# renderer-parity Specification
+
 ## Purpose
 
 Measure the Rust renderer against Remotion on real storyboards, so that render authority moves to Rust only on evidence and every supported feature stays at parity during the window.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: A golden-frame corpus holds Remotion references
 

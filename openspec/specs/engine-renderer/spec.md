@@ -1,8 +1,10 @@
+# engine-renderer Specification
+
 ## Purpose
 
 The Rust renderer draws video frames from the render storyboard, so that preview and export on every platform can come from one engine instead of from Remotion in a browser.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: The renderer draws a frame of a render storyboard
 
