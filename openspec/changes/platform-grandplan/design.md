@@ -313,6 +313,103 @@ state this.
 The renderer and export see one interface. Hardware acceleration is required
 on mobile.
 
+### D14. The engine owns the preview, each platform supplies four adapters
+
+A preview session in the engine (`app-core` or its own crate) holds all
+preview behavior once:
+
+- the storyboard, loaded once behind a handle. Edits arrive as diffs, and a
+  frame request carries only the frame number.
+- the playback clock (play, pause, seek, rate). The audio position is the
+  master clock.
+- the frame scheduler: the latest requested frame wins, late frames drop.
+- the decoded-frame cache and a decoder pool with a per-platform cap.
+- the preview states: loading, buffering, stalled, GPU device lost.
+
+Each platform implements four adapters and draws the UI around the preview:
+
+| Adapter       | Web                                                           | Desktop                         | Mobile                                    |
+| ------------- | ------------------------------------------------------------- | ------------------------------- | ----------------------------------------- |
+| Surface       | `<canvas>` with WebGPU, in a worker through `OffscreenCanvas` | wgpu surface in the gpui window | Android `SurfaceView`, iOS `CAMetalLayer` |
+| Decoder (D13) | WebCodecs                                                     | FFmpeg                          | MediaCodec / VideoToolbox                 |
+| Audio output  | Web Audio `AudioWorklet`                                      | cpal                            | AAudio / AVAudioEngine                    |
+| Input         | mouse, pen, keys                                              | mouse, keys                     | touch, pinch, two-finger rotate           |
+
+Export uses the same session with a texture in place of a surface and the
+encoder of D13 in place of the audio output.
+
+- Why: a platform added later writes adapters only, not preview logic. The
+  renderer already does no IO, so the adapters are the only IO.
+- Rejected: one preview controller per UI. Clock, scheduling and caching
+  would drift across three copies.
+- Decoded frames go through a CPU copy first. Zero-copy GPU import comes only
+  when measurements show the copy costs too much.
+- The desktop surface starts with the readback path that passed the P0 spike.
+  IOSurface or `CAMetalLayer` replaces it if 4K preview needs it.
+
+### D15. The engine owns editing on the preview, and the renderer draws the overlays
+
+- The renderer's layout pass gives each element's box (rotated rectangle) and
+  caption line boxes for every frame. Hit testing uses these boxes, so a
+  click matches what is drawn on every platform.
+- `app-core` converts screen points to canvas points (zoom, pan, pixel
+  density). It also owns the gesture logic: handle pick, move, resize,
+  rotate, snapping, aspect lock and limits. Selection, multi-select and
+  keyboard nudge are in `app-core` too.
+- During a gesture, the engine holds a temporary change. The frame shows it,
+  the document does not get it, and undo does not record it. On release,
+  the engine makes one `editor-core` command. An animated property gets a
+  keyframe at the playhead. Undo and sync (D7) use that command.
+- An overlay pass in the renderer draws the selection box, handles, snap
+  guides and safe area over the frame. Export does not run this pass.
+- Platforms send abstract input events (`down`, `move`, `up`, `pinch`,
+  `twist`, `key`) and draw no part of the canvas.
+- The first version edits text in the inspector panel. Typing text directly on
+  the canvas comes later: it needs the platform's input method, so each
+  platform will place its own text field over the box the engine reports.
+- Why: OpenCut-classic shares only its compositor in Rust. Its bounds, hit
+  test, gestures and DOM handles are web TypeScript, so a desktop client must
+  write them again. Its bounds also measure text apart from the compositor,
+  which can drift from the drawn frame.
+- Rejected: each platform draws the handles from engine geometry. That keeps
+  frames free of overlays, but each platform must then draw the handles,
+  and their look can drift between platforms.
+- Migration: the canvas command and snapping move from `apps/web` to
+  `app-core` first and run through WASM over the Remotion preview. The DOM
+  `ClipBox` then draws from engine geometry. When a project previews in Rust,
+  the overlay pass replaces the DOM box for it.
+
+### D16. Editing requires WebGPU, with no fallback renderer
+
+The web preview runs only on WebGPU. A browser without a WebGPU adapter shows
+a clear "this browser cannot edit video" state. No CPU or WebGL2 renderer is
+built.
+
+- Why: one renderer stays one renderer. Chrome, Edge, Safari 26+ and
+  Firefox 141+ (Windows, then Apple Silicon) ship WebGPU.
+- Rejected: `vello_cpu`. It needs WASM threads for speed, and threads need
+  COOP/COEP headers, which block cross-origin stock media. ADR 0011 already
+  rejects it.
+- Rejected: `vello_gpu` on WebGL2. It is not mature.
+- Cost: Firefox on Linux and Android, and Android devices without a supported
+  GPU, cannot edit.
+
+### D17. Remotion leaves in steps that each can roll back
+
+- Export moves first. The export change runs production jobs on both
+  renderers and compares them. Export then needs no headless Chromium and
+  no new UX.
+- Preview switches per project. When a project's coverage report is empty for
+  every frame, it previews in Rust. P6 removes Remotion when nearly all
+  projects switch and dual runs show no unexplained divergence.
+- Templates become data in the motion change: one declarative format, read by
+  a Remotion interpreter first and then by the Rust interpreter.
+- Before porting a feature, measure its use (presets, transitions, effects,
+  motions) and the share of sessions with a WebGPU adapter. Retire unused
+  features with a project migration instead of porting them.
+- New visual features land in Rust first. Remotion gets no new visual
+  features during the parity window.
+
 ## Risks / Trade-offs
 
 - [Rust renderer misses Remotion fidelity, mostly in captions] → Golden-frame
@@ -352,13 +449,16 @@ on mobile.
    its first online client. Extract `app-core` from web logic.
 3. P2. Build the Rust renderer. Run it in web through WASM beside Remotion.
    Compare golden frames. Move export to WebCodecs on the web and to a
-   headless core in the render worker. P2 ships as four changes:
+   headless core in the render worker. P2 ships as these changes:
    `p2-render-foundation` (the renderer crate with static layers and
    captions, the golden-frame parity gate, and the web compare mode), then
    motion (keyframes, camera motion, reveals, scene transitions, effects, text
-   templates), then media (video frames through WebCodecs, the audio mix),
-   then export (WebCodecs export in the browser, a headless core in the render
-   worker, production dual-run).
+   templates as data), then media (video frames through WebCodecs, the audio
+   mix), then export (WebCodecs export in the browser, a headless core in the
+   render worker, production dual-run). Beside them: preview runtime (the
+   preview session and the four web adapters of D14), then preview editing
+   (D15), then preview UX (states, quality, the WebGPU-required state of D16,
+   and the per-project switch of D17).
 4. P3. Build the sync service: pending queue and rebase, snapshots, media
    upload and download, device sign-in, capability handshake. Move the web
    client to a local store.
@@ -376,3 +476,5 @@ renderer runs in shadow. Each phase change defines its own rollback.
 - Size threshold for "small asset" prefetch. P3 tunes it with measurements.
 - Cache size defaults and eviction order per platform. P3 decides.
 - Payment provider for the hosted service. A later change owns it.
+- The declarative template format (D17): its schema, and how authors write and
+  test templates. The motion change decides.

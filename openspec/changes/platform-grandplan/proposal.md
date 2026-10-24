@@ -21,6 +21,13 @@ becomes its own OpenSpec change. This change adds no requirements by itself.
 - The Rust engine owns editing and rendering. A wgpu compositor in Rust
   replaces Remotion for preview and export. Templates and compositions become
   data that the engine reads, not React code.
+- The engine owns the preview on every platform: playback clock, frame
+  scheduling, decoding cache, hit testing, canvas gestures and the selection
+  handles. Each platform supplies only a drawing surface, a decoder, audio
+  output and input events.
+- Editing on the web requires WebGPU. A browser without a WebGPU adapter shows
+  a clear "this browser cannot edit video" state. No fallback renderer is
+  built. **BREAKING** for users on browsers without WebGPU.
 - Every client is local-first, the web client included. A client edits, plays
   back and exports with no network. A client syncs with its server when it is
   online.
@@ -39,7 +46,9 @@ becomes its own OpenSpec change. This change adds no requirements by itself.
   editing continues.
 - A client signs in through a browser approval flow on its server and stores a
   device-scoped token in the OS keyring.
-- Remotion and headless Chromium leave the product after a measured parity
+- Remotion leaves in steps that each can roll back: export moves first, then
+  preview switches per project when the Rust renderer covers every frame.
+  Remotion and headless Chromium leave the product after a measured parity
   window. **BREAKING** for any deployment that depends on the Remotion render
   path at that point.
 
@@ -52,15 +61,15 @@ Non-goals:
 
 ## Phases
 
-| Phase | Scope                                                                                  | Depends on |
-| ----- | -------------------------------------------------------------------------------------- | ---------- |
-| P0    | Architecture decisions and spikes                                                      | -          |
-| P1    | Core boundaries: project format, asset manifest, client-minted IDs, op log, `app-core` | P0         |
-| P2    | Rust renderer in web through WASM, dual run against Remotion, golden-frame parity      | P1         |
-| P3    | Sync service: op-log rebase, media upload and download, device sign-in, capabilities   | P1         |
-| P4    | Desktop client (gpui)                                                                  | P2, P3     |
-| P5    | Mobile client (Kotlin Multiplatform), then media proxies                               | P3         |
-| P6    | Remotion and Chromium removal                                                          | P2 window  |
+| Phase | Scope                                                                                                 | Depends on |
+| ----- | ----------------------------------------------------------------------------------------------------- | ---------- |
+| P0    | Architecture decisions and spikes                                                                     | -          |
+| P1    | Core boundaries: project format, asset manifest, client-minted IDs, op log, `app-core`                | P0         |
+| P2    | Rust renderer and preview session in web through WASM, dual run against Remotion, golden-frame parity | P1         |
+| P3    | Sync service: op-log rebase, media upload and download, device sign-in, capabilities                  | P1         |
+| P4    | Desktop client (gpui)                                                                                 | P2, P3     |
+| P5    | Mobile client (Kotlin Multiplatform), then media proxies                                              | P3         |
+| P6    | Remotion and Chromium removal                                                                         | P2 window  |
 
 P2 and P3 can run in parallel. design.md describes each phase.
 
@@ -79,6 +88,10 @@ capabilities:
 - `server-capabilities`: the handshake that tells a client what its server
   supports, including billing, signup and quota.
 - `engine-renderer`: the Rust compositor for preview and export.
+- `preview-runtime`: the engine's preview session and the platform adapters
+  it needs (surface, decoder, audio output, input).
+- `preview-editing`: hit testing, canvas gestures, snapping and the overlay
+  pass that draws selection handles.
 - `desktop-client`, `mobile-client`: platform shells over the Rust core.
 
 ### Modified Capabilities
@@ -99,7 +112,8 @@ capabilities:
   app-core.
 - New apps: `apps/desktop` (gpui) and a Kotlin Multiplatform mobile app.
 - `apps/web`: preview and export move from `@remotion/player` and the render
-  worker to the Rust renderer. Project state moves to a local store (OPFS).
+  worker to the Rust renderer. The canvas editing logic (`ClipBox`, the canvas
+  command, snapping) moves into `app-core`. Project state moves to a local store (OPFS).
 - `apps/api`: new sync, device sign-in and capability routes. Billing and
   quota behind configuration.
 - `packages/storage`: content hash, multipart upload through presigned parts.
