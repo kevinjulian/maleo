@@ -1,52 +1,75 @@
-/* Compare mode's Rust frame (OpenSpec p2-render-foundation D8).
+/* Compare mode's Rust preview (OpenSpec p2-render-foundation D8,
+ * p2-preview-runtime D7).
  *
- * With `?renderer=compare`, this checks for a WebGPU adapter, imports the
- * renderer module from `/renderer/` (`app/renderer-routes.ts`), supplies every
- * image the preview storyboard draws, and draws the frame at the playhead into
- * the panel's canvas. Without the parameter it does nothing at all, and the
- * module is never requested.
- *
- * One render runs at a time and at most one is scheduled per animation frame,
- * for the latest playhead: a slow frame drops the seeks that arrived while it
- * drew instead of queueing them. A frame's time runs from the call to the GPU
- * finishing its work. No pixels are compared here; the golden corpus does that. */
-import { useEffect, useMemo, useRef, useState } from "react";
+ * With `?renderer=compare`, this checks for a WebGPU adapter, starts the
+ * preview worker from `/renderer/` (`app/renderer-routes.ts`), transfers the
+ * panel's canvas to it, and drives the engine's preview session there from the
+ * Remotion Player: a paused seek seeks the session, a play plays it from the
+ * same position on its own clock, a pause pauses it, and while playing the
+ * Remotion position goes over about four times a second so the session can
+ * report drift. The worker draws, schedules and decodes images; nothing here
+ * runs per frame. Without the parameter it does nothing at all, and neither
+ * the worker nor the module is requested. No pixels are compared here; the
+ * golden corpus does that. */
+import { useEffect, useMemo, useState } from "react";
+import type { PlayerRef } from "@remotion/player";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import {
-	frameTimes,
-	storyboardImageUrls,
-	type CoverageEntry,
-	type FrameTimes,
-} from "@models/timeline/rust-compare.ts";
+	createPreviewClient,
+	type PreviewClient,
+	type PreviewWorkerLike,
+} from "@models/timeline/preview-client.ts";
+import type { PreviewState } from "@models/timeline/preview-protocol.ts";
+import { storyboardImageUrls } from "@models/timeline/rust-compare.ts";
 import { usePlayheadEffect } from "./use-playhead.ts";
 
-/** The renderer module's exports (`crates/renderer-wasm`, wasm-bindgen glue). */
-export interface RendererModule {
-	default: () => Promise<unknown>;
-	init: (canvas: HTMLCanvasElement) => Promise<void>;
-	put_image: (url: string, width: number, height: number, rgba: Uint8Array) => void;
-	render_to_canvas: (
-		storyboardJson: string,
-		frame: number,
-		width: number,
-		height: number,
-	) => string;
-	work_done: () => Promise<void>;
+/** What the hook needs from the Remotion Player. */
+export interface PlayerSignals {
+	frame: () => number;
+	playing: () => boolean;
+	/** Returns the unsubscribe. */
+	subscribe: (handlers: {
+		play: () => void;
+		pause: () => void;
+		seeked: (frame: number) => void;
+		rate: (rate: number) => void;
+	}) => () => void;
 }
 
-export interface DecodedImage {
-	width: number;
-	height: number;
-	rgba: Uint8Array;
+/** The signals of the Player behind `ref`, read when the hook subscribes. */
+export function playerSignals(ref: { current: PlayerRef | null }): PlayerSignals {
+	return {
+		frame: () => ref.current?.getCurrentFrame() ?? 0,
+		playing: () => ref.current?.isPlaying() ?? false,
+		subscribe: (handlers) => {
+			const player = ref.current;
+			if (!player) return () => {};
+			const play = (): void => handlers.play();
+			const pause = (): void => handlers.pause();
+			const seeked = (event: { detail: { frame: number } }): void =>
+				handlers.seeked(event.detail.frame);
+			const rate = (event: { detail: { playbackRate: number } }): void =>
+				handlers.rate(event.detail.playbackRate);
+			player.addEventListener("play", play);
+			player.addEventListener("pause", pause);
+			player.addEventListener("seeked", seeked);
+			player.addEventListener("ratechange", rate);
+			return () => {
+				player.removeEventListener("play", play);
+				player.removeEventListener("pause", pause);
+				player.removeEventListener("seeked", seeked);
+				player.removeEventListener("ratechange", rate);
+			};
+		},
+	};
 }
 
 /** What the hook reaches outside React for; tests pass fakes. */
 export interface RustCompareEnv {
-	loadModule: () => Promise<RendererModule>;
 	hasAdapter: () => Promise<boolean>;
-	decodeImage: (url: string) => Promise<DecodedImage>;
-	requestFrame: (run: () => void) => void;
-	now: () => number;
+	createWorker: () => PreviewWorkerLike;
+	/** Runs `run` every `ms`; returns the stop. */
+	every: (ms: number, run: () => void) => () => void;
 }
 
 export type RustCompareState =
@@ -54,42 +77,29 @@ export type RustCompareState =
 	| { status: "loading" }
 	| { status: "unavailable" }
 	| { status: "error"; message: string }
-	| { status: "ready"; times: FrameTimes | null; coverage: CoverageEntry[] };
+	| { status: "ready"; preview: PreviewState };
 
-const MODULE_URL = "/renderer/maleo_renderer_wasm.js";
-
-async function decodeImage(url: string): Promise<DecodedImage> {
-	const response = await fetch(url);
-	if (!response.ok) throw new Error(`${url} answered ${response.status}`);
-	const bitmap = await createImageBitmap(await response.blob(), {
-		premultiplyAlpha: "none",
-		colorSpaceConversion: "none",
-	});
-	const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-	const context = canvas.getContext("2d");
-	if (!context) throw new Error("no 2D context to decode images");
-	context.drawImage(bitmap, 0, 0);
-	const data = context.getImageData(0, 0, bitmap.width, bitmap.height).data;
-	return { width: bitmap.width, height: bitmap.height, rgba: new Uint8Array(data.buffer) };
-}
+const WORKER_URL = "/renderer/preview-worker.js";
+/** How often the Remotion position goes to the session while playing. */
+const REMOTION_REPORT_MS = 250;
 
 export const BROWSER_ENV: RustCompareEnv = {
-	// A variable, not a literal: the bundler must leave this import to the browser.
-	// SAFETY: the module at MODULE_URL is crates/renderer-wasm's wasm-bindgen glue,
-	// whose exports `RendererModule` lists.
-	loadModule: () => import(/* @vite-ignore */ MODULE_URL) as Promise<RendererModule>,
 	hasAdapter: async () => {
 		// SAFETY: `navigator.gpu` is absent from this DOM lib; it is read as optional.
 		const gpu = (navigator as Navigator & { gpu?: { requestAdapter: () => Promise<unknown> } }).gpu;
 		return Boolean(await gpu?.requestAdapter());
 	},
-	decodeImage,
-	requestFrame: (run) => requestAnimationFrame(run),
-	now: () => performance.now(),
+	createWorker: () => new Worker(WORKER_URL, { type: "module" }),
+	every: (ms, run) => {
+		const id = setInterval(run, ms);
+		return () => clearInterval(id);
+	},
 };
 
-function message(error: unknown): string {
-	return error instanceof Error ? error.message : String(error);
+function stateOf(preview: PreviewState): RustCompareState {
+	return preview.status === "failed"
+		? { status: "error", message: preview.message ?? "the preview session failed" }
+		: { status: "ready", preview };
 }
 
 export function useRustCompare(args: {
@@ -97,115 +107,91 @@ export function useRustCompare(args: {
 	canvas: HTMLCanvasElement | null;
 	storyboard: object;
 	playhead: PlayheadHandle;
+	player: PlayerSignals;
 	fps: number;
+	durationFrames: number;
 	width: number;
 	height: number;
 	env?: RustCompareEnv;
 }): RustCompareState {
-	const { enabled, canvas, storyboard, playhead, fps, width, height, env = BROWSER_ENV } = args;
+	const { enabled, canvas, storyboard, playhead, player, fps, durationFrames, width, height } =
+		args;
+	const env = args.env ?? BROWSER_ENV;
 	const [state, setState] = useState<RustCompareState>({ status: enabled ? "loading" : "off" });
-	const [module, setModule] = useState<RendererModule | null>(null);
+	const [client, setClient] = useState<PreviewClient | null>(null);
 	const json = useMemo(() => JSON.stringify(storyboard), [storyboard]);
-	const latest = useRef({ json, width, height, fps });
-	latest.current = { json, width, height, fps };
-	const loop = useRef<{
-		pending: number | null;
-		scheduled: boolean;
-		busy: boolean;
-		samples: number[];
-	}>({
-		pending: null,
-		scheduled: false,
-		busy: false,
-		samples: [],
-	});
-	const supplied = useRef(new Set<string>());
+	const images = useMemo(() => storyboardImageUrls(storyboard), [storyboard]);
 
 	useEffect(() => {
 		if (!enabled || !canvas) return;
 		let live = true;
+		let started: PreviewClient | null = null;
 		void (async () => {
 			try {
 				if (!(await env.hasAdapter())) {
 					if (live) setState({ status: "unavailable" });
 					return;
 				}
-				const loaded = await env.loadModule();
-				await loaded.default();
-				await loaded.init(canvas);
 				if (!live) return;
-				setModule(loaded);
-				setState({ status: "ready", times: null, coverage: [] });
+				started = createPreviewClient(
+					env.createWorker(),
+					(preview) => setState(stateOf(preview)),
+					(message) => setState({ status: "error", message }),
+				);
+				started.init(canvas.transferControlToOffscreen());
+				setClient(started);
 			} catch (error) {
-				if (live) setState({ status: "error", message: message(error) });
+				if (live)
+					setState({
+						status: "error",
+						message: error instanceof Error ? error.message : String(error),
+					});
 			}
 		})();
 		return () => {
 			live = false;
+			started?.dispose();
 		};
 	}, [enabled, canvas, env]);
 
-	const request = useRef((frame: number): void => {
-		const run = loop.current;
-		run.pending = frame;
-		if (run.scheduled || run.busy || !moduleRef.current) return;
-		run.scheduled = true;
-		env.requestFrame(() => void draw());
-	});
-	const moduleRef = useRef<RendererModule | null>(null);
-	moduleRef.current = module;
-
-	async function draw(): Promise<void> {
-		const run = loop.current;
-		const renderer = moduleRef.current;
-		run.scheduled = false;
-		if (!renderer || run.pending == null) return;
-		const frame = run.pending;
-		run.busy = true;
-		try {
-			const { json: storyboardJson, width: w, height: h } = latest.current;
-			const started = env.now();
-			// SAFETY: the module returns its coverage report as a JSON array of entries.
-			const coverage = JSON.parse(
-				renderer.render_to_canvas(storyboardJson, frame, w, h),
-			) as CoverageEntry[];
-			await renderer.work_done();
-			run.samples.push(env.now() - started);
-			setState({ status: "ready", times: frameTimes(run.samples), coverage });
-		} catch (error) {
-			setState({ status: "error", message: message(error) });
-		} finally {
-			run.busy = false;
-		}
-		if (run.pending !== frame) request.current(run.pending);
-		else run.pending = null;
-	}
-
-	// Every image the storyboard draws, supplied once; a new one redraws the frame.
 	useEffect(() => {
-		if (!module) return;
-		let live = true;
-		const missing = storyboardImageUrls(storyboard).filter((url) => !supplied.current.has(url));
-		for (const url of missing) {
-			supplied.current.add(url);
-			env
-				.decodeImage(url)
-				.then((image) => {
-					if (!live) return;
-					module.put_image(url, image.width, image.height, image.rgba);
-					request.current(Math.round(playhead.get() * latest.current.fps));
-				})
-				// An image that fails to load stays missing: the frame draws its placeholder.
-				.catch(() => {});
-		}
-		request.current(Math.round(playhead.get() * latest.current.fps));
+		client?.storyboard(json, fps, durationFrames, images);
+	}, [client, json, fps, durationFrames, images]);
+
+	useEffect(() => {
+		client?.resize(width, height);
+	}, [client, width, height]);
+
+	useEffect(() => {
+		if (!client) return;
+		let rate = 1;
+		const position = (): number => player.frame() / fps;
+		client.seek(Math.round(playhead.get() * fps));
+		if (player.playing()) client.play(position(), rate);
+		const unsubscribe = player.subscribe({
+			play: () => client.play(position(), rate),
+			pause: () => client.pause(position()),
+			// A seek while playing re-anchors the session's clock; a paused one
+			// arrives through the playhead.
+			seeked: (frame) => {
+				if (player.playing()) client.play(frame / fps, rate);
+			},
+			rate: (next) => {
+				rate = next;
+				if (player.playing()) client.play(position(), rate);
+			},
+		});
+		const stop = env.every(REMOTION_REPORT_MS, () => {
+			if (player.playing()) client.remotion(position());
+		});
 		return () => {
-			live = false;
+			unsubscribe();
+			stop();
 		};
-	}, [module, storyboard, env, playhead]);
+	}, [client, player, playhead, fps, env]);
 
 	usePlayheadEffect(playhead, (sec) => {
-		if (moduleRef.current) request.current(Math.round(sec * latest.current.fps));
+		if (client && !player.playing()) client.seek(Math.round(sec * fps));
 	});
 
 	return enabled ? state : { status: "off" };

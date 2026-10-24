@@ -362,7 +362,8 @@ renderer.
 cargo test -p maleo-renderer                         # unit tests and the golden parity gate
 MALEO_GOLDEN_SCORES=1 cargo test -p maleo-renderer --test golden -- --nocapture   # every score
 WGPU_BACKEND=vulkan cargo test -p maleo-renderer      # on Mesa lavapipe, as CI runs it
-bun scripts/build-renderer-wasm.ts                   # browser module → target/renderer-wasm/
+bun scripts/build-renderer-wasm.ts                   # browser module and preview worker → target/renderer-wasm/
+cargo test -p maleo-preview                          # preview session: clock, scheduler, states
 ```
 
 The gate renders every case in `crates/renderer/corpus/` and compares it with

@@ -108,6 +108,8 @@ COPY . .
 COPY --from=editor-engine /src/target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm
 RUN bun scripts/optimize-editor-wasm.mts target/wasm32-unknown-unknown/release/maleo_editor_wasm.wasm
 COPY --from=renderer-engine /src/target/renderer-wasm target/renderer-wasm
+# The preview worker that loads it is TypeScript, bundled with Bun here.
+RUN bun scripts/build-renderer-wasm.ts --worker
 
 # Every setting arrives as an environment variable. Nothing reads a repository
 # .env file. The API refuses to start in production without

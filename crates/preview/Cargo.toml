@@ -1,0 +1,7 @@
+[package]
+name = "maleo-preview"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Host-free preview session: playback clock, frame scheduler, preview states and the platform adapter interfaces"

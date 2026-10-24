@@ -698,6 +698,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "maleo-preview"
+version = "0.0.0"
+
+[[package]]
 name = "maleo-renderer"
 version = "0.0.0"
 dependencies = [
@@ -715,6 +719,7 @@ name = "maleo-renderer-wasm"
 version = "0.0.0"
 dependencies = [
  "js-sys",
+ "maleo-preview",
  "maleo-renderer",
  "serde_json",
  "wasm-bindgen",

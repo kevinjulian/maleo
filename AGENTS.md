@@ -66,29 +66,30 @@ the change into private historical record.
 
 ## Workspace map
 
-| Path                   | Name                   | Purpose                                                                                                                        |
-| ---------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `apps/web`             | `@maleo/web`           | content-first web UI                                                                                                           |
-| `apps/api`             | `@maleo/api`           | content-first HTTP API, chat agent, generation + metering                                                                      |
-| `packages/auth`        | `@maleo/auth`          | operator identity: sessions, API keys, registration policy, request perimeter                                                  |
-| `packages/db`          | `@maleo/db`            | unified runtime database modules                                                                                               |
-| `packages/shared`      | `@maleo/shared`        | pure shared types + logic                                                                                                      |
-| `packages/inngest`     | `@maleo/inngest`       | shared durable execution client and event schemas                                                                              |
-| `packages/media`       | `@maleo/media`         | content-generation provider abstraction and media worker runtime                                                               |
-| `apps/media-worker`    | `@maleo/media-worker`  | thin deployable shell for `@maleo/media` worker                                                                                |
-| `apps/render-worker`   | `@maleo/render-worker` | Remotion render server: job queue, local and Lambda renders                                                                    |
-| `infra/kokoro-tts`     | —                      | Dockerfile that builds and deploys the Kokoro-82M TTS server                                                                   |
-| `infra/pocket-tts-id`  | —                      | Dockerfile + server that deploy the Pocket TTS Indonesian voice-cloning service                                                |
-| `infra/searxng`        | —                      | Dockerfile + config that deploy the SearXNG metasearch instance research retrieval searches through                            |
-| `infra/crawl4ai`       | —                      | Dockerfile + config that deploy the Crawl4AI instance research retrieval extracts pages with                                   |
-| `packages/video`       | `@maleo/video`         | Remotion compositions, schema and storyboard preparation (library)                                                             |
-| `packages/stock`       | `@maleo/stock`         | stock media lookup                                                                                                             |
-| `packages/storage`     | `@maleo/storage`       | media object storage: local filesystem or S3-compatible store                                                                  |
-| `deploy`               | —                      | compose stack for the deployed core: web, api, media worker, Postgres, media store, Inngest                                    |
-| `crates/editor-core`   | `maleo-editor-core`    | Rust editor command engine shared by every controller (web editing and API agent commands execute through its WASM binding)    |
-| `crates/renderer`      | `maleo-renderer`       | Rust frame renderer (parley + vello on wgpu) drawn from the render storyboard, held at parity with Remotion by a golden corpus |
-| `crates/renderer-wasm` | `maleo-renderer-wasm`  | browser build of the renderer (`wasm-bindgen`, ADR 0011), loaded only by the editor's hidden compare mode                      |
-| `spikes`               | —                      | throwaway P0 proof code (gpui + wgpu, Kotlin Multiplatform bindings); outside the Cargo workspace and CI                       |
+| Path                   | Name                   | Purpose                                                                                                                           |
+| ---------------------- | ---------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web`             | `@maleo/web`           | content-first web UI                                                                                                              |
+| `apps/api`             | `@maleo/api`           | content-first HTTP API, chat agent, generation + metering                                                                         |
+| `packages/auth`        | `@maleo/auth`          | operator identity: sessions, API keys, registration policy, request perimeter                                                     |
+| `packages/db`          | `@maleo/db`            | unified runtime database modules                                                                                                  |
+| `packages/shared`      | `@maleo/shared`        | pure shared types + logic                                                                                                         |
+| `packages/inngest`     | `@maleo/inngest`       | shared durable execution client and event schemas                                                                                 |
+| `packages/media`       | `@maleo/media`         | content-generation provider abstraction and media worker runtime                                                                  |
+| `apps/media-worker`    | `@maleo/media-worker`  | thin deployable shell for `@maleo/media` worker                                                                                   |
+| `apps/render-worker`   | `@maleo/render-worker` | Remotion render server: job queue, local and Lambda renders                                                                       |
+| `infra/kokoro-tts`     | —                      | Dockerfile that builds and deploys the Kokoro-82M TTS server                                                                      |
+| `infra/pocket-tts-id`  | —                      | Dockerfile + server that deploy the Pocket TTS Indonesian voice-cloning service                                                   |
+| `infra/searxng`        | —                      | Dockerfile + config that deploy the SearXNG metasearch instance research retrieval searches through                               |
+| `infra/crawl4ai`       | —                      | Dockerfile + config that deploy the Crawl4AI instance research retrieval extracts pages with                                      |
+| `packages/video`       | `@maleo/video`         | Remotion compositions, schema and storyboard preparation (library)                                                                |
+| `packages/stock`       | `@maleo/stock`         | stock media lookup                                                                                                                |
+| `packages/storage`     | `@maleo/storage`       | media object storage: local filesystem or S3-compatible store                                                                     |
+| `deploy`               | —                      | compose stack for the deployed core: web, api, media worker, Postgres, media store, Inngest                                       |
+| `crates/editor-core`   | `maleo-editor-core`    | Rust editor command engine shared by every controller (web editing and API agent commands execute through its WASM binding)       |
+| `crates/renderer`      | `maleo-renderer`       | Rust frame renderer (parley + vello on wgpu) drawn from the render storyboard, held at parity with Remotion by a golden corpus    |
+| `crates/renderer-wasm` | `maleo-renderer-wasm`  | browser build of the renderer and the preview session (`wasm-bindgen`, ADR 0011), loaded only by the editor's hidden compare mode |
+| `crates/preview`       | `maleo-preview`        | host-free preview session: playback clock, frame scheduler, preview states and the platform adapter interfaces                    |
+| `spikes`               | —                      | throwaway P0 proof code (gpui + wgpu, Kotlin Multiplatform bindings); outside the Cargo workspace and CI                          |
 
 `apps/` holds deployables built from maleo source; `infra/` holds deployables
 that only configure third-party software (a Dockerfile over an upstream image, a

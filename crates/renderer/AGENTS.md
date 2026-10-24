@@ -4,6 +4,11 @@
 vello on wgpu. Remotion is the authority: the Rust renderer is correct when it
 draws what `packages/video/src` draws for the same storyboard. Architecture:
 `docs/CODEMAPS/renderer.md`. Browser build: `crates/renderer-wasm`, ADR 0011.
+The renderer draws a frame when asked; when and which frame is the preview
+session's call (`crates/preview`). `crates/renderer-wasm` composes the two and
+exports the session (`init`, `set_storyboard`, `seek`, `play`, `pause`,
+`tick`, `resize`, `put_image`, `report_remotion`, `state`, `lose_device`),
+not per-frame draws; its module comment lists them.
 
 ## Rules
 
@@ -20,6 +25,9 @@ draws what `packages/video/src` draws for the same storyboard. Architecture:
 - Text uses the bundled fonts only (`fonts/`). Do not enable parley's
   `system` feature.
 - No IO: hosts decode media and pass bytes (`Renderer::put_image`).
+- Fonts and `Media` are CPU-side; GPU-owned state is rebuilt by
+  `Renderer::replace_gpu` after device loss. Keep new GPU state rebuildable
+  there, and never move supplied images onto the device only.
 
 ## Golden corpus (D6)
 

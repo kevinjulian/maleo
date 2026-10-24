@@ -1,6 +1,7 @@
 /* `/renderer/*`: the Rust renderer's browser module (`crates/renderer-wasm`,
  * ADR 0011) and its wasm-bindgen glue, for the editor's hidden compare mode
- * (`?renderer=compare`, `hooks/timeline/use-rust-compare.ts`). Nothing else
+ * (`?renderer=compare`, `hooks/timeline/use-rust-compare.ts`), and the preview
+ * worker that runs it (`preview-worker/worker.ts`). Nothing else
  * requests it. It is a build output of `crates/`
  * (`bun scripts/build-renderer-wasm.ts`, and the Dockerfile's renderer stage),
  * not a bundle module. Absent, it answers 404 and compare mode says so. */
@@ -12,6 +13,7 @@ const RENDERER_DIR = join(import.meta.dir, "../../../../target/renderer-wasm");
 export const RENDERER_FILES: Readonly<Record<string, string>> = {
 	"maleo_renderer_wasm.js": "text/javascript; charset=utf-8",
 	"maleo_renderer_wasm_bg.wasm": "application/wasm",
+	"preview-worker.js": "text/javascript; charset=utf-8",
 };
 
 export function rendererRoutes(dir = RENDERER_DIR): Record<string, () => Promise<Response>> {

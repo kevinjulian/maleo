@@ -39,8 +39,27 @@ storyboard JSON ──storyboard.rs──> Storyboard (drawn fields decoded, the
 
 - Native: the test harness (`cargo test -p maleo-renderer`), on Metal locally
   and on lavapipe (`WGPU_BACKEND=vulkan`) in CI.
-- Browser: `crates/renderer-wasm` (`maleo-renderer-wasm`) wraps the crate with
-  `wasm-bindgen` (ADR 0011). `scripts/build-renderer-wasm.ts` writes
-  `target/renderer-wasm/`; the web serves it at `/renderer/`
-  (`apps/web/src/app/renderer-routes.ts`) and loads it only in compare mode
-  (`?renderer=compare`, `hooks/timeline/use-rust-compare.ts`).
+- Browser: `crates/renderer-wasm` (`maleo-renderer-wasm`) composes the crate
+  with the preview session (`crates/preview`) and exports the session through
+  `wasm-bindgen` (ADR 0011). `scripts/build-renderer-wasm.ts` writes the module
+  and the preview worker (`apps/web/src/preview-worker/worker.ts`) to
+  `target/renderer-wasm/`; the web serves both at `/renderer/`
+  (`apps/web/src/app/renderer-routes.ts`) and starts the worker only in
+  compare mode (`?renderer=compare`, `hooks/timeline/use-rust-compare.ts`).
+
+## Preview session
+
+`crates/preview` (`maleo-preview`) is host-free: no GPU, renderer or IO. It
+holds the storyboard, the playback clock (the host supplies the time), the
+frame scheduler (one draw in flight, the latest due frame wins, passed-over
+frames count as dropped) and the preview states (`loading`, `ready`,
+`playing`, `paused`, `device-lost`, `failed`). It decides which frame to draw;
+the host draws it with `Renderer::draw`. On device loss the host requests a new
+device and calls `Renderer::replace_gpu`, which keeps fonts and the supplied
+images. The `Decoder` and `AudioOutput` traits are defined for the media
+change to implement.
+
+On the web the session runs in a dedicated worker that owns the transferred
+canvas and fetches and decodes images; the main thread sends the protocol in
+`apps/web/src/models/timeline/preview-protocol.ts` through
+`preview-client.ts`.

@@ -513,4 +513,12 @@ Then load touched page/flow and verify behavior manually.
 - `models/` — pure types, rules and math per cluster; `core/` holds what two
   or more clusters share (asset URL resolution, formatting, class names,
   path <-> view routing).
+- `preview-worker/` — the compare mode's preview worker entry (`worker.ts`),
+  outside the role layers: it is not part of the app bundle.
+  `scripts/build-renderer-wasm.ts` bundles it with `Bun.build` to
+  `target/renderer-wasm/preview-worker.js`, and the web serves it at
+  `/renderer/` beside the renderer module it loads. It imports only `models/`.
+  Its protocol is `models/timeline/preview-protocol.ts`; the main thread
+  speaks it through `models/timeline/preview-client.ts`. After editing it,
+  rebuild with `bun scripts/build-renderer-wasm.ts --worker`.
 - `scripts/check-layers.ts` (in `apps/web/`) — the layering check.

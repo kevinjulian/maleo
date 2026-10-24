@@ -67,13 +67,15 @@ Rust renderer bundles.
 ### Requirement: The web editor offers a hidden compare mode
 
 The web editor SHALL offer a compare mode, opened by the `renderer=compare` URL parameter and
-not by any visible control. In compare mode, the editor SHALL draw the Rust frame for the same
-storyboard and frame as the Remotion Player, beside it, and SHALL show the Rust frame time and
-the coverage report. Remotion SHALL stay the only preview in every mode and the only export
-renderer.
+not by any visible control. In compare mode, the editor SHALL draw the Rust frame through the
+preview session, in a worker, beside the Remotion Player and for the same storyboard. A seek in
+the editor SHALL seek the session. When the Remotion Player plays or pauses, the session SHALL
+play or pause from the same position on its own clock. The panel SHALL show the Rust frame time,
+the dropped-frame count, the drift between the two playheads, and the coverage report. Remotion
+SHALL stay the only preview in every mode and the only export renderer.
 
-The renderer module SHALL load only in compare mode. Without the parameter, the editor SHALL NOT
-fetch it.
+The renderer module and the preview worker SHALL load only in compare mode. Without the
+parameter, the editor SHALL NOT fetch either.
 
 When the browser has no WebGPU adapter, compare mode SHALL show that the Rust renderer is not
 available, and the Remotion preview SHALL work as without the parameter.
@@ -84,10 +86,16 @@ available, and the Remotion preview SHALL work as without the parameter.
 - **THEN** the Rust frame for 4.0 s shows beside the Remotion Player
 - **AND** the panel shows the Rust frame time and lists any unsupported elements
 
+#### Scenario: An operator plays a project in compare mode
+
+- **WHEN** an operator plays a project in compare mode for 10 seconds
+- **THEN** the Rust preview plays on its own clock beside the Remotion Player
+- **AND** the panel shows the playhead drift and the dropped-frame count
+
 #### Scenario: The editor opens normally
 
 - **WHEN** an operator opens a project without the parameter
-- **THEN** the renderer module is not requested
+- **THEN** neither the renderer module nor the preview worker is requested
 
 #### Scenario: WebGPU is not available
 

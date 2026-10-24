@@ -29,6 +29,7 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Changed
 
+- Compare mode (`?renderer=compare`) now plays the Rust preview in a worker on its own clock, through the engine's new preview session (`crates/preview`: playback clock, frame scheduler, preview states and recovery from a lost GPU device). When the Remotion Player plays or pauses, the Rust preview plays or pauses from the same position; the panel shows dropped frames and the drift between the two playheads in frames. A slow Rust frame no longer blocks the editor. The storyboard goes to the worker only when it changes. Without the parameter neither the worker nor the renderer module is requested.
 - Exports draw emoji in color. The production image installs `fonts-noto-color-emoji`; before, every emoji in an export was an empty box.
 - **Breaking:** a media import request key (`x-upload-id`) must be a client-minted UUIDv7 media ID; any other key gets `400`. Documents no longer use `pending:<requestKey>` references, and nothing resolves them.
 

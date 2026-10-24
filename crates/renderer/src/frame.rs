@@ -73,6 +73,14 @@ impl Renderer {
         &self.gpu
     }
 
+    /// Moves the renderer to a new device after the old one was lost (OpenSpec
+    /// p2-preview-runtime D6). The GPU-owned parts are rebuilt; fonts and the
+    /// supplied images are CPU-side and stay, so no image is supplied again.
+    pub fn replace_gpu(&mut self, gpu: Gpu) {
+        self.blur = Blur::new(&gpu.device);
+        self.gpu = gpu;
+    }
+
     /// Supplies the decoded image for `url` (straight-alpha RGBA).
     pub fn put_image(&mut self, url: &str, width: u32, height: u32, rgba: Vec<u8>) -> Result<(), String> {
         self.media.put(url, width, height, rgba)
@@ -160,6 +168,23 @@ mod tests {
         assert_eq!(px(&frame, 10, 10), [0, 0, 0, 255], "outside the box: background");
         assert_eq!(px(&frame, 60, 70), [0x5a, 0x5a, 0x5a, 255], "inside the box: placeholder fill");
         assert_eq!(px(&frame, 140, 140)[0], 0x9a, "the cross runs corner to corner");
+    }
+
+    #[test]
+    fn a_replaced_gpu_draws_the_images_supplied_before() {
+        let mut renderer = renderer();
+        let storyboard = Storyboard::parse(
+            r##"{"scenes":[{"image":"","durationSec":2,"movement":"Static","transition":"cut"}],"bgColor":"#000000",
+                "videoOverlays":[{"url":"red.png","durationSec":2,"layout":{"xPct":25,"yPct":25,"widthPct":50,"heightPct":50}}]}"##,
+        )
+        .unwrap();
+        renderer.put_image("red.png", 4, 4, [255, 0, 0, 255].repeat(16)).unwrap();
+        let before = pollster::block_on(renderer.render(&storyboard, 0, 200, 200)).unwrap();
+        assert_eq!(px(&before, 100, 100), [255, 0, 0, 255]);
+        renderer.replace_gpu(pollster::block_on(Gpu::new()).expect("gpu"));
+        let frame = pollster::block_on(renderer.render(&storyboard, 0, 200, 200)).unwrap();
+        assert!(frame.coverage.is_empty(), "{:?}", frame.coverage);
+        assert_eq!(px(&frame, 100, 100), [255, 0, 0, 255], "inside the box: the image, not the placeholder");
     }
 
     #[test]

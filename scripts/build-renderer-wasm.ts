@@ -9,6 +9,11 @@
  *
  *   cargo install wasm-bindgen-cli --version 0.2.129 --locked
  *
+ * It also bundles the preview worker (apps/web/src/preview-worker/worker.ts,
+ * OpenSpec p2-preview-runtime D5) to target/renderer-wasm/preview-worker.js.
+ * `--worker` bundles only the worker (the Dockerfile builds the module in a
+ * Rust stage without Bun).
+ *
  * The web serves target/renderer-wasm/ at /renderer/ (app/renderer-routes.ts). */
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, statSync } from "node:fs";
@@ -68,7 +73,24 @@ export function buildRendererWasm(): string {
 	return join(RENDERER_WASM_DIR, "maleo_renderer_wasm_bg.wasm");
 }
 
+/** Bundles the preview worker beside the module it loads. */
+export async function buildPreviewWorker(): Promise<string> {
+	const result = await Bun.build({
+		entrypoints: [join(REPO_ROOT, "apps/web/src/preview-worker/worker.ts")],
+		outdir: RENDERER_WASM_DIR,
+		naming: "preview-worker.js",
+		target: "browser",
+		format: "esm",
+		minify: true,
+	});
+	if (!result.success) throw new AggregateError(result.logs, "preview worker bundle failed");
+	return join(RENDERER_WASM_DIR, "preview-worker.js");
+}
+
 if (import.meta.main) {
+	const worker = await buildPreviewWorker();
+	console.log(`${worker}: ${statSync(worker).size} bytes`);
+	if (process.argv.includes("--worker")) process.exit(0);
 	const module = buildRendererWasm();
 	const raw = statSync(module).size;
 	const gzip = gzipSync(readFileSync(module)).length;

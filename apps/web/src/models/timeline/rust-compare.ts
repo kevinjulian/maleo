@@ -1,6 +1,7 @@
 /* Compare mode: the Rust renderer drawn beside the Remotion preview
  * (OpenSpec p2-render-foundation D8). Pure rules; the hook is
- * `hooks/timeline/use-rust-compare.ts`.
+ * `hooks/timeline/use-rust-compare.ts`, the session runs in
+ * `preview-worker/worker.ts` (OpenSpec p2-preview-runtime).
  *
  * Opened by `?renderer=compare` for that page load only: no setting, no menu
  * item, no stored preference. Remotion stays the preview and the export. */
@@ -43,22 +44,10 @@ export function storyboardImageUrls(storyboard: {
 }
 
 /** Frame times in milliseconds: the last one, and the median and 95th
- *  percentile over the session (nearest rank). */
+ *  percentile over the session (nearest rank, `crates/preview` `stats.rs`). */
 export interface FrameTimes {
 	last: number;
 	p50: number;
 	p95: number;
 	count: number;
-}
-
-export function frameTimes(samples: readonly number[]): FrameTimes | null {
-	if (samples.length === 0) return null;
-	const sorted = [...samples].sort((a, b) => a - b);
-	const rank = (p: number): number => sorted[Math.max(0, Math.ceil(p * sorted.length) - 1)]!;
-	return {
-		last: samples[samples.length - 1]!,
-		p50: rank(0.5),
-		p95: rank(0.95),
-		count: samples.length,
-	};
 }

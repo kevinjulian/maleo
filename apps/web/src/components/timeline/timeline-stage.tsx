@@ -519,7 +519,9 @@ export function TimelineStage({
 					<RustComparePanel
 						storyboard={draftProps}
 						playhead={playhead}
+						playerRef={playerRef}
 						fps={previewFps}
+						durationFrames={previewFrames}
 						width={previewDims.w}
 						height={previewDims.h}
 					/>
