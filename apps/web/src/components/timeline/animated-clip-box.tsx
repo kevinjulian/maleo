@@ -1,107 +1,101 @@
-import { useCallback, useMemo, type ComponentProps } from "react";
-import type { ClipLayout } from "@maleo/shared";
-import {
-	canvasClipLayout,
-	canvasEditCommand,
-	sampledCanvasLayout,
-	type CanvasTarget,
-} from "@models/timeline/canvas-transform.ts";
-import { applyCommand, type EditScope } from "@maleo/shared/editor";
-import type { EditorDoc } from "@models/storyboard/editor-doc.ts";
+/* What the canvas draws over the selection, from the engine (`p2-preview-editing`).
+ *
+ * While idle the box comes from `canvas_overlay` at the playhead, and follows
+ * the playhead only when a selected element is animated. While a gesture runs
+ * it comes from the gesture's own results. */
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import type { JSX, RefObject } from "react";
+import type { CanvasBox } from "@maleo/shared/editor";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
+import type { Selection } from "@models/timeline/selection-model.ts";
 import { usePlayheadSelector } from "@hooks/timeline/use-playhead.ts";
+import type { CanvasEngine } from "@hooks/timeline/use-canvas-engine.ts";
 import {
 	useDocumentSelector,
 	type TimelineDocumentStore,
 } from "@stores/timeline-document-store.ts";
 import { useChromeField, type EditorChromeStore } from "@stores/editor-chrome-store.ts";
-import type { DocumentWriters } from "@stores/document-writers.ts";
-import { maskCanvasLayout, maskFromCanvas } from "@models/timeline/clip-mask-canvas.ts";
-import { ClipBox } from "./clip-canvas.tsx";
+import { ClipBox, MemberOutline, SnapGuides } from "./clip-box.tsx";
 
-/** A keyed box follows preview time and edits existing tracks at that time. */
+const SUBJECT: Record<NonNullable<CanvasBox["kind"]>, string> = {
+	element: "selected clip",
+	mask: "clip mask",
+	group: "selection",
+};
+
+/** The canvas size, so a box in pixel space (a group, a mask) is redrawn when it changes. */
+function useCanvasSize(canvasRef: RefObject<HTMLElement | null>): string {
+	const [size, setSize] = useState("");
+	useEffect(() => {
+		const el = canvasRef.current;
+		if (!el) return;
+		const read = (): void => {
+			const rect = el.getBoundingClientRect();
+			setSize(`${rect.width}x${rect.height}`);
+		};
+		read();
+		if (typeof ResizeObserver !== "function") return;
+		const observer = new ResizeObserver(read);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [canvasRef]);
+	return size;
+}
+
 export function AnimatedClipBox({
-	target,
+	canvas,
+	canvasRef,
 	store,
-	writers,
 	playhead,
 	chromeStore,
-	onPreview,
-	...props
-}: Omit<ComponentProps<typeof ClipBox>, "layout" | "onChange" | "onPreview" | "scale"> & {
-	target: CanvasTarget;
+	selection,
+	onActivateText,
+}: {
+	canvas: CanvasEngine;
+	canvasRef: RefObject<HTMLElement | null>;
 	store: TimelineDocumentStore;
-	writers: DocumentWriters;
 	playhead: PlayheadHandle;
 	chromeStore: EditorChromeStore;
-	onPreview: (doc: EditorDoc | null) => void;
-}) {
-	const doc = useDocumentSelector(store, (value) => value.getDoc()),
-		[visual] = useChromeField(chromeStore, "clipKeyVisual");
-	const selected =
-		target.source === "scene" && visual?.sceneId === target.id
-			? { ...target, visualId: visual.visualId }
-			: target;
-	const [maskEditing] = useChromeField(chromeStore, "clipMaskEditing");
-	const targetKey = JSON.stringify(selected);
-	const resolved = useMemo(() => canvasClipLayout(doc, selected), [doc, targetKey]);
-	const animated = Boolean(resolved.layout?.animation);
-	const selectTime = useCallback((time: number) => (animated ? time : 0), [animated]);
-	const time = usePlayheadSelector(playhead, selectTime),
-		sampled = useMemo(
-			() => sampledCanvasLayout(resolved.layout, props.kind, time - resolved.start),
-			[resolved, props.kind, time],
-		);
-	/* One command per gesture: keys for animated properties at the playhead, a static
-	   replace for the rest. Preview applies the same command to the live document. */
-	const command = (scope: EditScope, value: Partial<ClipLayout>) =>
-		canvasEditCommand(scope, selected, value, animated ? playhead.get() : undefined);
-	const commit = (value: Partial<ClipLayout>) => writers.apply((scope) => command(scope, value));
-	const preview = (value: Partial<ClipLayout> | null) => {
-		if (!value) {
-			onPreview(null);
-			return;
-		}
-		const scope: EditScope = { doc: store.getDoc(), slides: [], posts: [], mediaAssets: [] };
-		onPreview(applyCommand(scope, command(scope, value)).doc);
-	};
-	const mask = sampled.layout.mask;
-	const canvas = props.canvasRef.current?.getBoundingClientRect();
-	const box = useMemo(
-		() =>
-			maskEditing && mask && canvas?.width && canvas.height
-				? maskCanvasLayout(
-						sampled.layout,
-						mask,
-						{ w: canvas.width, h: canvas.height },
-						sampled.scale,
-					)
-				: undefined,
-		[maskEditing, mask, sampled.layout, sampled.scale, canvas?.width, canvas?.height],
+	selection: Selection;
+	/** Double-click on a selected text element. */
+	onActivateText?: (id: number) => void;
+}): JSX.Element | null {
+	const gesture = useSyncExternalStore(
+		canvas.subscribe,
+		canvas.gestureOverlay,
+		canvas.gestureOverlay,
 	);
-	if (mask && box && canvas) {
-		const size = { w: canvas.width, h: canvas.height };
-		const maskPatch = (value: Partial<ClipLayout>): Partial<ClipLayout> => ({
-			mask: maskFromCanvas(sampled.layout, mask, { ...box, ...value }, size, sampled.scale),
-		});
-		return (
-			<ClipBox
-				{...props}
-				subject="clip mask"
-				localBox
-				layout={box}
-				onChange={(value) => commit(maskPatch(value))}
-				onPreview={(value) => preview(value ? maskPatch(value) : null)}
-			/>
-		);
-	}
+	const doc = useDocumentSelector(store, (value) => value.getDoc());
+	const [visual] = useChromeField(chromeStore, "clipKeyVisual");
+	const [mask] = useChromeField(chromeStore, "clipMaskEditing");
+	const size = useCanvasSize(canvasRef);
+	const [animated, setAnimated] = useState(false);
+	const selectTime = useCallback((time: number) => (animated ? time : 0), [animated]);
+	const time = usePlayheadSelector(playhead, selectTime);
+	const idle = useMemo(
+		() => (size ? canvas.overlayAt(animated ? time : playhead.get()) : null),
+		[canvas, doc, selection, visual, mask, size, animated, time, playhead],
+	);
+	useEffect(() => setAnimated(Boolean(idle?.animated)), [idle]);
+	const overlay = gesture ?? idle;
+	const box = overlay?.box;
+	if (!overlay || !box) return null;
+	const activate =
+		box.kind === "element" && box.source === "text" && box.id !== undefined && onActivateText
+			? () => onActivateText(box.id!)
+			: undefined;
 	return (
-		<ClipBox
-			{...props}
-			layout={sampled.layout}
-			scale={sampled.scale}
-			onChange={commit}
-			onPreview={preview}
-		/>
+		<>
+			<SnapGuides guides={overlay.guides} />
+			{overlay.members.map((member) => (
+				<MemberOutline key={`${member.source}:${member.id}`} box={member} />
+			))}
+			<ClipBox
+				box={box}
+				subject={SUBJECT[box.kind ?? "element"]}
+				onKey={canvas.key}
+				onActivate={activate}
+			/>
+		</>
 	);
 }

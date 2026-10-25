@@ -27,8 +27,15 @@ import { buildEditorWasm, loadParityInputs } from "./editor-engine.mts";
  * pending queue and selection rules joined the module, 175,917 B -> 191,023 B
  * gzip and 470,213 B -> 513,616 B raw (+8.6% / +9.2%, under that change's 10%
  * stop line). */
-const MAX_GZIP_BYTES = 188 * 1024;
-const MAX_RAW_BYTES = 512 * 1024;
+/* 240 KB gzip / 620 KB raw since `p2-preview-editing` task 3.1 (2026-10-24): the
+ * canvas editing rules (screen mapping, hit testing, gestures, group and mask
+ * boxes, the edit command) joined the module, 515,419 B -> 627,108 B raw and
+ * 191,441 B -> 241,311 B gzip (+21.7% / +26.1%, over that change's 10% stop
+ * line). A size pass (one object builder, one sort) recovered 9 KB raw; the
+ * rest is the rules and libm's trigonometry. The user chose one module with a
+ * raised budget over a second module that would ship serde_json again. */
+const MAX_GZIP_BYTES = 240 * 1024;
+const MAX_RAW_BYTES = 620 * 1024;
 const MAX_EDIT_TRANSFER_BYTES = 4 * 1024;
 const MAX_EDIT_MEDIAN_MS_AT_2000_CLIPS = 0.5;
 /* Task 4.2: a pointer sample shares a ~16 ms frame with paint, so one policy

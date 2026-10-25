@@ -3,6 +3,7 @@
 //! commands. Host-free like `maleo-editor-core`, which it executes through;
 //! it never holds its own copy of the document.
 
+pub mod canvas;
 pub mod ledger;
 pub mod pending;
 pub mod selection;

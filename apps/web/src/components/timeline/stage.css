@@ -315,28 +315,17 @@
 		}
 	}
 
-	/* Click-to-select hit boxes for overlays live at the playhead. Transparent until
-   hovered, then a faint outline hints the element is pickable on the canvas. */
-	.tl2-canvas-hit {
-		position: absolute;
-		z-index: 40;
-		padding: 0;
-		border: 1.5px solid transparent;
-		border-radius: 3px;
-		background: transparent;
-		cursor: pointer;
+	/* A member's outline inside a group box: drawn, never hit. */
+	.tl2-clipbox.member {
+		z-index: 49;
+		border-style: dashed;
+		box-shadow: none;
+		pointer-events: none;
+	}
+	/* The canvas surface sends pointer input to the engine, so the browser must
+	   not take a touch on it for scrolling or zoom (D7). */
+	.tl2-canvas {
 		touch-action: none;
-		transition:
-			border-color var(--d-fast),
-			background var(--d-fast);
-	}
-	.tl2-canvas-hit.scene {
-		inset: 0;
-		z-index: 35;
-	}
-	.tl2-canvas-hit:hover {
-		border-color: color-mix(in oklab, var(--ai) 70%, transparent);
-		background: color-mix(in oklab, var(--ai) 10%, transparent);
 	}
 	/* Alignment guides shown while dragging a ClipBox (center / edge snap). */
 	.tl2-snapguides {

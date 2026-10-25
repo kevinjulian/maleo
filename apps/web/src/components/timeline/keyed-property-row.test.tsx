@@ -13,7 +13,7 @@ const { createTimelineDocumentStore, useDocumentSelector } =
 	await import("@stores/timeline-document-store.ts");
 const { createDocumentWriters } = await import("@stores/document-writers.ts");
 const { createPlayheadHandle } = await import("@models/timeline/playhead-handle.ts");
-const { patchCanvasLayout } = await import("@models/timeline/canvas-transform.ts");
+const { canvasPatchedDoc } = await import("@models/editor-engine/canvas-document.ts");
 const { clipAnimationInfo } = await import("@models/timeline/clip-animation-edit.ts");
 const { TransformSection } = await import("./clip-canvas.tsx");
 const { KeyGesture, useClipKeying } = await import("./keyed-property-row.tsx");
@@ -64,7 +64,7 @@ function setup(animation?: Animation) {
 					layout={layout}
 					kind="image"
 					keying={rowKeying}
-					onChange={(p) => writers.mutate((d) => patchCanvasLayout(d, target, p))}
+					onChange={(p) => writers.mutate((d) => canvasPatchedDoc(d, target, p))}
 				/>
 			</KeyGesture>
 		);
@@ -192,7 +192,7 @@ test("a locked, keyed Size row keys width and height together at the ratio", () 
 				layout={layout}
 				kind="text"
 				keying={rowKeying}
-				onChange={(p) => writers.mutate((d) => patchCanvasLayout(d, target, p))}
+				onChange={(p) => writers.mutate((d) => canvasPatchedDoc(d, target, p))}
 			/>
 		);
 	}

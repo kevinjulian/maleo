@@ -167,7 +167,7 @@ export function TimelineClipInspector({
 	const totalSec = previewFrames / previewFps;
 	const derived = useDocumentSelector(store, selectDerivedArrays);
 	/* A scene's canvas edits land on its visual once the visual carries its own layout
-	   (patchCanvasLayout), so the rows read that same resolved layout. */
+	   (the engine's `canvas_edit`), so the rows read that same resolved layout. */
 	const liveDoc = useDocumentSelector(store, (value) => value.getDoc());
 	const scenes = derived.scenes;
 	const overlays = derived.textOverlays;

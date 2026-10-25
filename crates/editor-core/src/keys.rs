@@ -250,6 +250,14 @@ fn key_target(scope: &EditScope, clip: &Clip) -> EngineResult<Option<KeyTarget>>
     }))
 }
 
+/// `keyTarget(doc, id)` as a canvas edit reads it: the animated element kind, the
+/// key timeline's length and whether its track is locked. `None` when the clip
+/// is missing or holds nothing to key.
+pub fn key_target_info(scope: &EditScope, id: &str) -> EngineResult<Option<(Option<String>, f64, bool)>> {
+    let Some(clip) = scope.doc.clips.iter().find(|clip| clip.id == id) else { return Ok(None) };
+    Ok(key_target(scope, clip)?.map(|target| (target.kind, target.duration, target.locked)))
+}
+
 fn strict_eq(a: Option<&Value>, b: Option<&Value>) -> bool {
     match (a, b) {
         (None, None) | (Some(Value::Null), Some(Value::Null)) => true,
@@ -338,7 +346,7 @@ fn key_is_valid(key: &Value, value_ok: &dyn Fn(&Value) -> bool) -> bool {
 /// `animationSchemaFor(kind).safeParse(probe).success` for a probe that holds
 /// one track: the property is one the kind may animate, every key is valid,
 /// and key times strictly increase.
-fn track_is_valid(kind: Option<&str>, property: &str, keys: &[Value]) -> bool {
+pub fn track_is_valid(kind: Option<&str>, property: &str, keys: &[Value]) -> bool {
     let allowed = |kinds: &[&str]| kind.is_some_and(|kind| kinds.contains(&kind));
     let value_ok: Box<dyn Fn(&Value) -> bool> = if is_color(property) {
         if !allowed(TEXT) {

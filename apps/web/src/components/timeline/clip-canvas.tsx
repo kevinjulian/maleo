@@ -9,7 +9,7 @@ import type { ClipLayout, ClipTextStyle, ClipKind } from "@models/timeline/clip-
 import { normalizeLayout } from "@models/timeline/clip-layout.ts";
 import type { NumericAnimationProperty } from "@maleo/shared";
 import { KeyedFieldRow, type RowKeying } from "./keyed-property-row.tsx";
-import { resizeLayoutValue } from "@models/timeline/canvas-transform.ts";
+import { canvasSizePatchOf } from "@models/editor-engine/canvas-document.ts";
 import { faderFromGain, formatGainDb, gainFromFader } from "@models/timeline/audio-fader.ts";
 import { AlphaColorControl } from "@design-system/components/color-control.tsx";
 import { Button } from "@design-system/components/button.tsx";
@@ -211,7 +211,7 @@ export function ClipControls({
 					suffix="%"
 					min={4}
 					max={200}
-					onChange={(v) => onChange(resizeLayoutValue(L, "widthPct", v))}
+					onChange={(v) => onChange(canvasSizePatchOf(L, "widthPct", v))}
 				/>
 				<IconButton
 					size="xs"
@@ -229,7 +229,7 @@ export function ClipControls({
 					min={4}
 					max={200}
 					disabled={Boolean(L.aspectLocked)}
-					onChange={(v) => onChange(resizeLayoutValue(L, "heightPct", v))}
+					onChange={(v) => onChange(canvasSizePatchOf(L, "heightPct", v))}
 				/>
 			</FieldRow>
 			<FieldRow label="Rotation and opacity">
@@ -382,7 +382,7 @@ export function TransformSection({
 	/* Locked, width drives: a width edit (static or keyed) moves height by the ratio of the values shown. */
 	const lockedKeys = locked
 		? (v: number, current: Partial<Record<NumericAnimationProperty, number>>) =>
-				resizeLayoutValue(
+				canvasSizePatchOf(
 					{
 						...L,
 						widthPct: current.widthPct ?? L.widthPct,
@@ -434,7 +434,7 @@ export function TransformSection({
 							label: "Width",
 							short: "W",
 							value: L.widthPct,
-							setStatic: (v) => onChange(resizeLayoutValue(L, "widthPct", v)),
+							setStatic: (v) => onChange(canvasSizePatchOf(L, "widthPct", v)),
 							keys: lockedKeys,
 							...size,
 						},
@@ -453,7 +453,7 @@ export function TransformSection({
 							label: "Height",
 							short: "H",
 							value: L.heightPct ?? 100,
-							setStatic: (v) => onChange(resizeLayoutValue(L, "heightPct", v)),
+							setStatic: (v) => onChange(canvasSizePatchOf(L, "heightPct", v)),
 							disabled: locked,
 							...size,
 						},

@@ -7,11 +7,8 @@ import {
 	type ClipLayout,
 	type ClipMask,
 } from "@maleo/shared";
-import {
-	canvasClipLayout,
-	patchCanvasLayout,
-	type CanvasTarget,
-} from "@models/timeline/canvas-transform.ts";
+import type { CanvasTarget } from "@maleo/shared/editor";
+import { canvasLayoutOf, canvasPatchedDoc } from "@models/editor-engine/canvas-document.ts";
 import {
 	useDocumentSelector,
 	type TimelineDocumentStore,
@@ -305,14 +302,14 @@ export function ClipCompositingControl({
 		visuals?.find((v) => v.primary) ??
 		visuals?.[0];
 	const target = visual ? { ...requested, visualId: visual.id } : requested;
-	const resolved = canvasClipLayout(doc, target);
+	const resolved = { layout: canvasLayoutOf(doc, target)?.layout ?? undefined };
 	const write = (patch: Partial<ClipLayout>) => {
 		const issues = clipCompositingBlockers({ layout: patch });
 		if (issues.length) {
 			setError(issues.join(" "));
 			return;
 		}
-		writers.mutate((live) => patchCanvasLayout(live, target, patch));
+		writers.mutate((live) => canvasPatchedDoc(live, target, patch));
 		setError(null);
 		if ("mask" in patch && !patch.mask) setMaskEditing(false);
 	};

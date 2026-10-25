@@ -11,7 +11,7 @@ import { Select } from "@design-system/components/select.tsx";
 import { PropertyRow } from "@design-system/patterns/inspector.tsx";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { STUDIO_SHOTS, STUDIO_MOVES } from "@models/timeline/editor-media.ts";
-import { canvasClipLayout } from "@models/timeline/canvas-transform.ts";
+import { canvasLayoutOf } from "@models/editor-engine/canvas-document.ts";
 import { normalizeLayout } from "@models/timeline/clip-layout.ts";
 import { SourcePlaybackControl } from "./source-playback-control.tsx";
 import { SceneVisualSource } from "./scene-visual-source.tsx";
@@ -131,7 +131,7 @@ export function sceneClipBody(c: ClipBodyContext, selectedScene: Scene): JSX.Ele
 				{transform(
 					<BlendingSection
 						layout={normalizeLayout(
-							canvasClipLayout(liveDoc, { source: "scene", id: selectedScene.id }).layout ??
+							canvasLayoutOf(liveDoc, { source: "scene", id: selectedScene.id })?.layout ??
 								selectedScene.layout,
 							"scene",
 						)}
@@ -170,7 +170,7 @@ export function sceneClipBody(c: ClipBodyContext, selectedScene: Scene): JSX.Ele
 			{transform(
 				<TransformSection
 					layout={normalizeLayout(
-						canvasClipLayout(liveDoc, { source: "scene", id: selectedScene.id }).layout ??
+						canvasLayoutOf(liveDoc, { source: "scene", id: selectedScene.id })?.layout ??
 							selectedScene.layout,
 						"scene",
 					)}

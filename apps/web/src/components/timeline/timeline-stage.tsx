@@ -25,11 +25,11 @@ import { VuiRemotionPreview } from "./remotion-preview.tsx";
 import { RustComparePanel } from "./rust-compare-panel.tsx";
 import { compareModeRequested } from "@models/timeline/rust-compare.ts";
 import { AnimatedClipBox } from "./animated-clip-box.tsx";
+import { useCanvasEngine } from "@hooks/timeline/use-canvas-engine.ts";
 import { TimelineStageMenus } from "./timeline-stage-menus.tsx";
 
 import { previewFrameAt, sceneSpans } from "@models/timeline/preview-frame.ts";
 import { boundaryTimes, segmentIndexAt } from "@models/timeline/time-segments.ts";
-import { canvasHitClipsAt } from "@models/timeline/canvas-hit-clips.ts";
 import type { EditorDoc } from "@models/storyboard/editor-doc.ts";
 import type { CanvasSelection } from "@hooks/timeline/use-canvas-selection.ts";
 import { collectPreloadAssets } from "@models/timeline/preload-assets.ts";
@@ -215,7 +215,7 @@ export function TimelineStage({
 	 * workspace config, so it comes from the active workspace rather than from the
 	 * project. */
 	const activeWorkspace = useActiveWorkspace();
-	const { selectScene, selectFreeClip, clearSelection, trackLocked, genFrame } = ops;
+	const { selectScene, selectFreeClip, clearSelection, genFrame } = ops;
 	const {
 		playhead,
 		playerRef,
@@ -225,21 +225,30 @@ export function TimelineStage({
 		previewForDoc,
 		previewFrames,
 		gen,
-		selectedClip,
-		selectedClipLocked,
-		selectedOverlay,
-		selectedVideoOverlay,
 		aspect,
 	} = view;
-	const selectedKey = selectedClip ? `${selectedClip.target.source}:${selectedClip.target.id}` : "";
-	const [draft, setDraft] = useState<{ key: string; doc: EditorDoc } | null>(null);
+	/* The document a canvas gesture previews (D3): the gesture's command run on a
+	 * copy, shown by the Player and never recorded. */
+	const [draft, setDraft] = useState<EditorDoc | null>(null);
 	const draftProps = useMemo(
-		() =>
-			draft?.key === selectedKey && selectedClip && !selectedClipLocked
-				? previewForDoc(draft.doc)
-				: previewProps,
-		[draft, selectedKey, selectedClip, selectedClipLocked, previewForDoc, previewProps, store],
+		() => (draft ? previewForDoc(draft) : previewProps),
+		[draft, previewForDoc, previewProps],
 	);
+	const canvasEngine = useCanvasEngine({
+		store,
+		writers,
+		chromeStore,
+		canvasRef,
+		playhead,
+		selection: view.selection,
+		ops: {
+			selectScene,
+			selectFreeClip,
+			clearSelection,
+			setSelection: ops.setSelection,
+		},
+		onPreview: setDraft,
+	});
 	const derived = useDocumentSelector(store, selectDerivedArrays);
 	const scenes = derived.scenes;
 	const overlays = derived.textOverlays;
@@ -302,20 +311,6 @@ export function TimelineStage({
 	const baseScene = frame.scene;
 	const baseVisualUrl = frame.visualUrl;
 	const isGen = baseScene ? gen[baseScene.id] : false;
-	const canvasHitClips = useMemo(
-		() =>
-			canvasHitClipsAt(
-				{
-					overlays,
-					videoOverlays,
-					trackFlags,
-					selectedOverlayId: selectedOverlay?.id ?? null,
-					selectedVideoOvId: selectedVideoOverlay?.id ?? null,
-				},
-				playhead.get(),
-			),
-		[overlays, videoOverlays, trackFlags, selectedOverlay, selectedVideoOverlay, segment, playhead],
-	);
 	const preloadAssets = useMemo(
 		() => collectPreloadAssets(scenes, videoOverlays, audioOverlays),
 		[audioOverlays, scenes, videoOverlays],
@@ -397,9 +392,11 @@ export function TimelineStage({
 						ref={canvasRef}
 						className="tl2-canvas"
 						style={{ aspectRatio: String(aspect), ...cssVars({ "--tl2-canvas-aspect": aspect }) }}
-						onPointerDown={(e) => {
-							if (e.target === canvasRef.current) clearSelection();
-						}}
+						onPointerDown={canvasEngine.pointerDown}
+						onPointerMove={canvasEngine.pointerMove}
+						onPointerUp={canvasEngine.pointerUp}
+						onPointerCancel={canvasEngine.pointerCancel}
+						onLostPointerCapture={canvasEngine.pointerCancel}
 						onPointerDownCapture={(e) => {
 							const id = pickableCaptionAt(e.clientX, e.clientY);
 							if (!id) return;
@@ -441,68 +438,18 @@ export function TimelineStage({
 								{Ic.spark(ICON.md)} Generate frame
 							</button>
 						)}
-						{baseScene && !trackLocked(-1) && (
-							<button
-								type="button"
-								className="tl2-canvas-hit scene"
-								title="Select scene"
-								onPointerDown={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									selectScene(baseScene.id);
-								}}
-							/>
-						)}
-						{/* Click-to-select layer: transparent hit boxes over every overlay live
-				    at the playhead, so you can pick an element directly on the canvas
-				    (like the timeline) and then drag it. The selected clip is skipped —
-				    its ClipBox owns the drag. Painted before ClipBox so it stays underneath. */}
-						{canvasHitClips.map((c) => (
-							<button
-								key={`${c.source}-${c.id}`}
-								type="button"
-								className="tl2-canvas-hit"
-								style={{
-									left: `${c.box.xPct}%`,
-									top: `${c.box.yPct}%`,
-									width: `${c.box.widthPct}%`,
-									height: `${c.box.heightPct}%`,
-									rotate: `${c.box.rotationDeg ?? 0}deg`,
-								}}
-								title="Select on canvas"
-								onPointerDown={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									selectFreeClip(c.source, c.id, c.start);
-								}}
-							/>
-						))}
-						{/* Preview canvas edits POSITION only (drag/resize the box). Double-click
-				    opens the content popover — text content and style are never edited
-				    inline on the canvas. */}
-						{selectedClip && (
-							<AnimatedClipBox
-								key={selectedKey}
-								target={selectedClip.target}
-								store={store}
-								writers={writers}
-								playhead={playhead}
-								chromeStore={chromeStore}
-								kind={selectedClip.kind}
-								canvasRef={canvasRef}
-								onPreview={(doc) => setDraft(doc ? { key: selectedKey, doc } : null)}
-								locked={selectedClipLocked}
-								onActivate={
-									selectedClip.kind === "text" && selectedOverlay
-										? () =>
-												setEditTarget({
-													type: "text",
-													id: selectedOverlay.id,
-												})
-										: undefined
-								}
-							/>
-						)}
+						{/* The engine draws the box over the selection; the canvas surface above
+						    sends it pointer input. Double-click opens the content popover; text
+						    content and style are never edited inline on the canvas. */}
+						<AnimatedClipBox
+							canvas={canvasEngine}
+							canvasRef={canvasRef}
+							store={store}
+							playhead={playhead}
+							chromeStore={chromeStore}
+							selection={view.selection}
+							onActivateText={(id) => setEditTarget({ type: "text", id })}
+						/>
 					</div>
 
 					<TimelineStageMenus

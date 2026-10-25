@@ -4,6 +4,7 @@ export * from "./scope-diff.ts";
 export * from "./scene-edit.ts";
 export * from "./clip-keys.ts";
 export * from "./engine.ts";
+export * from "./canvas-engine.ts";
 export * from "./engine-executor.ts";
 export * from "./engine-registry.ts";
 export * from "./conformance.ts";

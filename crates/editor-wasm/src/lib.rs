@@ -19,6 +19,7 @@
 //!   object `{"kind": …, "message": …}`.
 
 pub mod app;
+pub mod canvas;
 
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -492,6 +493,70 @@ mod abi {
     #[unsafe(no_mangle)]
     pub extern "C" fn selection_apply(ptr: *mut u8, len: usize) -> u32 {
         status(take_input(ptr, len).and_then(|json| super::app::selection_apply(&json)))
+    }
+
+    thread_local! {
+        static CANVASES: RefCell<super::canvas::Canvases> = RefCell::new(super::canvas::Canvases::default());
+    }
+
+    /// Run `call` with the canvas registry and the document registry.
+    fn with_canvases<T>(call: impl FnOnce(&mut super::canvas::Canvases, &Documents) -> T) -> T {
+        CANVASES.with(|canvases| DOCUMENTS.with(|documents| call(&mut canvases.borrow_mut(), &documents.borrow())))
+    }
+
+    /// Returns a canvas handle, or 0 with the error in the output buffer.
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_open(doc: u32) -> u32 {
+        match with_canvases(|canvases, documents| canvases.open(documents, doc)) {
+            Ok(handle) => {
+                set_output(String::new());
+                handle
+            }
+            Err(error) => {
+                set_output(error);
+                0
+            }
+        }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_close(canvas: u32) -> u32 {
+        unit(with_canvases(|canvases, _| canvases.close(canvas)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_open_count() -> u32 {
+        with_canvases(|canvases, _| canvases.open_count() as u32)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_view(canvas: u32, ptr: *mut u8, len: usize) -> u32 {
+        unit(take_input(ptr, len).and_then(|json| with_canvases(|canvases, _| canvases.view(canvas, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_input(canvas: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_canvases(|canvases, documents| canvases.input(documents, canvas, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_overlay(canvas: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_canvases(|canvases, documents| canvases.overlay(documents, canvas, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_layout(doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_canvases(|_, documents| super::canvas::layout(documents, doc, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_edit(doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| with_canvases(|_, documents| super::canvas::edit(documents, doc, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn canvas_size_patch(ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| super::canvas::size_patch(&json)))
     }
 }
 

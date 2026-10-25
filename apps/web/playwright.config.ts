@@ -95,6 +95,7 @@ export default defineConfig({
 				/phone-chat-workspace\.spec\.ts$/,
 				/vui-reduced-motion\.spec\.ts$/,
 				/touch-targets\.spec\.ts$/,
+				/canvas-pinch\.spec\.ts$/,
 			],
 			dependencies: ["warmup"],
 			use: shared,
@@ -149,7 +150,7 @@ export default defineConfig({
 			   the visual project would pass by measuring a control the rule never
 			   applied to. */
 			testMatch:
-				/(mobile-editor|phone-chat-workspace|story-clarification|post-research-clarification|touch-targets)\.spec\.ts$/,
+				/(mobile-editor|phone-chat-workspace|story-clarification|post-research-clarification|touch-targets|canvas-pinch)\.spec\.ts$/,
 			dependencies: ["warmup"],
 			use: {
 				...shared,

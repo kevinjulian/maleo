@@ -6,16 +6,16 @@
  * writer for the layout the bounding box drags. That resolution is here rather
  * than in the stage because the timeline reads the same answer.
  *
- * The hit boxes are the other half, and they are NOT here: they depend on the
- * playhead, and the editor calls this hook, so keeping them here meant the
- * editor knew the current time and re-rendered at frame rate to hold it. They
- * live in `use-canvas-hit-clips.ts`, called by the stage that draws them.
+ * Picking on the canvas is NOT here: it depends on the playhead, and the
+ * editor calls this hook. The engine hit-tests at the playhead
+ * (`use-canvas-engine.ts`, called by the stage).
  */
 import type { ClipKind, ClipLayout } from "@models/timeline/clip-layout.ts";
 import type { Scene, TextOverlay } from "@maleo/shared";
 import type { useAudioOps } from "./use-audio-ops.ts";
 import type { useVideoOverlayOps } from "./use-video-overlay-ops.ts";
-import { patchCanvasLayout, type CanvasTarget } from "@models/timeline/canvas-transform.ts";
+import type { CanvasTarget } from "@maleo/shared/editor";
+import { canvasPatchedDoc } from "@models/editor-engine/canvas-document.ts";
 import type { DocUpdater } from "@models/storyboard/editor-doc.ts";
 
 export interface CanvasSelectionInput {
@@ -53,7 +53,7 @@ export function useCanvasSelection({
 	// Unified clip layout: one selected visual clip whose placement the canvas
 	// bounding box + Controls panel edit. Priority: video overlay → text → scene.
 	const setSceneLayout = (id: number, patch: Partial<ClipLayout>): void =>
-		mutateDoc((doc) => patchCanvasLayout(doc, { source: "scene", id }, patch));
+		mutateDoc((doc) => canvasPatchedDoc(doc, { source: "scene", id }, patch));
 	const selectedScene =
 		selectedSceneId != null ? (scenes.find((s) => s.id === selectedSceneId) ?? null) : null;
 	const selected = selectedVideoOverlay
@@ -79,7 +79,7 @@ export function useCanvasSelection({
 		? {
 				...selected,
 				set: (patch: Partial<ClipLayout>) =>
-					mutateDoc((doc) => patchCanvasLayout(doc, selected.target, patch)),
+					mutateDoc((doc) => canvasPatchedDoc(doc, selected.target, patch)),
 			}
 		: null;
 	// The selected clip's track lock state — gates canvas edit affordances so a

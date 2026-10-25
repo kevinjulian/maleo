@@ -125,7 +125,7 @@ rediscovered as if new:
   feature boundary provided is not replaced — it is measured: `check:layers`
   prints the count of imports crossing a cluster within one role, and does not
   fail on it. If it climbs, the coupling is visible before it is load-bearing.
-- **The cross-cluster baseline is 183.** The three added by `use-media-while-uploading` are the session's pending-media resolver reached from `hooks/timeline` (preview) and `models/timeline` (admission, the local probe's type). It was 180 before that and 151 until the VUI kernel's
+- **The cross-cluster baseline is 200.** It was 201 before `p2-preview-editing` moved canvas editing to the engine; the 183 recorded below had drifted. The three added by `use-media-while-uploading` are the session's pending-media resolver reached from `hooks/timeline` (preview) and `models/timeline` (admission, the local probe's type). It was 180 before that and 151 until the VUI kernel's
   host half moved into `models/timeline-view/` and the engine's web side into
   `models/editor-engine/` (`migrate-editor-to-shared-rust-core` task 4.10):
   the 29 added are imports that used to name `@maleo/vui` and now name a
@@ -496,7 +496,10 @@ Then load touched page/flow and verify behavior manually.
     `insights-canvas` sat in `components/editor/` with no importer inside it.
   - nested contract: `components/timeline/studio/AGENTS.md` for the boundary
     with the Rust editor engine, which owns edit semantics and time arithmetic
-    (`models/editor-engine/`). The timeline's view-model — model, store,
+    (`models/editor-engine/`), including editing on the preview canvas:
+    `crates/app-core` owns its geometry, hit testing, gestures and commands, and
+    the web only forwards input and draws the boxes it returns
+    (`hooks/timeline/use-canvas-engine.ts`). The timeline's view-model — model, store,
     engagement, geometry — is `models/timeline-view/`; the surface that holds
     pointer capture is `controllers/surface/`. This app draws its own rows,
     ruler, gutter and item bodies in all three editor surfaces, and answers the

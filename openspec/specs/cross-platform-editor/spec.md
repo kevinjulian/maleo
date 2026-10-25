@@ -10,7 +10,7 @@ Keep editing behavior and portable projects consistent across every controller o
 
 The system SHALL execute admitted editor commands through one authoritative engine for web and server controllers, and any later controller SHALL bind the same engine. Identical compatible documents and commands SHALL produce equivalent documents, inverse commands and validation results. Platform presentation and IO SHALL NOT implement a second set of editing rules.
 
-Undo and redo bookkeeping, selection rules and the queue of pending local commands SHALL also live in the shared core. A controller SHALL hold only presentation, input handling and IO for them. Identical sequences of commands and selection actions SHALL produce identical undo stacks, selections and pending queues on every controller.
+Undo and redo bookkeeping, selection rules, the queue of pending local commands, and the canvas editing rules (canvas geometry and its screen mapping, hit testing, gestures, snapping and the commands a gesture makes) SHALL also live in the shared core. A controller SHALL hold only presentation, input handling and IO for them. Identical sequences of commands and selection actions SHALL produce identical undo stacks, selections and pending queues on every controller.
 
 #### Scenario: An edit crosses clients
 
@@ -31,6 +31,11 @@ Undo and redo bookkeeping, selection rules and the queue of pending local comman
 
 - **WHEN** a controller selects a text clip while a video clip is selected
 - **THEN** the resulting selection is the one the shared core defines, with no controller-specific rule
+
+#### Scenario: A canvas gesture crosses clients
+
+- **WHEN** two controllers send the same input events for a drag of the same element in the same document, canvas size and playhead
+- **THEN** both show the same box and guides during the drag and commit the same command on release
 
 ### Requirement: Migration phases have evidence gates
 

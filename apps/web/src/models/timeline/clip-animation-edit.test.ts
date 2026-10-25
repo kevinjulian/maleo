@@ -17,7 +17,7 @@ import {
 	setMomentsEasing,
 	type ClipAnimationTarget,
 } from "./clip-animation-edit.ts";
-import { canvasEditCommand } from "./canvas-transform.ts";
+import { canvasEditOf } from "@models/editor-engine/canvas-document.ts";
 import type { EditScope } from "@maleo/shared/editor";
 import { editorExecutor } from "@maleo/shared/editor";
 
@@ -190,7 +190,7 @@ test("row and canvas edits near an existing key update it instead of adding one"
 	expect(clipAnimationInfo(far.doc, target)?.animation?.tracks.opacity).toHaveLength(3);
 	const canvas = applyCommand(
 		keyed,
-		canvasEditCommand(keyed, { source: "video", id: 2 }, { opacity: 0.3 }, 8 + 2.05),
+		canvasEditOf(keyed.doc, { source: "video", id: 2 }, { opacity: 0.3 }, 8 + 2.05),
 	);
 	expect(clipAnimationInfo(canvas.doc, target)?.animation?.tracks.opacity).toEqual([
 		{ t: 0, v: 0, easing: "linear" },

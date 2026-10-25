@@ -19,7 +19,7 @@ import {
 	type ClipLayout,
 	type ClipTextStyle,
 } from "@models/timeline/clip-layout.ts";
-import { patchCanvasLayout } from "@models/timeline/canvas-transform.ts";
+import { canvasPatchedDoc } from "@models/editor-engine/canvas-document.ts";
 import { Select, onSelect } from "@design-system/components/select.tsx";
 import { AmountField, FieldRow, PropertyRow } from "@design-system/patterns/inspector.tsx";
 import { SourcePlaybackControl } from "./source-playback-control.tsx";
@@ -165,7 +165,7 @@ export function textClipBody(
 			</>
 		);
 	const textLayout = (p: Partial<ClipLayout>) =>
-		writers.mutate((doc) => patchCanvasLayout(doc, { source: "text", id: selectedOverlay.id }, p));
+		writers.mutate((doc) => canvasPatchedDoc(doc, { source: "text", id: selectedOverlay.id }, p));
 	if (tab === "blending")
 		return transform(
 			<BlendingSection
@@ -206,7 +206,7 @@ export function brollClipBody(
 		);
 	const brollTarget = { source: "video" as const, id: selectedVideoOverlay.id };
 	const brollLayout = (p: Partial<ClipLayout>) =>
-		writers.mutate((doc) => patchCanvasLayout(doc, brollTarget, p));
+		writers.mutate((doc) => canvasPatchedDoc(doc, brollTarget, p));
 	if (tab === "timing")
 		return (
 			<>

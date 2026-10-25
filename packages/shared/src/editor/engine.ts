@@ -84,6 +84,24 @@ export interface Engine {
 	pendingState(queue: number): EngineResult<string>;
 	/** `{selection, action}` → the next selection. */
 	selectionApply(json: string): EngineResult<string>;
+	/* Canvas editing (`p2-preview-editing` D2): a canvas handle over a document
+	 * handle, one call per input event. Typed in `canvas-engine.ts`. */
+	/** Open a canvas over document handle `doc`; returns its handle. */
+	canvasOpen(doc: number): EngineResult<number>;
+	canvasClose(canvas: number): EngineResult<void>;
+	canvasOpenCount(): number;
+	/** Where the canvas sits on the screen: `{area, aspect, fit?, zoom?, pan?, density?, handleSize?, handlesOutside?}`. */
+	canvasView(canvas: number, json: string): EngineResult<void>;
+	/** One input event → `{overlay, select, preview, commit, handled}`. */
+	canvasInput(canvas: number, json: string): EngineResult<string>;
+	/** `{time, selection | targets, visual?, mask?}` → the overlay to draw. */
+	canvasOverlay(canvas: number, json: string): EngineResult<string>;
+	/** `{target}` → `{clipId, layout, start, duration, kind, visualId}` or `null`. */
+	canvasLayout(doc: number, json: string): EngineResult<string>;
+	/** `{target, patch, unset?, time?}` → the command the change makes. */
+	canvasEdit(doc: number, json: string): EngineResult<string>;
+	/** `{layout, axis, value}` → the patch an aspect-locked size field writes. */
+	canvasSizePatch(json: string): EngineResult<string>;
 }
 
 interface Exports {
@@ -133,6 +151,15 @@ interface Exports {
 	pending_resolve(queue: number, ledger: number, doc: number, ptr: number, len: number): number;
 	pending_state(queue: number): number;
 	selection_apply(ptr: number, len: number): number;
+	canvas_open(doc: number): number;
+	canvas_close(canvas: number): number;
+	canvas_open_count(): number;
+	canvas_view(canvas: number, ptr: number, len: number): number;
+	canvas_input(canvas: number, ptr: number, len: number): number;
+	canvas_overlay(canvas: number, ptr: number, len: number): number;
+	canvas_layout(doc: number, ptr: number, len: number): number;
+	canvas_edit(doc: number, ptr: number, len: number): number;
+	canvas_size_patch(ptr: number, len: number): number;
 }
 
 /* Every export, checked to exist with the right kind, so a stale or foreign
@@ -183,6 +210,15 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 		pending_resolve: call("pending_resolve"),
 		pending_state: call("pending_state"),
 		selection_apply: call("selection_apply"),
+		canvas_open: call("canvas_open"),
+		canvas_close: call("canvas_close"),
+		canvas_open_count: call("canvas_open_count"),
+		canvas_view: call("canvas_view"),
+		canvas_input: call("canvas_input"),
+		canvas_overlay: call("canvas_overlay"),
+		canvas_layout: call("canvas_layout"),
+		canvas_edit: call("canvas_edit"),
+		canvas_size_patch: call("canvas_size_patch"),
 	};
 }
 
@@ -302,5 +338,19 @@ function engineOf(wasm: Exports): Engine {
 			result(wasm.pending_resolve(queue, ledger, doc, ...write(json))),
 		pendingState: (queue) => result(wasm.pending_state(queue)),
 		selectionApply: (json) => result(wasm.selection_apply(...write(json))),
+		canvasOpen(doc) {
+			const handle = wasm.canvas_open(doc);
+			return handle === 0
+				? { ok: false, error: parseError(output()) }
+				: { ok: true, value: handle };
+		},
+		canvasClose: (canvas) => done(result(wasm.canvas_close(canvas))),
+		canvasOpenCount: () => wasm.canvas_open_count(),
+		canvasView: (canvas, json) => done(result(wasm.canvas_view(canvas, ...write(json)))),
+		canvasInput: (canvas, json) => result(wasm.canvas_input(canvas, ...write(json))),
+		canvasOverlay: (canvas, json) => result(wasm.canvas_overlay(canvas, ...write(json))),
+		canvasLayout: (doc, json) => result(wasm.canvas_layout(doc, ...write(json))),
+		canvasEdit: (doc, json) => result(wasm.canvas_edit(doc, ...write(json))),
+		canvasSizePatch: (json) => result(wasm.canvas_size_patch(...write(json))),
 	};
 }

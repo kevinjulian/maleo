@@ -154,6 +154,18 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
 
 - Preview: `Player` + `StoryboardReel` from `@maleo/video/composition`,
   `playbackRate` state, playhead synced via `use-remotion-playhead.ts`.
+- Editing on the preview canvas is the shared Rust core's: `crates/app-core`
+  `canvas/` owns the screen mapping, element boxes at the playhead, hit
+  testing, gestures and snapping, the group and mask boxes, and the command a
+  change makes (keys at the playhead for keyed properties, a static replace for
+  the rest). The web reaches it through the editor engine's `canvas_*` calls
+  (`@maleo/shared/editor` `canvas-engine.ts`). `hooks/timeline/use-canvas-engine.ts`
+  forwards pointer, touch (`controllers/canvas/two-pointer.ts`) and key input
+  from the canvas surface, previews a gesture's command on a copy as the
+  Player's draft, applies the release's command as one undo step, and applies
+  click and shift-click selection actions. `components/timeline/clip-box.tsx`
+  draws the box, handles and guides the engine returns. Inspector layout edits
+  go through the same rules (`models/editor-engine/canvas-document.ts`).
 - Export: `CreateContent.onExport` → `submitVideoRender` (`api.ts`) →
   dashboard `/api/video/render` → video service. `backend` selects the
   worker path: `local` (in-process `renderMedia`) or `lambda`
