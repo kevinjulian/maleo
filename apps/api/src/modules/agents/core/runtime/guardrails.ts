@@ -133,7 +133,15 @@ export interface AgentOutcome {
 /** Turn the agent's last answer into the run's final state. */
 export async function settleRun(job: AgentJob, outcome: AgentOutcome): Promise<void> {
 	if (outcome.finishReason === "suspended" || job.status === "awaiting_input") return;
+	// Mastra invokes this hook before throwing provider errors to the host's failure handler.
+	if (outcome.finishReason === "error") return;
 	const last = outcome.steps.at(-1);
+	if (!last) {
+		job.status = "error";
+		job.error = `Text provider returned no completed model step (finish reason: ${outcome.finishReason ?? "unknown"}). Check the provider response and API logs.`;
+		await persist(job);
+		return;
+	}
 	const answered = last?.finishReason === "stop" && !finishBlockers(job).length;
 	if (!answered) {
 		await finalizeExhaustedRun(job, runState(job).builtSomething);

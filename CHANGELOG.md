@@ -424,6 +424,8 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Fixed
 
+- Agent provider failures preserve the API error instead of reporting a successful pause and delivery warnings. Empty scenes no longer trigger a brief-coverage warning, and responses with no completed model step report an error.
+
 - **Edits save through the command log without losing history.** A save reply that only accepted commands cleared redo, and a reply that handed back an equal scope recorded an empty undo step, so Redo turned off after any saved undo. Only a rejected or server-delivered command clears redo now. A layout the editor migrates while it loads (for example, retired lanes) is also saved now; before, it stayed only in the browser.
 - The API no longer exits when two media uploads stream at the same time. Bun 1.3.1 `pipeTo` left an unhandled rejection on that path; the upload now reads its body with a plain reader loop.
 - Project routes under `/api/operations/projects/:id` refuse a project that belongs to another workspace with `404 project_not_found`. Before, a member of any workspace could read or edit it by id.

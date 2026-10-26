@@ -69,6 +69,8 @@ describe("outcome evaluation", () => {
 	test("blocks empty or visually incomplete delivery", () => {
 		const empty = evaluateOutcome(job(), 200);
 		expect(empty.status).toBe("failed");
+		expect(empty.metrics.briefKeywordCoverage).toBeUndefined();
+		expect(empty.findings.some((finding) => finding.id === "brief-warning")).toBe(false);
 		expect(
 			empty.findings.some(
 				(finding) => finding.id === "content-empty" && finding.severity === "blocker",

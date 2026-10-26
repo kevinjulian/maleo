@@ -5,6 +5,7 @@
  * scripted model over a real project. */
 import { afterAll, beforeEach, describe, expect, test } from "bun:test";
 import { RequestContext } from "@mastra/core/request-context";
+import { ModelRouterLanguageModel } from "@mastra/core/llm";
 import { closeMaleoDb } from "@maleo/db/connection";
 import { createContentProject } from "@maleo/db/project-detail";
 import { clearWorkflowRunsForTests } from "@maleo/db/workflow-run-db";
@@ -14,6 +15,8 @@ import type { AgentJob } from "../../../model.ts";
 import { createInternalAgent } from "../../agent.ts";
 import { ASK_LIMIT, MAX_STEPS, settleRun } from "../../guardrails.ts";
 import { runState } from "../../run-state.ts";
+import { agentModel } from "../../model.ts";
+import { inProcessHost, startAgentRun } from "../../../service.ts";
 import type { AgentRunContext } from "../../tools/registry-tools.ts";
 import { answer, callTool, scriptedModel, type turn } from "../support/scripted-model.ts";
 import { savedVideoProject } from "../support/video-fixture.ts";
@@ -56,6 +59,42 @@ afterAll(async () => {
 });
 
 describe("finishing", () => {
+	test("an HTTP provider rejection keeps its error instead of becoming a delivery warning", async () => {
+		const server = Bun.serve({
+			port: 0,
+			fetch: () =>
+				Response.json({ error: { message: "Unsupported provider parameter" } }, { status: 400 }),
+		});
+		try {
+			const job = await runOn("empty");
+			const model = new ModelRouterLanguageModel(
+				agentModel("deepseek-flash", {
+					baseUrl: `http://127.0.0.1:${server.port}/v1`,
+					apiKey: "test",
+				}),
+			);
+			await startAgentRun(inProcessHost(createInternalAgent(model)), job, "Make a video");
+			const settled = (await loadRun(job.id))!;
+			expect(settled.status).toBe("error");
+			expect(settled.error).toBe("Unsupported provider parameter");
+			expect(settled.outcomeEvaluation).toBeUndefined();
+			expect(finalText(settled)).toBeUndefined();
+		} finally {
+			void server.stop(true);
+		}
+	});
+
+	test("a response with no completed model step reports failure without a delivery check", async () => {
+		const job = await runOn("empty");
+		await settleRun(job, { finishReason: "unknown", steps: [] });
+		const settled = (await loadRun(job.id))!;
+		expect(settled.status).toBe("error");
+		expect(settled.error).toContain("no completed model step");
+		expect(settled.error).toContain("unknown");
+		expect(settled.outcomeEvaluation).toBeUndefined();
+		expect(finalText(settled)).toBeUndefined();
+	});
+
 	test("a run that built nothing finishes with the model's answer as its final event", async () => {
 		const job = await runOn("saved");
 		const { run } = await drive(job, [

@@ -38,6 +38,7 @@ function parked(job: AgentJob): boolean {
 export async function settleAgentRun(runId: string, outcome: AgentOutcome): Promise<void> {
 	const job = await getAgentJob(runId);
 	if (!job || job.status !== "running") return;
+	if (outcome.finishReason === "error") return;
 	await settleRun(job, outcome);
 	if (!parked(job)) await endAgentRun(job);
 }

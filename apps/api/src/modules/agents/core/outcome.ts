@@ -277,6 +277,7 @@ function evaluateBrief(
 	findings: OutcomeFinding[],
 	metrics: Partial<OutcomeEvaluation["metrics"]>,
 ): void {
+	if (!job.scenes.length) return;
 	const wanted = [...new Set(tokens(ensureOutcomeContract(job).objective))];
 	if (!wanted.length) return;
 	const delivered = new Set(tokens(outputText(job)));
