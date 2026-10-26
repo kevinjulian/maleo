@@ -1054,6 +1054,130 @@
 		"motion-combined-overlap-geometry": {
 			"case": "motion-combined-overlap-geometry",
 			"frames": [0, 20, 21, 27, 28, 35, 36, 42, 44, 45, 50, 51, 60, 71, 72, 89, 90, 98, 119]
+		},
+		"shape.rect.fill": {
+			"case": "shape-rect-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.rect.stroke": {
+			"case": "shape-rect-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.rect.opacity": {
+			"case": "shape-rect-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.rect.nonsquare": {
+			"case": "shape-rect-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.rect.rotation": {
+			"case": "shape-rect-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.circle.fill": {
+			"case": "shape-circle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.circle.stroke": {
+			"case": "shape-circle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.circle.opacity": {
+			"case": "shape-circle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.circle.nonsquare": {
+			"case": "shape-circle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.circle.rotation": {
+			"case": "shape-circle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.triangle.fill": {
+			"case": "shape-triangle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.triangle.stroke": {
+			"case": "shape-triangle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.triangle.opacity": {
+			"case": "shape-triangle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.triangle.nonsquare": {
+			"case": "shape-triangle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.triangle.rotation": {
+			"case": "shape-triangle-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.star.fill": {
+			"case": "shape-star-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.star.stroke": {
+			"case": "shape-star-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.star.opacity": {
+			"case": "shape-star-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.star.nonsquare": {
+			"case": "shape-star-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.star.rotation": {
+			"case": "shape-star-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.cross.fill": {
+			"case": "shape-cross-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.cross.stroke": {
+			"case": "shape-cross-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.cross.opacity": {
+			"case": "shape-cross-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.cross.nonsquare": {
+			"case": "shape-cross-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.cross.rotation": {
+			"case": "shape-cross-primitives",
+			"frames": [0, 30, 59]
+		},
+		"shape.aspect.square": {
+			"case": "shape-primitives-square",
+			"frames": [0]
+		},
+		"shape.aspect.wide": {
+			"case": "shape-primitives-wide",
+			"frames": [0]
+		},
+		"motion-comp.primitives": {
+			"case": "composition-primitives",
+			"frames": [0, 21, 22, 23, 44, 45, 46, 75, 120, 157, 158, 179]
+		},
+		"motion-comp.unversioned": {
+			"case": "composition-unversioned",
+			"frames": [0, 21, 22, 23, 44, 45, 46, 75, 120, 157, 158, 179]
+		},
+		"motion-comp.local": {
+			"case": "composition-local",
+			"frames": [0, 21, 22, 23, 44, 45, 46, 75, 120, 157, 158, 179]
+		},
+		"motion-comp.geometry": {
+			"case": "composition-geometry",
+			"frames": [0, 21, 22, 23, 44, 45, 46, 75, 120, 157, 158, 179]
 		}
 	}
 }

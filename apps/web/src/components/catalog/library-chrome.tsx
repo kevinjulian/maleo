@@ -38,7 +38,7 @@ const HEADINGS = {
 	},
 	elements: {
 		title: "Elements",
-		blurb: "Placeable timeline building blocks — built-in text, motion and data, plus your own.",
+		blurb: "Plain text, five shapes, and motion compositions you create.",
 	},
 } satisfies Record<LibraryType, { title: string; blurb: string }>;
 

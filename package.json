@@ -38,6 +38,7 @@
 		"media:cleanup": "bun --env-file .env scripts/cleanup-media.ts",
 		"db:migrate-from-sqlite": "bun --env-file .env scripts/migrate-to-postgres.ts",
 		"storyboards:reclaim": "bun --env-file .env scripts/reclaim-storyboard-history.ts",
+		"visuals:cleanup": "bun --env-file .env scripts/cleanup-visual-presets.ts",
 		"auth:reset-password": "bun --env-file .env scripts/reset-password.ts",
 		"bake:voice-samples": "cd apps/api && bun run bake:voice-samples"
 	},

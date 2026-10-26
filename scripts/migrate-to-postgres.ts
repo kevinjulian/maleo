@@ -26,6 +26,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { validateWorkspaceConfigText } from "../apps/api/src/lib/config-yaml.ts";
 import type { Db, Param } from "../packages/db/src/db/handle.ts";
+import { VISUAL_CONTRACT_SETTING } from "../packages/db/src/db/visual-contract.ts";
 import { AUTH_OWNED_TABLES, RUNTIME_TABLES } from "../packages/db/src/db/schema.ts";
 
 export class CarryOverError extends Error {
@@ -286,6 +287,13 @@ async function carryTable(input: CarryOverInput, table: string): Promise<void> {
 
 export async function carryOver(input: CarryOverInput): Promise<CarryOverReport> {
 	const plan = preflight(input);
+	if (
+		plan.tables.includes("global_settings") &&
+		input.source.query("SELECT key FROM global_settings WHERE key = ?").get(VISUAL_CONTRACT_SETTING)
+	)
+		throw new CarryOverError("SQLite source cannot declare Postgres visual-contract readiness");
+	// Imported heads require cleanup even when the empty target was ready.
+	await input.target.run("DELETE FROM global_settings WHERE key = ?", [VISUAL_CONTRACT_SETTING]);
 	for (const table of plan.tables) await carryTable(input, table);
 	for (const [name, text] of plan.configs) {
 		await input.target.run(
@@ -312,33 +320,45 @@ export async function carryOver(input: CarryOverInput): Promise<CarryOverReport>
 if (import.meta.main) {
 	const { openLegacySqlite, resolveLegacySqlitePath } =
 		await import("../packages/db/src/db/legacy-sqlite.ts");
-	const { closeMaleoDb, databaseReady, openDb } =
-		await import("../packages/db/src/db/connection.ts");
+	const { runtimeDatabaseUrl } = await import("../packages/db/src/db/connection.ts");
+	const { databaseConfig } = await import("../packages/db/src/db/database-config.ts");
+	const { createSql } = await import("../packages/db/src/db/pg.ts");
+	const { pgDb } = await import("../packages/db/src/db/handle.ts");
+	const { loadMigrations, migrate } = await import("../packages/db/src/db/migrate.ts");
 	const { resolveDataDir } = await import("../packages/db/src/data-path.ts");
 	const { ensureAuthTables } = await import("../packages/auth/src/config.ts");
-	// Seeded fixture rows would collide by slug with the ones being carried.
-	process.env.MALEO_BOOTSTRAP_FIXTURES = "0";
 	const at = process.argv.indexOf("--source");
 	if (at !== -1) process.env.MALEO_DB_PATH = process.argv[at + 1];
 	console.log(`source: ${resolveLegacySqlitePath()}`);
 	const source = openLegacySqlite();
-	await databaseReady();
-	await ensureAuthTables();
-	const started = performance.now();
-	const report = await carryOver({
-		source,
-		target: openDb(),
-		dataDir: resolveDataDir(),
-		onBatch: (table, n) => {
-			if (n % 20_000 === 0) console.log(`  ${table}: ${n}`);
-		},
+	const config = databaseConfig();
+	const sql = createSql(await runtimeDatabaseUrl(), {
+		max: 1,
+		ssl: config.kind === "url" ? config.ssl : false,
 	});
-	for (const t of report.tables)
+	try {
+		// Maintenance must resume before runtime visual readiness is admitted.
+		await migrate(sql, loadMigrations());
+		await ensureAuthTables(sql);
+		const started = performance.now();
+		const report = await carryOver({
+			source,
+			target: pgDb(sql),
+			dataDir: resolveDataDir(),
+			onBatch: (table, n) => {
+				if (n % 20_000 === 0) console.log(`  ${table}: ${n}`);
+			},
+		});
+		for (const t of report.tables)
+			console.log(
+				`${t.table.padEnd(28)} ${String(t.source).padStart(8)} → ${String(t.target).padStart(8)}`,
+			);
+		console.log(`workspaces carried: ${report.workspaces.join(", ") || "none"}`);
 		console.log(
-			`${t.table.padEnd(28)} ${String(t.source).padStart(8)} → ${String(t.target).padStart(8)}`,
+			`done in ${Math.round((performance.now() - started) / 1000)}s; every count matches.`,
 		);
-	console.log(`workspaces carried: ${report.workspaces.join(", ") || "none"}`);
-	console.log(`done in ${Math.round((performance.now() - started) / 1000)}s; every count matches.`);
-	source.close();
-	await closeMaleoDb();
+	} finally {
+		source.close();
+		await sql.end();
+	}
 }

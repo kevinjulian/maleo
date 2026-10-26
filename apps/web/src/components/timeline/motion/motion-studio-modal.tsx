@@ -92,7 +92,7 @@ interface MotionStudioModalProps {
 	aspect: number;
 	brand?: BrandPalette;
 	/** Present when editing an existing motion — save targets this template. */
-	initial?: { id?: string; name: string; overlays: CompositionLayer[] };
+	initial?: { id?: string; name: string; overlays: CompositionLayer[]; spanSec?: number };
 	onClose: () => void;
 	onSaved: () => void;
 }
@@ -116,11 +116,12 @@ export function MotionStudioModal({
 	const compact = usePhoneLayout();
 	const [name, setName] = useState(initial?.name ?? "");
 	const [durationSec, setDurationSec] = useState(() => {
+		if (initial?.spanSec !== undefined) return initial.spanSec;
 		const span = initial ? Math.max(...initial.overlays.map((o) => o.start + o.dur), 0) : 0;
 		return Math.max(1, Math.round((span || 3) * 10) / 10);
 	});
 	const [layers, setLayers] = useState<CompositionLayer[]>(() =>
-		initial?.overlays.length ? initial.overlays.map((o) => ({ ...o })) : [newLayer("title", 3)],
+		initial?.overlays.length ? initial.overlays.map((o) => ({ ...o })) : [newLayer("plain", 3)],
 	);
 	const [selectedId, setSelectedId] = useState<number | null>(
 		() => initial?.overlays[0]?.id ?? null,
@@ -282,7 +283,7 @@ export function MotionStudioModal({
 	};
 
 	const save = (): void => {
-		const input = buildMotionSaveInput(name, layers, initial?.id);
+		const input = buildMotionSaveInput(name, layers, initial?.id, durationSec);
 		if (!input || busy) return;
 		setBusy(true);
 		setError(null);

@@ -56,6 +56,14 @@ export * from "./generation-cast.ts";
 export * from "./image-prompt-intent.ts";
 export * from "./motion-preset.ts";
 export * from "./clip-template.ts";
+export * from "./visual-primitives.ts";
+export * from "./visual-cleanup.ts";
+export * from "./composition-timing.ts";
+export {
+	compositionAnimationSchema,
+	compositionStyleSchema,
+	compositionLayoutSchema,
+} from "./composition-schema.ts";
 export * from "./project-selection.ts";
 export * from "./conversation-memory.ts";
 export * from "./chat-context-envelope.ts";

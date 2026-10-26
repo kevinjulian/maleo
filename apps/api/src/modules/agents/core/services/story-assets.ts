@@ -24,6 +24,8 @@ import type {
 } from "@maleo/shared";
 import {
 	bindingIdentity,
+	PLAIN_TEXT_AUTHOR_STYLE,
+	defaultClipLayout,
 	buildStoryBeatIntent,
 	materializedEntityId,
 	onlyStoredInfographicDirectionErrors,
@@ -307,7 +309,9 @@ function templateTitleOverlays(job: AgentJob, sections: StorySection[]): AgentTe
 					content,
 					startSec: section.startSec,
 					durationSec: Math.min(policy.titleDurationSec, section.audioDurationSec),
-					preset: policy.sectionPreset || policy.introPreset || undefined,
+					preset: "plain",
+					style: { ...PLAIN_TEXT_AUTHOR_STYLE },
+					layout: defaultClipLayout("text"),
 				},
 			] satisfies AgentTextOverlay[];
 		},

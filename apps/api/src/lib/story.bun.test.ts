@@ -799,14 +799,14 @@ describe("buildStoryTitleOverlays — chapter beat per section", () => {
 			leadInSec: 0.8,
 			policy: "first_only",
 			durationSec: 2.5,
-			introPreset: "section-card",
+			introPreset: "plain",
 		});
 		expect(cards).toHaveLength(1);
 		expect(cards[0]).toMatchObject({
 			id: 51_000_000,
 			startSec: 0,
 			durationSec: 2.5,
-			preset: "section-card",
+			preset: "plain",
 			track: 3,
 		});
 	});
@@ -819,10 +819,22 @@ describe("buildStoryTitleOverlays — chapter beat per section", () => {
 		const cards = buildStoryTitleOverlays(sections, { durationSec: 30 });
 		expect(cards.every((card) => card.durationSec === 30)).toBe(true);
 	});
-	it("uses the strong chapter preset", () => {
+	it("uses plain titles with explicit style", () => {
 		expect(buildStoryTitleOverlays(sections).every((c) => c.preset === STORY_TITLE_PRESET)).toBe(
 			true,
 		);
+	});
+	it("disables retired stored title choices", () => {
+		expect(
+			buildStoryTitleOverlays(sections, { introPreset: "chapter", sectionPreset: "section-card" }),
+		).toEqual([]);
+		expect(buildStoryTitleOverlays(sections)[0].style).toMatchObject({
+			fontFamily: "Inter",
+			fontSize: 64,
+			weight: 700,
+			fill: "#FFFFFF",
+			align: "center",
+		});
 	});
 	it("caps the dwell, but never exceeds a short section's own audio", () => {
 		const cards = buildStoryTitleOverlays(sections);

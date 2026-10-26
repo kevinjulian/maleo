@@ -210,6 +210,7 @@ export function useTimelineEditorActions(
 		selectedFreeIds: selectedFreeIdSet,
 		playhead,
 		total,
+		aspect,
 	});
 	/* The drag and the row bookkeeping that keys on it live in TimelineTracks
 	 * now, not here.

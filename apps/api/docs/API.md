@@ -40,6 +40,19 @@ from this table.
 Both enter the run snapshot together, including an initialized set with no cues.
 Caption data stays editor-owned when an agent updates unrelated content.
 
+`POST /api/operations/projects/:id/storyboards/:version/restore` accepts
+`{ "expectedRevisionId": "<current-storyboard-id>" }` (null before the first
+head). It cleans retired visual clips/layers before writing a new head through
+the command log. Historical rows remain unchanged. A stale head returns
+`409 storyboard_conflict`; pruned history returns `410 storyboard_pruned`.
+Unknown presets or invalid surviving layers return `409 invalid_visual_contract`.
+
+Project saves, seed imports, template writes and command results refuse retired
+visual IDs. Command bases older than cleanup receive a clean snapshot plus
+`visual_contract_reload`. The web editor reloads before replaying pending edits
+or using its old undo history. Server startup requires successful migration;
+see [retired visual cleanup](../../../docs/self-hosting.md#retired-visual-presets).
+
 `POST /api/operations/projects/:id/storyboards` validates new caption clips and
 set metadata before saving. A writer that omits `captionSet` preserves the
 latest saved captions. An explicit set with no caption clips records deletion.

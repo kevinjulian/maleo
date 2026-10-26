@@ -164,6 +164,54 @@ describe("the editor submits its pending commands", () => {
 });
 
 describe("the editor reads the log", () => {
+	test("a visual migration snapshot requires reload instead of replaying pending replacements", async () => {
+		let submitted = 0;
+		const initial = scopeOf([clip("text:1")]);
+		const { sync, edit, scope } = editor(initial, {
+			read: async () => ({
+				headSeq: 2,
+				headVersion: 2,
+				headStoryboardId: "clean",
+				entries: [
+					{
+						seq: 2,
+						version: 2,
+						snapshot: true,
+						actor: "visual-cleanup",
+						commands: [replaceScope(scopeOf([]))],
+					},
+				],
+			}),
+			submit: async () => {
+				submitted++;
+				return reply({});
+			},
+		});
+		edit(replaceScope(scopeOf([clip("text:1"), clip("text:9")])));
+		const before = scope();
+		await expect(sync.pull()).rejects.toThrow("Reload this project");
+		expect(scope()).toBe(before);
+		await sync.flush();
+		expect(submitted).toBe(0);
+		sync.dispose();
+	});
+
+	test("a reload refusal also stops later queued batches", async () => {
+		let submitted = 0;
+		const { sync, edit } = editor(scopeOf([clip("text:1")]), {
+			submit: async () => {
+				submitted++;
+				return reply({
+					rejected: [{ clientCommandId: "c1", kind: "visual_contract_reload", message: "Reload" }],
+				});
+			},
+		});
+		edit(moveClip("text:1", { startSec: 4 }));
+		await expect(sync.flush()).rejects.toThrow("Reload this project");
+		await sync.flush();
+		expect(submitted).toBe(1);
+		sync.dispose();
+	});
 	test("an agent's scope.replace lands under pending edits with the server's library plus local pending uploads", async () => {
 		const pendingId = mintMediaId();
 		const pending = {

@@ -15,6 +15,7 @@
  * suite already had once at a different layer: an artifact nobody rebuilt,
  * silently deciding what the baselines mean.
  */
+import { cleanRetiredVisualTemplate, PLAIN_TEXT_AUTHOR_STYLE } from "@maleo/shared";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -132,7 +133,9 @@ const OVERLAYS: ReadonlyArray<{ match: RegExp; apply: (body: Record<string, unkn
 	{
 		match: /\/api\/operations\/clip-templates$/,
 		apply: (b) => {
-			b.items = renameRecords(b.items, "Fixture Element");
+			b.items = renameRecords(b.items, "Fixture Element")
+				.map((item) => cleanRetiredVisualTemplate(item).value)
+				.filter((item) => item !== null);
 		},
 	},
 	{
@@ -174,7 +177,11 @@ const OVERLAYS: ReadonlyArray<{ match: RegExp; apply: (body: Record<string, unkn
 	{
 		match: /\/api\/operations\/timeline-templates/,
 		apply: (b) => {
-			b.items = widen(b.items, "Fixture Template", 4);
+			b.items = widen(b.items, "Fixture Template", 4).map((item) => ({
+				...(item as Record<string, unknown>),
+				introMotionPreset: "plain",
+				sectionMotionPreset: "plain",
+			}));
 		},
 	},
 ];
@@ -259,7 +266,17 @@ function sanitizeProject(body: Record<string, unknown>): void {
 			| undefined;
 		for (const clip of doc?.clips ?? []) {
 			const text = clip.text as Record<string, unknown> | undefined;
-			if (text && typeof text.content === "string") text.content = "FIXTURE";
+			if (text && typeof text.content === "string") {
+				text.content = "FIXTURE";
+				// This synthetic editable text sample now authors the retained primitive.
+				if (text.preset === "title") {
+					text.preset = "plain";
+				}
+				if (text.preset === "plain") {
+					text.style ??= { ...PLAIN_TEXT_AUTHOR_STYLE };
+					text.layout ??= { xPct: 8, yPct: 18, widthPct: 84, heightPct: 34, fit: "contain" };
+				}
+			}
 		}
 	}
 	for (const [i, event] of records(body.events).entries()) {

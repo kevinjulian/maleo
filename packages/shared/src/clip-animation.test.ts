@@ -102,7 +102,7 @@ test("optional visual/audio animation round-trips, scene camera is unchanged, an
 			content: "Old studio",
 			start: 0,
 			dur: 4,
-			preset: "title" as const,
+			preset: "plain" as const,
 			anim: {
 				tracks: {
 					x: [
@@ -336,7 +336,7 @@ test("blockers validate each element kind against its own registry entries", () 
 				startSec: 0,
 				durationSec: dur,
 				track: 0,
-				text: { id: 1, content: "T", start: 0, dur, preset: "title", layout: { animation } },
+				text: { id: 1, content: "T", start: 0, dur, preset: "plain", layout: { animation } },
 			},
 		],
 	});

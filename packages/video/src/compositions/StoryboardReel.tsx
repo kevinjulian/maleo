@@ -1,3 +1,4 @@
+import { shapePrimitiveOf } from "@maleo/shared";
 import { Fragment } from "react";
 import { AbsoluteFill, Audio, Img, OffthreadVideo, Sequence, useVideoConfig } from "remotion";
 import { SourceVideo, videoPremountFrames } from "../components/SourceVideo";
@@ -29,14 +30,11 @@ const MusicLayer: React.FC<{ url: string; storyboard: Storyboard }> = ({ url, st
 };
 
 import {
-	ExplainerTextCard,
-	RveTemplateText,
-	SectionTextCard,
+	ShapePrimitive,
 	TemplateFrame,
-	textPresetStyle,
+	plainTextCss,
 	type LayoutLike,
 	CompositionOverlay,
-	type CompositionOverlayConfig,
 } from "./reel-text";
 
 // Absolute box (% of canvas) for a positioned clip. Returns null when the layout
@@ -351,33 +349,6 @@ function SceneEntrance({
 	const frame = useCurrentFrame();
 	const style = sceneEntranceStyle(type, frame, durFrames);
 	return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
-}
-
-// Title/chapter reveal: ease the card in (fade + rise) and out (fade) so a section
-// title lands as a deliberate chapter beat instead of a hard pop. Animates only
-// compositor-friendly properties (opacity + transform). Frame is sequence-local;
-// `frames` is the clip's total length so the out-fade hugs the end.
-const TITLE_IN_FRAMES = 10;
-const TITLE_OUT_FRAMES = 8;
-const TITLE_RISE_PX = 28;
-function TitleReveal({
-	frames,
-	children,
-	animated = true,
-}: {
-	frames: number;
-	children: JSX.Element;
-	animated?: boolean;
-}): JSX.Element {
-	const frame = useCurrentFrame();
-	if (!animated) return children;
-	const inF = Math.min(TITLE_IN_FRAMES, Math.max(1, Math.floor(frames / 3)));
-	const outF = Math.min(TITLE_OUT_FRAMES, Math.max(1, Math.floor(frames / 3)));
-	const up = Math.min(1, frame / inF);
-	const down = Math.min(1, (frames - frame) / outF);
-	const vis = Math.max(0, Math.min(up, down));
-	const rise = (1 - Math.min(1, up)) * TITLE_RISE_PX;
-	return <AbsoluteFill style={{ opacity: vis, translate: `0 ${rise}px` }}>{children}</AbsoluteFill>;
 }
 
 export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
@@ -815,28 +786,7 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 				const align = st?.align ?? "center";
 				const content = st?.casing === "upper" ? t.content.toUpperCase() : t.content;
 				const plainTextStyle = (sampledStyle: typeof st): CSSProperties =>
-					sampledStyle
-						? {
-								fontFamily: sampledStyle.fontFamily,
-								fontSize: sampledStyle.fontSize,
-								fontWeight: sampledStyle.weight,
-								color: sampledStyle.fill,
-								background:
-									sampledStyle.background && sampledStyle.background !== "transparent"
-										? sampledStyle.background
-										: undefined,
-								textAlign: align,
-								lineHeight: sampledStyle.lineHeight ?? 1.1,
-								letterSpacing:
-									sampledStyle.letterSpacing != null ? sampledStyle.letterSpacing : undefined,
-								padding:
-									sampledStyle.background && sampledStyle.background !== "transparent"
-										? "12px 22px"
-										: undefined,
-								borderRadius: 12,
-								textShadow: "0 4px 16px rgba(0,0,0,0.5)",
-							}
-						: { ...textPresetStyle(t.preset), color: storyboard.fgColor };
+					plainTextCss(sampledStyle, storyboard.fgColor);
 				const textStyle: CSSProperties = plainTextStyle(st);
 				const tovFrames = Math.max(1, Math.floor(t.durationSec * fps));
 				// One-clip Motion Studio composition: sub-overlays scale to the clip.
@@ -856,9 +806,7 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 							>
 								{(sampledStyle) => (
 									<CompositionOverlay
-										// SAFETY: a "motion-comp" clip's params are the composition config
-										// `compositionFromOverlays` writes (apps/web composition-overlays.ts).
-										config={(t.params ?? {}) as CompositionOverlayConfig}
+										config={t.params}
 										frames={tovFrames}
 										fps={fps}
 										zIndex={1}
@@ -871,10 +819,8 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 						</Sequence>
 					);
 				}
-				if (
-					typeof t.preset === "string" &&
-					(t.preset.startsWith("rve-") || t.preset.startsWith("shape-"))
-				) {
+				const shape = shapePrimitiveOf(t.preset);
+				if (shape)
 					return (
 						<Sequence
 							key={`tov-${i}`}
@@ -888,80 +834,16 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 								anim={t.anim}
 								frames={tovFrames}
 							>
-								{(sampledStyle) => (
-									<RveTemplateText
-										preset={t.preset}
-										content={content}
-										params={t.params}
-										frames={tovFrames}
-										style={sampledStyle}
-										accentColor={storyboard.accentColor}
-										bgColor={storyboard.bgColor}
-										fgColor={storyboard.fgColor}
-									/>
-								)}
+								<ShapePrimitive
+									preset={shape.preset}
+									params={t.params}
+									accentColor={storyboard.accentColor}
+								/>
 							</TemplateFrame>
 						</Sequence>
 					);
-				}
-				if (t.preset === "explainer-card") {
-					return (
-						<Sequence
-							key={`tov-${i}`}
-							from={Math.floor(t.startSec * fps)}
-							durationInFrames={tovFrames}
-						>
-							<TemplateFrame
-								style={st}
-								zIndex={t.track != null ? 10 + t.track : 40}
-								layout={t.layout}
-								anim={t.anim}
-								frames={tovFrames}
-							>
-								{(sampledStyle) => (
-									<ExplainerTextCard
-										content={content}
-										params={t.params}
-										frames={tovFrames}
-										accentColor={storyboard.accentColor}
-										fgColor={storyboard.fgColor}
-										bgColor={storyboard.bgColor}
-										style={sampledStyle}
-									/>
-								)}
-							</TemplateFrame>
-						</Sequence>
-					);
-				}
-				if (t.preset === "section-card") {
-					return (
-						<Sequence
-							key={`tov-${i}`}
-							from={Math.floor(t.startSec * fps)}
-							durationInFrames={tovFrames}
-						>
-							<TemplateFrame
-								style={st}
-								zIndex={t.track != null ? 10 + t.track : 40}
-								layout={t.layout}
-								anim={t.anim}
-								frames={tovFrames}
-							>
-								{(sampledStyle) => (
-									<SectionTextCard
-										content={content}
-										params={t.params}
-										frames={tovFrames}
-										accentColor={storyboard.accentColor}
-										fgColor={storyboard.fgColor}
-										bgColor={storyboard.bgColor}
-										style={sampledStyle}
-									/>
-								)}
-							</TemplateFrame>
-						</Sequence>
-					);
-				}
+				if (t.preset !== "plain")
+					throw new Error(`Unsupported visual preset: ${t.preset ?? "missing"}`);
 				// Positioned text: the layout box defines the text block bounds.
 				if (box) {
 					return (
@@ -978,7 +860,7 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 								frames={tovFrames}
 							>
 								{(sampledStyle) => (
-									<TitleReveal frames={tovFrames} animated={t.preset !== "plain"}>
+									<>
 										<AbsoluteFill
 											style={{
 												display: "flex",
@@ -993,7 +875,7 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 										>
 											<div style={plainTextStyle(sampledStyle)}>{content}</div>
 										</AbsoluteFill>
-									</TitleReveal>
+									</>
 								)}
 							</TemplateFrame>
 						</Sequence>
@@ -1008,22 +890,22 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 						<AbsoluteFill
 							style={{
 								zIndex: t.track != null ? 10 + t.track : 40,
-								justifyContent: t.preset === "lower-third" ? "flex-end" : "center",
+								justifyContent: "center",
 								alignItems: "center",
 								padding: 64,
 							}}
 						>
-							<TitleReveal frames={tovFrames} animated={t.preset !== "plain"}>
+							<>
 								<AbsoluteFill
 									style={{
-										justifyContent: t.preset === "lower-third" ? "flex-end" : "center",
+										justifyContent: "center",
 										alignItems: "center",
 										padding: 64,
 									}}
 								>
 									<div style={textStyle}>{content}</div>
 								</AbsoluteFill>
-							</TitleReveal>
+							</>
 						</AbsoluteFill>
 					</Sequence>
 				);

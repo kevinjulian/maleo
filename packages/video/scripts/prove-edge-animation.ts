@@ -24,7 +24,7 @@ try {
 		`data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect width="32" height="32" fill="${color}"/></svg>`)}`;
 	const refs = { images: [], speakers: [], notes: [], style: { tone: "", palette: "", music: "" } };
 	// Basic primitives stay identical across their full visible span after save/reload.
-	for (const preset of ["plain", "shape-rect", "shape-circle", "title"] as const) {
+	for (const preset of ["plain", "shape-rect", "shape-circle", "plain"] as const) {
 		const doc = toTimelineDoc(
 			[
 				{
@@ -86,7 +86,7 @@ try {
 				]),
 			);
 		}
-		if (preset === "title")
+		if (preset === "plain")
 			assert.notDeepEqual(frames[0], frames[1], "Existing Title retains its built-in reveal");
 		else {
 			assert.deepEqual(frames[0], frames[1], `${preset}: first frame equals middle`);
@@ -96,7 +96,7 @@ try {
 				`${preset}: foreground renders, not only blue plate`,
 			);
 		}
-		console.log(JSON.stringify({ preset, reloaded: true, static: preset !== "title" }));
+		console.log(JSON.stringify({ preset, reloaded: true, static: preset !== "plain" }));
 	}
 	for (const preset of ["fade", "slide", "zoom"] as const) {
 		const entered = { tracks: edgeAnimationTracks(undefined, "in", preset, 0.5, 4, {}) };

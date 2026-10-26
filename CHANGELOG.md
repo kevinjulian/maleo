@@ -32,6 +32,10 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Changed
 
+- Text and Shapes no longer offer new variant creation. New timeline shapes keep their intended proportions across project aspect ratios, so Circle starts round.
+- **Breaking:** writable projects and saved element definitions retire stock visual presets. Run the explicit read-only/apply visual cleanup before starting an existing installation. Cleanup deletes retired clips without ripple, preserves surviving composition timing, deletes empty saved definitions, and leaves media objects intact. Stale editors must reload; historical restore creates a cleaned head. See the self-hosting cleanup procedure.
+- Saved plain-text composition layers now apply authored weight, alignment and casing consistently with standalone text. Frames can change where the old packed renderer ignored those values.
+
 - Rust compare mode draws animated image layouts, rotation/flips, plain-text box/style animation with content blur, existing camera presets/custom paths with focal points and glitch offsets, local color/masks/feather/blends, and direct/phased reveals with their existing directions and textures. Legacy text retains normalized timing. A pinned shader correction preserves exact repeatability across texture allocations and GPU segment order. Normal preview and export remain Remotion.
 - Compare mode (`?renderer=compare`) now plays the Rust preview in a worker on its own clock, through the engine's new preview session (`crates/preview`: playback clock, frame scheduler, preview states and recovery from a lost GPU device). When the Remotion Player plays or pauses, the Rust preview plays or pauses from the same position; the panel shows dropped frames and the drift between the two playheads in frames. A slow Rust frame no longer blocks the editor. The storyboard goes to the worker only when it changes. Without the parameter neither the worker nor the renderer module is requested.
 - Exports draw emoji in color. The production image installs `fonts-noto-color-emoji`; before, every emoji in an export was an empty box.

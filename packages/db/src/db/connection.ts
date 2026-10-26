@@ -16,6 +16,7 @@ import { bootstrapLibraryFixtures } from "./library-fixtures.ts";
 import { loadMigrations, migrate } from "./migrate.ts";
 import { createSql, type Sql } from "./pg.ts";
 import { startEmbeddedPostgres, type EmbeddedServer } from "./pg-embedded.ts";
+import { assertVisualContractReady } from "./visual-contract.ts";
 
 const EMBEDDED_DATABASE = "maleo";
 
@@ -112,6 +113,7 @@ function open(): Runtime {
 	 * The one-time SQLite carry-over turns it off: it must copy the old fixture
 	 * rows first, which the next start then finds by slug. */
 	const ready = connection.then(async (c) => {
+		await assertVisualContractReady(pgDb(c.sql));
 		if (process.env.MALEO_BOOTSTRAP_FIXTURES === "0") return;
 		await bootstrapLibraryFixtures(pgDb(c.sql)).catch(() => {});
 	});

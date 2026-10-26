@@ -677,7 +677,7 @@ test.describe("desktop", () => {
 		const motion = await openMotionStudio(page);
 		await expectControls(
 			motion.locator("[data-vui-slot='timeline-toolbar']").first(),
-			["Text", "Rectangle", "Circle", "Jump to start", "Play"],
+			["Text", "Rectangle", "Circle", "Triangle", "Star", "Cross", "Jump to start", "Play"],
 			"Motion Studio desktop toolbar",
 		);
 		await motion.locator("[title='Close']").click();
@@ -896,7 +896,7 @@ test.describe("phone", () => {
 		await expect(addSheet).toBeVisible();
 		await expectControls(
 			addSheet,
-			["Close Add layer", "Text", "Rectangle", "Circle"],
+			["Close Add layer", "Text", "Rectangle", "Circle", "Triangle", "Star", "Cross"],
 			"add-layer sheet",
 		);
 		const before = await modal.locator("[data-vui-slot='item']").count();
@@ -929,7 +929,7 @@ test.describe("phone", () => {
 		);
 		/* And the caption, which is not a control and so is deliberately outside
 		   the inventory: [close] SUBJECT [sections] [save]. */
-		await expect(bar.locator(".tl2-studiobar-subject")).toHaveText("Title");
+		await expect(bar.locator(".tl2-studiobar-subject")).toHaveText("Text");
 
 		/* And back, by the same route the content editor's clip bar takes: the
 		   leading control clears the selection rather than leaving the studio. */

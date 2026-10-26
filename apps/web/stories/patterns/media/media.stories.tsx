@@ -219,7 +219,7 @@ export const CompactWithActions: Story = {
 export const ElementPickerTiles: Story = {
 	render: () => (
 		<div className="tw:w-72">
-			<MediaGrid label="Basic elements" min={72} density="compact">
+			<MediaGrid label="Element picker" min={72} density="compact">
 				<MediaCard
 					variant="picker"
 					preview={Ic.type(ICON.display)}

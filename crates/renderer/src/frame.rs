@@ -14,7 +14,7 @@ use crate::gpu::Gpu;
 use crate::media::Media;
 use crate::paint::Rgba;
 use crate::scene::text::WordBrush;
-use crate::scene::{Canvas, Treatments, background, caption, effect, image, text};
+use crate::scene::{Canvas, Treatments, background, caption, composition, effect, image, shape, text};
 use crate::storyboard::Storyboard;
 use crate::timeline::{self, BaseMode, FPS, Visible};
 
@@ -210,6 +210,18 @@ impl Renderer {
                 }
                 Visible::TextOverlay { index, local, frames } if storyboard.text_overlays[index].preset.as_deref() == Some("plain") => {
                     text::draw(&mut canvas, &mut shadows, fonts, layouts, storyboard, index, (local as f64 / fps, frames as f64 / fps))
+                }
+                Visible::TextOverlay { index, local, frames } if storyboard.text_overlays[index].preset.as_deref().is_some_and(|p| shape::IDS.contains(&p)) => {
+                    shape::draw(
+                        &mut canvas,
+                        &mut shadows,
+                        &storyboard.text_overlays[index],
+                        &storyboard.accent_color,
+                        (local as f64 / fps, frames as f64 / fps),
+                    )
+                }
+                Visible::TextOverlay { index, local, frames } if storyboard.text_overlays[index].preset.as_deref() == Some("motion-comp") => {
+                    composition::draw(&mut canvas, &mut shadows, fonts, layouts, storyboard, &storyboard.text_overlays[index], (local, frames, fps))
                 }
                 Visible::Caption { index, local_sec } => {
                     caption::draw(&mut canvas, &mut shadows, fonts, layouts, storyboard, index, local_sec);

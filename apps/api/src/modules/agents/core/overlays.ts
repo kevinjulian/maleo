@@ -5,7 +5,12 @@
  * type-only from the orchestrator (no runtime cycle), so both the orchestrator
  * and the flow services can import these builders directly. */
 import type { AgentJob, AgentScene, AgentTextOverlay } from "./model.ts";
-import { autoTransitionForScenes, presentationFor } from "@maleo/shared";
+import {
+	autoTransitionForScenes,
+	presentationFor,
+	PLAIN_TEXT_AUTHOR_STYLE,
+	defaultClipLayout,
+} from "@maleo/shared";
 
 // Reserved auto-id ranges. Auto overlays carry ids inside these bands so a rebuild
 // replaces the stale auto layer in place; manual overlays (ids outside the bands)
@@ -60,7 +65,9 @@ export function buildSceneTextOverlays(
 					content: text,
 					startSec: start + Math.min(0.25, dur / 4),
 					durationSec: Math.min(dur, 2.4),
-					preset: "title",
+					preset: "plain",
+					style: { ...PLAIN_TEXT_AUTHOR_STYLE },
+					layout: defaultClipLayout("text"),
 					track: 1,
 				},
 				1,
@@ -79,7 +86,9 @@ export function buildSceneTextOverlays(
 					content: explainerText,
 					startSec: start + Math.min(0.6, dur / 3),
 					durationSec: Math.min(dur, 2.6),
-					preset: "explainer-card",
+					preset: "plain",
+					style: { ...PLAIN_TEXT_AUTHOR_STYLE },
+					layout: defaultClipLayout("text"),
 					track: 2,
 				},
 				2,
@@ -93,7 +102,9 @@ export function buildSceneTextOverlays(
 					content: transitionText,
 					startSec: start,
 					durationSec: Math.min(dur, Math.max(0.5, scene.sectionTransition?.durationSec ?? 0.9)),
-					preset: "section-card",
+					preset: "plain",
+					style: { ...PLAIN_TEXT_AUTHOR_STYLE },
+					layout: defaultClipLayout("text"),
 					track: 3,
 				},
 				3,

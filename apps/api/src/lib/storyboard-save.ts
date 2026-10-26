@@ -3,6 +3,7 @@
  * not own them. One function, so the save route and the command route
  * (`p1-command-log`) cannot drift on what a valid saved document is. */
 import {
+	retainedProjectVisuals,
 	clipControlBlockers,
 	CaptionClipSchema,
 	CaptionSetSchema,
@@ -35,6 +36,16 @@ export function prepareStoryboardSave(
 	prior: unknown,
 	expectedCaptionState?: string | null,
 ): StoryboardSaveCheck {
+	try {
+		incoming = retainedProjectVisuals(incoming);
+	} catch (error) {
+		return {
+			ok: false,
+			status: 409,
+			error: "invalid_visual_contract",
+			message: error instanceof Error ? error.message : "Reload and repair visual elements.",
+		};
+	}
 	const localUrls = localMediaUrlIssues(incoming);
 	if (localUrls.length)
 		return { ok: false, status: 400, error: "local_media_url", issues: localUrls };

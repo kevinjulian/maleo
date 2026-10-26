@@ -1,3 +1,4 @@
+import { shapePrimitiveOf, PLAIN_TEXT_AUTHOR_STYLE } from "@maleo/shared";
 /* Keyframe and layer arithmetic for Motion Studio — the parts with no React in
  * them.
  *
@@ -76,15 +77,16 @@ export function newLayer(preset: TextPreset, durationSec: number): CompositionLa
 	const layout =
 		preset === "shape-rect"
 			? { xPct: 30, yPct: 42, widthPct: 40, heightPct: 16, fit: "contain" as const }
-			: preset === "shape-circle"
+			: shapePrimitiveOf(preset) !== undefined
 				? { xPct: 40, yPct: 40, widthPct: 20, heightPct: 20, fit: "contain" as const }
 				: { xPct: 8, yPct: 34, widthPct: 84, heightPct: 32, fit: "contain" as const };
 	return {
 		id: Date.now(),
-		content: preset === "title" ? "Title" : "",
+		content: preset === "plain" ? "Text" : "",
 		start: 0,
 		dur: durationSec,
 		preset,
+		...(preset === "plain" ? { style: { ...PLAIN_TEXT_AUTHOR_STYLE } } : {}),
 		track: 0,
 		layout,
 		...(template ? { params: { ...template.defaultParams } } : {}),
@@ -92,8 +94,8 @@ export function newLayer(preset: TextPreset, durationSec: number): CompositionLa
 }
 
 export function layerLabel(o: CompositionLayer): string {
-	if (o.preset === "shape-rect") return "Rectangle";
-	if (o.preset === "shape-circle") return "Circle";
+	const shape = shapePrimitiveOf(o.preset);
+	if (shape) return shape.label;
 	const template = findTextTemplate(o.preset);
 	return o.content?.trim() || template?.label || o.preset;
 }

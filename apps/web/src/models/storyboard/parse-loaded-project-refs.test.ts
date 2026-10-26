@@ -174,7 +174,7 @@ describe("parseLoadedProject · clip-native seed (5.3)", () => {
 				startSec: 0,
 				durationSec: 2,
 				track: 2,
-				text: { id: 5, content: "Title", start: 0, dur: 2, preset: "title", track: 2 },
+				text: { id: 5, content: "Title", start: 0, dur: 2, preset: "plain", track: 2 },
 			},
 		],
 		markers: [

@@ -614,6 +614,12 @@ impl Storyboard {
             return Err(DecodeError("storyboard is not an object".into()));
         };
         let scenes = take(&mut object, "scenes")?.ok_or_else(|| DecodeError("`scenes`: missing".into()))?;
+        let text_overlays: Vec<TextOverlay> = take(&mut object, "textOverlays")?.unwrap_or_default();
+        for (i, overlay) in text_overlays.iter().enumerate() {
+            if overlay.preset.as_deref() == Some("motion-comp") {
+                crate::scene::composition::Config::parse(overlay.rest.get("params")).map_err(|e| DecodeError(format!("textOverlays[{i}].{e}")))?;
+            }
+        }
         Ok(Self {
             scenes,
             accent_color: take(&mut object, "accentColor")?.unwrap_or_else(|| "#FF3E6C".into()),
@@ -621,7 +627,7 @@ impl Storyboard {
             fg_color: take(&mut object, "fgColor")?.unwrap_or_else(|| "#FFFFFF".into()),
             show_labels: take(&mut object, "showLabels")?.unwrap_or(false),
             hide_base: take(&mut object, "hideBase")?.unwrap_or(false),
-            text_overlays: take(&mut object, "textOverlays")?.unwrap_or_default(),
+            text_overlays,
             video_overlays: take(&mut object, "videoOverlays")?.unwrap_or_default(),
             effects: take(&mut object, "effects")?.unwrap_or_default(),
             visual_timeline: take(&mut object, "visualTimeline")?,

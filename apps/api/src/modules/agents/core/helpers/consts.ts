@@ -4,18 +4,7 @@
 import type { AgentClipLayout } from "../model.ts";
 
 // Text Director roles the add_text tool accepts.
-export const TEXT_PRESETS: ReadonlySet<string> = new Set([
-	"title",
-	"subtitle",
-	"lower-third",
-	"stat",
-	"quote",
-	"location",
-	"timeline",
-	"chapter",
-	"explainer-card",
-	"section-card",
-]);
+export const TEXT_PRESETS: ReadonlySet<string> = new Set(["plain"]);
 
 // Non-voiceover audio cue kinds the add_audio tool accepts.
 export const AUDIO_OVERLAY_KINDS = ["sfx", "ambient", "accent_hit", "music"] as const;

@@ -15,6 +15,8 @@ import { addContentStoryboard } from "@maleo/db/storyboards";
 import { projectWorkspaceScope, workspaceScope } from "../../lib/active-workspace.ts";
 import { installTestCaller, TEST_CALLER } from "../../middleware/auth-testing.ts";
 import { registerCommandRoutes } from "./commands.ts";
+import { registerStoryboardRoutes } from "./storyboards.ts";
+import { cleanContentProjectVisuals } from "@maleo/db/visual-cleanup";
 import type { PresentationPatch } from "../../lib/project-commands.ts";
 
 const dbPath = join(tmpdir(), "maleo-project-commands.test.db");
@@ -41,6 +43,7 @@ function app(caller = TEST_CALLER): Hono {
 	instance.use("*", workspaceScope());
 	instance.use("/projects/:id/*", projectWorkspaceScope());
 	registerCommandRoutes(instance);
+	registerStoryboardRoutes(instance);
 	return instance;
 }
 
@@ -51,7 +54,7 @@ const clip = (id: string, startSec = 0) => ({
 	startSec,
 	durationSec: 1,
 	track: 0,
-	text: { id: 1, text: id, start: startSec, dur: 1 },
+	text: { id: 1, content: id, preset: "plain", start: startSec, dur: 1 },
 });
 const documentWith = (...clips: object[]) => ({ schemaVersion: 2, clips, markers: [] });
 const move = (id: string, startSec: number) => ({ type: "clip.move", id, patch: { startSec } });
@@ -95,6 +98,75 @@ const versionCount = async (projectId: string): Promise<number> =>
 		.length;
 
 const stranger = { userId: "stranger", email: "stranger@example.com", role: "user" } as const;
+
+describe("retired visual boundary", () => {
+	test("old bases get a clean snapshot; inverse/replacement writes cannot resurrect titles; historical restore cleans", async () => {
+		const server = Bun.serve({ port: 0, hostname: "127.0.0.1", fetch: app().fetch });
+		const submitLive = (projectId: string, baseSeq: number, commands: object[]) =>
+			fetch(new URL(`/projects/${projectId}/commands`, server.url), {
+				method: "POST",
+				headers: json,
+				body: JSON.stringify({ baseSeq, commands }),
+			});
+		try {
+			const kept = clip("text:2", 5);
+			const old = { ...clip("text:1"), text: { ...clip("text:1").text, preset: "title" } };
+			const id = await project("video", kept);
+			await openDb().run(
+				"UPDATE content_storyboards SET storyboard_json = ? WHERE project_id = ?",
+				[JSON.stringify(documentWith(old, kept)), id],
+			);
+			await cleanContentProjectVisuals(id, true);
+			const stale = (await (
+				await submitLive(id, 1, [{ clientCommandId: "stale", command: move("text:2", 9) }])
+			).json()) as Submitted;
+			expect(stale.accepted).toEqual([]);
+			expect(stale.rejected[0]?.kind).toBe("visual_contract_reload");
+			expect(stale.delivered[0]?.snapshot).toBe(true);
+			expect(stale.delivered[0]?.commands[0]?.scope?.doc.clips.map((c) => c.id)).toEqual([
+				"text:2",
+			]);
+			for (const [clientCommandId, command] of [
+				["inverse", { type: "clip.insert", clip: old }],
+				[
+					"replacement",
+					{
+						type: "scope.replace",
+						scope: { doc: documentWith(old, kept), slides: [], posts: [], mediaAssets: [] },
+					},
+				],
+			] as const) {
+				const result = (await (
+					await submitLive(id, 2, [{ clientCommandId, command }])
+				).json()) as Submitted;
+				expect(result.accepted).toEqual([]);
+				expect(result.rejected[0]?.kind).toBe("invalid_visual_contract");
+			}
+			expect(await versionCount(id)).toBe(2);
+			const head = await openDb().get<{ id: string }>(
+				"SELECT id FROM content_storyboards WHERE project_id = ? ORDER BY version DESC LIMIT 1",
+				[id],
+			);
+			const restored = await fetch(new URL(`/projects/${id}/storyboards/1/restore`, server.url), {
+				method: "POST",
+				headers: json,
+				body: JSON.stringify({ expectedRevisionId: head!.id }),
+			});
+			expect(restored.status).toBe(201);
+			const body = (await restored.json()) as {
+				storyboard: { storyboard_json: { clips: object[] } };
+			};
+			expect(body.storyboard.storyboard_json.clips).toEqual([kept]);
+			const edited = (await (
+				await submitLive(id, 3, [{ clientCommandId: "supported", command: move("text:2", 7) }])
+			).json()) as Submitted;
+			expect(edited.rejected).toEqual([]);
+			expect(edited.accepted).toHaveLength(1);
+		} finally {
+			await server.stop(true);
+		}
+	});
+});
 
 describe("POST /projects/:id/commands", () => {
 	test("a base behind the head applies against the head and delivers what the client missed", async () => {

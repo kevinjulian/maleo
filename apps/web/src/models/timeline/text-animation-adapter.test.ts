@@ -95,7 +95,7 @@ test("save as motion carries the same normalized keys a legacy overlay had", () 
 				startSec: 0,
 				durationSec: 2.71,
 				track: 0,
-				text: { id: 1, content: "Hi", start: 0, dur: 2.71, preset: "title", layout, anim: legacy },
+				text: { id: 1, content: "Hi", start: 0, dur: 2.71, preset: "plain", layout, anim: legacy },
 			},
 		],
 	};
@@ -104,7 +104,7 @@ test("save as motion carries the same normalized keys a legacy overlay had", () 
 	const layer = compositionLayerOf(overlay);
 	expect(layer.layout).not.toHaveProperty("animation");
 	expectSameAnim(layer.anim ?? null, legacy);
-	const plain: TextOverlay = { id: 2, content: "No motion", start: 0, dur: 1, preset: "title" };
+	const plain: TextOverlay = { id: 2, content: "No motion", start: 0, dur: 1, preset: "plain" };
 	expect(compositionLayerOf(plain)).toEqual({ ...plain, anim: null });
 });
 

@@ -112,7 +112,7 @@ struct Block {
     justify: f64,
 }
 
-fn block(storyboard: &Storyboard, overlay: &TextOverlay) -> Block {
+fn block(fg_color: &str, overlay: &TextOverlay) -> Block {
     let upper = overlay.style.as_ref().is_some_and(|s| s.casing.as_deref() == Some("upper"));
     let text = collapse_white_space(&if upper { overlay.content.to_uppercase() } else { overlay.content.clone() });
     match &overlay.style {
@@ -120,7 +120,7 @@ fn block(storyboard: &Storyboard, overlay: &TextOverlay) -> Block {
         None => Block {
             text,
             font: Font { size: 64.0, weight: 400.0, italic: false, line_height: 1.2, letter_spacing: None, break_anywhere: false },
-            fill: parse_color(&storyboard.fg_color).unwrap_or(DEFAULT_FILL),
+            fill: parse_color(fg_color).unwrap_or(DEFAULT_FILL),
             background: None,
             shadow: false,
             align: Alignment::Center,
@@ -186,10 +186,22 @@ pub fn draw(
     index: usize,
     time: (f64, f64),
 ) -> Result<(), String> {
+    draw_overlay(canvas, shadows, fonts, layouts, &storyboard.fg_color, &storyboard.text_overlays[index], time)
+}
+
+pub fn draw_overlay(
+    canvas: &mut Canvas<'_>,
+    shadows: &mut dyn Treatments,
+    fonts: &mut Fonts,
+    layouts: &mut LayoutContext<WordBrush>,
+    fg_color: &str,
+    overlay: &TextOverlay,
+    time: (f64, f64),
+) -> Result<(), String> {
     let (seconds, duration_sec) = time;
-    let sampled = super::text_motion::sample(&storyboard.text_overlays[index], seconds, duration_sec)?;
+    let sampled = super::text_motion::sample(overlay, seconds, duration_sec)?;
     let overlay = &sampled.overlay;
-    let block = block(storyboard, overlay);
+    let block = block(fg_color, overlay);
     let (container, opacity, box_fill) = match &overlay.layout {
         // TemplateFrame: the layout box, its opacity and its bgOpacity fill.
         Some(l) => {

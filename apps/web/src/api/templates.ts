@@ -118,13 +118,14 @@ export async function saveCompositionTemplate(
 	name: string,
 	overlays: CompositionLayer[],
 	id?: string,
+	spanSec?: number,
 ): Promise<ClipTemplate> {
-	const config = compositionFromOverlays(overlays);
+	const config = compositionFromOverlays(overlays, spanSec);
 	const input = {
 		kind: "composition" as const,
 		label: name,
 		intent: `${overlays.length} layer${overlays.length === 1 ? "" : "s"} motion`,
-		category: "text" as const,
+		category: "motion" as const,
 		base: "composition",
 		config,
 	};

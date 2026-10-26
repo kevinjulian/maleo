@@ -33,6 +33,7 @@ import {
 	transitionClipOf,
 	writeStoryboardDocument,
 	SCENE_TEXT_CLIP_MIGRATION_VERSION,
+	VisualContractError,
 } from "@maleo/shared";
 import { getContentProject } from "@maleo/db/project-detail";
 import { addContentStoryboard, StoryboardRevisionConflict } from "@maleo/db/storyboards";
@@ -229,7 +230,7 @@ export async function persist(job: AgentJob): Promise<void> {
 			storyboard_json,
 		});
 	} catch (error) {
-		if (error instanceof StoryboardRevisionConflict) {
+		if (error instanceof StoryboardRevisionConflict || error instanceof VisualContractError) {
 			job.editConflict = error.message;
 			await saveRun(job);
 		}
@@ -307,6 +308,8 @@ export function overlaysFromV2Clips(clips: readonly Clip[]): SeededOverlays {
 				startSec: t.start,
 				durationSec: t.dur || 2,
 				preset: t.preset || undefined,
+				style: t.style,
+				params: t.params,
 				layout: t.layout,
 				track,
 			});
@@ -406,6 +409,8 @@ export async function loadPriorOverlays(projectId: string): Promise<SeededOverla
 				startSec: t.start,
 				durationSec: t.dur || 2,
 				preset: t.preset || undefined,
+				style: t.style,
+				params: t.params,
 				layout: t.layout,
 				track: t.track ?? 0,
 			})),

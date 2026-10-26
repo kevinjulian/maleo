@@ -66,7 +66,7 @@ export function MotionLayerInspector({
 	setMarkEasing,
 	deleteMark,
 }: MotionLayerInspectorProps): JSX.Element {
-	const selTemplate = findTextTemplate(selected.preset);
+	const selTemplate = selected.preset === "plain" ? undefined : findTextTemplate(selected.preset);
 	const markFocused = Boolean(mark && mark.layerId === selected.id);
 	const lockUnless = (prop?: AnimatableProp): boolean =>
 		markFocused && !(mark!.kind === "value" && mark!.prop === prop);
@@ -219,14 +219,16 @@ export function MotionLayerInspector({
 				focusKey={openSection === "style" ? sectionFocusKey : null}
 			>
 				<div className="tl2-studio-grid4">
-					{colorRow("fill")}
-					{colorRow("bodyFill")}
-					{colorRow("accent")}
+					{selected.preset === "plain" && colorRow("fill")}
 					{colorRow("background")}
 					{valueRow("bgOpacity")}
-					{valueRow("fontSize")}
-					{valueRow("letterSpacing")}
-					{valueRow("lineHeight")}
+					{selected.preset === "plain" && (
+						<>
+							{valueRow("fontSize")}
+							{valueRow("letterSpacing")}
+							{valueRow("lineHeight")}
+						</>
+					)}
 				</div>
 			</AccordionSection>
 			<AccordionSection

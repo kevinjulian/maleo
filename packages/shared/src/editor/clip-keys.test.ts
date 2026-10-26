@@ -126,7 +126,7 @@ test("audio keeps gain keys on the payload, text keeps colour keys in its layout
 		startSec: 0,
 		durationSec: 2,
 		track: 1,
-		text: { id: 4, content: "Hi", start: 0, dur: 2, preset: "title" },
+		text: { id: 4, content: "Hi", start: 0, dur: 2, preset: "plain" },
 	};
 	const doc = setClipKeys(
 		setClipKeys(docWith(audio, text), "audio:3", "volume", [{ t: 1, v: 0.2 }]),

@@ -186,7 +186,7 @@ describe("create-content multi-track storyboard contract", () => {
 						content: "Timeline text only",
 						start: 0,
 						dur: 2,
-						preset: "title",
+						preset: "plain",
 						track: 0,
 						style: {
 							fontFamily: "Inter",

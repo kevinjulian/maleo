@@ -1,6 +1,6 @@
 /* Storyboard retention — the bound, what it never drops, and how a dropped
  * version reads. Each test names the requirement it pins. */
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, setDefaultTimeout } from "bun:test";
 import { pipelineArtifactKinds, writeArtifact } from "@maleo/shared";
 import { openTestDb, type TestDb } from "../../src/db/handle-testing.ts";
 import type { Db } from "../../src/db/handle.ts";
@@ -16,6 +16,9 @@ import {
 	STORYBOARD_RETENTION_WINDOW_ENV,
 	type RetentionRow,
 } from "../../src/db/storyboard-retention.ts";
+
+// These checks persist 200–300 versions; they verify retention rather than throughput.
+setDefaultTimeout(20_000);
 
 const WINDOW = 5;
 const policy = { window: WINDOW };

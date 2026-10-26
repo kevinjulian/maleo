@@ -552,10 +552,10 @@ test("a dropped file is placed while it uploads, survives a later lock and undoe
 		.getByRole("navigation", { name: "Editor tools" })
 		.getByRole("button", { name: "Elements", exact: true })
 		.click();
+	await page.getByRole("tab", { name: "Motion", exact: true }).click();
 	await page
-		.locator("section")
-		.filter({ has: page.locator(".tl2-elgroup-h", { hasText: "Motion" }) })
-		.first()
+		.getByRole("region", { name: "Motion elements", exact: true })
+		.locator(".tl2-elgroup-h")
 		.getByRole("button", { name: /New motion/ })
 		.click();
 	await expect(page.locator(".tl2-studio")).toBeVisible();
@@ -1448,10 +1448,10 @@ for (const width of [1440, 320])
 			expect(writes.at(-1)!.clips.find((clip) => clip.id === "video:98")?.durationSec).toBe(4);
 			await page.getByRole("button", { name: "Hide panel", exact: true }).click();
 			await page.keyboard.press("Alt+Digit5");
+			await page.getByRole("tab", { name: "Motion", exact: true }).click();
 			const section = page
-				.locator("section")
-				.filter({ has: page.locator(".tl2-elgroup-h", { hasText: "Motion" }) })
-				.first();
+				.getByRole("region", { name: "Motion elements", exact: true })
+				.locator(".tl2-elgroup-h");
 			await section.getByRole("button", { name: /New motion/ }).click();
 			await expect(page.locator(".tl2-studio")).toBeVisible();
 			const beforeStudio = JSON.stringify(writes.at(-1)?.clips);
@@ -1473,7 +1473,8 @@ for (const width of [1440, 320])
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 			clip = page.locator('[data-clipid="video:98"]');
 			ruler = page.locator('[data-vui-slot="ruler"]').first();
-			await expect(clip).toHaveAttribute("aria-disabled", "true");
+			await expect(clip).not.toHaveAttribute("aria-disabled", "true");
+			await expect(clip).toHaveAccessibleName(/locked/);
 			const lockedBox = (await clip.boundingBox())!;
 			if (width === 320)
 				await page.touchscreen.tap(

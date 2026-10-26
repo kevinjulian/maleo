@@ -16,7 +16,7 @@ import { StoryboardReel } from "@maleo/video/composition";
 const layer = (): CompositionLayer => ({
 	id: 7,
 	content: "Title",
-	preset: "title",
+	preset: "plain",
 	start: 1,
 	dur: 4,
 	anim: {
@@ -70,7 +70,7 @@ describe("Motion Studio VUI adapter", () => {
 				content: "Title",
 				startSec: 1,
 				durationSec: 4,
-				preset: "title",
+				preset: "plain",
 				track: 0,
 				layout: undefined,
 				style: undefined,
@@ -179,6 +179,6 @@ describe("Motion Studio VUI adapter", () => {
 		await persistMotionSave(input, async (...args) => {
 			calls.push(args);
 		});
-		expect(calls).toEqual([["Motion title", layers, "existing"]]);
+		expect(calls).toEqual([["Motion title", layers, "existing", undefined]]);
 	});
 });

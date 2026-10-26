@@ -1,6 +1,11 @@
 import type { AudioAnimation } from "./clip-animation.ts";
 import type { SourceAudioSettings } from "./processed-audio.ts";
-import type { ClipLayout, SceneVisualClip } from "./timeline-model.ts";
+import type {
+	ClipLayout,
+	ClipTextStyle,
+	TemplateParams,
+	SceneVisualClip,
+} from "./timeline-model.ts";
 /* The agent run contract — the wire format between the agent and the editor.
  *
  * This file is the ONE declaration of what a run sends. It used to be two: the
@@ -390,6 +395,8 @@ export interface AgentTextOverlay {
 	startSec: number;
 	durationSec: number;
 	preset?: string;
+	style?: ClipTextStyle;
+	params?: TemplateParams;
 	layout?: AgentClipLayout;
 	track?: number;
 }

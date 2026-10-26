@@ -499,7 +499,7 @@ test("a keyed text overlay shows its lanes and keys a canvas nudge at a non-key 
 						content: "Keyed title",
 						start: 0,
 						dur: 4,
-						preset: "title",
+						preset: "plain",
 						track: 0,
 						layout: { xPct: 10, yPct: 60, widthPct: 60, heightPct: 20, fit: "contain", animation },
 					},

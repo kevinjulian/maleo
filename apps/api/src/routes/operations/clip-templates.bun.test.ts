@@ -33,11 +33,11 @@ afterEach(async () => {
 
 const textInput = {
 	kind: "text",
-	label: "My Lower Third",
-	intent: "Brand name banner",
-	category: "text",
-	base: "rve-lower-third",
-	config: { title: "Maleo", subtitle: "Create" },
+	label: "My Star",
+	intent: "Brand shape",
+	category: "shape",
+	base: "shape-star",
+	config: { fill: "transparent", stroke: "#FFFFFF", strokeWidth: 2 },
 };
 
 describe("clip templates", () => {
@@ -82,6 +82,26 @@ describe("clip templates", () => {
 		expect(((await updated.json()) as { item: { label: string } }).item.label).toBe("Renamed");
 	});
 
+	test("rejects retired bases without creating a record", async () => {
+		const server = app();
+		const result = await server.request("/clip-templates", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ ...textInput, base: "rve-lower-third" }),
+		});
+		expect(result.status).toBe(400);
+		expect((await (await server.request("/clip-templates")).json()).items).toEqual([]);
+	});
+	test("rejects invalid retained shape values", async () => {
+		for (const config of [{ opacity: 2 }, { strokeWidth: -1 }, { radius: 3 }]) {
+			const result = await app().request("/clip-templates", {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ ...textInput, config }),
+			});
+			expect(result.status).toBe(400);
+		}
+	});
 	test("rejects malformed (missing base)", async () => {
 		const response = await app().request("/clip-templates", {
 			method: "POST",

@@ -188,45 +188,10 @@ export interface RailItem {
 	group: number;
 }
 
-export const DEFAULT_TEXT_BY_PRESET: Partial<Record<TextPreset, string>> = {
-	"explainer-card": "A forbidden object instantly creates curiosity.\nIt is like a wet paint sign.",
-	"section-card": "Can he resist?",
-	"rve-cinematic-title-intro": "Your Story Begins\nA Cinematic Experience",
-	"rve-lower-third": "John Smith\nSenior Producer",
-	"rve-end-card": "Thanks for Watching\nSubscribe for More\nSTUDIO CREATIVE",
-	"rve-chapter-title": "1\nThe Beginning",
-	"rve-quote-card": "Design is not just what it looks like. Design is how it works.\nSteve Jobs",
-	"rve-credits-roll": "DIRECTOR\nJane Smith\nPRODUCER\nJohn Doe\nEDITOR\nMaleo Studio",
-	"rve-countdown-intro": "3\nGO!",
-	"rve-title-split": "REVEALED",
-	"rve-subscribe-reminder": "Subscribe\n@CreativeStudio",
-	"rve-logo-fade-reveal": "LOGO\nCompany Name\nYour tagline here",
-	"rve-logo-spin-reveal": "LOGO\nCompany Name\nYour tagline here",
-	"rve-logo-glitch-reveal": "LOGO\nCompany Name\nYour tagline here",
-	"rve-logo-bounce-drop": "LOGO\nCompany Name",
-	"rve-logo-stroke-draw": "ACME",
-	"rve-logo-scale-rotate": "LOGO\nCompany Name",
-	"rve-logo-split-reveal": "LO\nGO\nCompany Name",
-	"rve-logo-typewriter": "ACME STUDIO",
-	"rve-logo-blur-reveal": "LOGO\nCompany Name",
-	"rve-bubble-pop-text": "HELLO",
-	"rve-popping-text": "BINO!",
-	"rve-floating-bubble-text": "Floating",
-	"rve-glitch-text": "GLITCH",
-	"rve-animated-text": "Hello Remotion",
-	"rve-typewriter-subtitle": "I like typing...",
-};
+export const DEFAULT_TEXT_BY_PRESET: Partial<Record<TextPreset, string>> = { plain: "Text" };
 
-// "Motion" clips are animated/branded templates (rve-* + the card templates);
-// plain "Text" clips are static caption presets (title/subtitle/stat/quote…).
-// The timeline labels the two differently so a designed template reads apart
-// from a bare text overlay at a glance.
-const MOTION_CARD_PRESETS = new Set<string>(["explainer-card", "section-card", "motion-comp"]);
 export function isMotionPreset(preset?: string): boolean {
-	return Boolean(
-		preset &&
-		(preset.startsWith("rve-") || preset.startsWith("shape-") || MOTION_CARD_PRESETS.has(preset)),
-	);
+	return preset === "motion-comp";
 }
 
 export function opensSceneEditorOnDoubleClick(track: TrackKind): boolean {

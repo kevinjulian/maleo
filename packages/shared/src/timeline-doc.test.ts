@@ -109,7 +109,7 @@ describe("toTimelineDoc / fromTimelineDoc", () => {
 		const doc = toTimelineDoc(
 			[scene({ id: 1 }), scene({ id: 2 })],
 			[{ id: 10, url: "b.mp4", kind: "video", start: 1, dur: 3, track: 1 } as VideoOverlay],
-			[{ id: 20, content: "Hi", start: 0, dur: 2, preset: "title", track: 2 } as TextOverlay],
+			[{ id: 20, content: "Hi", start: 0, dur: 2, preset: "plain", track: 2 } as TextOverlay],
 			[{ id: 30, kind: "voiceover", content: "vo", start: 0, dur: 5 } as AudioOverlay],
 			[{ id: 40, effect: "fade_in", start: 0, dur: 1 } as EffectClip],
 			[
@@ -452,7 +452,7 @@ describe("toTimelineDoc / fromTimelineDoc", () => {
 			content: "Hello",
 			start: 0,
 			dur: 2,
-			preset: "title",
+			preset: "plain",
 			track: 4,
 			layout: { x: 0.1, y: 0.2, w: 0.5, h: 0.3 },
 			style: { fontWeight: 700 },
@@ -471,7 +471,7 @@ describe("toTimelineDoc / fromTimelineDoc", () => {
 		expect(back.textOverlays[0]).toMatchObject({
 			id: 20,
 			content: "Hello",
-			preset: "title",
+			preset: "plain",
 			start: 3,
 			dur: 5,
 			track: 1,

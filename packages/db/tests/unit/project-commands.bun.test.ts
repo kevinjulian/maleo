@@ -20,7 +20,14 @@ beforeEach(async () => {
 });
 afterEach(() => t.close());
 
-const clip = { id: "text:1", type: "text", startSec: 0, durationSec: 1, track: 0 };
+const clip = {
+	id: "text:1",
+	type: "text",
+	startSec: 0,
+	durationSec: 1,
+	track: 0,
+	text: { id: 1, preset: "plain", content: "Text", start: 0, dur: 1 },
+};
 const document = { schemaVersion: 2, clips: [clip], markers: [] };
 const move = { type: "clip.move", id: "text:1", patch: { startSec: 2 } } as const;
 const remove = { type: "clip.remove", id: "text:1" } as const;

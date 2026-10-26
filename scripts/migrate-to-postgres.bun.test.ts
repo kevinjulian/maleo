@@ -14,6 +14,10 @@ import { applyUnifiedSchema } from "../packages/db/src/db/unified-schema.ts";
 import { createTestDatabase, type TestDatabase } from "../packages/db/src/db/pg-testing.ts";
 import { pgDb, type Db } from "../packages/db/src/db/handle.ts";
 import { carryOver, CarryOverError } from "./migrate-to-postgres.ts";
+import {
+	assertVisualContractReady,
+	VISUAL_CONTRACT_SETTING,
+} from "../packages/db/src/db/visual-contract.ts";
 
 let dir: string;
 let source: Database;
@@ -101,6 +105,17 @@ describe("every row is carried and counted", () => {
 		});
 		expect(report.tables.every((t) => t.source === t.target)).toBe(true);
 		expect(await count("content_storyboards")).toBe(25);
+		await expect(assertVisualContractReady(db)).rejects.toThrow("migration is incomplete");
+	});
+
+	test("a legacy source cannot claim readiness for imported heads", async () => {
+		source.run("INSERT INTO global_settings (key, value, updated_at) VALUES (?, '1', 0)", [
+			VISUAL_CONTRACT_SETTING,
+		]);
+		await expect(carryOver({ source, target: db, dataDir: dir })).rejects.toThrow(
+			"cannot declare Postgres visual-contract readiness",
+		);
+		expect(await count("content_projects")).toBe(0);
 	});
 
 	test("documents arrive byte for byte", async () => {
@@ -148,6 +163,44 @@ describe("every row is carried and counted", () => {
 });
 
 describe("an interrupted run", () => {
+	test("the maintenance CLI resumes before visual readiness and keeps runtime blocked", async () => {
+		await expect(
+			carryOver({
+				source,
+				target: db,
+				dataDir: dir,
+				batchSize: 10,
+				onBatch: () => {
+					throw new Error("interrupted");
+				},
+			}),
+		).rejects.toThrow("interrupted");
+		for (let attempt = 0; attempt < 2; attempt++) {
+			const child = Bun.spawn(
+				[process.execPath, join(import.meta.dirname, "migrate-to-postgres.ts")],
+				{
+					cwd: join(import.meta.dirname, ".."),
+					env: {
+						...process.env,
+						MALEO_DATABASE_URL: target.url,
+						MALEO_DATA_DIR: dir,
+						MALEO_DB_PATH: join(dir, "maleo.db"),
+					},
+					stdout: "pipe",
+					stderr: "pipe",
+				},
+			);
+			const [code, stdout, stderr] = await Promise.all([
+				child.exited,
+				new Response(child.stdout).text(),
+				new Response(child.stderr).text(),
+			]);
+			if (code !== 0) throw new Error(`${stdout}\n${stderr}`);
+			expect(stdout).toContain("every count matches");
+			await expect(assertVisualContractReady(db)).rejects.toThrow("migration is incomplete");
+			expect(await count("content_projects")).toBe(25);
+		}
+	}, 30_000);
 	test("finishes on the next run without duplicating a row", async () => {
 		let batches = 0;
 		await expect(
@@ -161,6 +214,7 @@ describe("an interrupted run", () => {
 				},
 			}),
 		).rejects.toThrow("interrupted");
+		await expect(assertVisualContractReady(db)).rejects.toThrow("migration is incomplete");
 		const partial = (await count("content_projects")) + (await count("content_storyboards"));
 		expect(partial).toBeGreaterThan(0);
 		expect(partial).toBeLessThan(50);

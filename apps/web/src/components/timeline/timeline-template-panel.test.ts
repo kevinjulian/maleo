@@ -16,17 +16,16 @@ import {
 } from "@models/timeline/template-preview-lanes.ts";
 
 describe("timeline template WYSIWYG preview", () => {
-	it("maps template motion policy to renderer-native preset", () => {
-		expect(resolveTimelineIntroTextPreset("cinematic-title-intro")).toBe(
-			"rve-cinematic-title-intro",
-		);
-		expect(resolveTimelineIntroTextPreset("countdown-intro")).toBe("rve-countdown-intro");
+	it("disables retired stored titles and renders retained text with explicit style", () => {
+		expect(resolveTimelineIntroTextPreset("cinematic-title-intro")).toBe("");
+		expect(resolveTimelineIntroTextPreset("countdown-intro")).toBe("");
 		const preview = buildTimelineTemplatePreview({
 			...DEFAULT_TIMELINE_TEMPLATE,
-			introTextPreset: "cinematic-title-intro",
+			introTextPreset: resolveTimelineIntroTextPreset("cinematic-title-intro"),
 		});
-		expect(preview.textOverlays?.[0]?.preset).toBe("rve-cinematic-title-intro");
-		expect(preview.textOverlays?.[1]?.preset).toBe("chapter");
+		expect(preview.textOverlays).toHaveLength(1);
+		expect(preview.textOverlays?.[0]?.preset).toBe("plain");
+		expect(preview.textOverlays?.[0]?.style?.fontFamily).toBe("Inter");
 	});
 
 	/* The template no longer owns a background — the project's settings do, and they

@@ -5,6 +5,41 @@ For an existing installation, follow [Maleo cutover](self-hosting.md#maleo-cutov
 Install and first run are in the [README quickstart](../README.md#quickstart).
 This guide covers everything after that.
 
+## Retired visual cleanup
+
+Existing databases must complete visual cleanup before this release starts.
+Use disposable copied data to rehearse the [deployment procedure](self-hosting.md#retired-visual-presets).
+Fresh empty databases need no cleanup. The runtime gate blocks both editing and
+generation while cleanup is incomplete.
+
+From repository root, with writers stopped and root `.env` targeting the copied
+database:
+
+```bash
+bun run visuals:cleanup
+bun run visuals:cleanup --apply
+bun run visuals:cleanup
+```
+
+The first command is read-only and skips schema migration and fixture bootstrap.
+Apply adds any pending schema migrations, cleans library rows transactionally,
+then cleans each project under its version lock. Only a fully successful pass
+opens the release barrier. An interrupted pass resumes without repeating cleaned
+versions. The final dry-run must report zero changes.
+
+Reports contain `changedProjects`, `changedTemplates`, `removedClips`,
+`removedLayers` and `removedTemplates`. They contain no private clip text or media
+URLs. Unknown IDs, unsupported composition versions or invalid surviving layers
+stop cleanup for repair. Cleanup removes retired clips without ripple and keeps
+surviving layer starts and the original span. It deletes no media objects.
+
+Focused disposable-database proof:
+
+```bash
+cd packages/db
+bun test tests/unit/visual-cleanup.bun.test.ts
+```
+
 ## Running one service at a time
 
 `bun run dev` waits for each required service before reporting app ready. Video
@@ -448,7 +483,10 @@ The runtime no longer uses SQLite. Release 0.1.0 kept everything in
    stops, naming the file, on a `config.yaml` that is missing, unparseable,
    invalid, or holds a credential. Fix the cause and run it again: an
    interrupted or failed run resumes without duplicating rows.
-4. Start the api. It seeds the shipped library fixtures on first start.
+4. Run the visual cleanup dry-run and apply described at the start of this
+   document. The carry preserves historical content and clears visual-contract
+   readiness; the API remains blocked until cleanup succeeds.
+5. Start the api. It seeds the shipped library fixtures on first start.
 
 Local development selects `MALEO_MEDIA_STORAGE_BACKEND=local` and keeps new
 media under `data/media/`. Production requires S3-compatible object storage.

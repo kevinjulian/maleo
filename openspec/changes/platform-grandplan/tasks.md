@@ -66,19 +66,23 @@ proposal before implementation. Payment-provider selection stays outside this ro
 
 Completed phase: [p2-motion-compositing](../archive/2026-10-26-p2-motion-compositing/proposal.md)
 owns the non-template rendering work in 4.1 and 4.3–4.5. Declarative templates
-and template interpretation (4.2 and 4.6) remain a separate follow-up.
+and template interpretation (4.2 and 4.6) are implemented in
+[p2-visual-templates](../archive/2026-10-27-p2-visual-templates/proposal.md). The user-approved
+scope retains plain text, five shapes and user-created motion, and deletes
+retired stock-preset clips and empty saved templates instead of porting them.
 
 - [x] 4.1 Measure use of unsupported presets, transitions, effects and motions. Verify the phase proposal names each feature to port or retire and provides migrations for affected projects.
   - Evidence: [motion/compositing inventory](../archive/2026-10-26-p2-motion-compositing/evidence/feature-matrix.md). Local 2026-10-25 snapshot: 12 projects, 10 saved storyboards and 2 saved templates; production unmeasured. All offered non-template options are retained. Visual presets, saved compositions and legacy `Product*` compositions remain explicitly deferred to `p2-visual-templates`; no feature retirement or persisted migration.
-- [ ] 4.2 Define the declarative template format and authoring contract. Verify schema fixtures and a Remotion interpreter preserve existing template output before adding the Rust interpreter.
-  - Resolve the D17 template question here. Record format, validation and authoring instructions in the motion change.
+- [x] 4.2 Define the retained primitive and user-composition format and authoring contract. Verify schema/cleanup fixtures and a Remotion interpreter preserve supported values and timing before adding Rust interpretation.
+  - Evidence: [visual-template tasks 1–3, 5–6 and 7.2](../archive/2026-10-27-p2-visual-templates/tasks.md): strict versioned/shared format; five shape primitives; user-only Motion; transactional no-ripple cleanup and stale-write barriers; production Remotion and desktop/320px authoring proof. Local development cleanup was applied after a backup; deployment apply remains an operator step.
 - [x] 4.3 Render animated transforms, camera motion and reveals in Rust. Verify keyframe sampling and representative frames against the golden corpus, including clip boundaries.
   - Evidence: [motion/compositing tasks 2, 3 and 5](../archive/2026-10-26-p2-motion-compositing/tasks.md), source-derived samples and production references. [Acceptance](../archive/2026-10-26-p2-motion-compositing/evidence/acceptance.md): all 156 cases / 1,098 frames pass Metal and local software Vulkan; direct/out-of-order checks pass.
 - [x] 4.4 Render supported scene transitions, effects, labels and progress decorations in Rust. Verify each retained feature has golden coverage and no unexplained coverage omission.
   - Evidence: [motion/compositing tasks 6 and 7](../archive/2026-10-26-p2-motion-compositing/tasks.md), eight transition types by placement, six effects, labels and pacing. [Acceptance](../archive/2026-10-26-p2-motion-compositing/evidence/acceptance.md) records empty supported-case coverage and measured playback limits. Normal preview/export remain Remotion.
 - [x] 4.5 Render rotation, flips, masks, color adjustments and blend modes in Rust. Verify compositing fixtures match preview/export semantics and update the renderer support documentation.
   - Evidence: [motion/compositing tasks 2 and 4](../archive/2026-10-26-p2-motion-compositing/tasks.md), transparent-edge and combined production cases; [backend proof](../archive/2026-10-26-p2-motion-compositing/evidence/backend-acceptance.md), renderer codemap and ownership instructions. Templates and media remain unsupported; this does not close export or preview cutover.
-- [ ] 4.6 Render retained text templates through the declarative interpreter. Verify template fixtures, font handling and golden frames match the accepted reference output.
+- [x] 4.6 Render retained text, shapes and user compositions through the declarative interpreter. Verify fixtures, font handling and golden frames match the accepted primitive/composition output, with no built-in motion catalogue.
+  - Evidence: [visual-template tasks 4 and 7.3](../archive/2026-10-27-p2-visual-templates/tasks.md): all five shape paths, validated composition traversal and layer-derived font/option coverage; 48 composition golden frames and seven shape cases at unchanged thresholds; actual browser compare worker and decoded production H.264 proof. Remotion remains the normal preview/export owner.
 
 ## 5. P2 — Video decoding and audio playback
 

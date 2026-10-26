@@ -99,18 +99,7 @@ export const addTextArgs = z
 		content: text.min(1),
 		startSec: number.nonnegative(),
 		durationSec: number.positive(),
-		preset: z
-			.enum([
-				"title",
-				"subtitle",
-				"lower-third",
-				"stat",
-				"quote",
-				"location",
-				"timeline",
-				"chapter",
-			])
-			.optional(),
+		preset: z.literal("plain").optional(),
 	})
 	.strict();
 export const setLayoutArgs = z

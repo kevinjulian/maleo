@@ -19,6 +19,7 @@ import {
 } from "../../lib/wire/reference-entity.ts";
 import {
 	localMediaUrlIssues,
+	retainedProjectVisuals,
 	oneOf,
 	readStoryboardDocument,
 	PROJECT_FEED_SORTS,
@@ -125,6 +126,21 @@ export function registerProjectRoutes(app: Hono): void {
 		if (!parsed.success) return c.json({ error: "invalid_body", issues: parsed.error.issues }, 400);
 		const body = parsed.data;
 		if (!body.title?.trim()) return c.json({ error: "title required" }, 400);
+		if (body.seed_storyboard?.storyboard_json) {
+			try {
+				body.seed_storyboard.storyboard_json = retainedProjectVisuals(
+					body.seed_storyboard.storyboard_json,
+				);
+			} catch (error) {
+				return c.json(
+					{
+						error: "invalid_visual_contract",
+						message: error instanceof Error ? error.message : "Repair imported visual elements.",
+					},
+					409,
+				);
+			}
+		}
 		const seedOutputs = Array.isArray(body.seed_outputs)
 			? body.seed_outputs
 					.map((output) => ({

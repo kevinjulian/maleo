@@ -144,7 +144,7 @@ describe("agentTimelineDoc", () => {
 						content: "Title",
 						startSec: 1,
 						durationSec: 2,
-						preset: "rve-lower-third",
+						preset: "plain",
 						track: 2,
 					},
 				],
@@ -179,7 +179,7 @@ describe("agentTimelineDoc", () => {
 			content: "Title",
 			start: 1,
 			dur: 2,
-			preset: "rve-lower-third",
+			preset: "plain",
 			track: 2,
 		});
 		expect(back.audioOverlays[0]).toMatchObject({
@@ -203,7 +203,7 @@ test("a run seeded from its own snapshot reads its overlays back unchanged", () 
 	const before = job({
 		scenes: [scene()],
 		textOverlays: [
-			{ id: 4, content: "Title", startSec: 1, durationSec: 2, preset: "lower-third", track: 2 },
+			{ id: 4, content: "Title", startSec: 1, durationSec: 2, preset: "plain", track: 2 },
 		],
 		videoOverlays: [
 			{
@@ -238,7 +238,7 @@ describe("agentEditorViews", () => {
 		const views = agentEditorViews(
 			job({ textOverlays: [{ content: "Hi", startSec: 0, durationSec: 2 }] }),
 		);
-		expect(views.textOverlays[0]).toMatchObject({ id: 1, preset: "title" });
+		expect(views.textOverlays[0]).toMatchObject({ id: 1, preset: "plain" });
 	});
 
 	test("keeps an opted-out scene's reference flag", () => {

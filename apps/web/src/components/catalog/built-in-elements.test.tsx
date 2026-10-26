@@ -2,11 +2,7 @@ import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 import { describe, expect, test } from "vite-plus/test";
 import { readFileSync } from "node:fs";
 import { builtInCounts } from "./built-in-elements.tsx";
-import {
-	BASIC_ELEMENTS,
-	BUILT_IN_TEXT_PRESETS,
-	MOTION_ITEMS,
-} from "@models/timeline/element-catalogue.ts";
+import { BUILT_IN_TEXT_PRESETS } from "@models/timeline/element-catalogue.ts";
 
 const read = (path: string): string => readFileSync(`${import.meta.dirname}/${path}`, "utf8");
 
@@ -34,43 +30,34 @@ describe("the library and the rail read one element source", () => {
 		expect(library).not.toMatch(/\[\s*"(title|subtitle|stat|quote|bar_chart|stat_reveal)"/);
 	});
 
-	test("the rail builds its motion list from the module, not the registry", () => {
+	test("motion reads saved user templates without stock items", () => {
 		const rail = readFileSync(railPath, "utf8");
-		expect(rail).toContain("MOTION_ITEMS");
-		expect(rail).not.toContain("TEMPLATE_ITEMS.filter");
+		expect(rail).toContain("CustomTemplatesBlock");
+		expect(rail).not.toContain("MOTION_ITEMS");
 	});
 });
 
 /* Cheap guards on the module itself: an empty family would render an empty group
  * that looks deliberate. */
-describe("the element catalogue is populated", () => {
-	test("every built-in family has members", () => {
-		expect(BASIC_ELEMENTS.map((item) => item.preset)).toEqual(["plain"]);
-		expect(SHAPE_ELEMENTS.map((item) => item.preset)).toEqual(["shape-rect", "shape-circle"]);
-		expect(BUILT_IN_TEXT_PRESETS.length).toBeGreaterThan(0);
-		expect(MOTION_ITEMS.length).toBeGreaterThan(0);
+describe("the retained catalogue", () => {
+	test("text and five shapes appear exactly once", () => {
+		expect(BUILT_IN_TEXT_PRESETS).toEqual(["plain"]);
+		expect(SHAPE_ELEMENTS.map((item) => item.preset)).toEqual([
+			"shape-rect",
+			"shape-circle",
+			"shape-triangle",
+			"shape-star",
+			"shape-cross",
+		]);
+		expect(new Set(SHAPE_ELEMENTS.map((item) => item.preset)).size).toBe(5);
+		expect(builtInCounts("")).toEqual({ shapes: 5, text: 1 });
+		expect(builtInCounts("star")).toEqual({ shapes: 1, text: 0 });
 	});
-
-	/* Infographics are removed: no Data family, tab or group survives in either surface. */
-	test("neither the rail nor the library offers a Data family", () => {
-		expect(Object.keys(builtInCounts(""))).toEqual(["shapes", "basic", "text", "motion"]);
-		const rail = read("../timeline/elements-panel.tsx");
-		const library = read("elements-library.tsx");
-		for (const src of [rail, library]) {
-			expect(src).not.toMatch(/id: "data"/);
-			expect(src).not.toMatch(/infographic/i);
+	test("editor and Library expose exactly three groups", () => {
+		for (const src of [read("../timeline/elements-panel.tsx"), read("elements-library.tsx")]) {
+			expect(src).not.toMatch(/id: "(?:basic|custom|motion-presets)"/);
+			for (const id of ["text", "shapes", "motion"]) expect(src).toContain(`id: "${id}"`);
 		}
-	});
-
-	/* Motion owns the presets it backs, so a preset must not be offered twice
-	 * under two different families. */
-	test("no preset appears in both the text and motion families", () => {
-		const motion = new Set(MOTION_ITEMS.map((item) => item.preset));
-		for (const { preset } of [...BASIC_ELEMENTS, ...SHAPE_ELEMENTS]) {
-			expect(motion.has(preset)).toBe(false);
-			expect(BUILT_IN_TEXT_PRESETS).not.toContain(preset);
-		}
-		for (const preset of BUILT_IN_TEXT_PRESETS) expect(motion.has(preset)).toBe(false);
 	});
 });
 

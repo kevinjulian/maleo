@@ -52,7 +52,7 @@ describe("placements are clip inserts", () => {
 			content: "Chapter 2",
 			startSec: 1,
 			durationSec: 3,
-			preset: "chapter",
+			preset: "plain",
 		});
 
 		const [clip] = inserted(j)!;
@@ -60,7 +60,12 @@ describe("placements are clip inserts", () => {
 			type: "text",
 			startSec: 1,
 			durationSec: 3,
-			text: { content: "Chapter 2", preset: "chapter" },
+			text: {
+				content: "Chapter 2",
+				preset: "plain",
+				style: { fontFamily: "Inter", fontSize: 64 },
+				layout: { xPct: 8, yPct: 64 },
+			},
 		});
 		expect(clip!.id).not.toBe("text:2");
 		expect(j.textOverlays.map((t) => t.content)).toEqual(["Hi", "Chapter 2"]);

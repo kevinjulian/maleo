@@ -4,11 +4,13 @@
 pub mod background;
 pub mod camera;
 pub mod caption;
+pub mod composition;
 pub mod decoration;
 pub mod effect;
 pub mod image;
 mod mask;
 pub mod reveal;
+pub mod shape;
 pub mod text;
 mod text_motion;
 pub mod transition;

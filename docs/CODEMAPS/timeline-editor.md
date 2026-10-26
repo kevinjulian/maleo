@@ -29,6 +29,16 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   converted on read (`legacy-text-animation.ts`). Scene camera motion
   (`CustomMotion`) and Motion Studio's composition layers (`CompositionLayer`)
   stay normalized and separate.
+- **Saved compositions** use shared `composition-schema.ts`: version 1, flat
+  retained primitive layers, relative seconds and preserved `spanSec`. Compatible
+  unversioned data gains the version without changing authored fields. Inner
+  animation stays normalized; outer animation stays in clip-local seconds.
+  Save/place rejects invalid layers rather than defaulting them to `title`.
+  Shared `visual-primitives.ts` owns the five shape definitions and normalized
+  geometry. `reel-text.tsx` owns retained Remotion interpretation: normal
+  preview/export, Motion Studio and library tiles all render `StoryboardReel`.
+  Packed previews retain every layer and use the saved span; still frames clamp
+  to that span. Rust adoption remains subject to parity verification.
 - **Keyframe editing** follows opencut-classic. Each inspector row of
   animatable values has one keyframe toggle before its label
   (`keyed-property-row.tsx` `KeyedFieldRow`, `useClipKeying().rowKeying`); it
@@ -55,6 +65,20 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
 - **Caption words** on voiceover overlays are ABSOLUTE timeline seconds
   (`caption-timing.ts`). Real aligned words win; otherwise timing is
   estimated from text + measured duration. SRT interop: `srt.ts`.
+
+## Retained elements
+
+Editor and Library share Text, Shapes and user-only Motion groups. Filters are
+All/Text/Shapes/Motion. `element-catalogue.ts` supplies plain text;
+`visual-primitives.ts` supplies five shapes. `clip-templates/registry.ts` exposes
+only those six bases. Retained custom variants stay with Text or Shapes, but neither
+group offers new variant creation. Motion contains compositions and retains creation.
+New shapes use the project aspect ratio to preserve square or four-to-one visible
+bounds. Saved composition edits retain original span and leading
+layer gaps; placement copies values into a new clip, independent of library CRUD.
+Loading scene metadata never derives replacement text clips. Generated titles
+are explicit plain-text clips; Video Template title choices are plain or none,
+and retired stored selections resolve to none without changing other policy.
 
 ## Interaction contract
 
@@ -98,7 +122,8 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
 - **Selection marking**: a lane holding a selected clip, and its gutter row,
   carry `.holds`.
 - **Tracks**: per-row lock/mute/hide flags (`trackFlags`, key -1 = base).
-  Locked rows refuse drag/delete.
+  Locked rows refuse drag/delete. Clips remain selectable for read-only inspection;
+  `aria-disabled` follows selection permission, not the edit lock.
 
 ## Editing commands and undo
 

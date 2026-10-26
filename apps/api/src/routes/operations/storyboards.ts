@@ -2,8 +2,12 @@
 import type { Hono } from "hono";
 import { getContentProject } from "@maleo/db/project-detail";
 import { syncProjectReferenceLock } from "@maleo/db/references";
-import { addContentStoryboard, StoryboardRevisionConflict } from "@maleo/db/storyboards";
-import { readStoryboardDocument } from "@maleo/shared";
+import {
+	addContentStoryboard,
+	restoreContentStoryboard,
+	StoryboardRevisionConflict,
+} from "@maleo/db/storyboards";
+import { readStoryboardDocument, VisualContractError } from "@maleo/shared";
 import { prepareStoryboardSave } from "../../lib/storyboard-save.ts";
 import {
 	approveStoryboard,
@@ -13,11 +17,46 @@ import {
 
 import {
 	createStoryboardBody,
+	restoreStoryboardBody,
 	storyboardApprovalBody,
 	storyboardCommandBody,
 } from "./request-schemas.ts";
 
 export function registerStoryboardRoutes(app: Hono): void {
+	app.post("/projects/:id/storyboards/:version/restore", async (c) => {
+		const parsed = restoreStoryboardBody.safeParse(await c.req.json().catch(() => null));
+		const version = Number(c.req.param("version"));
+		if (!parsed.success || !Number.isSafeInteger(version) || version < 1)
+			return c.json({ error: "invalid_restore" }, 400);
+		try {
+			const restored = await restoreContentStoryboard(
+				c.req.param("id"),
+				version,
+				parsed.data.expectedRevisionId,
+			);
+			if (restored.state === "pruned") return c.json({ error: "storyboard_pruned" }, 410);
+			if (restored.state === "never_existed") return c.json({ error: "storyboard_not_found" }, 404);
+			if (restored.state === "read_failed") return c.json({ error: "storyboard_read_failed" }, 500);
+			const references = await syncProjectReferenceLock({
+				project_id: c.req.param("id"),
+				entity_ids: readStoryboardDocument(restored.row.storyboard_json).doc.projectReferences
+					.entityIds,
+			});
+			return c.json({ ok: true, storyboard: restored.row, references }, 201);
+		} catch (error) {
+			if (error instanceof StoryboardRevisionConflict)
+				return c.json({ error: "storyboard_conflict", message: error.message }, 409);
+			if (error instanceof VisualContractError)
+				return c.json(
+					{
+						error: "invalid_visual_contract",
+						message: error.message,
+					},
+					409,
+				);
+			throw error;
+		}
+	});
 	app.get("/projects/:id/storyboard-authoring", async (c) => {
 		const snapshot = await readStoryboardAuthoring(c.req.param("id"));
 		return snapshot ? c.json(snapshot) : c.json({ error: "project_not_found" }, 404);

@@ -16,12 +16,9 @@
 import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 import type { JSX, ReactNode } from "react";
 import {
-	BASIC_ELEMENTS,
 	BUILT_IN_TEXT_PRESETS,
-	MOTION_ITEMS,
 	textPresetLabel,
 	textPresetSample,
-	textPresetSampleOr,
 } from "@models/timeline/element-catalogue.ts";
 import { TextPresetPreview } from "@components/timeline/timeline-editor-panels.tsx";
 import { LazyPreview } from "./lazy-preview.tsx";
@@ -51,24 +48,6 @@ const matches = (query: string, ...fields: string[]): boolean => {
 	const q = query.trim().toLowerCase();
 	return !q || fields.some((field) => field.toLowerCase().includes(q));
 };
-
-export function BuiltInBasicTiles({ query }: { query: string }): JSX.Element {
-	const items = BASIC_ELEMENTS.filter((item) => matches(query, item.label, item.kind));
-	return (
-		<div className="catalog-el-tiles">
-			{items.map((item) => (
-				<ElementTile
-					key={item.preset}
-					label={item.label}
-					meta={item.kind}
-					preview={() => (
-						<TextPresetPreview preset={item.preset} content={textPresetSample(item.preset)} />
-					)}
-				/>
-			))}
-		</div>
-	);
-}
 
 export function BuiltInShapeTiles({ query }: { query: string }): JSX.Element {
 	const items = SHAPE_ELEMENTS.filter((item) => matches(query, item.label, item.kind));
@@ -102,40 +81,15 @@ export function BuiltInTextTiles({ query }: { query: string }): JSX.Element {
 	);
 }
 
-export function BuiltInMotionTiles({ query }: { query: string }): JSX.Element {
-	const items = MOTION_ITEMS.filter((item) => matches(query, item.label, item.intent));
-	return (
-		<div className="catalog-el-tiles">
-			{items.map((item) => (
-				<ElementTile
-					key={`${item.preset}-${item.label}`}
-					label={item.label}
-					meta={item.intent}
-					preview={() => (
-						<TextPresetPreview
-							preset={item.preset}
-							content={textPresetSampleOr(item.preset, item.label)}
-						/>
-					)}
-				/>
-			))}
-		</div>
-	);
-}
-
 /** How many built-ins each family contributes for a query, for the group counts. */
 export interface BuiltInCounts {
-	basic: number;
 	shapes: number;
 	text: number;
-	motion: number;
 }
 
 export function builtInCounts(query: string): BuiltInCounts {
 	return {
 		shapes: SHAPE_ELEMENTS.filter((item) => matches(query, item.label, item.kind)).length,
-		basic: BASIC_ELEMENTS.filter((item) => matches(query, item.label, item.kind)).length,
 		text: BUILT_IN_TEXT_PRESETS.filter((preset) => matches(query, textPresetLabel(preset))).length,
-		motion: MOTION_ITEMS.filter((item) => matches(query, item.label, item.intent)).length,
 	};
 }

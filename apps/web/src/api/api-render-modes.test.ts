@@ -225,7 +225,7 @@ describe("create-content multi-track storyboard contract", () => {
 	test("doc projection preserves Remotion render storyboard input", () => {
 		const scenes = twoScenes().map((s, index) => ({ ...s, start: index * 3 }));
 		const overlays = [
-			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "title" as const, track: 2 },
+			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "plain" as const, track: 2 },
 		];
 		const audioOverlays = [
 			{
@@ -261,7 +261,7 @@ describe("create-content multi-track storyboard contract", () => {
 	test("buildRenderStoryboardFromDoc clip-native render path equals the array path", () => {
 		const scenes = twoScenes().map((s, index) => ({ ...s, start: index * 3 }));
 		const overlays = [
-			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "title" as const, track: 2 },
+			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "plain" as const, track: 2 },
 		];
 		const audioOverlays = [
 			{
@@ -354,7 +354,7 @@ describe("create-content multi-track storyboard contract", () => {
 	test("buildRenderStoryboardFromDoc honors track flags (hidden visuals, muted audio, base flags)", () => {
 		const scenes = twoScenes().map((s, index) => ({ ...s, start: index * 3 }));
 		const overlays = [
-			{ id: 21, content: "Hidden title", start: 1, dur: 2, preset: "title" as const, track: 2 },
+			{ id: 21, content: "Hidden title", start: 1, dur: 2, preset: "plain" as const, track: 2 },
 		];
 		const audioOverlays = [
 			{
@@ -383,7 +383,7 @@ describe("create-content multi-track storyboard contract", () => {
 	test("storyboardJson clips-direct persist path equals the array-projection path", () => {
 		const scenes = twoScenes().map((s, index) => ({ ...s, start: index * 3 }));
 		const overlays = [
-			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "title" as const, track: 2 },
+			{ id: 21, content: "Visible title", start: 1, dur: 2, preset: "plain" as const, track: 2 },
 		];
 		const audioOverlays = [
 			{

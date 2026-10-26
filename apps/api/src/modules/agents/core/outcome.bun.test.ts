@@ -226,9 +226,9 @@ describe("outcome evaluation", () => {
 						content: "Practice five habits every day for a happier life",
 						startSec: 0,
 						durationSec: 3,
-						preset: "explainer-card",
+						preset: "plain",
 					},
-					{ id: 2, content: "Five habits", startSec: 0, durationSec: 3, preset: "title" },
+					{ id: 2, content: "Five habits", startSec: 0, durationSec: 3, preset: "plain" },
 				],
 				audioOverlays: [
 					{

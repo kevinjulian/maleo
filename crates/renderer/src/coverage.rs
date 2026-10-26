@@ -20,6 +20,12 @@ pub const SUPPORTED: &[&str] = &[
     "timeline-image",
     "image-overlay",
     "text-plain",
+    "shape-rect",
+    "shape-circle",
+    "shape-triangle",
+    "shape-star",
+    "shape-cross",
+    "motion-comp",
     "caption",
     "transition",
     "effect",
@@ -70,6 +76,22 @@ pub fn inspect(storyboard: &Storyboard, frame: i64, fps: f64, has_media: &dyn Fn
                 problems.extend(placed.transitions_at(*local).filter(|t| !crate::scene::transition::series_supported(t)).map(|t| format!("`{t}` transition")));
                 problems.extend((!has_media(&overlay.url)).then(|| "missing media".to_owned()));
                 out.push(visual(&overlay.kind, "image-overlay", "video-overlay", path, problems));
+            }
+            Visible::TextOverlay { index, local, frames } if storyboard.text_overlays[*index].preset.as_deref() == Some("motion-comp") => {
+                let text = &storyboard.text_overlays[*index];
+                let mut problems = layout_problems(text.layout.as_ref(), false);
+                match crate::scene::composition::Config::parse(text.rest.get("params")) {
+                    Err(error) => problems.push(error),
+                    Ok(config) => {
+                        for (i, layer) in config.layers.iter().enumerate() {
+                            let (from, duration) = layer.timing(config.span, *frames, fps);
+                            if *local >= from && *local < from + duration {
+                                out.push(inspect_overlay(storyboard, &layer.overlay, format!("{path}.params.overlays[{i}]")));
+                            }
+                        }
+                    }
+                }
+                out.push(Inspected { kind: "motion-comp", path, problems });
             }
             Visible::TextOverlay { index, .. } => out.push(inspect_text(storyboard, *index, path)),
             Visible::Caption { index, .. } => out.push(Inspected { kind: "caption", path, problems: caption_problems(storyboard, *index) }),
@@ -174,6 +196,9 @@ fn layout_problems(layout: Option<&Layout>, visual: bool) -> Vec<String> {
             problems.push(format!("animation option `{option}`"));
         }
     }
+    if !visual && layout.crop.is_some() {
+        problems.push("crop".into());
+    }
     if layout.local_mask().is_some() && !visual {
         problems.push("mask".into());
     }
@@ -197,12 +222,72 @@ fn layout_problems(layout: Option<&Layout>, visual: bool) -> Vec<String> {
 }
 
 fn inspect_text(storyboard: &Storyboard, index: usize, path: String) -> Inspected {
-    let text = &storyboard.text_overlays[index];
+    inspect_overlay(storyboard, &storyboard.text_overlays[index], path)
+}
+
+fn inspect_overlay(storyboard: &Storyboard, text: &crate::storyboard::TextOverlay, path: String) -> Inspected {
+    let mut extra = Vec::new();
+    for key in text.rest.keys().filter(|key| key.as_str() != "params") {
+        extra.push(format!("layer option `{key}`"));
+    }
+    if let Some(style) = &text.style {
+        for key in style.rest.keys().filter(|key| !["accent", "bodyFill"].contains(&key.as_str())) {
+            extra.push(format!("style option `{key}`"));
+        }
+    }
+    if let Some(preset) = crate::scene::shape::IDS.iter().copied().find(|id| text.preset.as_deref() == Some(*id)) {
+        let mut problems = layout_problems(text.layout.as_ref(), false);
+        problems.extend(extra);
+        if text.style.as_ref().and_then(|s| s.background.as_deref()).is_some_and(|color| parse_color(color).is_none()) {
+            problems.push("style.background: color does not parse".into());
+        }
+        let animation = text.layout.as_ref().and_then(|l| l.animation.as_ref()).or(text.anim.as_ref());
+        for property in ["fontSize", "letterSpacing", "lineHeight"] {
+            if animation.and_then(|a| a.get("tracks")).and_then(|t| t.get(property)).and_then(Value::as_array).is_some_and(|keys| !keys.is_empty()) {
+                problems.push(format!("shape animation `{property}`"));
+            }
+        }
+        if let Some(params) = text.rest.get("params") {
+            if let Some(params) = params.as_object() {
+                for (key, value) in params {
+                    match key.as_str() {
+                        "fill" | "stroke" => {
+                            if !value.as_str().is_some_and(|s| s.is_empty() || parse_color(s).is_some()) {
+                                problems.push(format!("params.{key}: color does not parse"));
+                            }
+                        }
+                        "strokeWidth" | "opacity" | "radius" => {
+                            let n = value.as_f64().or_else(|| value.as_str().and_then(|s| s.trim().parse::<f64>().ok()));
+                            if !n.is_some_and(|n| n.is_finite() && n >= 0.0 && (key != "opacity" || n <= 1.0)) {
+                                problems.push(format!("params.{key}: invalid shape number"));
+                            }
+                            if key == "radius" && preset != "shape-rect" {
+                                problems.push("params.radius: Rectangle only".into());
+                            }
+                        }
+                        _ => problems.push(format!("params option `{key}`")),
+                    }
+                }
+            } else {
+                problems.push("params must be an object".into());
+            }
+        }
+        if text.rest.get("params").and_then(|p| p.get("fill")).and_then(Value::as_str).is_none_or(str::is_empty)
+            && parse_color(&storyboard.accent_color).is_none()
+        {
+            problems.push("accent color does not parse".into());
+        }
+        return Inspected { kind: preset, path, problems };
+    }
     if text.preset.as_deref() != Some("plain") {
         let preset = text.preset.as_deref().map_or("no preset".to_owned(), |p| format!("`{p}` preset"));
         return Inspected { kind: "text", path, problems: vec![preset] };
     }
     let mut problems = layout_problems(text.layout.as_ref(), false);
+    problems.extend(extra);
+    if text.rest.get("params").and_then(Value::as_object).is_some_and(|p| !p.is_empty()) {
+        problems.push("plain text shape params".into());
+    }
     let animation = text.layout.as_ref().and_then(|layout| layout.animation.as_ref()).or(text.anim.as_ref());
     if let Some(colors) = animation.and_then(|a| a.get("colorTracks")).and_then(Value::as_object) {
         for (property, keys) in colors {
@@ -343,6 +428,20 @@ mod tests {
             0,
         );
         assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["font `Unbundled`", "`lower-third` preset"]);
+    }
+
+    #[test]
+    fn composition_coverage_names_layers_and_refuses_bad_definitions() {
+        let mut value = serde_json::json!({"scenes":[],"textOverlays":[{"preset":"motion-comp","content":"","durationSec":4,"params":{"spanSec":4,"overlays":[{"preset":"plain","content":"word","relStart":0,"dur":2,"style":{"fontFamily":"Missing","fontSize":32},"future":true},{"preset":"shape-cross","content":"","relStart":0,"dur":4,"layout":{"crop":{"xPct":0,"yPct":0,"widthPct":50,"heightPct":50}}}]}}]});
+        let entries = report_at(&value.to_string(), 0);
+        assert!(entries.iter().any(|e| e.path == "textOverlays[0].params.overlays[0]" && e.reason == "font `Missing`"));
+        assert!(entries.iter().any(|e| e.path == "textOverlays[0].params.overlays[0]" && e.reason.contains("future")));
+        assert!(entries.iter().any(|e| e.path == "textOverlays[0].params.overlays[1]" && e.reason == "crop"));
+        value["textOverlays"][0]["params"]["schemaVersion"] = 2.into();
+        assert!(Storyboard::parse(&value.to_string()).unwrap_err().0.contains("schemaVersion"));
+        value["textOverlays"][0]["params"]["schemaVersion"] = 1.into();
+        value["textOverlays"][0]["params"]["overlays"][0]["dur"] = (-1).into();
+        assert!(Storyboard::parse(&value.to_string()).unwrap_err().0.contains("overlays[0]"));
     }
 
     #[test]

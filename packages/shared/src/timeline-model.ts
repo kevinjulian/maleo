@@ -1,3 +1,4 @@
+import { VISUAL_PRIMITIVE_IDS } from "./visual-primitives.ts";
 /* Canonical timeline domain model (shared source of truth).
  *
  * The video editor (dashboard) and the Remotion render worker (packages/video)
@@ -354,46 +355,7 @@ export interface Scene {
 /* The members as a value, so a boundary that receives a preset name from a model
  * or a stored document can check it rather than assert it. The union is derived
  * from the array so the two cannot disagree. */
-export const TEXT_PRESETS = [
-	"plain",
-	"title",
-	"subtitle",
-	"lower-third",
-	"stat",
-	"quote",
-	"location",
-	"timeline",
-	"chapter",
-	"explainer-card",
-	"section-card",
-	"rve-cinematic-title-intro",
-	"rve-lower-third",
-	"rve-end-card",
-	"rve-chapter-title",
-	"rve-quote-card",
-	"rve-credits-roll",
-	"rve-countdown-intro",
-	"rve-title-split",
-	"rve-subscribe-reminder",
-	"rve-logo-fade-reveal",
-	"rve-logo-spin-reveal",
-	"rve-logo-glitch-reveal",
-	"rve-logo-bounce-drop",
-	"rve-logo-stroke-draw",
-	"rve-logo-scale-rotate",
-	"rve-logo-split-reveal",
-	"rve-logo-typewriter",
-	"rve-logo-blur-reveal",
-	"rve-bubble-pop-text",
-	"rve-popping-text",
-	"rve-floating-bubble-text",
-	"rve-glitch-text",
-	"rve-animated-text",
-	"rve-typewriter-subtitle",
-	"shape-rect",
-	"shape-circle",
-	"motion-comp",
-] as const;
+export const TEXT_PRESETS = [...VISUAL_PRIMITIVE_IDS, "motion-comp"] as const;
 
 export type TextPreset = (typeof TEXT_PRESETS)[number];
 /** One value a text template's parameter can hold.

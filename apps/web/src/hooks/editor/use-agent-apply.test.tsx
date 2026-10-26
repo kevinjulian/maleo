@@ -32,7 +32,7 @@ const scene = (id: number, dur: number): Scene =>
 const initialDoc = toTimelineDoc(
 	[scene(40, 3), scene(12, 4)],
 	[],
-	[{ id: 2, content: "Hi", start: 0, dur: 2, track: 0, preset: "title" }],
+	[{ id: 2, content: "Hi", start: 0, dur: 2, track: 0, preset: "plain" }],
 	[],
 	[],
 	[],
@@ -288,7 +288,7 @@ describe("settling a job result stored before infographics were removed", () => 
 			const stored = {
 				...job([]),
 				commands: undefined,
-				textOverlays: [{ id: 7, content: "Kept", startSec: 1, durationSec: 2, preset: "title" }],
+				textOverlays: [{ id: 7, content: "Kept", startSec: 1, durationSec: 2, preset: "plain" }],
 				infographicOverlays: [
 					{
 						id: 3,

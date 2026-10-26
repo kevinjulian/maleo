@@ -48,7 +48,7 @@ const text: Clip = {
 	startSec: 0,
 	durationSec: 2,
 	track: 0,
-	text: { id: 1, content: "Title", start: 0, dur: 2, preset: "title" },
+	text: { id: 1, content: "Title", start: 0, dur: 2, preset: "plain" },
 };
 const doc = (revision = 1, clips: Clip[] = [text, caption]) => ({
 	schemaVersion: 2,
@@ -64,6 +64,23 @@ async function seed() {
 async function latest(id: string) {
 	return readStoryboardDocument((await getContentProject(id))?.storyboards[0]?.storyboard_json).doc;
 }
+
+test("agent persistence reports a retired visual result instead of accepting a new head", async () => {
+	const { id, row } = await seed();
+	const job = await buildAgentJob({ projectId: id, instruction: "" });
+	const result = executeEdit(
+		job,
+		updateClip(text.id, { text: { ...text.text!, preset: JSON.parse('"title"') } }),
+	);
+	// A legacy in-flight tool can still hold the old ID before the persistence boundary.
+	expect(result).toEqual({ ok: true });
+	await persist(job);
+	expect(job.editConflict).toContain("Retired visual presets");
+	const head = (await getContentProject(id))?.storyboards[0];
+	expect(head?.id).toBe(row.id);
+	const doc = readStoryboardDocument(head?.storyboard_json).doc;
+	expect(doc.clips.find((clip) => clip.id === text.id)?.text?.preset).toBe("plain");
+});
 
 test("saved and unsaved caption state enters agent command execution", async () => {
 	const { id } = await seed();

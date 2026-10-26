@@ -5,7 +5,10 @@
  * than against a database some earlier test already migrated. */
 import { afterEach, describe, expect, test } from "bun:test";
 import { createTestDatabase, type TestDatabase } from "../../src/db/pg-testing.ts";
-import { MigrationError, migrate, type Migration } from "../../src/db/migrate.ts";
+import { MigrationError, loadMigrations, migrate, type Migration } from "../../src/db/migrate.ts";
+import { pgDb } from "../../src/db/handle.ts";
+import { createContentProject } from "../../src/db/project-detail.ts";
+import { assertVisualContractReady } from "../../src/db/visual-contract.ts";
 
 const opened: TestDatabase[] = [];
 async function emptyDb(): Promise<TestDatabase> {
@@ -117,6 +120,23 @@ describe("a failed migration rolls back and refuses to serve", () => {
 });
 
 describe("an applied migration is never edited", () => {
+	test("a later migration opens empty installs but keeps existing projects closed", async () => {
+		const migrations = loadMigrations();
+		const through13 = migrations.filter((migration) => migration.version <= 13);
+		const empty = await emptyDb();
+		await migrate(empty.sql, through13);
+		await expect(migrate(empty.sql, migrations)).resolves.toEqual({ applied: [14] });
+		await expect(assertVisualContractReady(pgDb(empty.sql))).resolves.toBeUndefined();
+
+		const populated = await emptyDb();
+		await migrate(populated.sql, through13);
+		await createContentProject({ title: "Existing", type: "video" }, pgDb(populated.sql));
+		await expect(migrate(populated.sql, migrations)).resolves.toEqual({ applied: [14] });
+		await expect(assertVisualContractReady(pgDb(populated.sql))).rejects.toThrow(
+			"migration is incomplete",
+		);
+	});
+
 	test("changed content of an applied migration is detected and refused", async () => {
 		const db = await emptyDb();
 		await migrate(db.sql, [m(1, "CREATE TABLE a (x text)")]);

@@ -7,6 +7,7 @@ import { openDb } from "./connection.ts";
 import type { Db } from "./handle.ts";
 import { DEFAULT_CONTENT_WORKSPACE } from "./schema.ts";
 import { randomUUID } from "node:crypto";
+import { retainedProjectVisuals } from "@maleo/shared";
 import {
 	mapContentProjectRow,
 	CONTENT_PROJECT_COUNT_COLS,
@@ -203,6 +204,9 @@ export async function createContentProject(
 	},
 	db: Db = openDb(),
 ): Promise<ContentProjectDetail> {
+	const seedDocument = input.seed_storyboard
+		? retainedProjectVisuals(input.seed_storyboard.storyboard_json)
+		: undefined;
 	const now = Date.now();
 	const projectId = randomUUID();
 	await db.run(
@@ -258,7 +262,7 @@ export async function createContentProject(
 				input.seed_storyboard.status ?? "draft",
 				input.seed_storyboard.source_prompt ?? null,
 				input.seed_storyboard.reference_notes ?? null,
-				JSON.stringify(input.seed_storyboard.storyboard_json),
+				JSON.stringify(seedDocument),
 				now,
 			],
 		);

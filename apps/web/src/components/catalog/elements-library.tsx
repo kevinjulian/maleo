@@ -1,31 +1,9 @@
-/* Library > Elements — the placeable timeline building blocks, browsable.
- *
- * This surface used to be Custom Elements: four editor panels stacked in a
- * 420px column, listing only the blocks an operator had saved. The menu said
- * "Elements" and showed none of the elements that ship with the product, so the
- * page contradicted its own label and was empty in a fresh workspace.
- *
- * It now lists every placeable family — built-in Text, built-in Motion, the
- * operator's own Custom Elements, and Motion presets — with Custom
- * Elements as one group inside it rather than the name of the whole thing.
- *
- * Nothing here places anything. Placing needs a timeline and a playhead and the
- * library has neither, so the built-in tiles carry no action and the custom
- * block runs with `placeable={false}`. What the library is for is finding,
- * inspecting and managing the records themselves.
- */
+/* Library > Elements: Text, Shapes and user-authored Motion. */
 import { useCallback, useMemo, useState } from "react";
-import type { JSX } from "react";
+import type { JSX, ReactNode } from "react";
 import type { ClipTemplateKind } from "@maleo/shared";
 import { CustomTemplatesBlock } from "@components/clip-templates/custom-clip-templates.tsx";
-import { MotionPresetLibraryBlock } from "@components/timeline/motion/motion-editor.tsx";
-import {
-	BuiltInBasicTiles,
-	BuiltInShapeTiles,
-	BuiltInMotionTiles,
-	BuiltInTextTiles,
-	builtInCounts,
-} from "./built-in-elements.tsx";
+import { BuiltInShapeTiles, BuiltInTextTiles, builtInCounts } from "./built-in-elements.tsx";
 import { LibraryHeader } from "./library-chrome.tsx";
 import { LibraryToolbar } from "./library-toolbar.tsx";
 import { Chip } from "@design-system/components/chip.tsx";
@@ -35,15 +13,12 @@ import { Chip } from "@design-system/components/chip.tsx";
  * re-rendered, until the browser ran out of sockets. A module constant is stable. */
 const CUSTOM_KINDS: ClipTemplateKind[] = ["text", "composition"];
 
-type ElementGroup = "basic" | "shapes" | "text" | "motion" | "custom" | "motion-presets";
+type ElementGroup = "shapes" | "text" | "motion";
 
 const GROUPS = [
-	{ id: "basic", label: "Basic" },
-	{ id: "shapes", label: "Shapes" },
 	{ id: "text", label: "Text" },
+	{ id: "shapes", label: "Shapes" },
 	{ id: "motion", label: "Motion" },
-	{ id: "custom", label: "Custom Elements" },
-	{ id: "motion-presets", label: "Motion presets" },
 ] as const satisfies ReadonlyArray<{ id: ElementGroup; label: string }>;
 
 function Group({
@@ -55,7 +30,7 @@ function Group({
 	title: string;
 	hint: string;
 	count: number;
-	children: JSX.Element;
+	children: ReactNode;
 }): JSX.Element {
 	return (
 		<section className="catalog-el-group">
@@ -72,7 +47,7 @@ function Group({
 export function ElementsLibrary(): JSX.Element {
 	const [query, setQuery] = useState("");
 	const [group, setGroup] = useState<ElementGroup | null>(null);
-	/* The custom and motion-preset blocks own their own fetches, so their counts
+	/* The user-template block owns its fetch, so its count
 	 * arrive from them rather than being known up front. */
 	const [counts, setCounts] = useState<Record<string, number>>({});
 	const setCount = useCallback((key: string, n: number): void => {
@@ -81,12 +56,11 @@ export function ElementsLibrary(): JSX.Element {
 
 	const builtIn = useMemo(() => builtInCounts(query), [query]);
 	const total =
-		builtIn.basic +
 		builtIn.shapes +
 		builtIn.text +
-		builtIn.motion +
-		(counts.custom ?? 0) +
-		(counts.motionPresets ?? 0);
+		(counts.text ?? 0) +
+		(counts.shapes ?? 0) +
+		(counts.motion ?? 0);
 
 	const shows = (id: ElementGroup): boolean => group === null || group === id;
 
@@ -104,58 +78,58 @@ export function ElementsLibrary(): JSX.Element {
 			/>
 
 			<div className="catalog-el-groups">
-				{shows("basic") && (
-					<Group title="Basic" hint="Static text. Add motion with keyframes." count={builtIn.basic}>
-						<BuiltInBasicTiles query={query} />
-					</Group>
-				)}
-				{shows("shapes") && (
-					<Group title="Shapes" hint="Rectangle and Circle primitives." count={builtIn.shapes}>
-						<BuiltInShapeTiles query={query} />
-					</Group>
-				)}
 				{shows("text") && (
 					<Group
 						title="Text"
-						hint="Styled text presets — a title, a stat, a quote."
-						count={builtIn.text}
+						hint="Plain text. Style and animate each clip."
+						count={builtIn.text + (counts.text ?? 0)}
 					>
 						<BuiltInTextTiles query={query} />
+						<CustomTemplatesBlock
+							group="text"
+							kind="text"
+							kinds={CUSTOM_KINDS}
+							query={query}
+							placeable={false}
+							onPlace={() => undefined}
+							onCount={(n) => setCount("text", n)}
+						/>
+					</Group>
+				)}
+				{shows("shapes") && (
+					<Group
+						title="Shapes"
+						hint="Five shape primitives."
+						count={builtIn.shapes + (counts.shapes ?? 0)}
+					>
+						<BuiltInShapeTiles query={query} />
+						<CustomTemplatesBlock
+							group="shapes"
+							kind="text"
+							kinds={CUSTOM_KINDS}
+							query={query}
+							placeable={false}
+							onPlace={() => undefined}
+							onCount={(n) => setCount("shapes", n)}
+						/>
 					</Group>
 				)}
 				{shows("motion") && (
 					<Group
 						title="Motion"
-						hint="Animated compositions that ship with the product."
-						count={builtIn.motion}
-					>
-						<BuiltInMotionTiles query={query} />
-					</Group>
-				)}
-				{shows("custom") && (
-					<Group
-						title="Custom Elements"
-						hint="Blocks saved in this workspace. Edit, copy or delete them here."
-						count={counts.custom ?? 0}
+						hint="Compositions saved in this workspace."
+						count={counts.motion ?? 0}
 					>
 						<CustomTemplatesBlock
 							kind="text"
+							group="motion"
 							kinds={CUSTOM_KINDS}
 							query={query}
 							studio={{ aspect: 16 / 9 }}
 							placeable={false}
 							onPlace={() => undefined}
-							onCount={(n) => setCount("custom", n)}
+							onCount={(n) => setCount("motion", n)}
 						/>
-					</Group>
-				)}
-				{shows("motion-presets") && (
-					<Group
-						title="Motion presets"
-						hint="Reusable keyframe motion applied to a clip."
-						count={counts.motionPresets ?? 0}
-					>
-						<MotionPresetLibraryBlock query={query} onCount={(n) => setCount("motionPresets", n)} />
 					</Group>
 				)}
 			</div>

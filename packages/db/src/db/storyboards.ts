@@ -1,5 +1,10 @@
 /* Storyboards — the versioned document a project renders from. */
 import { randomUUID } from "node:crypto";
+import {
+	cleanRetiredProjectVisuals,
+	retainedProjectVisuals,
+	VisualContractError,
+} from "@maleo/shared";
 import { openDb } from "./connection.ts";
 import { serialize, type Db } from "./handle.ts";
 import { parseJsonValue } from "./row-json.ts";
@@ -73,6 +78,7 @@ export async function addContentStoryboard(
 	db: Db = openDb(),
 	retention: StoryboardRetentionPolicy = storyboardRetentionPolicy(),
 ): Promise<ContentStoryboardRow | null> {
+	const document = retainedProjectVisuals(input.storyboard_json);
 	// Existence check only — this used to call the seven-family project aggregate
 	// to answer "does this project exist?".
 	const exists = await db.get<{ ok: number }>(`SELECT 1 AS ok FROM content_projects WHERE id = ?`, [
@@ -109,7 +115,7 @@ export async function addContentStoryboard(
 				input.status ?? "draft",
 				input.source_prompt ?? null,
 				input.reference_notes ?? null,
-				JSON.stringify(input.storyboard_json),
+				JSON.stringify(document),
 				now,
 			],
 		);
@@ -136,7 +142,7 @@ export async function addContentStoryboard(
 			commands: input.commands ?? [
 				{
 					command: replaceScope(
-						storyboardScope(input.storyboard_json, await lockedMediaLibrary(tx, input.project_id)),
+						storyboardScope(document, await lockedMediaLibrary(tx, input.project_id)),
 					),
 				},
 			],
@@ -191,4 +197,41 @@ export async function readStoryboardVersion(
 			message: error instanceof Error ? error.message : String(error),
 		};
 	}
+}
+
+/** Restore immutable history through cleanup and the authoritative version writer. */
+export async function restoreContentStoryboard(
+	projectId: string,
+	version: number,
+	expectedRevisionId: string | null,
+	db: Db = openDb(),
+): Promise<StoryboardVersionRead> {
+	return db.transaction(async (tx) => {
+		await serialize(tx, `storyboard-version:${projectId}`);
+		const historical = await readStoryboardVersion(projectId, version, tx);
+		if (historical.state !== "found") return historical;
+		let cleaned: ReturnType<typeof cleanRetiredProjectVisuals>;
+		try {
+			cleaned = cleanRetiredProjectVisuals(historical.row.storyboard_json);
+		} catch (error) {
+			throw new VisualContractError(
+				error instanceof Error
+					? error.message
+					: "Repair historical visual elements before restoring.",
+			);
+		}
+		const row = await addContentStoryboard(
+			{
+				project_id: projectId,
+				expectedRevisionId,
+				storyboard_json: cleaned.value,
+				source_prompt: historical.row.source_prompt,
+				reference_notes: historical.row.reference_notes,
+				actor_type: "restore",
+			},
+			tx,
+		);
+		if (!row) return { state: "never_existed", version };
+		return { state: "found", row };
+	});
 }

@@ -238,10 +238,10 @@ export function EditTimelineItemModalHost(p: EditModalHostProps): JSX.Element | 
 		/^#[0-9a-f]{6}$/i.test(value ?? "") ? value! : fallback;
 	const template = findTextTemplate(t.preset);
 	const brand = p.brand ?? DEFAULT_BRAND;
-	const templateValues = textTemplateValuesFromClip(template, t.preset, t.content, t.params);
+	const templateValues = textTemplateValuesFromClip(template, t.params);
 	// A motion template (has a fields schema) sizes via `scale`; a plain text
 	// preset sizes via the `fontSize` px value its renderer reads directly.
-	const isTemplate = Boolean(template);
+	const isTemplate = Boolean(template) && t.preset !== "plain";
 	const knobs = styleKnobsFor(t.preset);
 	const upd = (patch: Partial<ClipTextStyle>): void =>
 		p.onUpdOverlay(t.id, { style: { ...ts, ...patch } });
@@ -281,7 +281,7 @@ export function EditTimelineItemModalHost(p: EditModalHostProps): JSX.Element | 
 				</>
 			}
 			customContentEditor={
-				template ? (
+				template?.fields.length ? (
 					<TemplateFieldsEditor
 						fields={template.fields}
 						values={templateValues ?? template.defaultParams}

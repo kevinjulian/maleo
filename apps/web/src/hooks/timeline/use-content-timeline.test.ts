@@ -255,7 +255,7 @@ describe("ripple trim reaches the document whole", () => {
 		track,
 		startSec,
 		durationSec,
-		text: { id: ref, content: id, start: startSec, dur: durationSec, preset: "lower-third" },
+		text: { id: ref, content: id, start: startSec, dur: durationSec, preset: "plain" },
 	});
 	/* Three clips on lane 0 with gaps, and one on lane 1 level with the second. */
 	const doc: EditorDoc = {

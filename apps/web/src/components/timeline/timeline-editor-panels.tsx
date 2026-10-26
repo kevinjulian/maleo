@@ -1,3 +1,4 @@
+import { shapePrimitiveOf } from "@maleo/shared";
 /* Maleo — Content-First Create · clip-first timeline video editor.
  *
  * Layout (left → right): a global icon rail, a global library/project panel,
@@ -16,6 +17,7 @@ import { ML } from "@design-system/components/field-label.tsx";
 import { STUDIO_TRANSITIONS, EFFECT_DEFS } from "@models/timeline/editor-media.ts";
 import type { TemplateItem } from "@models/clip-templates/registry.ts";
 import type { TemplateParams, EffectKind, Scene, TextPreset, TransitionType } from "@maleo/shared";
+import { compositionConfigSchema } from "@maleo/shared";
 
 // Font family choices for the text/motion edit popover. Kept small and
 // web-safe-ish so the picker stays scannable.
@@ -48,12 +50,8 @@ export type ToggleCat = "image" | "voice" | "note";
  * so Library > Elements can read them without importing this editor panel. They
  * are re-exported here because this module's path is the one the rail and the
  * tests already import them from. */
-import {
-	TEXT_PRESET_LABELS,
-	TEXT_PRESET_OPTIONS,
-	TEXT_PRESET_SAMPLES,
-} from "@models/timeline/element-catalogue.ts";
-export { TEXT_PRESET_OPTIONS, TEXT_PRESET_LABELS, TEXT_PRESET_SAMPLES };
+import { TEXT_PRESET_LABELS, TEXT_PRESET_OPTIONS } from "@models/timeline/element-catalogue.ts";
+export { TEXT_PRESET_OPTIONS, TEXT_PRESET_LABELS };
 
 // The brand palette lives in its own module.
 import { DEFAULT_BRAND, type BrandPalette } from "@models/timeline/panel-brand.ts";
@@ -82,6 +80,12 @@ export function TextPresetPreview({
 	compact?: boolean;
 }): JSX.Element {
 	const previewFrame = usePreviewFrame(still);
+	const composition = useMemo(
+		() => (preset === "motion-comp" ? compositionConfigSchema.parse(params) : null),
+		[preset, params],
+	);
+	const durationSec = composition?.spanSec ?? 4;
+	const durationInFrames = Math.max(1, Math.floor(durationSec * 30));
 	const compositionWidth = renderAspect && renderAspect < 1 ? 720 : 1280;
 	const compositionHeight = renderAspect ? Math.round(compositionWidth / renderAspect) : 640;
 	const storyboard = useMemo(
@@ -89,7 +93,7 @@ export function TextPresetPreview({
 			scenes: [
 				{
 					image: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",
-					durationSec: 4,
+					durationSec,
 					label: "",
 					movement: "Static",
 					transition: "cut",
@@ -111,29 +115,31 @@ export function TextPresetPreview({
 				{
 					content,
 					startSec: 0,
-					durationSec: 4,
+					durationSec,
 					preset,
 					params,
 					style,
 					track: 0,
 					layout:
-						preset === "shape-rect"
-							? { xPct: 20, yPct: 35, widthPct: 60, heightPct: 30 }
-							: preset === "shape-circle"
-								? { xPct: 30, yPct: 10, widthPct: 40, heightPct: 80 }
-								: {
-										xPct: 8,
-										yPct: preset === "section-card" ? 8 : 12,
-										widthPct: 84,
-										fit: "contain",
-									},
+						preset === "motion-comp"
+							? { xPct: 0, yPct: 0, widthPct: 100, heightPct: 100 }
+							: preset === "shape-rect"
+								? { xPct: 20, yPct: 35, widthPct: 60, heightPct: 30 }
+								: shapePrimitiveOf(preset)
+									? { xPct: 30, yPct: 10, widthPct: 40, heightPct: 80 }
+									: {
+											xPct: 8,
+											yPct: 12,
+											widthPct: 84,
+											fit: "contain",
+										},
 				},
 			],
 			audioOverlays: [],
 			videoOverlays: [],
 			effects: [],
 		}),
-		[content, preset, params, style, brand.accentColor, brand.bgColor, brand.fgColor],
+		[content, preset, params, style, brand.accentColor, brand.bgColor, brand.fgColor, durationSec],
 	);
 	return (
 		<span
@@ -144,13 +150,15 @@ export function TextPresetPreview({
 				key={previewFrame ?? "loop"}
 				component={StoryboardReel}
 				inputProps={storyboard}
-				durationInFrames={120}
+				durationInFrames={durationInFrames}
 				compositionWidth={compositionWidth}
 				compositionHeight={compositionHeight}
 				fps={30}
 				initiallyMuted
 				numberOfSharedAudioTags={0}
-				initialFrame={previewFrame}
+				initialFrame={
+					previewFrame === undefined ? undefined : Math.min(previewFrame, durationInFrames - 1)
+				}
 				autoPlay={previewFrame === undefined}
 				loop={previewFrame === undefined}
 				style={{ width: "100%", height: "100%" }}
@@ -221,41 +229,13 @@ export function ExactTimelinePreview({
 	);
 }
 
-function paramsFromTextPresetContent(
-	preset: TextPreset,
-	content: string,
-): TemplateParams | undefined {
-	const [first = "", ...rest] = content
-		.split(/\n+/)
-		.map((line) => line.trim())
-		.filter(Boolean);
-	const body = rest.join("\n");
-	if (preset === "explainer-card") return { claim: first || content, analogy: body };
-	if (preset === "section-card") return { question: first || content };
-	return undefined;
-}
-
 type TextTemplateItem = Extract<TemplateItem, { kind: "text" }>;
 
 export function textTemplateValuesFromClip(
 	template: TextTemplateItem | undefined,
-	preset: TextPreset,
-	content: string,
 	params?: TemplateParams,
 ): TemplateParams | undefined {
-	if (!template) return paramsFromTextPresetContent(preset, content);
-	const lines = content
-		.split(/\n+/)
-		.map((line) => line.trim())
-		.filter(Boolean);
-	const fromContent: TemplateParams = {};
-	let lineIndex = 0;
-	for (const field of template.fields) {
-		if (field.type !== "text" && field.type !== "textarea") continue;
-		const value = lines[lineIndex++];
-		if (value) fromContent[field.key] = value;
-	}
-	return { ...template.defaultParams, ...fromContent, ...params };
+	return template ? { ...template.defaultParams, ...params } : params;
 }
 
 /* ════════ Transitions panel (apply to the selected scene) ════════ */

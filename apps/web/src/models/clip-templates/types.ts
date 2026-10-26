@@ -1,6 +1,6 @@
 import type { TextPreset, TemplateParams } from "@maleo/shared";
 
-export type TemplateCategory = "all" | "text" | "intro" | "logo" | "shape";
+export type TemplateCategory = "all" | "text" | "shape" | "motion";
 
 // Which style controls the edit popover should show for a template. A template
 // only advertises the knobs its renderer actually honors, so the popover never
@@ -11,9 +11,8 @@ export type StyleKnob = "fg" | "bg" | "accent" | "body" | "scale" | "font";
 export const TEMPLATE_CATEGORIES: Array<{ id: TemplateCategory; label: string }> = [
 	{ id: "all", label: "All" },
 	{ id: "text", label: "Text" },
-	{ id: "intro", label: "Intro & Outro" },
-	{ id: "logo", label: "Logo & Branding" },
 	{ id: "shape", label: "Shapes" },
+	{ id: "motion", label: "Motion" },
 ];
 
 // Describes one editable content field on a text template. The edit panel

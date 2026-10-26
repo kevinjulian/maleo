@@ -53,7 +53,7 @@ function sampleDoc(): EditorDoc {
 			clip("scene-1", "image", -1, 0, 3, { scene: scene(1, "Opening", 3), markerId: 1 }),
 			clip("scene-2", "video", -1, 3, 4, { scene: scene(2, "Middle", 4), markerId: 1 }),
 			clip("text-1", "text", 0, 1, 2, {
-				text: { id: 1, content: "Title", start: 1, dur: 2, preset: "lower-third" },
+				text: { id: 1, content: "Title", start: 1, dur: 2, preset: "plain" },
 				refIds: ["ref-a"],
 			}),
 			clip("audio-1", "audio", 1, 0, 7, {

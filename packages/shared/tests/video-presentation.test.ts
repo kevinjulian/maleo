@@ -25,8 +25,8 @@ describe("presentation grammar", () => {
 	test("maps categories to reusable compatible templates", () => {
 		expect(PRESENTATION_TEMPLATE_MAP.explainer.clipFamily).toBe("text");
 		expect(PRESENTATION_TEMPLATE_MAP.narrative.clipFamily).toBe("none");
-		expect(templateCompatibleWithPresentation("explainer", "explainer-card")).toBe(true);
-		expect(templateCompatibleWithPresentation("explainer", "rve-quote-card")).toBe(true);
+		expect(templateCompatibleWithPresentation("explainer", "plain")).toBe(true);
+		expect(templateCompatibleWithPresentation("explainer", "rve-quote-card")).toBe(false);
 		expect(templateCompatibleWithPresentation("explainer", "table_build")).toBe(false);
 	});
 });

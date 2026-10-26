@@ -149,7 +149,7 @@ test("text overlays key through the same builders", () => {
 				content: "Title",
 				start: 1,
 				dur: 3,
-				preset: "title",
+				preset: "plain",
 				style: { fontFamily: "Inter", fontSize: 48, weight: 800, fill: "#ffffff", align: "center" },
 			},
 		],

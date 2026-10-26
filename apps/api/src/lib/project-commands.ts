@@ -14,6 +14,7 @@ import {
 	commandEntriesBetween,
 	commandOutcomes,
 	headCommandSeq,
+	visualCleanupSeq,
 	recordCommandEntry,
 	recordCommandRejection,
 	type CommandLogEntry,
@@ -102,6 +103,8 @@ async function entriesAfter(
 	library: () => Promise<MediaAsset[]>,
 ): Promise<CommandLogEntry[]> {
 	if (headSeq <= after) return [];
+	if (head && after < (await visualCleanupSeq(projectId, db)))
+		return [{ ...snapshotOf(head, await library(), headSeq), actor: "visual-cleanup" }];
 	const entries = await commandEntriesBetween(projectId, after, headSeq, db);
 	if (entries) return entries;
 	return head ? [snapshotOf(head, await library(), headSeq)] : [];
@@ -183,6 +186,7 @@ export async function submitCommands(
 		);
 		const head = await headRow(tx, projectId);
 		const headSeq = await headCommandSeq(tx, projectId);
+		const cleanupSeq = await visualCleanupSeq(projectId, tx);
 		const library = await lockedMediaLibrary(tx, projectId);
 		let scope = storyboardScope(head?.storyboard_json, library);
 		let written: StoredStoryboardDocument | undefined;
@@ -197,6 +201,15 @@ export async function submitCommands(
 			}
 			if (outcome?.state === "rejected") {
 				rejected.push({ clientCommandId, ...outcome.error });
+				continue;
+			}
+			if (baseSeq < cleanupSeq) {
+				const error = {
+					kind: "visual_contract_reload",
+					message: "Visual elements changed during migration. Reload this project before editing.",
+				};
+				await recordCommandRejection(tx, projectId, clientCommandId, error);
+				rejected.push({ clientCommandId, ...error });
 				continue;
 			}
 			const command = withServerLibrary(submitted, scope.mediaAssets);

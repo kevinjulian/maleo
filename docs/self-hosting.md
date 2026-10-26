@@ -377,6 +377,45 @@ command is `bun run auth:reset-password <email>`.
 
 ## Backup and restore
 
+### Retired visual presets
+
+This release removes retired stock visual presets from writable project heads
+and saved element definitions. It deletes retired text clips without ripple,
+removes retired composition layers, and deletes empty compositions and custom
+variants based only on retired presets. It preserves surviving values, relative
+times and original composition spans. It does not delete media objects or
+rewrite historical storyboard documents. Existing installations cannot start
+the API or generation host until explicit cleanup succeeds.
+
+1. Stop API and generation writers. Keep old replicas stopped during migration.
+2. Take a fresh Postgres dump using the runtime backup procedure below. Verify
+   the dump in a scratch database before changing the source database.
+3. Use the new release's code in a maintenance shell with the same database
+   configuration. Run `bun run visuals:cleanup` from repository root. In a
+   container without root `.env`, run `bun scripts/cleanup-visual-presets.ts`.
+   Dry-run uses a read-only transaction and performs no bootstrap/schema writes.
+4. Review aggregate counts: `changedProjects`, `changedTemplates`,
+   `removedClips`, `removedLayers` and `removedTemplates`. Unknown IDs or invalid
+   surviving data stop the operation for repair.
+5. Run `bun run visuals:cleanup --apply`, or
+   `bun scripts/cleanup-visual-presets.ts --apply` in the container. Apply runs
+   pending schema migrations, cleans library rows transactionally, and persists
+   cleaned project heads through normal version locks and the command log.
+6. Repeat dry-run. All change/removal counts must be zero. Start the new API,
+   generation hosts and web release together. Old command bases receive a clean
+   snapshot and an explicit reload refusal. Reload discards stale undo/pending
+   edits before editing resumes.
+
+An interrupted apply keeps completed project versions but leaves the startup
+barrier closed. Repair the reported data, then repeat apply. Successfully cleaned
+heads create no extra version. Reports contain counts, not private clip content.
+The maintenance command imports no storage deletion APIs.
+
+Application rollback alone cannot restore deleted content. To recover the prior
+state, stop writers, restore the pre-cleanup Postgres backup with the procedure
+below, and start the matching prior application release. Historical restore
+under the new release cleans retired visuals before creating a new writable head.
+
 ### Runtime database
 
 `maleo-db-backup` writes a `pg_dump -Fc` of the runtime database to the
@@ -433,3 +472,8 @@ duplicating rows. Stop the stack before that first deploy, so that nothing
 writes to the SQLite file while it is being copied. Keep the file until the
 deployment is verified: to roll back, deploy the previous release, which reads
 it.
+
+After the carry, complete the retired-visual cleanup procedure above before
+starting the API. The carry preserves old documents and clears visual-contract
+readiness. The `.postgres-carried` marker records database transfer only; it
+does not admit editing before visual cleanup succeeds.

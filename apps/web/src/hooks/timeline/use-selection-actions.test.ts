@@ -60,7 +60,7 @@ describe("selectFreeClip — the duration it decides the seek from", () => {
 			// Same refId, different durations. Families are numbered independently,
 			// so a collision here is ordinary rather than contrived.
 			effects: [{ id: 7, effect: "shake", start: 10, dur: 6 }],
-			overlays: [{ id: 7, content: "", preset: "title", start: 0, dur: 1 }],
+			overlays: [{ id: 7, content: "", preset: "plain", start: 0, dur: 1 }],
 		} as unknown as Partial<SelectionActionsInput>);
 
 		h.setPlayhead(12); // inside the effect (10..16), outside the text overlay (0..1)

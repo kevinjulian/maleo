@@ -26,7 +26,7 @@ const scene = (id: number, name: string): Scene =>
 const doc = toTimelineDoc(
 	[scene(7, "Open"), scene(9, "Close")],
 	[],
-	[{ id: 2, content: "Hi", start: 0, dur: 2, track: 0, preset: "title" }],
+	[{ id: 2, content: "Hi", start: 0, dur: 2, track: 0, preset: "plain" }],
 	[],
 	[],
 	[],

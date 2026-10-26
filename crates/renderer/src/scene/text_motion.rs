@@ -2,9 +2,13 @@
 //! `packages/video/src/lib/text-animation.ts` and `compositions/reel-text.tsx`.
 //! Ordinary tracks use seconds; legacy tracks use normalized clip progress.
 
+use super::{Canvas, Treatments};
+use crate::paint::parse_color;
 use maleo_editor_core::keyframes::{evaluate_color_track, sample_clip_property};
 use serde_json::Value;
+use vello::Scene;
 use vello::kurbo::{Affine, Rect};
+use vello::peniko::{Fill, ImageBrush};
 
 use crate::storyboard::TextOverlay;
 
@@ -38,6 +42,49 @@ impl Sample {
     pub fn content_opacity(&self) -> f64 {
         self.opacity
     }
+}
+
+/// TemplateFrame's local box for shape bodies and packed compositions.
+pub fn draw_frame(
+    canvas: &mut Canvas<'_>,
+    treatments: &mut dyn Treatments,
+    sampled: &Sample,
+    draw: impl FnOnce(&mut Canvas<'_>, &mut dyn Treatments) -> Result<(), String>,
+) -> Result<(), String> {
+    let layout = sampled.overlay.layout.as_ref().cloned().unwrap_or_default();
+    let (w, h) = (canvas.width * layout.width_pct.unwrap_or(100.0) / 100.0, canvas.height * layout.height_pct.unwrap_or(100.0) / 100.0);
+    if w <= 0.0 || h <= 0.0 {
+        return Ok(());
+    }
+    let local = Rect::new(0.0, 0.0, w, h);
+    let mut body = Scene::new();
+    draw(&mut Canvas { scene: &mut body, media: canvas.media, width: w, height: h, pixelated: canvas.pixelated }, treatments)?;
+    let before = sampled.before_blur(local);
+    let mut content = Scene::new();
+    content.append(&body, Some(before));
+    if sampled.blur > 0.0 {
+        let bounds = before.transform_rect_bbox(local).inflate(sampled.blur * 3.0, sampled.blur * 3.0);
+        let bounds = Rect::new(bounds.x0.floor(), bounds.y0.floor(), bounds.x1.ceil(), bounds.y1.ceil());
+        let image = treatments.blur_content(&content, bounds, sampled.blur as f32)?;
+        content.reset();
+        content.draw_image(&ImageBrush::new(image), Affine::translate(bounds.origin().to_vec2()));
+    }
+    let style = sampled.overlay.style.as_ref();
+    let background = style
+        .and_then(|s| s.background.as_deref())
+        .and_then(parse_color)
+        .map(|c| c.with_alpha((style.and_then(|s| s.bg_opacity).unwrap_or(0.0).clamp(0.0, 1.0) * 100.0).round() as f32 / 100.0));
+    let transform = Affine::translate((canvas.width * layout.x_pct.unwrap_or(0.0) / 100.0, canvas.height * layout.y_pct.unwrap_or(0.0) / 100.0))
+        * super::image::outer_transform(local, layout.rotation_deg.unwrap_or(0.0), sampled.box_scale);
+    canvas.transformed(transform, |canvas| {
+        canvas.group(layout.opacity.unwrap_or(1.0), |canvas| {
+            if let Some(fill) = background {
+                canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, fill.color(), None, &local);
+            }
+            canvas.group(sampled.content_opacity(), |canvas| canvas.scene.append(&content, Some(sampled.after_blur(local))));
+        })
+    });
+    Ok(())
 }
 
 pub fn sample(overlay: &TextOverlay, seconds: f64, duration_sec: f64) -> Result<Sample, String> {
@@ -89,6 +136,13 @@ pub fn sample(overlay: &TextOverlay, seconds: f64, duration_sec: f64) -> Result<
         ] {
             if animation["tracks"].get(property).is_some() {
                 *target = Some(value(property, target.unwrap_or(neutral)));
+            }
+        }
+        for property in ["accent", "bodyFill"] {
+            if let Some(keys) = animation.get("colorTracks").and_then(|t| t.get(property)).and_then(Value::as_array)
+                && !keys.is_empty()
+            {
+                style.rest.insert(property.into(), evaluate_color_track(keys, time).map_err(|error| error.to_string())?);
             }
         }
         for (property, target, neutral) in [("fill", &mut style.fill, "#ffffff"), ("background", &mut style.background, "#000000")] {

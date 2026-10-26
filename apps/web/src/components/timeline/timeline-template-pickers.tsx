@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type JSX, type ReactNode } from "react";
-import { DEFAULT_MUSIC_EMOTION_CUES, resolveTimelineIntroTextPreset } from "@maleo/shared";
+import { DEFAULT_MUSIC_EMOTION_CUES } from "@maleo/shared";
 import {
 	Popover,
 	PopoverContent,
@@ -23,14 +23,7 @@ import { AudioPreview } from "@design-system/components/audio-preview.tsx";
 
 export const TIMELINE_TITLE_CHOICES = [
 	{ value: "", label: "None", description: "No section title" },
-	{ value: "chapter", label: "Chapter title", description: "Clear chapter marker" },
-	{
-		value: "cinematic-title-intro",
-		label: "Cinematic title",
-		description: "Large cinematic entrance",
-	},
-	{ value: "section-card", label: "Section card", description: "Question-led section card" },
-	{ value: "countdown-intro", label: "Countdown intro", description: "Countdown before title" },
+	{ value: "plain", label: "Text", description: "Plain section title" },
 ] as const;
 
 type PickerChoice<T extends string> = { value: T; label: string; description?: string };
@@ -122,9 +115,9 @@ export function TitlePresetPicker({
 	onChange,
 }: {
 	label: string;
-	value: string;
+	value: "plain" | "";
 	disabled?: boolean;
-	onChange: (value: string) => void;
+	onChange: (value: "plain" | "") => void;
 }): JSX.Element {
 	return (
 		<PreviewPicker
@@ -135,10 +128,7 @@ export function TitlePresetPicker({
 			onChange={onChange}
 			renderPreview={(choice) =>
 				choice.value ? (
-					<TextPresetPreview
-						preset={resolveTimelineIntroTextPreset(choice.value)}
-						content={choice.value === "section-card" ? "What changes next?" : "Section title"}
-					/>
+					<TextPresetPreview preset="plain" content="Section title" />
 				) : (
 					<span className="tl2-selection-empty">No title</span>
 				)

@@ -2,7 +2,7 @@
 import { randomUUID } from "node:crypto";
 import { clipTemplateInputSchema, type ClipTemplate, type ClipTemplateInput } from "@maleo/shared";
 import { openDb } from "./connection.ts";
-import type { Db } from "./handle.ts";
+import { serialize, type Db } from "./handle.ts";
 
 interface ClipTemplateDbRow {
 	id: string;
@@ -50,24 +50,28 @@ export async function createContentClipTemplate(
 	input: ClipTemplateInput,
 	db: Db = openDb(),
 ): Promise<ClipTemplate> {
-	const now = Date.now();
-	const id = randomUUID();
-	await db.run(
-		`INSERT INTO content_clip_templates (id, kind, label, intent, category, base, config_json, created_at, updated_at)
+	input = clipTemplateInputSchema.parse(input);
+	return db.transaction(async (tx) => {
+		await serialize(tx, "visual-templates");
+		const now = Date.now();
+		const id = randomUUID();
+		await tx.run(
+			`INSERT INTO content_clip_templates (id, kind, label, intent, category, base, config_json, created_at, updated_at)
 		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-		[
-			id,
-			input.kind,
-			input.label,
-			input.intent,
-			input.category,
-			input.base,
-			JSON.stringify(input.config),
-			now,
-			now,
-		],
-	);
-	return (await getContentClipTemplate(id, db))!;
+			[
+				id,
+				input.kind,
+				input.label,
+				input.intent,
+				input.category,
+				input.base,
+				JSON.stringify(input.config),
+				now,
+				now,
+			],
+		);
+		return (await getContentClipTemplate(id, tx))!;
+	});
 }
 
 export async function updateContentClipTemplate(
@@ -75,28 +79,35 @@ export async function updateContentClipTemplate(
 	input: ClipTemplateInput,
 	db: Db = openDb(),
 ): Promise<ClipTemplate | null> {
-	const exists = await db.get<{ id: string }>(
-		"SELECT id FROM content_clip_templates WHERE id = ?",
-		[id],
-	);
-	if (!exists) return null;
-	await db.run(
-		"UPDATE content_clip_templates SET kind = ?, label = ?, intent = ?, category = ?, base = ?, config_json = ?, updated_at = ? WHERE id = ?",
-		[
-			input.kind,
-			input.label,
-			input.intent,
-			input.category,
-			input.base,
-			JSON.stringify(input.config),
-			Date.now(),
-			id,
-		],
-	);
-	return getContentClipTemplate(id, db);
+	input = clipTemplateInputSchema.parse(input);
+	return db.transaction(async (tx) => {
+		await serialize(tx, "visual-templates");
+		const exists = await tx.get<{ id: string }>(
+			"SELECT id FROM content_clip_templates WHERE id = ?",
+			[id],
+		);
+		if (!exists) return null;
+		await tx.run(
+			"UPDATE content_clip_templates SET kind = ?, label = ?, intent = ?, category = ?, base = ?, config_json = ?, updated_at = ? WHERE id = ?",
+			[
+				input.kind,
+				input.label,
+				input.intent,
+				input.category,
+				input.base,
+				JSON.stringify(input.config),
+				Date.now(),
+				id,
+			],
+		);
+		return getContentClipTemplate(id, tx);
+	});
 }
 
 export async function deleteContentClipTemplate(id: string, db: Db = openDb()): Promise<boolean> {
-	const result = await db.run("DELETE FROM content_clip_templates WHERE id = ?", [id]);
-	return result.changes > 0;
+	return db.transaction(async (tx) => {
+		await serialize(tx, "visual-templates");
+		const result = await tx.run("DELETE FROM content_clip_templates WHERE id = ?", [id]);
+		return result.changes > 0;
+	});
 }

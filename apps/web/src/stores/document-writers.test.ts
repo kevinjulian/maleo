@@ -74,7 +74,7 @@ describe("every per-type write goes through commit", () => {
 			content: "Hi",
 			start: 0,
 			dur: 2,
-			preset: "title",
+			preset: "plain",
 			track: 1,
 		};
 		writers.setOverlays([overlay]);
@@ -85,7 +85,7 @@ describe("every per-type write goes through commit", () => {
 	test("editing one family leaves the others intact", () => {
 		const { writers, store } = harness();
 		writers.setScenes([scene(1)]);
-		writers.setOverlays([{ id: 10, content: "Hi", start: 0, dur: 2, preset: "title", track: 1 }]);
+		writers.setOverlays([{ id: 10, content: "Hi", start: 0, dur: 2, preset: "plain", track: 1 }]);
 		writers.setScenes((prev) => prev.map((s) => ({ ...s, name: "renamed" })));
 
 		const views = store.deriveArrays();
@@ -207,7 +207,7 @@ describe("a command leaves the document the array path would have left", () => {
 		content: "A",
 		start: 0,
 		dur: 4,
-		preset: "title",
+		preset: "plain",
 		track: 2,
 	} as unknown as TextOverlay;
 
@@ -265,7 +265,7 @@ describe("a positional command matches the array path, per family", () => {
 			"text",
 			(w) =>
 				w.setOverlays([
-					{ id: 1, content: "A", start: 0, dur: 4, preset: "title", track: 2 } as never,
+					{ id: 1, content: "A", start: 0, dur: 4, preset: "plain", track: 2 } as never,
 				]),
 			"text:1",
 		],

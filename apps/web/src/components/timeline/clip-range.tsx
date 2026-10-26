@@ -124,8 +124,8 @@ export const ClipRange = memo(function ClipRange({
 			title={title}
 			role="option"
 			aria-selected={selected}
-			aria-disabled={capabilities.readOnly || undefined}
-			aria-label={`${clip.label}, starts at ${clip.start.toFixed(2)} seconds`}
+			aria-disabled={!capabilities.select || undefined}
+			aria-label={`${clip.label}, starts at ${clip.start.toFixed(2)} seconds${capabilities.readOnly ? ", locked" : ""}`}
 			aria-keyshortcuts="ArrowLeft ArrowRight"
 			tabIndex={selected ? 0 : -1}
 			onClick={(event) => {

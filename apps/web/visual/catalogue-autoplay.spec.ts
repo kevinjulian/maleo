@@ -43,12 +43,33 @@ for (const width of [1440, 320])
 							items: [
 								{
 									id: "saved-countdown",
-									kind: "text",
+									kind: "composition",
 									label: "Saved countdown",
 									intent: "Countdown",
-									category: "text",
-									base: "rve-countdown-intro",
-									config: { seconds: 3 },
+									category: "motion",
+									base: "composition",
+									config: {
+										schemaVersion: 1,
+										spanSec: 3,
+										overlays: [
+											{
+												preset: "shape-star",
+												content: "",
+												relStart: 0,
+												dur: 3,
+												params: { fill: "#ff3b64" },
+												layout: { xPct: 30, yPct: 25, widthPct: 40, heightPct: 50, fit: "contain" },
+												anim: {
+													tracks: {
+														rotate: [
+															{ t: 0, v: 0 },
+															{ t: 1, v: 180 },
+														],
+													},
+												},
+											},
+										],
+									},
 								},
 							],
 						},
@@ -70,15 +91,6 @@ for (const width of [1440, 320])
 							.getByRole("button", { name, exact: true })
 							.click();
 				};
-				const preview = (label: string) =>
-					surface === "tools"
-						? page
-								.getByRole("button", { name: `Add ${label}`, exact: true })
-								.locator(".tl2-element-preview")
-						: page
-								.locator(".catalog-el-tile")
-								.filter({ has: page.getByText(label, { exact: true }) })
-								.locator(".fc-data-preview");
 				if (surface === "tools") {
 					await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 					await page.getByRole("tab", { name: "Timeline", exact: true }).click();
@@ -91,15 +103,6 @@ for (const width of [1440, 320])
 				} else await page.goto("/library/elements");
 				await page.evaluate(() => document.fonts.ready);
 				await category("Motion");
-				const motion = preview("Countdown Intro");
-				if (surface === "library")
-					await page
-						.locator(".catalog-el-tile")
-						.filter({ has: page.getByText("Countdown Intro", { exact: true }) })
-						.scrollIntoViewIfNeeded();
-				await motion.scrollIntoViewIfNeeded();
-				await expectPlayback(motion);
-				if (surface === "library") await category("Custom Elements");
 				const saved =
 					surface === "tools"
 						? page
@@ -115,14 +118,7 @@ for (const width of [1440, 320])
 						.filter({ has: page.getByText("Saved countdown", { exact: true }) })
 						.scrollIntoViewIfNeeded();
 				await expectPlayback(saved);
-				if (surface === "library") {
-					await category("Motion");
-					await page
-						.locator(".catalog-el-tile")
-						.filter({ has: page.getByText("Countdown Intro", { exact: true }) })
-						.scrollIntoViewIfNeeded();
-				}
-				await motion.scrollIntoViewIfNeeded();
+				const motion = saved;
 				// A live preference change remounts at an arrived frame, rather than pausing mid-reveal.
 				await page.emulateMedia({ reducedMotion: "reduce" });
 				await page.waitForTimeout(300);

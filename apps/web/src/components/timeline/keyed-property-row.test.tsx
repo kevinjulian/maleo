@@ -162,7 +162,7 @@ test("a locked, keyed Size row keys width and height together at the ratio", () 
 				content: "Title",
 				start: 0,
 				dur: 4,
-				preset: "title",
+				preset: "plain",
 				style: { fontFamily: "Inter", fontSize: 48, weight: 800, fill: "#ffffff", align: "center" },
 				layout: {
 					xPct: 0,

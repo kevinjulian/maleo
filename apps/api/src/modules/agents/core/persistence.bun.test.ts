@@ -71,7 +71,7 @@ describe("what the agent carries forward across its writes", () => {
 });
 
 describe("overlaysFromV2Clips", () => {
-	test("preserves timeline-template motion preset from saved text clips", () => {
+	test("preserves retained plain text style from saved clips", () => {
 		const out = overlaysFromV2Clips([
 			{
 				id: "text:51000000",
@@ -84,11 +84,22 @@ describe("overlaysFromV2Clips", () => {
 					content: "Opening",
 					start: 0,
 					dur: 4,
-					preset: "rve-cinematic-title-intro",
+					preset: "plain",
+					style: {
+						fontFamily: "Inter",
+						fontSize: 64,
+						weight: 700,
+						fill: "#FFFFFF",
+						align: "center",
+					},
 				},
 			},
 		]);
-		expect(out.textOverlays[0]).toMatchObject({ preset: "rve-cinematic-title-intro", track: 3 });
+		expect(out.textOverlays[0]).toMatchObject({
+			preset: "plain",
+			track: 3,
+			style: { weight: 700 },
+		});
 	});
 
 	test("preserves audio kind and origin from saved clip docs", () => {

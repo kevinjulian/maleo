@@ -50,7 +50,7 @@ export function itemAccessibility(
 		name: `${label}${at}${duration}${locked}`,
 		tabIndex: options.focused === true ? 0 : -1,
 		ariaSelected: options.selected === true,
-		ariaDisabled: capabilities.readOnly ? true : undefined,
+		ariaDisabled: capabilities.select ? undefined : true,
 		slot: "item",
 	};
 }

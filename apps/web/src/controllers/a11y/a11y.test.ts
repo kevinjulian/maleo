@@ -92,7 +92,7 @@ describe("focusable representation", () => {
 
 		expect(node.name).toBe("watermark locked, 00:00:00:00, 7 seconds, locked");
 		expect(node.ariaSelected).toBe(true);
-		expect(node.ariaDisabled).toBe(true);
+		expect(node.ariaDisabled).toBeUndefined();
 		/* The focused member holds the tab stop; everything else is reachable by
 		 * arrow key, which is what a roving tab index is for. */
 		expect(node.tabIndex).toBe(0);

@@ -300,6 +300,8 @@ fn animated_elements_draw_identically_out_of_order() {
             || case.name.starts_with("decoration-")
             || case.name.starts_with("pacing-")
             || case.name.starts_with("motion-combined-")
+            || case.name.starts_with("shape-")
+            || case.name.starts_with("composition-")
     }) {
         for (url, path) in media_files(&case.dir) {
             let image = read_image(&path);
@@ -537,6 +539,16 @@ fn combined_boundary_keeps_pacing_visible_with_and_without_render_history() {
             assert_eq!(direct.rgba, drawn.rgba);
         }
     }
+}
+
+#[test]
+fn compositions_match_production() {
+    assert_cases_at_parity(|case| case.name.starts_with("composition-"));
+}
+
+#[test]
+fn shape_primitives_match_production() {
+    assert_cases_at_parity(|case| case.name.starts_with("shape-"));
 }
 
 fn assert_cases_at_parity(select: impl Fn(&Case) -> bool) {

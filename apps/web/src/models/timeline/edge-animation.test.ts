@@ -33,7 +33,7 @@ const doc = toTimelineDoc(
 		{ id: 2, kind: "image", url: "a.png", start: 0, dur: 4, track: 0 },
 		{ id: 3, kind: "video", url: "b.mp4", start: 4, dur: 4, track: 0 },
 	],
-	[{ id: 4, content: "Title", start: 0, dur: 4, preset: "title" }],
+	[{ id: 4, content: "Title", start: 0, dur: 4, preset: "plain" }],
 	[{ id: 5, kind: "music", content: "", start: 0, dur: 4, volume: 0.6 }],
 	[],
 	[],

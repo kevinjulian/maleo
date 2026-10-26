@@ -24,25 +24,20 @@ export const PRESENTATION_TEMPLATE_MAP: Readonly<
 	headline: {
 		category: "headline",
 		clipFamily: "text",
-		defaultTemplateId: "title",
-		compatibleTemplateIds: [
-			"title",
-			"rve-title-split",
-			"rve-animated-text",
-			"rve-typewriter-subtitle",
-		],
+		defaultTemplateId: "plain",
+		compatibleTemplateIds: ["plain"],
 	},
 	explainer: {
 		category: "explainer",
 		clipFamily: "text",
-		defaultTemplateId: "explainer-card",
-		compatibleTemplateIds: ["explainer-card", "rve-quote-card", "rve-floating-bubble-text"],
+		defaultTemplateId: "plain",
+		compatibleTemplateIds: ["plain"],
 	},
 	transition: {
 		category: "transition",
 		clipFamily: "text",
-		defaultTemplateId: "section-card",
-		compatibleTemplateIds: ["section-card", "rve-chapter-title", "rve-cinematic-title-intro"],
+		defaultTemplateId: "plain",
+		compatibleTemplateIds: ["plain"],
 	},
 };
 

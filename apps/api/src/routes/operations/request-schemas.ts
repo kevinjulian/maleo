@@ -232,6 +232,10 @@ export const patchCampaignBody = z
 
 /* --- storyboards --------------------------------------------------------- */
 
+export const restoreStoryboardBody = z
+	.object({ expectedRevisionId: z.string().min(1).nullable() })
+	.strict();
+
 export const createStoryboardBody = z
 	.object({
 		expectedCaptionState: z.string().regex(/^[a-f0-9]{16}$/),

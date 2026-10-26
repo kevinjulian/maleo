@@ -29,7 +29,7 @@ function layer(overrides: Partial<CompositionLayer> = {}): CompositionLayer {
 		content: "Title",
 		start: 2,
 		dur: 4,
-		preset: "lower-third",
+		preset: "plain",
 		anim: {
 			tracks: {
 				x: [

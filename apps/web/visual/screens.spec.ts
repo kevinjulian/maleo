@@ -166,6 +166,16 @@ const CAPTURES = SCREENS.flatMap((screen) => [
 			// Web fonts change metrics; a screenshot taken before they load is a
 			// different screen from the one users see.
 			await page.evaluate(() => document.fonts.ready);
+			if (screen.name === "library-elements") {
+				// Visit lazy previews before capturing the full catalogue.
+				for (const preview of await page.locator(".catalog-el-tile-preview").all()) {
+					await preview.scrollIntoViewIfNeeded();
+					await expect(preview.locator(".fc-text-preview")).toBeVisible();
+				}
+				await page.evaluate(() => window.scrollTo(0, 0));
+				await page.evaluate(() => document.fonts.ready);
+				await expect(page.getByRole("status").filter({ hasText: "Loading saved" })).toHaveCount(0);
+			}
 			/* A failed-save banner is a harness fault, not a screen. Fail here
 			 * rather than let `--update-snapshots` bake it into a baseline. */
 			await expect(page.getByText("Auto-save failed")).toHaveCount(0);

@@ -182,7 +182,7 @@ function parseTextOverlays(latestStoryboard: unknown): TextOverlay[] {
 		content: textOf(prop(o, "content")),
 		start: Number(prop(o, "start_sec") ?? 0),
 		dur: Math.max(0.5, Number(prop(o, "duration_sec") ?? 2)),
-		preset: carriedId<TextPreset>(o, "preset", "title"),
+		preset: carriedId<TextPreset>(o, "preset", "plain"),
 		track: optNum(o, "track") ?? 0,
 		layout: carriedObject<NonNullable<TextOverlay["layout"]>>(o, "layout") ?? undefined,
 		style: carriedObject<NonNullable<TextOverlay["style"]>>(o, "style") ?? undefined,

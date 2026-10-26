@@ -268,7 +268,8 @@ for (const viewport of [
 			await page.goto(`/content/${EDITOR_CHAT_FIXTURE_PROJECT_ID}`);
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 			const clip = page.locator('[data-clipid="text:1"]');
-			await expect(clip).toHaveAttribute("aria-disabled", "true");
+			await expect(clip).not.toHaveAttribute("aria-disabled", "true");
+			await expect(clip).toHaveAccessibleName(/locked/);
 			/* A landscape phone leaves the timeline ~120px; with lane heights following
 			 * lane groups the text lane sits below that, so bring it into view first. */
 			await clip.scrollIntoViewIfNeeded();

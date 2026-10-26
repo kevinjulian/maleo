@@ -1,6 +1,6 @@
-/* Custom clip templates — user-authored items that appear in the Motion and
- * Text sidebar menus next to the built-ins. Built-ins are read-only; these add
- * Create + Edit + Delete on top of the same renderers.
+import { templateElementGroup, type ElementKind } from "@models/timeline/element-groups.ts";
+/* Custom clip templates — user-authored Motion and retained Text/Shape variants.
+ * Motion can be created here. Existing variants remain placeable and editable.
  *
  * A custom item is a saved variant of a base built-in: it reuses the base's
  * renderer (TextPreset id) and field schema, storing only the custom
@@ -15,7 +15,12 @@ import type {
 	TemplateParams,
 	TextOverlay,
 } from "@maleo/shared";
-import { CLIP_TEMPLATE_CATEGORIES, oneOf } from "@maleo/shared";
+import {
+	CLIP_TEMPLATE_CATEGORIES,
+	clipTemplateInputSchema,
+	compositionParams,
+	oneOf,
+} from "@maleo/shared";
 import { CLIP_TEMPLATE_DND_MIME } from "@models/timeline/editor-media.ts";
 import { isCommitEnter } from "@models/core/keys.ts";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
@@ -34,10 +39,7 @@ import {
 } from "@api/templates.ts";
 import type { CompositionConfig } from "@models/clip-templates/composition-config.ts";
 import { compositionLayerOf } from "@models/timeline/text-animation-adapter.ts";
-import {
-	overlaysFromComposition,
-	presetOfCompositionOverlay,
-} from "@models/clip-templates/composition-overlays.ts";
+import { overlaysFromComposition } from "@models/clip-templates/composition-overlays.ts";
 import { MotionStudioModal } from "@components/timeline/motion/motion-studio-modal.tsx";
 import type { BrandPalette } from "@models/timeline/panel-brand.ts";
 import { Button } from "@design-system/components/button.tsx";
@@ -47,8 +49,8 @@ import { Input } from "@design-system/components/input.tsx";
 
 const CATEGORY_LABEL = {
 	text: "Text",
-	intro: "Intro & Outro",
-	logo: "Logo & Branding",
+	shape: "Shapes",
+	motion: "Motion",
 } satisfies Record<ClipTemplateCategory, string>;
 
 const textBases = (): Array<Extract<TemplateItem, { kind: "text" }>> =>
@@ -91,8 +93,7 @@ function customDragPayload(t: ClipTemplate): TemplateDropInfo | null {
 	return preset ? { kind: "text", preset, params: t.config } : null;
 }
 
-/** Visual thumbnail for a custom item, matching the built-in preset tiles: a
- * live text-preset preview (compositions preview their first layer). */
+/** Custom tiles render the same complete primitive/composition as placement. */
 function CustomTilePreview({
 	template,
 	brand,
@@ -103,12 +104,11 @@ function CustomTilePreview({
 	compact?: boolean;
 }): JSX.Element {
 	if (template.kind === "composition") {
-		const primary = template.config.overlays[0];
 		return (
 			<TextPresetPreview
-				preset={presetOfCompositionOverlay(primary)}
-				content={primary?.content || template.label}
-				params={primary?.params}
+				preset="motion-comp"
+				content={template.label}
+				params={compositionParams(template.config)}
 				brand={brand}
 				compact={compact}
 			/>
@@ -119,7 +119,7 @@ function CustomTilePreview({
 	// tile previews as the default rather than rendering an unknown preset id.
 	return (
 		<TextPresetPreview
-			preset={baseTextItem(template.base)?.preset ?? "title"}
+			preset={baseTextItem(template.base)?.preset ?? "plain"}
 			content={template.label}
 			params={template.config}
 			brand={brand}
@@ -144,13 +144,15 @@ interface Draft {
 	config: TemplateParams;
 }
 
-function newDraft(kind: DraftKind): Draft {
-	const base = textBases()[0];
+function newDraft(kind: DraftKind, group: ElementKind): Draft {
+	const base = textBases().find((item) =>
+		group === "shapes" ? item.category === "shape" : item.category === "text",
+	);
 	return {
 		kind,
 		label: "",
 		intent: "",
-		category: "text",
+		category: group === "shapes" ? "shape" : "text",
 		base: base?.preset ?? "",
 		config: { ...base?.defaultParams },
 	};
@@ -175,14 +177,14 @@ interface MenuState {
 	armDelete?: boolean;
 }
 
-/** Custom-templates section embedded in a sidebar menu. Renders a "New" button,
- * the user's saved items (left-click to place, right-click to Edit/Delete), and
- * the create/edit modal. */
+/** Saved items: left-click to place, right-click to edit/delete. Motion alone
+ * exposes creation. */
 export function CustomTemplatesBlock({
 	kind,
 	kinds,
 	onPlace,
 	onPlaceComposition,
+	group = "motion",
 	studio,
 	brand,
 	query,
@@ -192,6 +194,7 @@ export function CustomTemplatesBlock({
 	children,
 }: {
 	heading?: string;
+	group?: ElementKind;
 	children?: ReactNode;
 	kind: DraftKind;
 	kinds?: ClipTemplateKind[];
@@ -206,22 +209,29 @@ export function CustomTemplatesBlock({
 	placeable?: boolean;
 }): JSX.Element {
 	const [templates, setTemplates] = useState<ClipTemplate[]>([]);
+	const [loading, setLoading] = useState(true);
 	const [draft, setDraft] = useState<Draft | null>(null);
 	const [menu, setMenu] = useState<MenuState | null>(null);
 	const [studioSession, setStudioSession] = useState<{
 		id?: string;
 		name: string;
 		overlays: TextOverlay[];
+		spanSec?: number;
 	} | null>(null);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
 	const reload = useCallback(() => {
+		setLoading(true);
+		setError(null);
 		const accept = new Set<ClipTemplateKind>(kinds ?? [kind]);
 		listClipTemplates()
-			.then((all) => setTemplates(all.filter((t) => accept.has(t.kind))))
-			.catch(() => setError("Failed to load"));
-	}, [kind, kinds]);
+			.then((all) =>
+				setTemplates(all.filter((t) => accept.has(t.kind) && templateElementGroup(t) === group)),
+			)
+			.catch(() => setError("Failed to load saved elements."))
+			.finally(() => setLoading(false));
+	}, [kind, kinds, group]);
 	useEffect(() => {
 		reload();
 	}, [reload]);
@@ -240,7 +250,9 @@ export function CustomTemplatesBlock({
 		onCount?.(filtered.length);
 	}, [filtered.length, onCount]);
 
-	const bases = textBases().map((b) => ({ id: b.preset, label: b.label }));
+	const bases = textBases()
+		.filter((b) => (group === "shapes" ? b.category === "shape" : b.category === "text"))
+		.map((b) => ({ id: b.preset, label: b.label }));
 	const baseFields = useMemo(
 		() => (draft ? (baseTextItem(draft.base)?.fields ?? []) : []),
 		[draft],
@@ -256,7 +268,17 @@ export function CustomTemplatesBlock({
 			category: draft.category,
 			base: draft.base,
 		};
-		const input = { ...common, kind: "text" as const, config: draft.config };
+		const parsed = clipTemplateInputSchema.safeParse({
+			...common,
+			kind: "text",
+			config: draft.config,
+		});
+		if (!parsed.success) {
+			setBusy(false);
+			setError(parsed.error.issues[0]?.message ?? "Invalid visual template");
+			return;
+		}
+		const input = parsed.data;
 		const op = draft.id ? updateClipTemplate(draft.id, input) : createClipTemplate(input);
 		op.then(() => {
 			setDraft(null);
@@ -298,6 +320,7 @@ export function CustomTemplatesBlock({
 					id: template.id,
 					name: template.label,
 					overlays: overlaysFromComposition(template.config, 0),
+					spanSec: template.config.spanSec,
 				});
 			return;
 		}
@@ -309,7 +332,7 @@ export function CustomTemplatesBlock({
 		setDraft({ ...draft, base, config: { ...baseTextItem(base)?.defaultParams } });
 	};
 
-	const createButton = (
+	const createButton = group === "motion" && (
 		<Button
 			variant={heading ? "ghost" : "primary"}
 			size="sm"
@@ -318,7 +341,7 @@ export function CustomTemplatesBlock({
 			onClick={() => {
 				setError(null);
 				if (studio) setStudioSession({ name: "", overlays: [] });
-				else setDraft(newDraft(kind));
+				else setDraft(newDraft(kind, group));
 			}}
 		>
 			{Ic.plus(ICON.sm)} {heading ? "New" : "New motion"}
@@ -334,7 +357,19 @@ export function CustomTemplatesBlock({
 			) : (
 				createButton
 			)}
-			{error && <p className="tl2-ct-err">{error}</p>}
+			{error && (
+				<p className="tl2-ct-err" role="alert">
+					{error}
+				</p>
+			)}
+			{loading && <p role="status">Loading saved {group === "motion" ? "motion" : "variants"}…</p>}
+			{group === "motion" && !loading && !error && filtered.length === 0 && (
+				<p className="tl2-elgroup-empty">
+					{q
+						? "No saved elements match your search."
+						: "No saved motion yet. Create one with New motion."}
+				</p>
+			)}
 			{children}
 			{filtered.length > 0 &&
 				(placeable ? (
@@ -516,7 +551,7 @@ export function CustomTemplatesBlock({
 													content: "",
 													start: 0,
 													dur: 3,
-													preset: baseTextItem(menu.template.base)?.preset ?? "title",
+													preset: baseTextItem(menu.template.base)?.preset ?? "plain",
 													track: 0,
 													params: { ...menu.template.config },
 													layout: {

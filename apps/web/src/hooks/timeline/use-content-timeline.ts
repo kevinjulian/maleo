@@ -451,7 +451,10 @@ export function useContentTimeline(options: ContentTimelineOptions): ContentTime
 			 * — they are views of one clip, not clips. Opening a gesture for one would
 			 * take capture and then find nothing to edit, which is a dead pointer
 			 * rather than a declined press. */
-			if (!store.getState().items.has(id)) return undefined;
+			const item = store.getState().items.get(id);
+			if (!item) return undefined;
+			// Decline capture so locked clips still receive their selection click.
+			if (latest.current.trackLocked(laneTrackOf(item.rowId))) return undefined;
 			/* On a finger, a press on an UNSELECTED clip is a selection, and a press
 			 * anywhere else is the view's to pan. Declining here rather than opening a
 			 * gesture and refusing it later is what leaves the browser free to scroll —

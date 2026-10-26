@@ -1,9 +1,7 @@
 /* Placing text and motion on the timeline.
  *
- * `addOverlay` covers the plain text presets and the RVE motion templates; the
- * per-preset layout table is here because a template's selection box has to
- * start at the visible content region rather than the full frame, or preview
- * editing targets a box the user cannot see.
+ * `addOverlay` places plain text and shape primitives. Initial layout matches
+ * the visible content region so preview selection targets the authored object.
  *
  * `placeComposition` places a saved Motion Studio composition as ONE clip. The
  * renderer scales its sub-overlays — and therefore every keyframe — to the
@@ -23,9 +21,15 @@ import {
 } from "@models/timeline/timeline-clips.ts";
 import { selectClip as selectClipIn, type Selection } from "@models/timeline/selection-model.ts";
 import type { ClipLayout } from "@models/timeline/clip-layout.ts";
-import type { TextOverlay, TextPreset, TemplateParams } from "@maleo/shared";
+import {
+	compositionParams,
+	type TextOverlay,
+	type TextPreset,
+	type TemplateParams,
+} from "@maleo/shared";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import type { CompositionConfig } from "@models/clip-templates/composition-config.ts";
+import { initialShapeLayout } from "@models/timeline/shape-elements.ts";
 
 export interface OverlayAuthoringInput {
 	setOverlays: Dispatch<SetStateAction<TextOverlay[]>>;
@@ -34,6 +38,7 @@ export interface OverlayAuthoringInput {
 	selectedFreeIds: Set<string>;
 	playhead: PlayheadHandle;
 	total: number;
+	aspect: number;
 }
 
 export interface OverlayAuthoring {
@@ -60,20 +65,9 @@ export function useOverlayAuthoring({
 	selectedFreeIds,
 	playhead,
 	total,
+	aspect,
 }: OverlayAuthoringInput): OverlayAuthoring {
 	// ── Text overlays (free-form, on their own track) ──
-	/* A `motion-comp` overlay is the one preset whose `params` hold a composition
-	 * BUNDLE rather than field values — `StoryboardReel` reads them straight back
-	 * as a `CompositionOverlayConfig`. The bundle is JSON, which is what
-	 * `TemplateParams` describes, but its declared type carries `unknown`
-	 * passthroughs for style/layout/anim so the two do not unify.
-	 *
-	 * Isolated here so the claim is made once. Modelling it properly means
-	 * discriminating `TextOverlay` on its preset, which is a document change. */
-	const compositionParams = (config: CompositionConfig): TemplateParams =>
-		// SAFETY: as above — the bundle was parsed from JSON and is written back as
-		// JSON; only its declared passthrough fields stop the types unifying.
-		JSON.parse(JSON.stringify(config)) as TemplateParams;
 
 	const addOverlay = (
 		at?: number,
@@ -82,22 +76,16 @@ export function useOverlayAuthoring({
 		paramsOverride?: TemplateParams,
 	): void => {
 		const id = Date.now();
-		const isRve = preset.startsWith("rve-") || preset.startsWith("shape-");
 		const template = findTextTemplate(preset);
-		const motionLayout: ClipLayout =
-			preset === "rve-lower-third" || preset === "rve-typewriter-subtitle"
-				? { xPct: 8, yPct: 66, widthPct: 84, heightPct: 22, fit: "contain" }
-				: preset === "rve-end-card" ||
-					  preset === "rve-quote-card" ||
-					  preset === "rve-countdown-intro"
-					? { xPct: 8, yPct: 24, widthPct: 84, heightPct: 52, fit: "contain" }
-					: preset === "shape-rect"
-						? { xPct: 30, yPct: 42, widthPct: 40, heightPct: 16, fit: "contain" }
-						: preset === "shape-circle"
-							? { xPct: 40, yPct: 40, widthPct: 20, heightPct: 20, fit: "contain" }
-							: { xPct: 8, yPct: 18, widthPct: 84, heightPct: 34, fit: "contain" };
+		const motionLayout: ClipLayout = initialShapeLayout(preset, aspect) ?? {
+			xPct: 8,
+			yPct: 18,
+			widthPct: 84,
+			heightPct: 34,
+			fit: "contain",
+		};
 		const start = at ?? Math.max(0, Math.min(playhead.get(), Math.max(0, total - 2)));
-		const dur = isRve ? 3 : 2;
+		const dur = 2;
 		const occupied: TrackSpan[] = freeClips.map((c) => ({
 			start: c.start,
 			dur: c.dur,
@@ -112,9 +100,7 @@ export function useOverlayAuthoring({
 				start,
 				dur,
 				preset,
-				// Motion templates carry no style overrides. Their selection box starts
-				// at the visible content region, not the full frame, so preview editing
-				// targets the object users see.
+				// Primitive layout is explicit so preview selection matches its content.
 				...(template
 					? { params: { ...template.defaultParams, ...paramsOverride }, layout: motionLayout }
 					: paramsOverride

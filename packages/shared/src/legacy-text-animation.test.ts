@@ -157,7 +157,7 @@ test("the storyboard read upgrades text anim, reports drops, writes no legacy fi
 					content: "Hi",
 					start: 0,
 					dur: 2,
-					preset: "title",
+					preset: "plain",
 					layout,
 					anim: {
 						tracks: {
@@ -181,7 +181,7 @@ test("the storyboard read upgrades text anim, reports drops, writes no legacy fi
 					content: "Kept",
 					start: 0,
 					dur: 2,
-					preset: "title",
+					preset: "plain",
 					layout: { ...layout, animation: { tracks: { opacity: [{ t: 1, v: 1 }] } } },
 					anim: { tracks: { opacity: [{ t: 0, v: 0 }] } },
 				},

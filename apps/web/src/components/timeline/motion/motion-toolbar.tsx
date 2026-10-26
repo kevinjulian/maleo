@@ -1,3 +1,4 @@
+import { SHAPE_PRIMITIVES, type VisualPrimitiveId } from "@maleo/shared";
 /* Motion Studio's strip between the preview and the timeline.
  *
  * The same frame the main editor and Template Studio draw, so the transport
@@ -18,7 +19,7 @@ import { TransportControls } from "@design-system/patterns/transport.tsx";
 import { IconButton } from "@design-system/components/icon-button.tsx";
 
 /** The layer kinds this bar can add. The studio owns what they mean. */
-export type MotionLayerKind = "title" | "shape-rect" | "shape-circle";
+export type MotionLayerKind = VisualPrimitiveId;
 
 /* One list, read by the phone's sheet and the desktop's button row, so a fourth
  * kind is one entry rather than two places to remember. */
@@ -27,9 +28,8 @@ const LAYER_KINDS: readonly {
 	label: string;
 	icon: (s?: number) => JSX.Element;
 }[] = [
-	{ kind: "title", label: "Text", icon: Ic.type },
-	{ kind: "shape-rect", label: "Rectangle", icon: Ic.box },
-	{ kind: "shape-circle", label: "Circle", icon: Ic.spark },
+	{ kind: "plain", label: "Text", icon: Ic.type },
+	...SHAPE_PRIMITIVES.map((shape) => ({ kind: shape.preset, label: shape.label, icon: Ic.box })),
 ];
 
 export interface MotionToolbarProps {

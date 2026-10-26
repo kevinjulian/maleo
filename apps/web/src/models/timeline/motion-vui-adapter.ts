@@ -78,23 +78,30 @@ export interface MotionSaveInput {
 	name: string;
 	layers: CompositionLayer[];
 	templateId: string | undefined;
+	spanSec?: number;
 }
 
 export function buildMotionSaveInput(
 	name: string,
 	layers: CompositionLayer[],
 	templateId?: string,
+	spanSec?: number,
 ): MotionSaveInput | null {
 	const trimmed = name.trim();
 	if (!trimmed || layers.length === 0) return null;
-	return { name: trimmed, layers, templateId };
+	return { name: trimmed, layers, templateId, ...(spanSec === undefined ? {} : { spanSec }) };
 }
 
 export async function persistMotionSave(
 	input: MotionSaveInput,
-	save: (name: string, layers: CompositionLayer[], templateId?: string) => Promise<unknown>,
+	save: (
+		name: string,
+		layers: CompositionLayer[],
+		templateId?: string,
+		spanSec?: number,
+	) => Promise<unknown>,
 ): Promise<void> {
-	await save(input.name, input.layers, input.templateId);
+	await save(input.name, input.layers, input.templateId, input.spanSec);
 }
 
 /** Stable web adapter from Motion domain state to renderer-neutral preview props. */

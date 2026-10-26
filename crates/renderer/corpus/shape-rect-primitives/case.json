@@ -1,0 +1,26 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30, 59],
+	"regions": [
+		{
+			"name": "fill",
+			"rect": [95, 140, 470, 440]
+		},
+		{
+			"name": "stroke",
+			"rect": [580, 140, 960, 440]
+		},
+		{
+			"name": "nonsquare-rotated",
+			"rect": [0, 450, 460, 1250]
+		}
+	],
+	"options": [
+		"shape.rect.fill",
+		"shape.rect.stroke",
+		"shape.rect.opacity",
+		"shape.rect.nonsquare",
+		"shape.rect.rotation"
+	]
+}

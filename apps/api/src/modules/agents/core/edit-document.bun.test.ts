@@ -72,7 +72,7 @@ const job = (over: Partial<AgentJob> = {}): AgentJob => ({
 			content: "Hi",
 			startSec: 1,
 			durationSec: 2,
-			preset: "title",
+			preset: "plain",
 			layout: { xPct: 5 },
 			track: 1,
 		},

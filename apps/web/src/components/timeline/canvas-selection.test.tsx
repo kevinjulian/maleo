@@ -50,7 +50,7 @@ const doc = toTimelineDoc(
 			content: "T",
 			start: 0,
 			dur: 4,
-			preset: "title",
+			preset: "plain",
 			layout: { xPct: 60, yPct: 60, widthPct: 20, heightPct: 20, fit: "contain" },
 		},
 	],

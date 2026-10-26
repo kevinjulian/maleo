@@ -166,6 +166,16 @@ stable for the work that reads it. The boundaries differ on purpose.
 A project's template selection can change while a run waits for approval. The asset
 pass uses the one captured when it began, not the one selected now.
 
+## Generated visual primitives
+
+`core/overlays.ts`, `lib/story.ts` and `services/story-assets.ts` write plain text
+with explicit stored style/layout. `add_text` accepts only plain text. Presentation
+roles choose content and placement, with `video-presentation.ts` mapping each
+text role to the retained plain primitive. Video Template titles select plain or
+none; retired stored choices disable titles while preserving other policy.
+Agent document persistence carries text styles and shape/composition params.
+The ordinary visual-write guard refuses retired IDs before a new head is saved.
+
 ## The chat context envelope
 
 One typed envelope per chat command, built from live editor state and frozen on

@@ -49,6 +49,19 @@ export async function headCommandSeq(db: Db, projectId: string): Promise<number>
 	return row?.s ?? 0;
 }
 
+/** Clients before visual cleanup must discard their old command/undo base. */
+export async function visualCleanupSeq(projectId: string, db: Db): Promise<number> {
+	if (db.dialect !== "postgres") return 0;
+	return (
+		(
+			await db.get<{ visual_cleanup_seq: number }>(
+				"SELECT visual_cleanup_seq FROM content_projects WHERE id = ?",
+				[projectId],
+			)
+		)?.visual_cleanup_seq ?? 0
+	);
+}
+
 /** Write one entry at the next sequence and return it. The caller holds the
  *  `storyboard-version:<project>` lock. */
 export async function recordCommandEntry(
@@ -142,6 +155,7 @@ export async function commandEntriesBetween(
 	db: Db = openDb(),
 ): Promise<CommandLogEntry[] | null> {
 	if (through <= after) return [];
+	if (after < (await visualCleanupSeq(projectId, db))) return null;
 	const rows = await db.all<{
 		seq: number;
 		version: number | null;

@@ -308,7 +308,7 @@ describe("parseLoadedProject · settings", () => {
 });
 
 describe("parseLoadedProject · scene text metadata", () => {
-	it("migrates legacy scene metadata text into timeline text clips", () => {
+	it("does not recreate deleted text from legacy scene metadata", () => {
 		const p = parseLoadedProject(
 			baseDetail(
 				{ type: "video" },
@@ -341,12 +341,10 @@ describe("parseLoadedProject · scene text metadata", () => {
 				},
 			),
 		);
-		expect(p.overlays.map((o) => [o.id, o.content, o.start, o.dur, o.preset])).toEqual([
-			[41_000_000, "Forbidden button\nNobody can ignore it.", 3.6, 2.6, "explainer-card"],
-		]);
+		expect(p.overlays).toEqual([]);
 	});
 
-	it("places migrated scene text on next free track when preferred track is occupied", () => {
+	it("preserves manual text without deriving scene metadata", () => {
 		const p = parseLoadedProject(
 			baseDetail(
 				{ type: "video" },
@@ -359,7 +357,7 @@ describe("parseLoadedProject · scene text metadata", () => {
 							startSec: 3.1,
 							durationSec: 2,
 							track: 1,
-							text: { id: 9, content: "Manual", start: 3.1, dur: 2, preset: "title", track: 1 },
+							text: { id: 9, content: "Manual", start: 3.1, dur: 2, preset: "plain", track: 1 },
 						},
 						{
 							id: "scene:1",
@@ -384,13 +382,10 @@ describe("parseLoadedProject · scene text metadata", () => {
 				},
 			),
 		);
-		expect(p.overlays.map((o) => [o.id, o.track])).toEqual([
-			[9, 1],
-			[40_000_000, 2],
-		]);
+		expect(p.overlays.map((o) => [o.id, o.track])).toEqual([[9, 1]]);
 	});
 
-	it("migrates v3 marker forward for explainer claim card style", () => {
+	it("leaves older scene metadata without derived clips", () => {
 		const p = parseLoadedProject(
 			baseDetail(
 				{ type: "video" },
@@ -422,9 +417,7 @@ describe("parseLoadedProject · scene text metadata", () => {
 				},
 			),
 		);
-		expect(p.overlays.map((o) => [o.content, o.preset])).toEqual([
-			["Needs clip\nNot hidden metadata", "explainer-card"],
-		]);
+		expect(p.overlays).toEqual([]);
 	});
 
 	it("does not remigrate scene metadata after the storyboard is marked v5 migrated", () => {

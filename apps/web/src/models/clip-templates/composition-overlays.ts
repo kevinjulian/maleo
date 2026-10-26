@@ -3,7 +3,12 @@
  * to the selection's start; placing it expands the bundle back into ordinary
  * editable overlays at the playhead. The save that writes one is
  * `saveCompositionTemplate` in the api's templates module. */
-import type { CompositionLayer, TextPreset } from "@maleo/shared";
+import {
+	compositionConfigSchema,
+	isVisualPrimitive,
+	type CompositionLayer,
+	type TextPreset,
+} from "@maleo/shared";
 import type {
 	CompositionConfig,
 	CompositionOverlayJson,
@@ -11,13 +16,16 @@ import type {
 
 /** Serialize overlays into a composition config, timing relative to the
  * earliest start and tracks relative to the lowest track. */
-export function compositionFromOverlays(overlays: CompositionLayer[]): CompositionConfig {
-	const t0 = Math.min(...overlays.map((o) => o.start));
-	const track0 = Math.min(...overlays.map((o) => o.track ?? 0));
+export function compositionFromOverlays(
+	overlays: CompositionLayer[],
+	spanSec?: number,
+): CompositionConfig {
+	const t0 = spanSec === undefined ? Math.min(...overlays.map((o) => o.start)) : 0;
+	const track0 = spanSec === undefined ? Math.min(...overlays.map((o) => o.track ?? 0)) : 0;
 	const items = overlays.map((o): CompositionOverlayJson => ({
 		relStart: Math.max(0, o.start - t0),
 		dur: o.dur,
-		preset: o.preset,
+		preset: primitivePreset(o.preset),
 		content: o.content,
 		track: (o.track ?? 0) - track0,
 		params: o.params ?? undefined,
@@ -25,8 +33,14 @@ export function compositionFromOverlays(overlays: CompositionLayer[]): Compositi
 		layout: o.layout ?? undefined,
 		anim: o.anim ?? undefined,
 	}));
-	const spanSec = Math.max(...items.map((i) => i.relStart + i.dur));
-	return { overlays: items, spanSec };
+	const span = spanSec ?? Math.max(...items.map((i) => i.relStart + i.dur));
+	return compositionConfigSchema.parse({ schemaVersion: 1, overlays: items, spanSec: span });
+}
+
+function primitivePreset(preset: string) {
+	if (!isVisualPrimitive(preset))
+		throw new Error(`Unsupported composition primitive: ${preset}. Reload or repair this layer.`);
+	return preset;
 }
 
 /** The renderer id a stored composition overlay resolves to. The one place the
@@ -34,11 +48,7 @@ export function compositionFromOverlays(overlays: CompositionLayer[]): Compositi
 export function presetOfCompositionOverlay(
 	overlay: Pick<CompositionOverlayJson, "preset"> | undefined,
 ): TextPreset {
-	// SAFETY: the field is written by `compositionFromOverlays` above from a
-	// `CompositionLayer.preset`, so every non-empty id came from the union. Stored
-	// compositions do carry `preset: ""` (see `composition-overlays.test.ts`);
-	// that case is defaulted before the assertion, not asserted through.
-	return (overlay?.preset || "title") as TextPreset;
+	return primitivePreset(overlay?.preset ?? "");
 }
 
 /** Rebuild placeable overlays from a stored composition at an absolute start.
@@ -49,18 +59,16 @@ export function overlaysFromComposition(
 	baseTrack = 0,
 ): CompositionLayer[] {
 	const stamp = Date.now();
-	// SAFETY: a stored composition's style/layout/anim are written only by
-	// `compositionFromOverlays` above, from these same `CompositionLayer` fields.
-	return (config.overlays ?? []).map((o, i): CompositionLayer => ({
+	return compositionConfigSchema.parse(config).overlays.map((o, i): CompositionLayer => ({
 		id: stamp + i,
 		content: o.content ?? "",
-		start: atSec + Math.max(0, o.relStart ?? 0),
-		dur: Math.max(0.5, o.dur ?? 2),
+		start: atSec + o.relStart,
+		dur: o.dur,
 		preset: presetOfCompositionOverlay(o),
-		track: baseTrack + Math.max(0, o.track ?? 0),
+		track: baseTrack + (o.track ?? 0),
 		params: o.params,
-		style: o.style as CompositionLayer["style"],
-		layout: o.layout as CompositionLayer["layout"],
-		anim: o.anim as CompositionLayer["anim"],
+		style: o.style,
+		layout: o.layout,
+		anim: o.anim,
 	}));
 }

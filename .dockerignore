@@ -26,6 +26,7 @@ packages/*/music-source/
 **/build/
 **/dist/
 **/out/
+apps/web/storybook-static/
 # Cargo build output for crates/; the image builds the engine in its own stage.
 target/
 

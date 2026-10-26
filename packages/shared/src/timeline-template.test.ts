@@ -30,8 +30,8 @@ describe("stored blobs written before the field retirements still parse", () => 
 
 		const parsed = timelineTemplateInputSchema.parse(raw);
 
-		expect(parsed.introTextPreset).toBe("section-card");
-		expect(parsed.sectionTextPreset).toBe("rve-countdown-intro");
+		expect(parsed.introTextPreset).toBe("");
+		expect(parsed.sectionTextPreset).toBe("");
 	});
 
 	test("the retired keys are gone from the parsed result", () => {
@@ -58,11 +58,11 @@ describe("stored blobs written before the field retirements still parse", () => 
 	test("a blob carrying both names keeps the new one", () => {
 		const parsed = timelineTemplateInputSchema.parse({
 			...DEFAULT_TIMELINE_TEMPLATE,
-			introTextPreset: "chapter",
+			introTextPreset: "plain",
 			introMotionPreset: "section-card",
 		});
 
-		expect(parsed.introTextPreset).toBe("chapter");
+		expect(parsed.introTextPreset).toBe("plain");
 	});
 
 	test("strict parsing still rejects a genuinely unknown key", () => {
@@ -78,5 +78,22 @@ describe("stored blobs written before the field retirements still parse", () => 
 		expect(timelineTemplateInputSchema.parse(DEFAULT_TIMELINE_TEMPLATE)).toEqual(
 			DEFAULT_TIMELINE_TEMPLATE,
 		);
+	});
+});
+
+test("retired title selections are disabled without changing other policy", () => {
+	const parsed = timelineTemplateInputSchema.parse({
+		...DEFAULT_TIMELINE_TEMPLATE,
+		name: "Kept",
+		introTextPreset: "chapter",
+		sectionTextPreset: "section-card",
+		musicVolume: 0.3,
+	});
+	expect(parsed).toEqual({
+		...DEFAULT_TIMELINE_TEMPLATE,
+		name: "Kept",
+		introTextPreset: "",
+		sectionTextPreset: "",
+		musicVolume: 0.3,
 	});
 });

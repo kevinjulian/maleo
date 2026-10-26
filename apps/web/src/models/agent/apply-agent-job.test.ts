@@ -206,12 +206,12 @@ describe("text overlays", () => {
 			content: "Title",
 			startSec: 0,
 			durationSec: 2,
-			preset: "title",
+			preset: "plain",
 			...over,
 		}) as AgentTextOverlayOut;
 
 	test("an incoming overlay replaces the editor's copy of the same id", () => {
-		const prev: TextOverlay[] = [{ id: 5, content: "Old", start: 0, dur: 2, preset: "title" }];
+		const prev: TextOverlay[] = [{ id: 5, content: "Old", start: 0, dur: 2, preset: "plain" }];
 		const next = mergeAgentTextOverlays(prev, [overlay({ id: 5, content: "New" })], SEED);
 
 		expect(next).toHaveLength(1);
@@ -226,7 +226,7 @@ describe("text overlays", () => {
 
 	test("an incoming overlay lands on a free track rather than colliding", () => {
 		const prev: TextOverlay[] = [
-			{ id: 5, content: "Existing", start: 0, dur: 4, preset: "title", track: 0 },
+			{ id: 5, content: "Existing", start: 0, dur: 4, preset: "plain", track: 0 },
 		];
 		const next = mergeAgentTextOverlays(
 			prev,
@@ -240,7 +240,7 @@ describe("text overlays", () => {
 
 	test("the editor's unrelated overlays survive", () => {
 		const prev: TextOverlay[] = [
-			{ id: 9, content: "Operator's", start: 10, dur: 2, preset: "title" },
+			{ id: 9, content: "Operator's", start: 10, dur: 2, preset: "plain" },
 		];
 		const next = mergeAgentTextOverlays(prev, [overlay()], SEED);
 

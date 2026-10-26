@@ -230,18 +230,10 @@ test.describe("voices", () => {
 	});
 });
 
-/* Library > Elements is the placeable building blocks, browsable — built-ins
- * included, with the operator's own saved blocks as one group inside it rather
- * than as the name of the whole surface. */
+/* Library > Elements shares retained primitive groups with the editor.
+ * Saved variants stay with their primitive; user compositions belong to Motion. */
 test.describe("elements catalogue", () => {
-	const FAMILIES = [
-		"Basic",
-		"Shapes",
-		"Text",
-		"Motion",
-		"Custom Elements",
-		"Motion presets",
-	] as const;
+	const FAMILIES = ["Text", "Shapes", "Motion"] as const;
 
 	test("library chrome: elements lists every placeable family", async ({ page }) => {
 		await page.setViewportSize(DESKTOP);
@@ -254,7 +246,7 @@ test.describe("elements catalogue", () => {
 					.filter({ hasText: new RegExp(`^${family}\\s*\\d+$`) }),
 			).toHaveCount(1);
 		}
-		// Custom Elements is one group among six, not the whole page.
+		// Retained variants share their primitive group; compositions belong to Motion.
 		await expect(page.locator(".catalog-el-group")).toHaveCount(FAMILIES.length);
 	});
 
@@ -262,15 +254,7 @@ test.describe("elements catalogue", () => {
 		await page.setViewportSize(DESKTOP);
 		await open(page, "/library/elements");
 		// Built-ins that ship with the product, from the rail's own source module.
-		for (const label of [
-			"Text",
-			"Rectangle",
-			"Circle",
-			"Title",
-			"Stat",
-			"Quote",
-			"Cinematic Title Intro",
-		]) {
+		for (const label of ["Text", "Rectangle", "Circle", "Triangle", "Star", "Cross"]) {
 			await expect(
 				page
 					.locator(".catalog-el-tile figcaption b", { hasText: new RegExp(`^${label}$`) })
@@ -296,16 +280,19 @@ test.describe("elements catalogue", () => {
 	test("library chrome: custom elements keep their management controls", async ({ page }) => {
 		await page.setViewportSize(DESKTOP);
 		await open(page, "/library/elements");
-		const custom = page.locator(".catalog-el-group", { hasText: "Custom Elements" });
-		await expect(custom.getByRole("button", { name: /New (motion|data)/ })).toBeVisible();
+		const custom = page
+			.locator(".catalog-el-group")
+			.filter({ has: page.locator("h2", { hasText: /^Motion/ }) });
+		await expect(page.getByRole("button", { name: /New (text|shape) variant/ })).toHaveCount(0);
+		await expect(custom.getByRole("button", { name: "New motion", exact: true })).toBeVisible();
 	});
 
 	test("library chrome: search spans element families", async ({ page }) => {
 		await page.setViewportSize(DESKTOP);
 		await open(page, "/library/elements");
-		await page.locator(".catalog-search input").fill("logo");
+		await page.locator(".catalog-search input").fill("Fixture Element");
 
-		// Motion keeps its logo templates; Text matches nothing and says zero.
+		// User motion matches its label; built-in Text and Shapes do not.
 		const countOf = (family: string) =>
 			page
 				.locator(".catalog-el-group")
@@ -313,6 +300,7 @@ test.describe("elements catalogue", () => {
 				.locator('h2 [data-slot="chip"]');
 		await expect(countOf("Motion")).not.toHaveText("0");
 		await expect(countOf("Text")).toHaveText("0");
+		await expect(countOf("Shapes")).toHaveText("0");
 	});
 
 	test("library chrome: a family filter narrows to that family", async ({ page }) => {
@@ -340,10 +328,10 @@ test.describe("the elements rename", () => {
 		const crumbs = page.locator("header.ui-topbar .crumbs");
 		await expect(crumbs).toContainText(/elements/i);
 		await expect(crumbs).not.toContainText(/custom elements/i);
-		// Still present as the name of one group inside the page.
+		// Saved items belong to Text, Shapes or Motion; they have no fourth group.
 		await expect(
 			page.locator(".catalog-el-group > h2", { hasText: "Custom Elements" }),
-		).toHaveCount(1);
+		).toHaveCount(0);
 	});
 
 	test("library chrome: the route is unchanged", async ({ page }) => {

@@ -53,6 +53,8 @@ src/
                            + readiness) and the default registry
   animation-properties.ts  the one registry of animatable clip/overlay properties
                            (unit, range, neutral value, allowed element kinds)
+  visual-primitives.ts     retained IDs, explicit retired IDs and normalized shape geometry
+  composition-schema.ts    versioned primitive layers and normalized composition animation
   clip-animation.ts        the animation value, per-kind schemas derived from the
                            registry, trim/retime, export blockers
   keyframe-evaluation.ts   value and colour track sampling, easing incl. hold
@@ -129,6 +131,32 @@ src/
   planned narration-beat boundaries use `sceneVoiceoverPauseSec`, and section
   boundaries use `sectionGapSec`.
 - No filesystem, DB, fetch, env, or subprocess access here.
+
+## Visual primitive contract
+
+`visual-primitives.ts` defines plain text and five shape IDs. `motion-comp`
+is a composition container. The explicit retirement set classifies historical
+presets. Unknown IDs require repair. Only historical classification resolves
+missing, null or empty IDs to the old `title` preset.
+
+Shape coordinates use a unit box. Triangle has vertices at top centre and both
+bottom corners. Star has five outer points, starts upright and uses half-radius
+inner points. Cross has two centred bars, each one third of its axis dimension.
+Circle becomes an ellipse in nonsquare boxes. Rectangle alone supports radius.
+`shapeGeometry` scales each axis independently. It clamps stroke width to the
+smaller dimension and insets its centreline by half that width. Polygon strokes
+use round joins to stay inside the box. Invalid numbers fail; zero dimensions
+draw nothing. Existing renderer branches remain unchanged until they adopt this
+geometry and pass their parity gates.
+
+`compositionConfigSchema` accepts version 1 or compatible unversioned bundles,
+which normalize to version 1. It rejects unknown fields and unsupported versions.
+Layers are flat retained primitives. Starts and durations use seconds relative
+to the saved selection. `spanSec` retains the original span, including gaps.
+Layer order and track offsets remain authored. Inner `anim` keys use normalized
+0–1 time over the layer's rendered frame span. Outer clip `layout.animation`
+keys use clip-local seconds. Cleanup must not rebase surviving layer starts or
+recompute the span. Numeric shape strings remain compatible without conversion.
 
 ## Verification
 

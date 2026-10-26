@@ -12,12 +12,9 @@ import type { CompositionConfig } from "@models/clip-templates/composition-confi
 import { CustomTemplatesBlock } from "@components/clip-templates/custom-clip-templates.tsx";
 import { TextPresetPreview } from "./timeline-editor-panels.tsx";
 import {
-	BASIC_ELEMENTS,
 	BUILT_IN_TEXT_PRESETS,
-	MOTION_ITEMS,
 	textPresetLabel,
 	textPresetSample,
-	textPresetSampleOr,
 } from "@models/timeline/element-catalogue.ts";
 import type { BrandPalette } from "@models/timeline/panel-brand.ts";
 
@@ -25,12 +22,11 @@ import { SHAPE_ELEMENTS } from "@models/timeline/shape-elements.ts";
 
 const MOTION_KINDS: ClipTemplateKind[] = ["text", "composition"];
 
-type ElementFilter = "all" | "basic" | "shapes" | "text" | "motion";
+type ElementFilter = "all" | "shapes" | "text" | "motion";
 const FILTER_TABS = [
 	{ id: "all", label: "All" },
-	{ id: "basic", label: "Basic" },
-	{ id: "shapes", label: "Shapes" },
 	{ id: "text", label: "Text" },
+	{ id: "shapes", label: "Shapes" },
 	{ id: "motion", label: "Motion" },
 ] as const;
 
@@ -56,10 +52,8 @@ export function ElementsPanel({
 	const q = query.trim().toLowerCase();
 	const matches = (...fields: string[]) =>
 		!q || fields.some((field) => field.toLowerCase().includes(q));
-	const basics = BASIC_ELEMENTS.filter((item) => matches(item.label, item.kind));
 	const shapes = SHAPE_ELEMENTS.filter((item) => matches(item.label, item.kind));
 	const texts = BUILT_IN_TEXT_PRESETS.filter((preset) => matches(textPresetLabel(preset)));
-	const motions = MOTION_ITEMS.filter((item) => matches(item.label, item.intent));
 	const dragText = (event: DragEvent<HTMLElement>, preset: TextPreset) => {
 		event.dataTransfer.setData(CLIP_TEMPLATE_DND_MIME, JSON.stringify({ kind: "text", preset }));
 		event.dataTransfer.effectAllowed = "copy";
@@ -85,25 +79,34 @@ export function ElementsPanel({
 			onDragStart={(event) => dragText(event, preset)}
 		/>
 	);
+	const variants = (group: "text" | "shapes") => (
+		<CustomTemplatesBlock
+			group={group}
+			kind="text"
+			kinds={MOTION_KINDS}
+			brand={brand}
+			query={q}
+			onPlace={(item) => onPlaceCustomText(item.preset, item.defaultParams)}
+		/>
+	);
 	const groups = (category: ElementFilter) => {
 		const shows = (kind: ElementFilter) => category === "all" || category === kind;
 		return (
 			<>
-				{shows("basic") && (
-					<section className="tl2-elgroup" aria-label="Basic elements">
+				{shows("text") && (
+					<section className="tl2-elgroup">
 						<div className="tl2-elgroup-h">
-							<span>Basic</span>
+							<span>Text</span>
 						</div>
-						<MediaGrid label="Basic elements" min={72} density="compact">
-							{basics.map((item) =>
-								textTile(item.preset, item.label, textPresetSample(item.preset), () =>
-									onAddText(item.preset),
+						<MediaGrid label="Text presets" min={72} density="compact">
+							{texts.map((preset) =>
+								textTile(preset, textPresetLabel(preset), textPresetSample(preset), () =>
+									onAddText(preset),
 								),
 							)}
 						</MediaGrid>
-						{!basics.length && (
-							<p className="tl2-elgroup-empty">No basic elements match “{query}”.</p>
-						)}
+						{!texts.length && <p className="tl2-elgroup-empty">No text matches “{query}”.</p>}
+						{variants("text")}
 					</section>
 				)}
 				{shows("shapes") && (
@@ -119,27 +122,14 @@ export function ElementsPanel({
 							)}
 						</MediaGrid>
 						{!shapes.length && <p className="tl2-elgroup-empty">No shapes match “{query}”.</p>}
-					</section>
-				)}
-				{shows("text") && (
-					<section className="tl2-elgroup">
-						<div className="tl2-elgroup-h">
-							<span>Text</span>
-						</div>
-						<MediaGrid label="Text presets" min={72} density="compact">
-							{texts.map((preset) =>
-								textTile(preset, textPresetLabel(preset), textPresetSample(preset), () =>
-									onAddText(preset),
-								),
-							)}
-						</MediaGrid>
-						{!texts.length && <p className="tl2-elgroup-empty">No text matches “{query}”.</p>}
+						{variants("shapes")}
 					</section>
 				)}
 				{shows("motion") && (
 					<section className="tl2-elgroup" aria-label="Motion elements">
 						<CustomTemplatesBlock
 							heading="Motion"
+							group="motion"
 							kind="text"
 							kinds={MOTION_KINDS}
 							brand={brand}
@@ -149,18 +139,7 @@ export function ElementsPanel({
 								if (item.kind === "text") onPlaceCustomText(item.preset, item.defaultParams);
 							}}
 							onPlaceComposition={onPlaceComposition}
-						>
-							<MediaGrid label="Motion elements" min={72} density="compact">
-								{motions.map((item) =>
-									textTile(
-										item.preset,
-										item.label,
-										textPresetSampleOr(item.preset, item.label),
-										() => onAddText(item.preset),
-									),
-								)}
-							</MediaGrid>
-						</CustomTemplatesBlock>
+						></CustomTemplatesBlock>
 					</section>
 				)}
 			</>

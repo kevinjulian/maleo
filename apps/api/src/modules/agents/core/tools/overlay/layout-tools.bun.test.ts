@@ -34,7 +34,7 @@ const job = (): AgentJob => ({
 			content: "Hi",
 			startSec: 0,
 			durationSec: 2,
-			preset: "title",
+			preset: "plain",
 			layout: { xPct: 10, yPct: 60 },
 			track: 0,
 		},

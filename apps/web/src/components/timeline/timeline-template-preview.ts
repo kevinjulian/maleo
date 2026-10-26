@@ -8,11 +8,11 @@ import { StoryboardReel, type Storyboard } from "@maleo/video/composition";
 import { absolutizeStoryboard } from "@models/storyboard/storyboard-mapper.ts";
 import {
 	DEFAULT_TIMELINE_TEMPLATE,
+	PLAIN_TEXT_AUTHOR_STYLE,
 	resolveTimelineIntroTextPreset,
 	type TimelineTemplate,
 	type TimelineTemplateInput,
 } from "@maleo/shared";
-import type { TemplateParams, TextPreset } from "@maleo/shared";
 import {
 	resolveTimelineTemplatePreviewMusic,
 	resolveTimelineTemplatePreviewSfx,
@@ -80,12 +80,6 @@ export function templateInput(template: TimelineTemplate): TimelineTemplateInput
 	};
 }
 
-function previewPresetParams(preset: TextPreset, title: string): TemplateParams | undefined {
-	if (preset === "rve-cinematic-title-intro") return { title, subtitle: "Framework preview" };
-	if (preset === "rve-countdown-intro") return { seconds: 3 };
-	return undefined;
-}
-
 export function buildTimelineTemplatePreview(
 	template: TimelineTemplateInput,
 	sectionPreviewAudio?: TimelineTemplatePreviewAudio | null,
@@ -100,33 +94,23 @@ export function buildTimelineTemplatePreview(
 	const secondInternalSceneStartSec = roundSec(secondStartSec + sectionSpan / 2);
 	const previewDurationSec = timelineTemplatePreviewDuration(template);
 	const textOverlays: NonNullable<Storyboard["textOverlays"]> = [];
-	if (template.introTextPreset && template.sectionTitlePolicy !== "none")
+	if (introPreset && template.sectionTitlePolicy !== "none")
 		textOverlays.push({
-			content:
-				introPreset === "rve-countdown-intro"
-					? "3\nGO!"
-					: introPreset === "section-card"
-						? "Opening framework"
-						: "A Better Opening\nSection 1",
+			content: "A Better Opening\nSection 1",
 			startSec: 0,
 			durationSec: template.introTitleDurationSec,
 			preset: introPreset,
-			params: previewPresetParams(introPreset, "A Better Opening"),
+			style: { ...PLAIN_TEXT_AUTHOR_STYLE },
 			track: 0,
 			layout: { xPct: 7, yPct: 8, widthPct: 86, fit: "contain" },
 		});
-	if (template.sectionTitlePolicy === "every_section" && template.sectionTextPreset)
+	if (template.sectionTitlePolicy === "every_section" && sectionPreset)
 		textOverlays.push({
-			content:
-				sectionPreset === "rve-countdown-intro"
-					? "3\nGO!"
-					: sectionPreset === "section-card"
-						? "What changes next?"
-						: "What Changes Next?\nSection 2+",
+			content: "What Changes Next?\nSection 2+",
 			startSec: secondStartSec,
 			durationSec: template.introTitleDurationSec,
 			preset: sectionPreset,
-			params: previewPresetParams(sectionPreset, "What Changes Next?"),
+			style: { ...PLAIN_TEXT_AUTHOR_STYLE },
 			track: 0,
 			layout: { xPct: 7, yPct: 8, widthPct: 86, fit: "contain" },
 		});

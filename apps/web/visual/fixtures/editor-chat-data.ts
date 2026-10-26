@@ -167,7 +167,7 @@ const TEXT_CLIP = {
 		start: 4,
 		dur: 4,
 		track: 1,
-		preset: "title",
+		preset: "plain",
 		layout: { xPct: 6, yPct: 12, widthPct: 88, fit: "contain" },
 	},
 };

@@ -369,7 +369,7 @@ describe("the read drops stored infographic content", () => {
 		startSec: 0,
 		durationSec: 2,
 		track: 0,
-		text: { id: 1, content: "Hello", start: 0, dur: 2, preset: "title", track: 0 },
+		text: { id: 1, content: "Hello", start: 0, dur: 2, preset: "plain", track: 0 },
 	};
 	const infographicClip = (id: number, track: number) => ({
 		id: `infographic:${id}`,

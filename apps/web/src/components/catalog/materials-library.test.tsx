@@ -61,7 +61,7 @@ describe("library vocabulary", () => {
 		const html = headingOf("elements");
 		expect(html).toContain(">Elements<");
 		expect(html).not.toContain(">Custom Elements<");
-		expect(html).toContain("Placeable timeline building blocks");
+		expect(html).toContain("Plain text, five shapes, and motion compositions you create.");
 		expect(html).not.toContain("default");
 	});
 

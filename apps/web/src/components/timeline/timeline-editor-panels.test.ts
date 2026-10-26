@@ -1,25 +1,13 @@
-import { describe, expect, it } from "vite-plus/test";
-import { findTextTemplate } from "@models/clip-templates/registry.ts";
-import { textTemplateValuesFromClip } from "./timeline-editor-panels.tsx";
-
-describe("text template inspector values", () => {
-	it("derives generated cinematic title fields from rendered clip content", () => {
-		const template = findTextTemplate("rve-cinematic-title-intro");
-		expect(
-			textTemplateValuesFromClip(template, "rve-cinematic-title-intro", "Mulai dari Dalam"),
-		).toMatchObject({
-			title: "Mulai dari Dalam",
-			subtitle: "A Cinematic Experience",
-		});
-	});
-
-	it("maps multiline generated content onto structured text fields", () => {
-		const template = findTextTemplate("rve-lower-third");
-		expect(
-			textTemplateValuesFromClip(template, "rve-lower-third", "Kevin\nDirector"),
-		).toMatchObject({
-			name: "Kevin",
-			role: "Director",
-		});
-	});
+import { expect, test } from "vite-plus/test";
+import { findTextTemplate, TEMPLATE_ITEMS } from "@models/clip-templates/registry.ts";
+test("retained catalogue has one text primitive and five shapes", () => {
+	expect(TEMPLATE_ITEMS).toHaveLength(6);
+	expect(findTextTemplate("shape-star")?.fields.map((f) => f.key)).toEqual([
+		"fill",
+		"stroke",
+		"strokeWidth",
+		"opacity",
+	]);
+	expect(findTextTemplate("shape-rect")?.fields.map((f) => f.key)).toContain("radius");
+	expect(findTextTemplate("plain")?.fields).toEqual([]);
 });

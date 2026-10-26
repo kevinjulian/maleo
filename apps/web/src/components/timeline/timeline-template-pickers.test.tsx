@@ -6,13 +6,7 @@ import { AccordionSection } from "./clip-canvas.tsx";
 
 describe("timeline template selection pickers", () => {
 	test("offers every supported section-title preset plus none", () => {
-		expect(TIMELINE_TITLE_CHOICES.map((choice) => choice.value)).toEqual([
-			"",
-			"chapter",
-			"cinematic-title-intro",
-			"section-card",
-			"countdown-intro",
-		]);
+		expect(TIMELINE_TITLE_CHOICES.map((choice) => choice.value)).toEqual(["", "plain"]);
 	});
 
 	test("reuses playable stock audio rows for SFX selection", () => {

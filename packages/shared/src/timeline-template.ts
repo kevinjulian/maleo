@@ -150,7 +150,12 @@ const timelineTemplateFieldsSchema = z
 	.object({
 		name: z.string().trim().min(1).max(80),
 		description: z.string().trim().max(240).default(""),
-		introTextPreset: z.string().trim().max(80).default("chapter"),
+		introTextPreset: z
+			.preprocess(
+				(value) => (typeof value === "string" && value !== "plain" ? "" : value),
+				z.enum(["plain", ""]),
+			)
+			.default("plain"),
 		introEntrySfx: z.string().trim().max(160).default("subtle transition stinger"),
 		introEntrySfxUrl: timelineAssetUrlSchema.default(""),
 		introLeadInSec: z.number().nonnegative().default(0.6),
@@ -159,7 +164,12 @@ const timelineTemplateFieldsSchema = z
 		introEntrySfxOffsetSec: z.number().nonnegative().default(0),
 		sectionGapSec: z.number().nonnegative().default(0.6),
 		sectionTitlePolicy: z.enum(["none", "first_only", "every_section"]).default("every_section"),
-		sectionTextPreset: z.string().trim().max(80).default("chapter"),
+		sectionTextPreset: z
+			.preprocess(
+				(value) => (typeof value === "string" && value !== "plain" ? "" : value),
+				z.enum(["plain", ""]),
+			)
+			.default("plain"),
 		sceneEntrySfx: z.string().trim().max(160).default(""),
 		sceneEntrySfxUrl: timelineAssetUrlSchema.default(""),
 		// Background music, shaped like the SFX fields above: a cue resolved against the
@@ -211,8 +221,8 @@ export const ANIMATED_SYSTEMS_EXPLAINER_TEMPLATE_ID = "timeline-animated-systems
 export const STORY_TITLE_ID_BASE = 51_000_000;
 export const DEFAULT_TIMELINE_TEMPLATE: TimelineTemplateInput = {
 	name: "Documentary flow",
-	description: "Narration-first sections with chapter motion and entry accents.",
-	introTextPreset: "chapter",
+	description: "Narration-first sections with plain titles and entry accents.",
+	introTextPreset: "plain",
 	introEntrySfx: "subtle transition stinger",
 	introEntrySfxUrl: "",
 	introLeadInSec: 0.6,
@@ -221,7 +231,7 @@ export const DEFAULT_TIMELINE_TEMPLATE: TimelineTemplateInput = {
 	introEntrySfxOffsetSec: 0,
 	sectionGapSec: 0.6,
 	sectionTitlePolicy: "every_section",
-	sectionTextPreset: "chapter",
+	sectionTextPreset: "plain",
 	sceneEntrySfx: "",
 	sceneEntrySfxUrl: "",
 	musicCue: "calm ambient background",
@@ -247,7 +257,7 @@ export const ANIMATED_SYSTEMS_EXPLAINER_TEMPLATE: TimelineTemplateInput = {
 	name: "Animated systems explainer",
 	description:
 		"Question-led sections with clear diagrams, symbolic animation, and explanatory visual beats.",
-	introTextPreset: "section-card",
+	introTextPreset: "plain",
 	introEntrySfx: "soft whoosh",
 	introEntrySfxUrl: "",
 	introLeadInSec: 0.4,
@@ -256,7 +266,7 @@ export const ANIMATED_SYSTEMS_EXPLAINER_TEMPLATE: TimelineTemplateInput = {
 	introEntrySfxOffsetSec: 0,
 	sectionGapSec: 0.45,
 	sectionTitlePolicy: "every_section",
-	sectionTextPreset: "section-card",
+	sectionTextPreset: "plain",
 	sceneEntrySfx: "subtle pop",
 	sceneEntrySfxUrl: "",
 	musicCue: "playful pizzicato",
@@ -304,21 +314,10 @@ export const TIMELINE_TEMPLATE_FIXTURES: readonly TimelineTemplateFixture[] = [
 	},
 ];
 
-/* Derived with `Extract` rather than written out, so the subset relation to
- * `TextPreset` is enforced instead of coincidental. It was already a subset —
- * which is why the three `as TextPreset` casts at the call sites narrowed
- * nothing — but nothing said so, and dropping a member from `TEXT_PRESETS` would
- * have left this naming a preset that no longer exists. */
-export type TimelineIntroTextPreset = Extract<
-	TextPreset,
-	"chapter" | "rve-cinematic-title-intro" | "section-card" | "rve-countdown-intro"
->;
-
+/** Retired stored selections are disabled; new choices are plain text or none. */
+export type TimelineIntroTextPreset = Extract<TextPreset, "plain"> | "";
 export function resolveTimelineIntroTextPreset(preset: string): TimelineIntroTextPreset {
-	if (preset === "cinematic-title-intro") return "rve-cinematic-title-intro";
-	if (preset === "countdown-intro") return "rve-countdown-intro";
-	if (preset === "section-card") return "section-card";
-	return "chapter";
+	return preset === "plain" ? "plain" : "";
 }
 
 export function isStoryTitleOverlayId(id: number | undefined): boolean {

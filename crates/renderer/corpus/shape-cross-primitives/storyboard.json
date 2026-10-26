@@ -1,0 +1,109 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#10182b",
+	"accentColor": "#f09522",
+	"showLabels": false,
+	"textOverlays": [
+		{
+			"preset": "shape-cross",
+			"content": "",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 0,
+			"params": {
+				"fill": "#ff3b64",
+				"strokeWidth": 0
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 8,
+				"widthPct": 32,
+				"heightPct": 14,
+				"rotationDeg": 0
+			}
+		},
+		{
+			"preset": "shape-cross",
+			"content": "",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 1,
+			"params": {
+				"fill": "transparent",
+				"stroke": "#00ffb3",
+				"strokeWidth": 12
+			},
+			"layout": {
+				"xPct": 55,
+				"yPct": 8,
+				"widthPct": 32,
+				"heightPct": 14,
+				"rotationDeg": 0
+			}
+		},
+		{
+			"preset": "shape-cross",
+			"content": "",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 2,
+			"params": {
+				"fill": "#ffc94a",
+				"stroke": "#fff",
+				"strokeWidth": 6
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 30,
+				"widthPct": 20,
+				"heightPct": 30,
+				"rotationDeg": 18
+			}
+		},
+		{
+			"preset": "shape-cross",
+			"content": "",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 3,
+			"params": {
+				"fill": "#ee00ff",
+				"opacity": 0
+			},
+			"layout": {
+				"xPct": 55,
+				"yPct": 30,
+				"widthPct": 32,
+				"heightPct": 14,
+				"rotationDeg": 0
+			}
+		},
+		{
+			"preset": "shape-cross",
+			"content": "",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 4,
+			"params": {
+				"fill": "transparent",
+				"stroke": "#fff",
+				"strokeWidth": 0,
+				"opacity": 0
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 72,
+				"widthPct": 32,
+				"heightPct": 14,
+				"rotationDeg": 0
+			}
+		}
+	]
+}

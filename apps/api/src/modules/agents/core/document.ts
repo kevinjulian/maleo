@@ -174,7 +174,9 @@ export function agentEditorViews(job: AgentJob): AgentEditorViews {
 		start: t.startSec,
 		dur: t.durationSec,
 		track: t.track ?? 0,
-		preset: sceneUnion("textOverlay.preset", t.preset, TEXT_PRESETS) ?? "title",
+		preset: sceneUnion("textOverlay.preset", t.preset, TEXT_PRESETS) ?? "plain",
+		style: t.style,
+		params: t.params,
 		// SAFETY: the agent wire's `AgentClipLayout`, carried as in `asSceneUnions` above.
 		layout: t.layout as TextOverlay["layout"],
 	}));

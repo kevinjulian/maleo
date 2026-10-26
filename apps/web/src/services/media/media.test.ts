@@ -192,7 +192,7 @@ describe("waveform summarisation", () => {
 		if (short.type !== "result" || long.type !== "result") throw new Error("expected results");
 		/* And the summary grows with the asset, as a summary should. */
 		expect(long.payload.buckets.length).toBeGreaterThan(short.payload.buckets.length);
-	});
+	}, 20_000); // Allocation check: 610 audio ranges exceed the default timeout under coverage.
 
 	test("decimation reports peaks rather than means", () => {
 		/* A quiet passage with one transient. A mean would flatten it into the

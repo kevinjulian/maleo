@@ -154,7 +154,7 @@
 					"directionFingerprint": "<volatile>",
 					"directionInputs": {
 						"materials": "{\"visual\":\"\",\"rules\":\"\"}",
-						"templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+						"templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"plain\",\"sectionTextPreset\":\"plain\"}"
 					},
 					"clarification": {
 						"batchId": "pre-baseline",
@@ -344,7 +344,7 @@
 			"directionFingerprint": "<volatile>",
 			"directionInputs": {
 				"materials": "{\"visual\":\"\",\"rules\":\"\"}",
-				"templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"chapter\",\"sectionTextPreset\":\"chapter\"}"
+				"templateConstraints": "{\"maxVisualBeatSec\":6,\"staticSceneMovement\":false,\"overrideSceneTransition\":false,\"sceneTransition\":\"fade\",\"sectionTitlePolicy\":\"every_section\",\"introTextPreset\":\"plain\",\"sectionTextPreset\":\"plain\"}"
 			},
 			"clarification": {
 				"batchId": "pre-baseline",

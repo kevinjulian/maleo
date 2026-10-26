@@ -9,7 +9,9 @@ import { EDITOR_CHAT_PROJECT_ID, editorChatProjectDetail } from "./fixtures/edit
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "fixtures/api-editor-chat.har");
 for (const width of [1440, 320])
 	for (const theme of ["light", "dark"] as const)
-		test(`basic elements and text keys at ${width}px ${theme}`, async ({ browser }, testInfo) => {
+		test(`retained elements and text keys at ${width}px ${theme}`, async ({
+			browser,
+		}, testInfo) => {
 			test.setTimeout(90_000);
 			const phone = width === 320;
 			const context = await browser.newContext({
@@ -31,7 +33,7 @@ for (const width of [1440, 320])
 									kind: "text",
 									label: "Saved rectangle",
 									intent: "Static shape",
-									category: "text",
+									category: "shape",
 									base: "shape-rect",
 									config: {},
 								},
@@ -69,7 +71,7 @@ for (const width of [1440, 320])
 							{
 								id: 77,
 								content: "Existing text",
-								preset: "title",
+								preset: "plain",
 								start: 0,
 								dur: 3,
 								track: 0,
@@ -129,8 +131,15 @@ for (const width of [1440, 320])
 				await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 				await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 				await page.locator('[data-clipid="text:77"]').click();
-				const basics = page.getByRole("region", { name: "Basic elements", exact: true });
-				for (const [index, label] of ["Text", "Rectangle", "Circle"].entries()) {
+				const basics = page.getByRole("list", { name: "Text presets", exact: true });
+				for (const [index, label] of [
+					"Text",
+					"Rectangle",
+					"Circle",
+					"Triangle",
+					"Star",
+					"Cross",
+				].entries()) {
 					await openElements();
 					await expect(basics).toBeVisible();
 					if (index === 0) {
@@ -139,14 +148,14 @@ for (const width of [1440, 320])
 						).toHaveCount(1);
 						await expect(basics.locator(".fc-template-tile")).toHaveCount(0);
 						const tabs = page.getByRole("tablist", { name: "Element category", exact: true });
-						await expect(tabs.getByRole("tab")).toHaveCount(5);
+						await expect(tabs.getByRole("tab")).toHaveCount(4);
 						await expect(tabs.locator("svg")).toHaveCount(0);
 						const searchBox = (await page.locator('[data-slot="search-field"]').boundingBox())!;
 						const tabsBox = (await tabs.boundingBox())!;
 						expect(tabsBox.y).toBeGreaterThanOrEqual(searchBox.y + searchBox.height);
 						await tabs.getByRole("tab", { name: "All", exact: true }).focus();
 						await page.keyboard.press("ArrowRight");
-						await expect(page.getByRole("tabpanel", { name: "Basic", exact: true })).toBeVisible();
+						await expect(page.getByRole("tabpanel", { name: "Text", exact: true })).toBeVisible();
 						await page.keyboard.press("Home");
 						await expect(tabs.getByRole("tab", { name: "All", exact: true })).toHaveAttribute(
 							"aria-selected",
@@ -158,11 +167,14 @@ for (const width of [1440, 320])
 						expect(size.width).toBeLessThanOrEqual(110);
 						expect(size.height).toBeCloseTo(size.width, 0);
 						await expect(basics.locator(".ui-media-copy")).toHaveCount(0);
+						await expect(
+							page.getByRole("button", { name: /New (text|shape) variant/ }),
+						).toHaveCount(0);
 						await page
 							.getByRole("searchbox", { name: "Search elements", exact: true })
 							.fill("circle");
 						const shapes = page.getByRole("region", { name: "Shape elements", exact: true });
-						await expect(shapes.getByRole("button")).toHaveCount(1);
+						await expect(shapes.locator('[data-slot="media-card"]')).toHaveCount(1);
 						await expect(
 							shapes.getByRole("button", { name: "Add Circle", exact: true }),
 						).toBeVisible();
@@ -175,17 +187,31 @@ for (const width of [1440, 320])
 							: page.getByRole("region", { name: "Shape elements", exact: true });
 					const add = source.getByRole("button", { name: `Add ${label}`, exact: true });
 					if (phone) await add.tap();
-					else await add.click();
+					else if (label === "Triangle") {
+						await add.focus();
+						await page.keyboard.press("Enter");
+					} else await add.click();
 					await expect.poll(() => textClips().length).toBe(index + 2);
 					expect(textClips().at(-1)?.text?.layout?.animation).toBeUndefined();
 					expect(textClips()[0]?.text?.layout?.animation).toEqual(oldKeys);
+					if (label === "Circle" && !phone) {
+						const box = page.getByRole("group", { name: "Selected clip transform", exact: true });
+						await expect(box).toBeVisible();
+						const bounds = (await box.boundingBox())!;
+						expect(Math.abs(bounds.width - bounds.height)).toBeLessThan(2);
+					}
 				}
 				expect(textClips().map((c) => c.text?.preset)).toEqual([
-					"title",
+					"plain",
 					"plain",
 					"shape-rect",
 					"shape-circle",
+					"shape-triangle",
+					"shape-star",
+					"shape-cross",
 				]);
+				const placedCircleLayout = textClips().find((clip) => clip.text?.preset === "shape-circle")!
+					.text!.layout;
 				// Drag uses the same static preset and normal clip placement path.
 				await openElements();
 				const transfer = await page.evaluateHandle(() => new DataTransfer());
@@ -201,7 +227,7 @@ for (const width of [1440, 320])
 					clientX: box.x + 80,
 					clientY: box.y + box.height / 2,
 				});
-				await expect.poll(() => textClips().length).toBe(5);
+				await expect.poll(() => textClips().length).toBe(8);
 				const plain = textClips()[1]!;
 				await page.locator(`[data-clipid="${plain.id}"]`).click();
 				if (phone) await page.locator('.tl2-clipbar-groups [aria-label="Text"]').tap();
@@ -210,6 +236,12 @@ for (const width of [1440, 320])
 						.locator(".tl2-clippanel")
 						.getByRole("button", { name: "Text", exact: true })
 						.click();
+				const content = page.getByPlaceholder("Prompt / text…", { exact: true });
+				await content.fill("Edited plain text");
+				await content.press("Tab");
+				await expect
+					.poll(() => saved.clips.find((clip) => clip.id === plain.id)?.text?.content)
+					.toBe("Edited plain text");
 				await expect(page.locator(".tl2-anim")).toHaveCount(0);
 				await expect(page.getByRole("combobox", { name: "Weight", exact: true })).toHaveAttribute(
 					"data-value",
@@ -240,12 +272,18 @@ for (const width of [1440, 320])
 				await page.reload();
 				await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 				expect(textClips().map((c) => c.text?.preset)).toEqual([
-					"title",
+					"plain",
 					"plain",
 					"shape-rect",
 					"shape-circle",
+					"shape-triangle",
+					"shape-star",
+					"shape-cross",
 					"shape-rect",
 				]);
+				expect(
+					textClips().find((clip) => clip.text?.preset === "shape-circle")?.text?.layout,
+				).toEqual(placedCircleLayout);
 				expect(keys()?.[0]?.v).toBe(20);
 				expect(textClips()[0]?.text?.layout?.animation).toEqual(oldKeys);
 				await page.locator('[data-clipid="text:77"]').click();
@@ -281,19 +319,18 @@ for (const width of [1440, 320])
 				).toBeVisible();
 				await page.locator(".fc-ctx-scrim").click({ position: { x: width - 10, y: 120 } });
 				await custom.click();
-				await expect.poll(() => textClips().length).toBe(6);
+				await expect.poll(() => textClips().length).toBe(9);
 				expect(textClips().at(-1)?.text?.preset).toBe("shape-rect");
 				expect(textClips().at(-1)?.text?.layout?.animation).toBeUndefined();
 				await openElements();
 				await page.getByRole("searchbox", { name: "Search elements", exact: true }).fill("");
 				const category = page.getByRole("tablist", { name: "Element category", exact: true });
 				await category.getByRole("tab", { name: "Text", exact: true }).click();
-				const title = page.getByRole("button", { name: "Add Title", exact: true });
-				await expect(title).toContainText(/Launch Moment/i);
+				const title = page.getByRole("button", { name: "Add Text", exact: true });
 				expect(await title.textContent()).not.toContain("Existing text");
 				await title.click();
-				await expect.poll(() => textClips().length).toBe(7);
-				expect(textClips().at(-1)?.text?.content).toBe("Launch Moment");
+				await expect.poll(() => textClips().length).toBe(10);
+				expect(textClips().at(-1)?.text?.content).toBe("Text");
 				expect(textClips()[0]?.text?.content).toBe("Existing text");
 				expect(textClips()[0]?.text?.layout?.animation).toEqual(oldKeys);
 				await openElements();
@@ -304,6 +341,59 @@ for (const width of [1440, 320])
 						.locator(".tl2-elgroup-h")
 						.getByRole("button", { name: "New motion", exact: true }),
 				).toBeVisible();
+				await page.getByRole("button", { name: "Hide panel", exact: true }).click();
+				for (const preset of [
+					"shape-rect",
+					"shape-circle",
+					"shape-triangle",
+					"shape-star",
+					"shape-cross",
+				]) {
+					const shape = textClips().find((clip) => clip.text?.preset === preset)!;
+					await page.locator(`[data-clipid="${shape.id}"]`).click();
+					if (phone) await page.locator('.tl2-clipbar-groups [aria-label="Shape"]').tap();
+					else
+						await page
+							.locator(".tl2-clippanel")
+							.getByRole("button", { name: "Shape", exact: true })
+							.click();
+					const stroke = page.getByRole("spinbutton", { name: "Stroke width", exact: true });
+					await expect(stroke).toBeVisible();
+					await expect(
+						page.getByRole("spinbutton", { name: "Corner radius", exact: true }),
+					).toHaveCount(preset === "shape-rect" ? 1 : 0);
+					await expect(page.getByRole("combobox", { name: "Weight", exact: true })).toHaveCount(0);
+					await stroke.fill("9");
+					await stroke.press("Tab");
+					const width = () =>
+						saved.clips.find((clip) => clip.id === shape.id)?.text?.params?.strokeWidth;
+					await expect.poll(width).toBe(9);
+					await close();
+					await page.getByRole("button", { name: "Undo", exact: true }).click();
+					await expect.poll(width).toBe(0);
+					await page.getByRole("button", { name: "Redo", exact: true }).click();
+					await expect.poll(width).toBe(9);
+				}
+				const star = textClips().find((clip) => clip.text?.preset === "shape-star")!;
+				saved = { ...saved, ...{ trackFlags: { [star.track]: { locked: true } } } };
+				await page.reload();
+				await page.getByRole("tab", { name: "Timeline", exact: true }).click();
+				await page.locator(`[data-clipid="${star.id}"]`).click();
+				await expect(page.locator(`[data-clipid="${star.id}"]`)).toHaveAttribute(
+					"aria-selected",
+					"true",
+				);
+				await page.screenshot({ path: testInfo.outputPath("locked-shape.png") });
+				if (phone) await page.locator('.tl2-clipbar-groups [aria-label="Shape"]').tap();
+				else
+					await page
+						.locator(".tl2-clippanel")
+						.getByRole("button", { name: "Shape", exact: true })
+						.click();
+				await expect(
+					page.getByRole("spinbutton", { name: "Stroke width", exact: true }),
+				).toBeDisabled();
+				expect(saved.clips.find((clip) => clip.id === star.id)?.text?.params?.strokeWidth).toBe(9);
 				expect(errors).toEqual([]);
 			} finally {
 				await context.close();

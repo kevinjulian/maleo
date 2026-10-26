@@ -23,7 +23,7 @@ const SECOND_TEXT = {
 		start: 4,
 		dur: 4,
 		track: 2,
-		preset: "title",
+		preset: "plain",
 		layout: { xPct: 50, yPct: 60, widthPct: 30, heightPct: 20, fit: "contain" },
 	},
 };

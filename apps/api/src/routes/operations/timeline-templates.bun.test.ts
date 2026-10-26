@@ -66,7 +66,7 @@ describe("global timeline templates", () => {
 		const input = {
 			name: "Clean explainer",
 			description: "Calm explainers",
-			introTextPreset: "cinematic-title-intro",
+			introTextPreset: "plain",
 			introEntrySfx: "soft swoosh accent",
 			introEntrySfxUrl: "https://audio.test/section.mp3",
 			introLeadInSec: 9,
@@ -75,7 +75,7 @@ describe("global timeline templates", () => {
 			introEntrySfxOffsetSec: 0.15,
 			sectionGapSec: 0.8,
 			sectionTitlePolicy: "every_section",
-			sectionTextPreset: "section-card",
+			sectionTextPreset: "plain",
 			sceneEntrySfx: "gentle interface tick",
 			sceneEntrySfxUrl: "https://audio.test/scene.mp3",
 			sentenceVoiceoverPauseSec: 0.2,

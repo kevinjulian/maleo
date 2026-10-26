@@ -58,7 +58,12 @@ test(
 				encoding: "utf8",
 			});
 			expect(modified.status).toBe(0);
-			for (const name of modified.stdout.split("\0").filter(Boolean)) {
+			const untracked = spawnSync("git", ["ls-files", "--others", "--exclude-standard", "-z"], {
+				cwd: root,
+				encoding: "utf8",
+			});
+			expect(untracked.status).toBe(0);
+			for (const name of `${modified.stdout}\0${untracked.stdout}`.split("\0").filter(Boolean)) {
 				const target = join(fixture, name);
 				if (!existsSync(join(root, name))) rmSync(target, { force: true });
 				else {

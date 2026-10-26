@@ -162,6 +162,19 @@ export function createCommandSync(input: CommandSyncInput): CommandSync {
 		rejected: readonly { clientCommandId: string; kind: string; message: string }[],
 	): void => {
 		if (!entries.length && !accepted.length && !rejected.length) return;
+		if (
+			entries.some((entry) => entry.snapshot && entry.actor === "visual-cleanup") ||
+			rejected.some((entry) => entry.kind === "visual_contract_reload")
+		) {
+			disposed = true;
+			diverged(
+				new EngineCommandError(
+					"visual_contract_reload",
+					"Visual elements changed during migration. Reload this project before editing.",
+				),
+			);
+			return;
+		}
 		const current = scope();
 		const delivered = entries.flatMap((entry) => entry.commands);
 		serverLibrary = accepted

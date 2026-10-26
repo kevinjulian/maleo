@@ -7,6 +7,9 @@
 export { measureAudioDurationSec, measureWavDurationSec } from "./audio-duration.ts";
 import {
 	STORY_TITLE_ID_BASE,
+	PLAIN_TEXT_AUTHOR_STYLE,
+	resolveTimelineIntroTextPreset,
+	type ClipTextStyle,
 	wordsPerSecWithBreaths,
 	type NarrationBreathRate,
 } from "@maleo/shared";
@@ -977,13 +980,14 @@ export function buildStorySceneAccentHits(
 	return hits;
 }
 
-// Minimal text-overlay shape (subset of AgentTextOverlay) for animated section titles.
+// Plain section titles with explicit authored style and placement.
 export interface LongformTextOverlay {
 	id: number;
 	content: string;
 	startSec: number;
 	durationSec: number;
 	preset: string;
+	style: ClipTextStyle;
 	layout: { xPct: number; yPct: number; widthPct: number; heightPct: number };
 	track: number;
 }
@@ -991,13 +995,10 @@ export interface LongformTextOverlay {
 /** How long a section title card holds on screen — long enough to register as a chapter
  *  beat, capped so it never lingers; clamped to the section's own audio on short shots. */
 export const STORY_TITLE_MAX_SEC = 4;
-/** Renderer preset that styles the card as a bold chapter title (see textPresetStyle). */
-export const STORY_TITLE_PRESET = "chapter";
+/** Retained title primitive, with style stored on each generated clip. */
+export const STORY_TITLE_PRESET = "plain";
 
-/** One animated chapter card per section (at its measured start), so the viewer gets a
- *  clear, strong beat at each boundary instead of an unbroken stream of images. The
- *  renderer reveals it with a fade + rise and styles it via the "chapter" preset. Sits
- *  in a raised lower band so it reads big without burying the subject or the captions. */
+/** One title at each selected section boundary, in a raised lower band. */
 export function buildStoryTitleOverlays(
 	sections: StorySection[],
 	opts: {
@@ -1030,8 +1031,9 @@ export function buildStoryTitleOverlays(
 				) / 1000,
 			preset:
 				index === 0
-					? (opts.introPreset ?? STORY_TITLE_PRESET)
-					: (opts.sectionPreset ?? STORY_TITLE_PRESET),
+					? resolveTimelineIntroTextPreset(opts.introPreset ?? STORY_TITLE_PRESET)
+					: resolveTimelineIntroTextPreset(opts.sectionPreset ?? STORY_TITLE_PRESET),
+			style: { ...PLAIN_TEXT_AUTHOR_STYLE, weight: 700 },
 			layout: { xPct: 6, yPct: 60, widthPct: 88, heightPct: 28 },
 			track: opts.track ?? STORY_TIMELINE_LANES.introMotion,
 		}))

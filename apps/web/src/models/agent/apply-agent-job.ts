@@ -209,7 +209,7 @@ export function mergeAgentTextOverlays(
 			(title) =>
 				clip.content === title.content &&
 				Math.abs(clip.start - title.startSec) < 0.01 &&
-				(clip.preset ?? "title") === (title.preset ?? "title"),
+				(clip.preset ?? "plain") === (title.preset ?? "plain"),
 		);
 
 	const map = new Map<number, TextOverlay>(
@@ -233,7 +233,9 @@ export function mergeAgentTextOverlays(
 			content: t.content,
 			start,
 			dur,
-			preset: oneOf(t.preset, TEXT_PRESETS) ?? "title",
+			preset: oneOf(t.preset, TEXT_PRESETS) ?? "plain",
+			style: t.style,
+			params: t.params,
 			track,
 			layout: t.layout ? normalizeLayout(t.layout, "text") : undefined,
 		});

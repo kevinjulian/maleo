@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1080,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "shapes",
+			"rect": [0, 200, 1080, 900]
+		}
+	],
+	"options": ["shape.aspect.square"]
+}

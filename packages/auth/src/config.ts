@@ -21,6 +21,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { getMigrations } from "better-auth/db/migration";
 import { openDb, runtimeGeneration, runtimeSql } from "@maleo/db/connection";
 import { AUTH_OWNED_TABLES } from "@maleo/db/schema";
+import type { Sql } from "@maleo/db/pg";
 import { listWorkspaces } from "@maleo/db/workspaces";
 import { addWorkspaceMember } from "@maleo/db/workspace-members";
 import { invitationAuthorisation } from "./invitation-context.ts";
@@ -75,23 +76,26 @@ async function accountCount(): Promise<number> {
  * to Kysely's PostgresDialect. Each connection is resolved from the runtime at
  * `connect()`, so the library follows the runtime rather than capturing one
  * pool — a test that resets the database, or a reconnect, is seen at once. */
-const runtimePool = {
-	async connect() {
-		const reserved = await (await runtimeSql()).reserve();
-		return {
-			async query(text: string, params: unknown[] = []) {
-				// SAFETY: Kysely binds only values its PostgresDialect already hands to
-				// `pg`, which postgres.js accepts as plain parameters.
-				const rows = await reserved.unsafe(text, params as never[]);
-				return { rows: [...rows], rowCount: rows.count, command: rows.command };
-			},
-			release() {
-				reserved.release();
-			},
-		};
-	},
-	async end() {},
-};
+function postgresPool(sql: () => Promise<Sql>) {
+	return {
+		async connect() {
+			const reserved = await (await sql()).reserve();
+			return {
+				async query(text: string, params: unknown[] = []) {
+					// SAFETY: Kysely binds only values its PostgresDialect already hands to
+					// `pg`, which postgres.js accepts as plain parameters.
+					const rows = await reserved.unsafe(text, params as never[]);
+					return { rows: [...rows], rowCount: rows.count, command: rows.command };
+				},
+				release() {
+					reserved.release();
+				},
+			};
+		},
+		async end() {},
+	};
+}
+const runtimePool = postgresPool(runtimeSql);
 
 const isProduction = (): boolean => process.env.NODE_ENV === "production";
 
@@ -140,9 +144,9 @@ const trustedOrigins = (): string[] => {
  * what a leaked key can do. */
 const API_KEY_RATE_LIMIT = { enabled: true, timeWindow: 60_000, maxRequests: 300 };
 
-const build = () =>
+const build = (database = runtimePool) =>
 	betterAuth({
-		database: runtimePool,
+		database,
 		// Without this the origin is inferred per request, which makes the origin
 		// check circular: an attacker's request supplies the value it is checked
 		// against. Unset in development, where everything is one loopback origin.
@@ -291,8 +295,10 @@ export { MODEL_NAMES };
  * @maleo/db owns every other one and leaves these alone (AUTH_OWNED_TABLES).
  *
  * Idempotent: `getMigrations` diffs the live database against the declared
- * shape and returns nothing to run when it already matches. */
-export async function ensureAuthTables(): Promise<void> {
-	const { runMigrations } = await getMigrations(getAuth().options);
+ * shape and returns nothing to run when it already matches. Maintenance may
+ * supply its own pool before runtime admission. */
+export async function ensureAuthTables(sql?: Sql): Promise<void> {
+	const auth = sql ? build(postgresPool(async () => sql)) : getAuth();
+	const { runMigrations } = await getMigrations(auth.options);
 	await runMigrations();
 }

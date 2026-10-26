@@ -31,6 +31,8 @@ import {
 	evaluateColorTrack,
 	retainClipAnimation,
 	KEYFRAME_EASINGS,
+	SHAPE_PRIMITIVES,
+	shapeGeometry,
 	type ValueKeyframe,
 	type ColorKeyframe,
 	type TimelineDoc,
@@ -105,6 +107,24 @@ const frames = Array.from({ length: lastFrame }, (_, frame) => {
 });
 
 const outputs: Array<[string, unknown]> = [
+	[
+		"shape-geometry.json",
+		SHAPE_PRIMITIVES.flatMap(({ preset }) =>
+			[
+				[200, 60, 8],
+				[60, 200, 0],
+				[0, 60, 8],
+				[60, 0, 0],
+				[5, 5, 100],
+			].map(([width, height, stroke]) => ({
+				preset,
+				width,
+				height,
+				stroke,
+				geometry: shapeGeometry(preset, width!, height!, stroke!, 12),
+			})),
+		),
+	],
 	["built-storyboard.json", storyboard],
 	["caption-timing.json", { cues: cues.map((c) => ({ ...c, type: "caption", track: 0 })), frames }],
 	["keyframe-timing.json", keyframeSamples()],

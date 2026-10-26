@@ -136,7 +136,7 @@ describe("clip templates", () => {
 		kind: "text",
 		label: "Lower third",
 		category: "text",
-		base: "lower-third",
+		base: "plain",
 	});
 
 	test("create, read and list", async () => {

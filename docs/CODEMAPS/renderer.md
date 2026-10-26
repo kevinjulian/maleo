@@ -33,7 +33,9 @@ storyboard JSON ──storyboard.rs──> Storyboard (drawn fields decoded, the
 | `src/scene/*.rs`           | One module per layer, ported from the composition source               |
 | `src/correction.rs`        | GPU brightness, contrast and saturation on straight sRGB channels      |
 | `src/blur.rs`              | Shadow alpha blur and full-color content blur, each in two GPU passes  |
-| `src/scene/text_motion.rs` | Plain-text box/style sampling and legacy normalized text motion        |
+| `src/scene/text_motion.rs` | Shared primitive/container box, style and animation sampling           |
+| `src/scene/shape.rs`       | Five shapes, shared-source geometry fixtures and physical strokes      |
+| `src/scene/composition.rs` | Versioned packed layers, span timing, stacking and primitive dispatch  |
 | `src/scene/mask.rs`        | Physical rectangle/ellipse geometry, inversion and SVG filter region   |
 | `src/scene/transition.rs`  | Placement-specific transitions, projection, clip paths and nesting     |
 | `src/scene/reveal.rs`      | Reveal timing, directions, dark/color phase layers and local textures  |
@@ -51,6 +53,13 @@ Image layout and plain-text animation reuse the host-free evaluators in
 with entering-key easing, endpoint holds and retained subranges. Legacy text
 `anim` uses normalized clip progress. Modern `layout.animation` takes precedence.
 Plain-text body/accent colors remain inert where the reference does not use them.
+Packed compositions use sampled outer foreground/accent colors as their palette.
+Version 1 and compatible unversioned bundles retain saved spans and relative
+starts. Inner `anim` stays normalized; inner local keys stretch with the saved
+span, while outer keys use clip-local seconds. Stable track sorting preserves
+input order for ties. Layers reuse the standalone primitive painters inside the
+sampled outer box. Invalid bundles fail decoding with their path; unsupported
+layer options/fonts remain in input-derived coverage at the layer path.
 
 `scene/image.rs` applies sampled outer position, scale, rotation and opacity.
 Crop and flips remain source-local. `scene/text_motion.rs` resolves text box,
@@ -179,3 +188,9 @@ avoids the fixed 4096-tile spill buffer that cleared complex full-frame scenes.
 `Gpu::draw` refuses deeper scenes explicitly. Shader/CPU constants and the Rust
 guard are checked together. Hardware measurements include register-pressure
 cost; no extra local mask raster copy is used as a workaround.
+
+Composition goldens retain original SSIM limits. The normalized text cases use
+`composition-geometry` at matching dimensions/frames for the unchanged two-pixel
+geometry gate: faint shadow tails differ by one or two bytes at the ink cutoff,
+while glyph bounds differ by one pixel. The companion adds an opaque padded text
+background; shape geometry, motion and outer timing stay identical.
