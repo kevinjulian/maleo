@@ -7,5 +7,6 @@
 			"name": "visual",
 			"rect": [0, 360, 1080, 1560]
 		}
-	]
+	],
+	"options": ["image.scene-crop"]
 }

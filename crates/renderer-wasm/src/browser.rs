@@ -112,7 +112,8 @@ impl Host {
         let Self { session, renderer, surface, .. } = self;
         let storyboard = session.storyboard().ok_or("no storyboard")?;
         let target = renderer.gpu().target(width, height);
-        self.coverage = renderer.draw(storyboard, frame, &target.create_view(&Default::default()), width, height)?;
+        self.coverage =
+            renderer.draw(storyboard, frame, &target.create_view(&Default::default()), width, height, (session.fps(), session.duration_frames()))?;
         let output = match surface.get_current_texture() {
             wgpu::CurrentSurfaceTexture::Success(texture) | wgpu::CurrentSurfaceTexture::Suboptimal(texture) => texture,
             other => return Err(format!("canvas texture unavailable: {other:?}")),

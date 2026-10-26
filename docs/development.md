@@ -380,6 +380,18 @@ elements the renderer does not draw yet. It needs a browser with WebGPU and a
 built module; without WebGPU the panel says so and the preview works as usual.
 Without the parameter the editor never requests the module.
 
+The compare renderer includes keyed layout/plain text, camera motion, local
+color correction, crop/flips, rectangle/ellipse masks and feather, supported
+blends, reveals, placement-specific transitions, timeline effects and scene
+decorations. Coverage still reports video media, visual templates and unbundled
+fonts. This does not switch normal preview or export away from Remotion.
+
+Option evidence lives in `corpus/manifest.json`; golden cases retain full-frame
+and region SSIM plus the two-pixel edge limit. Approved low-contrast cases can
+delegate geometry to a matching high-contrast companion with a recorded reason.
+Original SSIM checks remain. Grain's fixed SVG tile is rasterized in the pinned
+production browser; its recipe is `crates/renderer/assets/README.md`.
+
 Component stories run in Storybook: `bun run --cwd apps/web storybook` (port 6006) or `build-storybook`. Conventions are in `apps/web/stories/README.md`.
 
 ## The agent in development

@@ -1,0 +1,82 @@
+{
+	"scenes": [],
+	"hideBase": true,
+	"bgColor": "#182432",
+	"fgColor": "#fff",
+	"accentColor": "#ffd400",
+	"videoOverlays": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 7,
+				"yPct": 15,
+				"widthPct": 60,
+				"heightPct": 40,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 7
+							},
+							{
+								"t": 3,
+								"v": 25,
+								"easing": "in-out"
+							}
+						],
+						"yPct": [
+							{
+								"t": 0,
+								"v": 15
+							},
+							{
+								"t": 3,
+								"v": 30,
+								"easing": "out"
+							}
+						],
+						"scale": [
+							{
+								"t": 0,
+								"v": 0.8
+							},
+							{
+								"t": 3,
+								"v": 1.15,
+								"easing": "in",
+								"easingRange": [0.2, 0.8]
+							}
+						],
+						"rotationDeg": [
+							{
+								"t": 0,
+								"v": -15
+							},
+							{
+								"t": 3,
+								"v": 25,
+								"easing": "linear"
+							}
+						],
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.9
+							},
+							{
+								"t": 2,
+								"v": 0.35,
+								"easing": "hold"
+							}
+						]
+					}
+				}
+			}
+		}
+	]
+}

@@ -15,7 +15,7 @@ use vello::kurbo::{Affine, Join, Rect, Stroke};
 use vello::peniko::{Fill, ImageBrush, Mix};
 
 use super::text::{Font, WordBrush, layout, line_shift};
-use super::{Canvas, SILHOUETTE, Shadows, pixel_bounds};
+use super::{Canvas, SILHOUETTE, Treatments, pixel_bounds};
 use crate::coverage::caption_style;
 use crate::fonts::Fonts;
 use crate::paint::{Paint, Rgba, brush, parse_color, parse_paint};
@@ -244,7 +244,7 @@ fn fit(fonts: &mut Fonts, layouts: &mut LayoutContext<WordBrush>, cue: &Cue, fon
 /// Draws caption cue `index` at cue-local time `local_sec`.
 pub fn draw(
     canvas: &mut Canvas<'_>,
-    shadows: &mut dyn Shadows,
+    shadows: &mut dyn Treatments,
     fonts: &mut Fonts,
     layouts: &mut LayoutContext<WordBrush>,
     storyboard: &Storyboard,

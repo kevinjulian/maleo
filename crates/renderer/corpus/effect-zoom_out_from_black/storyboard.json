@@ -1,0 +1,20 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#101820",
+	"showLabels": false,
+	"effects": [
+		{
+			"effect": "zoom_out_from_black",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 1
+		}
+	]
+}

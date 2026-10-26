@@ -29,6 +29,22 @@ the Remotion License. Its company-size and use limits may require a paid license
 review current terms before commercial deployment. Packages declaring MIT keep
 their MIT terms.
 
+## Vendored Rust shader correction
+
+`vendor/vello_shaders` retains `vello_shaders` 0.11.0 from the Vello Authors,
+licensed under Apache-2.0 OR MIT. Both upstream license texts remain in that
+directory. Maleo modifies the medium-quality bilinear sampling branch of
+`shader/fine.wgsl` to compute fractions before adding atlas offsets and accumulate
+analytic area in geometry order. An opt-in raw image-quality mode reproduces
+Skia's four-bit premultiplied-byte source sampling; GPU treatment images retain
+standard filtering. Pixel presentations and solid effect plates opt into
+byte-opacity composition; ordinary blend groups retain Vello arithmetic.
+Shader and CPU coarse paths keep sixteen blend levels inline to avoid the
+fixed spill-buffer limit for supported compositor trees. Cargo uses
+the same corrected source for native and WASM builds. Source revision, registry
+checksum, changed-file hashes and replacement criteria are recorded in
+`vendor/vello_shaders/MALEO_PATCH.md`.
+
 ## Models and container images
 
 | Item                                                                                                            | Terms                                                               | How used                                                                                                                                  |
@@ -64,6 +80,9 @@ themselves, or use Inngest's commercial cloud, which the SSPL does not reach.
   renders of Maleo's own compositions, and synthetic media generated for it
   (gradients, grids and discs, no photographs). Both are distributed under MIT
   with repository source.
+- `crates/renderer/assets/grain.rgba` is a production-browser raster of Maleo's
+  constant SVG noise tile, distributed under MIT with its source. Its recipe
+  and hash are in `crates/renderer/assets/README.md`.
 - The Rust renderer bundles its fonts (`crates/renderer/fonts/`), all under the
   SIL Open Font License 1.1, with the license text beside them:
   - [Inter](https://github.com/rsms/inter) v20, the files `@remotion/google-fonts`

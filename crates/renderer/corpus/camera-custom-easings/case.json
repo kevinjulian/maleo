@@ -1,0 +1,18 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30, 60, 90, 119],
+	"regions": [
+		{
+			"name": "camera-easings",
+			"rect": [0, 0, 1080, 1800]
+		}
+	],
+	"options": [
+		"camera.easing.linear",
+		"camera.easing.in",
+		"camera.easing.out",
+		"camera.easing.in-out",
+		"camera.easing.bezier"
+	]
+}

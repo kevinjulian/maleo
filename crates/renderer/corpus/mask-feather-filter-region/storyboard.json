@@ -1,0 +1,35 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"layout": {
+				"xPct": 8,
+				"yPct": 12,
+				"widthPct": 84,
+				"heightPct": 60,
+				"fit": "stretch",
+				"mask": {
+					"shape": "rectangle",
+					"xPct": 40,
+					"yPct": 35,
+					"widthPct": 8,
+					"heightPct": 12,
+					"rotationDeg": 28,
+					"featherPct": 50,
+					"inverted": true
+				}
+			}
+		}
+	]
+}

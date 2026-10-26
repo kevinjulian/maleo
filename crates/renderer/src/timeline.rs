@@ -43,7 +43,7 @@ impl Span {
 }
 
 /// The transition frames for an authored type and duration, or 0 for a cut.
-fn transition_frames(kind: Option<&str>, duration_sec: Option<f64>, fps: f64) -> i64 {
+pub(crate) fn transition_frames(kind: Option<&str>, duration_sec: Option<f64>, fps: f64) -> i64 {
     match kind {
         None | Some("cut") => 0,
         Some(_) => match duration_sec {
@@ -70,17 +70,19 @@ pub struct Placed {
 }
 
 impl Placed {
-    /// The transition this local frame is inside, if any.
+    /// Active entrance and exit, including simultaneous windows.
+    pub fn transitions_at(&self, local: i64) -> impl Iterator<Item = &str> {
+        self.entrance
+            .as_ref()
+            .filter(move |(_, frames)| local < *frames)
+            .map(|(kind, _)| kind.as_str())
+            .into_iter()
+            .chain(self.exit.as_ref().filter(move |(_, from, _)| local >= *from).map(|(kind, _, _)| kind.as_str()))
+    }
+
+    /// First active transition, retained for placement callers.
     pub fn transition_at(&self, local: i64) -> Option<String> {
-        if let Some((kind, frames)) = &self.entrance
-            && local < *frames
-        {
-            return Some(kind.clone());
-        }
-        match &self.exit {
-            Some((kind, from, _)) if local >= *from => Some(kind.clone()),
-            _ => None,
-        }
+        self.transitions_at(local).next().map(str::to_owned)
     }
 }
 
@@ -180,7 +182,7 @@ pub fn place_scenes(storyboard: &Storyboard, fps: f64) -> Vec<Placed> {
 }
 
 /// Scene starts: an authored start, else packed after the previous scene.
-fn scene_starts(scenes: &[Scene]) -> Vec<f64> {
+pub(crate) fn scene_starts(scenes: &[Scene]) -> Vec<f64> {
     let mut cursor = 0.0;
     scenes
         .iter()
@@ -192,8 +194,41 @@ fn scene_starts(scenes: &[Scene]) -> Vec<f64> {
         .collect()
 }
 
+/// Root.tsx storyboardSeconds: nominal scene ends, then trailing clip ends.
+/// Series overlap does not shorten the composition's metadata duration.
+pub fn composition_frames(storyboard: &Storyboard, fps: f64) -> i64 {
+    let mut end: f64 = 0.0;
+    for (scene, start) in storyboard.scenes.iter().zip(scene_starts(&storyboard.scenes)) {
+        end = end.max(start + scene.duration_sec);
+    }
+    for clip in &storyboard.video_overlays {
+        end = end.max(clip.start_sec + clip.duration_sec);
+    }
+    for clip in &storyboard.text_overlays {
+        end = end.max(clip.start_sec + clip.duration_sec);
+    }
+    for clip in storyboard.visual_timeline.as_deref().unwrap_or_default() {
+        end = end.max(clip.start_sec + clip.duration_sec);
+    }
+    for clip in storyboard.rest.get("audioOverlays").and_then(|v| v.as_array()).into_iter().flatten() {
+        if let (Some(start), Some(duration)) = (clip.get("startSec").and_then(|v| v.as_f64()), clip.get("durationSec").and_then(|v| v.as_f64())) {
+            end = end.max(start + duration);
+        }
+    }
+    (end * fps).ceil().max(1.0) as i64
+}
+
 fn incoming(scene: &Scene) -> Option<&str> {
     (scene.transition != "cut").then_some(scene.transition.as_str())
+}
+
+/// StoryboardReel.sceneBoundaryHold; neighbor selection remains the caller's rule.
+pub fn boundary_hold(start: f64, end: f64, next: Option<f64>, transition_frames: i64, fps: f64) -> (i64, i64) {
+    let Some(next) = next.filter(|_| transition_frames > 0) else { return (0, 0) };
+    let start_frame = (start * fps).floor() as i64;
+    let end_frame = start_frame + (((end - start) * fps).round() as i64).max(1);
+    let next_frame = (next * fps).floor() as i64;
+    ((next_frame - start_frame).max(0), (next_frame - end_frame).max(0) + transition_frames)
 }
 
 fn place_absolute(scenes: &[Scene], durations: &[i64], fps: f64) -> Vec<Placed> {
@@ -209,16 +244,7 @@ fn place_absolute(scenes: &[Scene], durations: &[i64], fps: f64) -> Vec<Placed> 
                 .min_by(|&a, &b| starts[a].total_cmp(&starts[b]));
             let entrance = transition_frames(incoming(&scenes[i]), scenes[i].transition_dur_sec, fps);
             let next_frames = next.map_or(0, |j| transition_frames(incoming(&scenes[j]), scenes[j].transition_dur_sec, fps));
-            // sceneBoundaryHold()
-            let (exit_from, hold) = match next {
-                Some(j) if next_frames > 0 => {
-                    let start_frame = (start * fps).floor() as i64;
-                    let end_frame = start_frame + (((end - start) * fps).round() as i64).max(1);
-                    let next_start = (starts[j] * fps).floor() as i64;
-                    ((next_start - start_frame).max(0), (next_start - end_frame).max(0) + next_frames)
-                }
-                _ => (0, 0),
-            };
+            let (exit_from, hold) = boundary_hold(start, end, next.map(|j| starts[j]), next_frames, fps);
             Placed {
                 index: i,
                 span: Span::at(start, durations[i] + hold, fps),
@@ -373,7 +399,13 @@ fn z_index(storyboard: &Storyboard, visible: &Visible) -> f64 {
         Visible::Scene { .. } | Visible::TimelineVisual { .. } => 0.0,
         Visible::VideoOverlay { placed, .. } => 10.0 + storyboard.video_overlays[placed.index].track,
         Visible::TextOverlay { index, .. } => storyboard.text_overlays[*index].track.map_or(40.0, |t| 10.0 + t),
-        Visible::Effect { .. } => 60.0,
+        Visible::Effect { index } => {
+            if storyboard.effects[*index].effect == "flash" {
+                61.0
+            } else {
+                60.0
+            }
+        }
         Visible::ChapterPills | Visible::ProgressBar => 900.0,
         Visible::Caption { .. } => 920.0,
     }
@@ -447,6 +479,23 @@ mod tests {
 
     fn storyboard(json: &str) -> Storyboard {
         Storyboard::parse(json).expect("storyboard")
+    }
+
+    #[test]
+    fn boundary_holds_match_source_rounding_at_multiple_frame_rates() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/transition-placement.json")).unwrap();
+        for sample in fixture["holds"].as_array().unwrap() {
+            let i = &sample["input"];
+            let expected = &sample["expected"];
+            let actual = boundary_hold(
+                i["startSec"].as_f64().unwrap(),
+                i["endSec"].as_f64().unwrap(),
+                i["nextStartSec"].as_f64(),
+                i["transitionFrames"].as_i64().unwrap(),
+                i["fps"].as_f64().unwrap(),
+            );
+            assert_eq!(actual, (expected["exitFromFrame"].as_i64().unwrap(), expected["holdFrames"].as_i64().unwrap()));
+        }
     }
 
     #[test]

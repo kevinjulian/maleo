@@ -10,6 +10,11 @@ members = [
 	"crates/renderer",
 	"crates/renderer-wasm",
 ]
+exclude = ["vendor/vello_shaders"]
+
+[patch.crates-io]
+# Deterministic image sampling and analytic area; provenance: vendor/vello_shaders/MALEO_PATCH.md.
+vello_shaders = { path = "vendor/vello_shaders" }
 
 [workspace.package]
 edition = "2024"

@@ -1,0 +1,16 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59],
+	"regions": [
+		{
+			"name": "phase-layers",
+			"rect": [20, 50, 1060, 1860]
+		}
+	],
+	"options": ["reveal.color-build.muted_to_full", "reveal.color-build.none"],
+	"geometry": {
+		"case": "reveal-phase-geometry",
+		"reason": "Approved on 2026-10-25: photographic alpha gradients turn one-byte channel rounding into unstable ink edges. Keep photo SSIM; measure the same reveal boxes and timing with solid high-contrast geometry."
+	}
+}

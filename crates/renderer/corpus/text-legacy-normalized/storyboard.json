@@ -1,0 +1,175 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 4,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#182432",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"textOverlays": [
+		{
+			"content": "Synthetic text animation wraps onto another line",
+			"preset": "plain",
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 12,
+				"yPct": 25,
+				"widthPct": 65,
+				"heightPct": 35
+			},
+			"style": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 700,
+				"fill": "#ffffff",
+				"background": "#293c50",
+				"bgOpacity": 0.3,
+				"align": "center",
+				"letterSpacing": 0,
+				"lineHeight": 1.1
+			},
+			"anim": {
+				"tracks": {
+					"x": [
+						{
+							"t": 0,
+							"v": -5
+						},
+						{
+							"t": 1,
+							"v": 10
+						}
+					],
+					"y": [
+						{
+							"t": 0,
+							"v": 0
+						},
+						{
+							"t": 1,
+							"v": 10
+						}
+					],
+					"width": [
+						{
+							"t": 0,
+							"v": 65
+						},
+						{
+							"t": 1,
+							"v": 55
+						}
+					],
+					"height": [
+						{
+							"t": 0,
+							"v": 35
+						},
+						{
+							"t": 1,
+							"v": 30
+						}
+					],
+					"scale": [
+						{
+							"t": 0,
+							"v": 0.9
+						},
+						{
+							"t": 1,
+							"v": 1.1
+						}
+					],
+					"rotate": [
+						{
+							"t": 0,
+							"v": -10
+						},
+						{
+							"t": 1,
+							"v": 10
+						}
+					],
+					"opacity": [
+						{
+							"t": 0,
+							"v": 1
+						},
+						{
+							"t": 0.5,
+							"v": 0.6,
+							"easing": "hold"
+						}
+					],
+					"blur": [
+						{
+							"t": 0,
+							"v": 0
+						},
+						{
+							"t": 1,
+							"v": 4
+						}
+					],
+					"fontSize": [
+						{
+							"t": 0,
+							"v": 48
+						},
+						{
+							"t": 1,
+							"v": 72
+						}
+					],
+					"letterSpacing": [
+						{
+							"t": 0,
+							"v": 0
+						},
+						{
+							"t": 1,
+							"v": 2
+						}
+					],
+					"lineHeight": [
+						{
+							"t": 0,
+							"v": 1
+						},
+						{
+							"t": 1,
+							"v": 1.3
+						}
+					],
+					"bgOpacity": [
+						{
+							"t": 0,
+							"v": 0.2
+						},
+						{
+							"t": 1,
+							"v": 0.5
+						}
+					]
+				},
+				"colorTracks": {
+					"fill": [
+						{
+							"t": 0,
+							"v": "#fdba74"
+						},
+						{
+							"t": 1,
+							"v": "#67e8f9"
+						}
+					]
+				}
+			}
+		}
+	]
+}

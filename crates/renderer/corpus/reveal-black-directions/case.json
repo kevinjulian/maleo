@@ -1,0 +1,18 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59],
+	"regions": [
+		{
+			"name": "phase-layers",
+			"rect": [20, 50, 1060, 1860]
+		}
+	],
+	"options": [
+		"reveal.black.none",
+		"reveal.black.left",
+		"reveal.black.right",
+		"reveal.black.top",
+		"reveal.black.bottom"
+	]
+}

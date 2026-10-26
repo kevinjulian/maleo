@@ -1,0 +1,16 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 1,
+			"movement": "Static",
+			"transition": "cut",
+			"label": "Long labels wrap inside scene padding while each spring moves only its own text",
+			"visual": "Supporting text also wraps without changing its delayed entrance or bottom alignment"
+		}
+	],
+	"bgColor": "#4070b0",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": true
+}

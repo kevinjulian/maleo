@@ -7,5 +7,6 @@
 			"name": "caption",
 			"rect": [130, 1530, 952, 1701]
 		}
-	]
+	],
+	"options": ["caption.motion.none", "caption.position.bottom"]
 }

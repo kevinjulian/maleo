@@ -1,0 +1,12 @@
+{
+	"scenes": [],
+	"bgColor": "#204060",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": false,
+	"pacingDevices": {
+		"chapterPills": true,
+		"progressBar": false,
+		"variant": "pill"
+	}
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "visual-treatment",
+			"rect": [0, 0, 1080, 1500]
+		}
+	],
+	"options": ["image.flip-x", "image.flip-y", "image.flip-xy", "image.rotation"]
+}

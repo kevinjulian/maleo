@@ -1,0 +1,29 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"startSec": 0,
+			"durationSec": 1.2,
+			"movement": "Static",
+			"transition": "cut"
+		},
+		{
+			"image": "media/1.png",
+			"startSec": 1.5,
+			"durationSec": 1.1,
+			"movement": "Static",
+			"transition": "pixel",
+			"transitionDurSec": 0.4
+		},
+		{
+			"image": "media/0.png",
+			"startSec": 2.2,
+			"durationSec": 1.1,
+			"movement": "Static",
+			"transition": "pixel",
+			"transitionDurSec": 0.3
+		}
+	],
+	"bgColor": "#101820",
+	"showLabels": false
+}

@@ -1,0 +1,24 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 20, 21, 27, 28, 35, 36, 42, 44, 45, 50, 51, 60, 71, 72, 89, 90, 98, 119],
+	"regions": [
+		{
+			"name": "motion-stack",
+			"rect": [0, 250, 1080, 1600]
+		},
+		{
+			"name": "pacing",
+			"rect": [0, 0, 1080, 250]
+		},
+		{
+			"name": "labels-captions",
+			"rect": [0, 1600, 1080, 1920]
+		}
+	],
+	"options": ["motion-combined-overlap"],
+	"geometry": {
+		"case": "motion-combined-overlap-geometry",
+		"reason": "Approved low-contrast companion policy: compounded zoom/opacity leaves threshold-six gradient/noise ink sensitive to 1-2 byte changes (frame 20 background native [3,6,9], reference [4,7,10]; at [516,1855] native [5,9,15], reference [6,11,17]). White-backdrop companion preserves all layouts, blend modes, timing and sampled frames at original two-pixel geometry limit. Original full-frame and region SSIM are retained."
+	}
+}

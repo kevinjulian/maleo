@@ -1,0 +1,89 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"movement": "Glitch",
+			"durationSec": 4,
+			"transition": "cut",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "in-out"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "bezier"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 20,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 12,
+				"yPct": 15,
+				"widthPct": 65,
+				"heightPct": 50,
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 12
+							},
+							{
+								"t": 3,
+								"v": 25,
+								"easing": "in-out"
+							}
+						],
+						"rotationDeg": [
+							{
+								"t": 0,
+								"v": -10
+							},
+							{
+								"t": 3,
+								"v": 20
+							}
+						],
+						"scale": [
+							{
+								"t": 0,
+								"v": 0.9
+							},
+							{
+								"t": 3,
+								"v": 1.1
+							}
+						],
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.85
+							}
+						]
+					}
+				}
+			}
+		}
+	],
+	"bgColor": "#182432"
+}

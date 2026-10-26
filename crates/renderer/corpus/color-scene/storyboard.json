@@ -1,0 +1,23 @@
+{
+	"scenes": [
+		{
+			"image": "media/swatches.png",
+			"movement": "Slow Zoom In",
+			"durationSec": 2,
+			"transition": "cut",
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 70,
+				"color": {
+					"brightness": 1.2,
+					"contrast": 1.4,
+					"saturation": 0.4
+				}
+			}
+		}
+	],
+	"bgColor": "#226644",
+	"showLabels": false
+}

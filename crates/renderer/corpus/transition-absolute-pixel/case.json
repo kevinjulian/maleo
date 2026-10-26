@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98],
+	"regions": [
+		{
+			"name": "absolute-plates",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": ["transition.absolute.pixel"]
+}

@@ -7,5 +7,6 @@
 			"name": "second",
 			"rect": [30, 168, 1050, 1176]
 		}
-	]
+	],
+	"options": ["image.timeline-placement"]
 }

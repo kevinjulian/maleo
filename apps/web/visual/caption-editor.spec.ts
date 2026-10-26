@@ -178,7 +178,8 @@ for (const width of [1440, 320]) {
 					.evaluate((el) => getComputedStyle(el).transform + el.style.left);
 			const before = await playheadLeft();
 			const cueClip = page.locator(`[data-clipid="${cueId}"]`);
-			await page.locator(".tl2-canvas").dispatchEvent("pointerdown");
+			await cueClip.focus();
+			await page.keyboard.press("Escape");
 			await expect(cueClip).not.toHaveClass(/(^|\s)on(\s|$)/);
 			if (width === 320) await rendered.tap({ force: true });
 			else await rendered.click({ force: true });

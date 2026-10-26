@@ -1,0 +1,173 @@
+{
+	"scenes": [],
+	"videoOverlays": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 0,
+			"layout": {
+				"xPct": 5,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "linear"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 1,
+			"layout": {
+				"xPct": 55,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "in"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 2,
+			"layout": {
+				"xPct": 5,
+				"yPct": 35,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "out"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 3,
+			"layout": {
+				"xPct": 55,
+				"yPct": 35,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "in-out"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 4,
+			"layout": {
+				"xPct": 5,
+				"yPct": 65,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "bezier"
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"track": 5,
+			"layout": {
+				"xPct": 55,
+				"yPct": 65,
+				"widthPct": 40,
+				"heightPct": 25,
+				"fit": "cover",
+				"animation": {
+					"tracks": {
+						"opacity": [
+							{
+								"t": 0,
+								"v": 0.2
+							},
+							{
+								"t": 3,
+								"v": 0.9,
+								"easing": "hold"
+							}
+						]
+					}
+				}
+			}
+		}
+	]
+}

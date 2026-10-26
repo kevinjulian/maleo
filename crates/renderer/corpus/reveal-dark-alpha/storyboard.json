@@ -1,0 +1,25 @@
+{
+	"scenes": [],
+	"hideBase": true,
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/swatches.png",
+			"durationSec": 2,
+			"reveal": {
+				"type": "fade",
+				"phase": "black_then_color",
+				"blackDirection": "none",
+				"durationSec": 1.4,
+				"delaySec": 0.2
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"fit": "stretch"
+			}
+		}
+	]
+}

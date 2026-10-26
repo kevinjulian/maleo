@@ -1,0 +1,30 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/landscape.png",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"phase": "dark_pixels_first",
+				"durationSec": 1.4,
+				"delaySec": 0.2
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"fit": "stretch"
+			}
+		}
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "feathered-mask",
+			"rect": [50, 160, 980, 1500]
+		}
+	],
+	"options": ["mask.feather-filter-region"]
+}

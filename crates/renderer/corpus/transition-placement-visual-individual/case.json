@@ -1,0 +1,22 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89],
+	"regions": [
+		{
+			"name": "placement",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": [
+		"transition.scene-visual.individual.cut",
+		"transition.scene-visual.individual.fade",
+		"transition.scene-visual.individual.slide",
+		"transition.scene-visual.individual.zoom",
+		"transition.scene-visual.individual.wipe",
+		"transition.scene-visual.individual.flip",
+		"transition.scene-visual.individual.clock_wipe",
+		"transition.scene-visual.individual.pixel",
+		"transition.scene-visual.first-clip-ignored"
+	]
+}

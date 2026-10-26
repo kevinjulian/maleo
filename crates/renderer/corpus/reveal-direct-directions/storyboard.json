@@ -1,0 +1,132 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "left",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 3,
+				"yPct": 5,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "right",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 35,
+				"yPct": 5,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "top",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 67,
+				"yPct": 5,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "bottom",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 3,
+				"yPct": 36,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "top_left_to_bottom_right",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 35,
+				"yPct": 36,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "draw_top_left_to_bottom_right",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 67,
+				"yPct": 36,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"durationSec": 2,
+			"reveal": {
+				"type": "wipe",
+				"direction": "center",
+				"delaySec": 0.2,
+				"durationSec": 1.4
+			},
+			"layout": {
+				"xPct": 3,
+				"yPct": 67,
+				"widthPct": 29,
+				"heightPct": 27,
+				"fit": "stretch"
+			}
+		}
+	]
+}

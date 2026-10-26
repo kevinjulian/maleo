@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 1, 8, 15, 29, 30, 31, 38, 59, 60, 61, 68, 89],
+	"regions": [
+		{
+			"name": "pacing",
+			"rect": [0, 0, 1080, 250]
+		}
+	],
+	"options": ["pacing.minimal"]
+}

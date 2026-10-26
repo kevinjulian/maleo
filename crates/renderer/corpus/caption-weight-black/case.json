@@ -7,5 +7,6 @@
 			"name": "caption",
 			"rect": [124, 1529, 956, 1701]
 		}
-	]
+	],
+	"options": ["caption.weight"]
 }

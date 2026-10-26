@@ -7,6 +7,7 @@ publish.workspace = true
 description = "Draws video frames from the render storyboard with parley and vello on wgpu"
 
 [dependencies]
+maleo-editor-core = { path = "../editor-core" }
 # Versions from spike C, re-checked against the 14-day rule (p2-render-foundation 1.1).
 # No `system` feature: the renderer reads only its bundled fonts (D5).
 parley = { version = "=0.11.1", default-features = false, features = ["std"] }

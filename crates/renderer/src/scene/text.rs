@@ -16,7 +16,7 @@ use vello::Scene;
 use vello::kurbo::{Affine, Rect, RoundedRect};
 use vello::peniko::{Fill, ImageBrush};
 
-use super::{Canvas, SILHOUETTE, Shadows, pixel_bounds};
+use super::{Canvas, SILHOUETTE, Treatments, pixel_bounds};
 use crate::fonts::{FAMILY, Fonts};
 use crate::paint::{Rgba, parse_color};
 use crate::storyboard::{Storyboard, TextOverlay};
@@ -158,7 +158,7 @@ fn block(storyboard: &Storyboard, overlay: &TextOverlay) -> Block {
 }
 
 /// Draws every glyph of `layout` from `origin` in `color`.
-fn draw_glyphs(scene: &mut Scene, layout: &Layout<WordBrush>, origin: (f64, f64), content_width: f32, align: Alignment, color: Rgba) {
+pub(super) fn draw_glyphs(scene: &mut Scene, layout: &Layout<WordBrush>, origin: (f64, f64), content_width: f32, align: Alignment, color: Rgba) {
     for line in layout.lines() {
         let shift = f64::from(line_shift(align, content_width, line.metrics()));
         for item in line.items() {
@@ -179,13 +179,16 @@ fn draw_glyphs(scene: &mut Scene, layout: &Layout<WordBrush>, origin: (f64, f64)
 /// Draws the plain text overlay `index`.
 pub fn draw(
     canvas: &mut Canvas<'_>,
-    shadows: &mut dyn Shadows,
+    shadows: &mut dyn Treatments,
     fonts: &mut Fonts,
     layouts: &mut LayoutContext<WordBrush>,
     storyboard: &Storyboard,
     index: usize,
-) {
-    let overlay = &storyboard.text_overlays[index];
+    time: (f64, f64),
+) -> Result<(), String> {
+    let (seconds, duration_sec) = time;
+    let sampled = super::text_motion::sample(&storyboard.text_overlays[index], seconds, duration_sec)?;
+    let overlay = &sampled.overlay;
     let block = block(storyboard, overlay);
     let (container, opacity, box_fill) = match &overlay.layout {
         // TemplateFrame: the layout box, its opacity and its bgOpacity fill.
@@ -198,7 +201,7 @@ pub fn draw(
                 .and_then(|s| s.background.as_deref())
                 .filter(|b| *b != "transparent" && bg_opacity > 0.0)
                 .and_then(parse_color)
-                .map(|c| c.with_alpha(bg_opacity.min(1.0) as f32));
+                .map(|c| c.with_alpha((bg_opacity.min(1.0) * 100.0).round() as f32 / 100.0));
             (rect, l.opacity.unwrap_or(1.0), fill)
         }
         None => (canvas.frame().inset(-64.0), 1.0, None),
@@ -223,10 +226,9 @@ pub fn draw(
         let bounds = pixel_bounds(div.inflate(reach, reach + SHADOW_OFFSET_Y), canvas.width, canvas.height);
         shadows.shadow(&silhouette, bounds, SHADOW_BLUR, SHADOW_COLOR).map(|image| (image, bounds))
     });
-    canvas.group(opacity, |canvas| {
-        if let Some(fill) = box_fill {
-            canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, fill.color(), None, &container);
-        }
+    let mut body = Scene::new();
+    {
+        let canvas = &mut Canvas { scene: &mut body, media: canvas.media, width: canvas.width, height: canvas.height, pixelated: canvas.pixelated };
         if let Some(background) = block.background {
             canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, background.color(), None, &RoundedRect::from_rect(div, RADIUS));
         }
@@ -234,7 +236,28 @@ pub fn draw(
             canvas.scene.draw_image(&ImageBrush::new(image.clone()), Affine::translate(bounds.origin().to_vec2()));
         }
         draw_glyphs(canvas.scene, &text, origin, content_width, block.align, block.fill);
+    }
+    let before = sampled.before_blur(container);
+    let mut content = Scene::new();
+    content.append(&body, Some(before));
+    if sampled.blur > 0.0 {
+        let reach = f64::from(SHADOW_BLUR) * 1.5 + f64::from(block.font.size) * 0.5;
+        let bounds = before.transform_rect_bbox(div.inflate(reach, reach + SHADOW_OFFSET_Y)).inflate(sampled.blur * 3.0, sampled.blur * 3.0);
+        let bounds = Rect::new(bounds.x0.floor(), bounds.y0.floor(), bounds.x1.ceil(), bounds.y1.ceil());
+        let image = shadows.blur_content(&content, bounds, sampled.blur as f32)?;
+        content.reset();
+        content.draw_image(&ImageBrush::new(image), Affine::translate(bounds.origin().to_vec2()));
+    }
+    let rotation = overlay.layout.as_ref().and_then(|l| l.rotation_deg).unwrap_or(0.0);
+    canvas.transformed(super::image::outer_transform(container, rotation, sampled.box_scale), |canvas| {
+        canvas.group(opacity, |canvas| {
+            if let Some(fill) = box_fill {
+                canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, fill.color(), None, &container);
+            }
+            canvas.group(sampled.content_opacity(), |canvas| canvas.scene.append(&content, Some(sampled.after_blur(container))));
+        });
     });
+    Ok(())
 }
 
 #[cfg(test)]

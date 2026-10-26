@@ -1,0 +1,27 @@
+{
+	"scenes": [
+		{
+			"image": "media/blue.png",
+			"durationSec": 2,
+			"startSec": 0,
+			"transition": "cut",
+			"movement": "Static"
+		},
+		{
+			"image": "media/red.png",
+			"durationSec": 2,
+			"startSec": 0,
+			"transition": "cut",
+			"movement": "Static",
+			"layout": {
+				"xPct": 10,
+				"yPct": 15,
+				"widthPct": 80,
+				"heightPct": 60,
+				"blendMode": "multiply"
+			}
+		}
+	],
+	"bgColor": "transparent",
+	"showLabels": false
+}

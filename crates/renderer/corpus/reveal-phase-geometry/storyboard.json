@@ -1,0 +1,51 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/geometry.png",
+			"durationSec": 2,
+			"reveal": {
+				"type": "sketch_draw",
+				"phase": "direct",
+				"colorBuild": "muted_to_full",
+				"durationSec": 1.4,
+				"delaySec": 0.2,
+				"intensity": 0.6
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 8,
+				"widthPct": 80,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/geometry.png",
+			"durationSec": 2,
+			"reveal": {
+				"type": "sketch_draw",
+				"phase": "dark_pixels_first",
+				"colorBuild": "muted_to_full",
+				"durationSec": 1.4,
+				"delaySec": 0.2,
+				"intensity": 0.6
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 52,
+				"widthPct": 80,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		}
+	]
+}

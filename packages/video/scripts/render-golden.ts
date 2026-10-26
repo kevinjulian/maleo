@@ -19,7 +19,7 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { extname, join } from "node:path";
 import { bundle } from "@remotion/bundler";
-import { renderStill, selectComposition } from "@remotion/renderer";
+import { openBrowser, renderStill, selectComposition } from "@remotion/renderer";
 import { aspectMap, storyboardSchema } from "../src/schema.ts";
 import { VIDEO_ENTRY } from "../src/paths.ts";
 
@@ -32,6 +32,7 @@ interface Manifest {
 	emojiFont: { package: string; version: string; file: string; sha256: string };
 	thresholds: { frame: number; region: number };
 	lowered: Record<string, { frame?: number; region?: number; reason: string }>;
+	supportedOptions: Record<string, { case: string; frames: number[] }>;
 }
 // SAFETY: manifest.json is this corpus's own file, written in this shape by
 // this script and read by crates/renderer/tests/golden.
@@ -41,6 +42,7 @@ interface Case {
 	width: number;
 	height: number;
 	frames: number[];
+	options?: string[];
 }
 
 const COMPOSITIONS: Record<string, string> = {
@@ -85,30 +87,42 @@ const cases = readdirSync(corpus, { withFileTypes: true })
 const serveUrl = await bundle({ entryPoint: VIDEO_ENTRY });
 // Emulated or small hosts are slow; a stuck frame should fail, not hang.
 const timeoutInMilliseconds = 180_000;
-for (const name of cases) {
-	const dir = join(corpus, name);
-	// SAFETY: case.json is this corpus's own file, shaped as `Case`.
-	const spec = JSON.parse(readFileSync(join(dir, "case.json"), "utf8")) as Case;
-	const id = COMPOSITIONS[`${spec.width}x${spec.height}`];
-	if (!id) throw new Error(`${name}: no storyboard composition is ${spec.width}x${spec.height}`);
-	const storyboard = JSON.parse(readFileSync(join(dir, "storyboard.json"), "utf8"));
-	const inputProps = storyboardSchema.parse(inlineMedia(storyboard, dir));
-	console.log(`${name}: ${id}`);
-	const composition = await selectComposition({ serveUrl, id, inputProps, timeoutInMilliseconds });
-	mkdirSync(join(dir, "reference"), { recursive: true });
-	for (const frame of spec.frames) {
-		const output = join(dir, "reference", `${frame}.png`);
-		await renderStill({
-			composition,
+const browser = await openBrowser("chrome");
+try {
+	for (const name of cases) {
+		const dir = join(corpus, name);
+		// SAFETY: case.json is this corpus's own file, shaped as `Case`.
+		const spec = JSON.parse(readFileSync(join(dir, "case.json"), "utf8")) as Case;
+		const id = COMPOSITIONS[`${spec.width}x${spec.height}`];
+		if (!id) throw new Error(`${name}: no storyboard composition is ${spec.width}x${spec.height}`);
+		const storyboard = JSON.parse(readFileSync(join(dir, "storyboard.json"), "utf8"));
+		const inputProps = storyboardSchema.parse(inlineMedia(storyboard, dir));
+		console.log(`${name}: ${id}`);
+		const composition = await selectComposition({
 			serveUrl,
-			output,
-			frame,
+			id,
 			inputProps,
-			imageFormat: "png",
 			timeoutInMilliseconds,
+			puppeteerInstance: browser,
 		});
-		console.log(output);
+		mkdirSync(join(dir, "reference"), { recursive: true });
+		for (const frame of spec.frames) {
+			const output = join(dir, "reference", `${frame}.png`);
+			await renderStill({
+				puppeteerInstance: browser,
+				composition,
+				serveUrl,
+				output,
+				frame,
+				inputProps,
+				imageFormat: "png",
+				timeoutInMilliseconds,
+			});
+			console.log(output);
+		}
 	}
+} finally {
+	await browser.close({ silent: true });
 }
 
 const remotion = JSON.parse(

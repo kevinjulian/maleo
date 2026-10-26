@@ -1,0 +1,24 @@
+{
+	"scenes": [],
+	"hideBase": false,
+	"showLabels": false,
+	"visualTimeline": [
+		{
+			"url": "media/swatches.png",
+			"kind": "image",
+			"durationSec": 2,
+			"movement": "Slow Zoom Out",
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 70,
+				"color": {
+					"brightness": 0.8,
+					"contrast": 1.4,
+					"saturation": 2
+				}
+			}
+		}
+	]
+}

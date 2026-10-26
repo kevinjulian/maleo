@@ -1,0 +1,30 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"durationSec": 2,
+			"movement": "Slow Pan Left",
+			"transition": "cut",
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75
+			},
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"durationSec": 2,
+					"reveal": {
+						"type": "wipe",
+						"direction": "top_left_to_bottom_right",
+						"durationSec": 1.4,
+						"delaySec": 0.2
+					}
+				}
+			]
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 45, 75],
+	"regions": [
+		{
+			"name": "text-box-and-content",
+			"rect": [30, 200, 1050, 1700]
+		}
+	],
+	"options": ["text.animation.blur", "text.content-scale"]
+}

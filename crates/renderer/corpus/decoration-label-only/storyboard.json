@@ -1,0 +1,16 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 1,
+			"movement": "Static",
+			"transition": "cut",
+			"label": "Motion and color",
+			"visual": ""
+		}
+	],
+	"bgColor": "#4070b0",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": true
+}

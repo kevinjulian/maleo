@@ -113,6 +113,10 @@ impl<S> Session<S> {
         self.fps
     }
 
+    pub fn duration_frames(&self) -> i64 {
+        self.frames
+    }
+
     pub fn device_ready(&mut self) {
         self.device = Device::Ready;
         self.scheduler.invalidate();
@@ -265,6 +269,8 @@ mod tests {
         session.set_storyboard("b", 30.0, 300).unwrap();
         assert_eq!(draw(&mut session, 2.0), Some(120));
         assert_eq!(session.storyboard(), Some(&"b"));
+        assert_eq!(session.fps(), 30.0);
+        assert_eq!(session.duration_frames(), 300);
     }
 
     #[test]
@@ -273,6 +279,15 @@ mod tests {
         assert!(session.set_storyboard("b", 0.0, 300).unwrap_err().contains("fps"));
         assert!(session.set_storyboard("b", 30.0, 0).unwrap_err().contains("duration"));
         assert_eq!(session.storyboard(), Some(&"a"));
+    }
+
+    #[test]
+    fn drawing_timing_follows_only_accepted_storyboards() {
+        let mut session = session();
+        session.set_storyboard("b", 24.0, 241).unwrap();
+        assert_eq!((session.fps(), session.duration_frames()), (24.0, 241));
+        assert!(session.set_storyboard("c", 0.0, 600).is_err());
+        assert_eq!((session.fps(), session.duration_frames()), (24.0, 241));
     }
 
     #[test]

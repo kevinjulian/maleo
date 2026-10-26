@@ -102,3 +102,73 @@ available, and the Remotion preview SHALL work as without the parameter.
 - **WHEN** an operator opens compare mode in a browser with no WebGPU adapter
 - **THEN** the compare panel says the Rust renderer is not available in this browser
 - **AND** the Remotion preview plays and seeks as usual
+
+### Requirement: Motion and compositing have option-level evidence
+
+Each newly supported motion, compositing, transition, reveal, effect and decoration option SHALL have a synthetic golden case or named coverage within a case. Cases SHALL include representative combinations that expose treatment order, layer isolation and transparency. References SHALL come from the existing production Remotion path before any reference-behavior change.
+
+The corpus SHALL identify the options each case exercises. An option declared supported without its required case SHALL fail the corpus check. Existing score thresholds and reference-review rules SHALL continue to apply.
+
+For approved low-contrast compositing cases, full-frame and region SSIM SHALL
+remain unchanged. Geometry SHALL be measured by a named high-contrast companion
+with the same dimensions and all sampled frames, using the existing two-pixel
+limit. The corpus check SHALL reject missing companions, delegated companions,
+empty geometry regions or incomplete temporal coverage.
+
+#### Scenario: A photographic reveal has unstable ink thresholds
+
+- **WHEN** `reveal-color-builds` names `reveal-phase-geometry` as its approved geometry companion
+- **THEN** the gate retains every photographic SSIM comparison
+- **AND** the companion measures direct and dark reveal boundaries within two pixels
+- **AND** removing the companion or one required frame fails corpus validation
+
+#### Scenario: A declared mask option has no case
+
+- **WHEN** mask inversion is declared supported but no corpus case exercises inversion
+- **THEN** the corpus check fails and names the missing option
+
+#### Scenario: Treatment order is exercised
+
+- **WHEN** a case combines crop, flip, color correction, a feathered mask and rotation over a contrasting backdrop
+- **THEN** the parity gate compares both the whole frame and the affected element region against the reference
+
+### Requirement: Temporal parity includes boundaries and random access
+
+Motion parity SHALL include deterministic numeric samples and golden frames at entrances, intermediate times, exits and discontinuities. Cases SHALL cover hold keys, retained easing subranges, camera focal points, reveal phase changes and transition placement modes. Samples SHALL state their frame rate, local time and reference rounding rules.
+
+The renderer SHALL match the same reference frame after sequential drawing, direct seek and out-of-order drawing. A numeric fixture check SHALL fail when source behavior changes without regenerated fixtures.
+
+#### Scenario: A hold boundary is sampled
+
+- **WHEN** a key uses hold interpolation
+- **THEN** the evidence includes samples immediately before and at its key time
+- **AND** the gate detects a one-frame timing error
+
+#### Scenario: A transition is reached by seeking
+
+- **WHEN** a transition midpoint is drawn directly and after drawing earlier and later frames
+- **THEN** the results are identical on one device and match the reference within the existing visual thresholds
+
+#### Scenario: Identical textures receive different atlas allocations
+
+- **WHEN** identical image bytes are registered again and drawn with the same affine transform on one device
+- **THEN** output pixels remain byte-identical despite changed atlas placement
+- **AND** native and WASM builds use the same reviewed dependency correction
+
+### Requirement: Compare-mode validation covers expanded drawing support
+
+Acceptance for expanded renderer support SHALL exercise the running hidden compare mode with motion and compositing fixtures. It SHALL record visual comparisons, coverage, frame times, dropped frames, seek behavior and GPU recovery. Recovery SHALL preserve supplied images and rebuild resources used by the new treatments.
+
+Normal preview and production export SHALL continue through Remotion. Without the compare parameter, the web editor SHALL NOT load the Rust renderer or its worker.
+
+#### Scenario: Recovery redraws a composited frame
+
+- **WHEN** the GPU device is lost while a masked and color-corrected image frame is displayed in compare mode
+- **THEN** recovery redraws the frame with its treatments and supplied image intact
+- **AND** a failed recovery reports failure instead of silently dropping a treatment
+
+#### Scenario: Normal editor remains on Remotion
+
+- **WHEN** an operator opens the editor without the compare parameter after expanded support is installed
+- **THEN** normal preview and export retain their existing renderer
+- **AND** neither Rust renderer module nor preview worker is requested

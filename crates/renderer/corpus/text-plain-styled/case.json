@@ -7,5 +7,12 @@
 			"name": "text",
 			"rect": [40, 206, 1039, 830]
 		}
+	],
+	"options": [
+		"text.align.left",
+		"text.line-height",
+		"text.letter-spacing",
+		"text.casing.upper",
+		"text.background"
 	]
 }

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 24, 25, 26, 48, 59],
+	"regions": [
+		{
+			"name": "phase-filter-order",
+			"rect": [10, 40, 1070, 1820]
+		}
+	],
+	"options": ["reveal.texture.phase-order"]
+}

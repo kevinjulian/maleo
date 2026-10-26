@@ -1,0 +1,278 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 2,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "cut",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 27,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "fade",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 52,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "slide",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 77,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "zoom",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 2,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "wipe",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 27,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "flip",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 52,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "clock_wipe",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"startSec": 0,
+			"durationSec": 3,
+			"movement": "Static",
+			"transition": "cut",
+			"layout": {
+				"xPct": 77,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			},
+			"visualClips": [
+				{
+					"url": "media/0.png",
+					"kind": "image",
+					"startSec": 0,
+					"durationSec": 3,
+					"transition": "fade"
+				},
+				{
+					"url": "media/1.png",
+					"kind": "image",
+					"startSec": 1,
+					"durationSec": 1.5,
+					"transition": "pixel",
+					"transitionDurSec": 0.4,
+					"layout": {
+						"widthPct": 21
+					}
+				}
+			]
+		}
+	],
+	"bgColor": "transparent",
+	"showLabels": false
+}

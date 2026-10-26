@@ -1,0 +1,20 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 15, 29],
+	"regions": [
+		{
+			"name": "decoration",
+			"rect": [0, 0, 1080, 1920]
+		},
+		{
+			"name": "label-area",
+			"rect": [65, 1450, 1015, 1860]
+		}
+	],
+	"options": ["decoration.grain-repeat"],
+	"geometry": {
+		"case": "decoration-grain-geometry",
+		"reason": "Approved change-wide low-contrast policy: every native/production channel differs by at most one byte, but threshold-six ink on a nearly uniform noise field shifts 165px. Matching fixed-grain high-contrast plate retains all sampled frames and the original two-pixel geometry gate; original full-frame and region SSIM stay unchanged. Pixel/tile checks separately bound grain error and repeat position."
+	}
+}

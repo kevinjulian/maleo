@@ -15,5 +15,6 @@
 			"name": "stretch",
 			"rect": [30, 744, 1050, 1176]
 		}
-	]
+	],
+	"options": ["image.fit.cover", "image.fit.contain", "image.fit.stretch", "image.track-order"]
 }

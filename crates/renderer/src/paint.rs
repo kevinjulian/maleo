@@ -51,6 +51,26 @@ pub enum Paint {
 pub fn parse_color(value: &str) -> Option<Rgba> {
     let value = value.trim();
     let lower = value.to_ascii_lowercase();
+    // Exact fallback expression emitted by shared keyframe-evaluation.ts.
+    if let Some(args) = lower.strip_prefix("color-mix(in srgb,").and_then(|s| s.strip_suffix(')')) {
+        if args.contains("color-mix(") {
+            return None;
+        }
+        let parts = top_level_args(args);
+        let [first, second] = parts.as_slice() else { return None };
+        let (a, Some(weight)) = parse_stop(first)? else { return None };
+        let (b, None) = parse_stop(second)? else { return None };
+        if !(0.0..=1.0).contains(&weight) {
+            return None;
+        }
+        let (wa, wb) = (weight * f64::from(a.a), (1.0 - weight) * f64::from(b.a));
+        let alpha = wa + wb;
+        if alpha == 0.0 {
+            return Some(Rgba::TRANSPARENT);
+        }
+        let channel = |a, b| ((f64::from(a) * wa + f64::from(b) * wb) / alpha).round() as u8;
+        return Some(Rgba { r: channel(a.r, b.r), g: channel(a.g, b.g), b: channel(a.b, b.b), a: alpha as f32 });
+    }
     match lower.as_str() {
         "transparent" => return Some(Rgba::TRANSPARENT),
         "black" => return Some(Rgba { r: 0, g: 0, b: 0, a: 1.0 }),
@@ -233,7 +253,18 @@ pub fn parse_paint(value: &str) -> Option<Paint> {
 
 /// The brush and its transform that paint `paint` over `rect`.
 pub fn brush(paint: &Paint, rect: Rect) -> (Brush, Option<Affine>) {
-    let stops = |stops: &[(f64, Rgba)]| -> Vec<ColorStop> { stops.iter().map(|(p, c)| ColorStop::from((*p as f32, c.color()))).collect() };
+    let stops = |stops: &[(f64, Rgba)]| -> Vec<ColorStop> {
+        let mut out: Vec<_> = stops.iter().map(|(p, c)| ColorStop::from((*p as f32, c.color()))).collect();
+        // Vello normalizes the first/last offsets. CSS holds their colors to
+        // the box edges, so include those constant intervals explicitly.
+        if let Some((_, c)) = stops.first().filter(|(p, _)| *p > 0.0) {
+            out.insert(0, ColorStop::from((0.0, c.color())));
+        }
+        if let Some((_, c)) = stops.last().filter(|(p, _)| *p < 1.0) {
+            out.push(ColorStop::from((1.0, c.color())));
+        }
+        out
+    };
     let (w, h) = (rect.width(), rect.height());
     match paint {
         Paint::Solid(color) => (Brush::Solid(color.color()), None),
@@ -279,6 +310,9 @@ mod tests {
         assert_eq!(parse_color("rgba(0,0,0,0.5)"), Some(Rgba { r: 0, g: 0, b: 0, a: 0.5 }));
         assert_eq!(parse_color("rgb(10 20 30 / 50%)"), Some(Rgba { r: 10, g: 20, b: 30, a: 0.5 }));
         assert_eq!(parse_color("transparent"), Some(Rgba::TRANSPARENT));
+        assert_eq!(parse_color("color-mix(in srgb, transparent 50%, #ffffff)"), Some(Rgba { r: 255, g: 255, b: 255, a: 0.5 }));
+        assert_eq!(parse_color("color-mix(in srgb, rgba(0,0,255,0.5) 50%, #ff0000)"), Some(Rgba { r: 170, g: 0, b: 85, a: 0.75 }));
+        assert_eq!(parse_color("color-mix(in srgb, black 110%, white)"), None);
         assert_eq!(parse_color("hsl(0 100% 50%)"), None);
         assert_eq!(parse_color("#12345"), None);
     }

@@ -1,6 +1,6 @@
 {
 	"remotion": "4.0.462",
-	"image": "maleo production image (Dockerfile runtime stage, linux/amd64) sha256:146ade4131420726457fe0540d63093764ed12122f82aca179be8e68c333a691",
+	"image": "sha256:146ade4131420726457fe0540d63093764ed12122f82aca179be8e68c333a691",
 	"emojiFont": {
 		"package": "fonts-noto-color-emoji",
 		"version": "2.042-0+deb12u1",
@@ -11,5 +11,1049 @@
 		"frame": 0.98,
 		"region": 0.92
 	},
-	"lowered": {}
+	"lowered": {},
+	"supportedOptions": {
+		"background.linear": {
+			"case": "background-linear",
+			"frames": [0]
+		},
+		"background.linear-square": {
+			"case": "background-linear-square",
+			"frames": [0]
+		},
+		"background.linear-stops": {
+			"case": "background-linear-stops",
+			"frames": [0]
+		},
+		"background.radial-circle": {
+			"case": "background-radial-circle",
+			"frames": [0]
+		},
+		"background.radial-ellipse": {
+			"case": "background-radial-ellipse",
+			"frames": [0]
+		},
+		"background.solid": {
+			"case": "background-solid",
+			"frames": [0]
+		},
+		"camera.focal-point": {
+			"case": "image-scene-focal",
+			"frames": [0]
+		},
+		"camera.static": {
+			"case": "image-scene-full",
+			"frames": [0, 30]
+		},
+		"caption.background": {
+			"case": "caption-background",
+			"frames": [21, 28, 30]
+		},
+		"caption.combined-a": {
+			"case": "caption-combined-a",
+			"frames": [21, 28, 30]
+		},
+		"caption.combined-b": {
+			"case": "caption-combined-b",
+			"frames": [21, 28, 30]
+		},
+		"caption.emoji": {
+			"case": "caption-emoji",
+			"frames": [21, 28, 30]
+		},
+		"caption.highlight": {
+			"case": "caption-highlight",
+			"frames": [21, 28, 30]
+		},
+		"caption.italic": {
+			"case": "caption-italic",
+			"frames": [21, 28, 30]
+		},
+		"caption.motion.fade": {
+			"case": "caption-motion-fade",
+			"frames": [31, 33, 45]
+		},
+		"caption.motion.none": {
+			"case": "caption-base",
+			"frames": [21, 28, 30]
+		},
+		"caption.motion.pop": {
+			"case": "caption-motion-pop",
+			"frames": [31, 33, 45]
+		},
+		"caption.motion.slide-up": {
+			"case": "caption-motion-slide-up",
+			"frames": [31, 33, 45]
+		},
+		"caption.position.bottom": {
+			"case": "caption-base",
+			"frames": [21, 28, 30]
+		},
+		"caption.position.center": {
+			"case": "caption-position-center",
+			"frames": [21, 28, 30]
+		},
+		"caption.position.percent": {
+			"case": "caption-position-percent",
+			"frames": [21, 28, 30]
+		},
+		"caption.position.top": {
+			"case": "caption-position-top",
+			"frames": [21, 28, 30]
+		},
+		"caption.shadow": {
+			"case": "caption-shadow",
+			"frames": [21, 28, 30]
+		},
+		"caption.stroke": {
+			"case": "caption-stroke",
+			"frames": [21, 28, 30]
+		},
+		"caption.typewriter": {
+			"case": "caption-typewriter",
+			"frames": [8, 21, 52]
+		},
+		"caption.weight": {
+			"case": "caption-weight-black",
+			"frames": [21, 28, 30]
+		},
+		"caption.wrap": {
+			"case": "caption-wrap",
+			"frames": [21, 28, 30]
+		},
+		"composition.combined": {
+			"case": "combined-project",
+			"frames": [30, 45, 120]
+		},
+		"image.auto-height": {
+			"case": "image-overlay-crop",
+			"frames": [0]
+		},
+		"image.crop": {
+			"case": "image-overlay-crop",
+			"frames": [0]
+		},
+		"image.fit.contain": {
+			"case": "image-overlay-fit",
+			"frames": [0]
+		},
+		"image.fit.cover": {
+			"case": "image-overlay-fit",
+			"frames": [0]
+		},
+		"image.fit.stretch": {
+			"case": "image-overlay-fit",
+			"frames": [0]
+		},
+		"image.opacity": {
+			"case": "image-overlay-crop",
+			"frames": [0]
+		},
+		"image.scene-box": {
+			"case": "image-scene-box",
+			"frames": [0]
+		},
+		"image.scene-crop": {
+			"case": "image-scene-crop",
+			"frames": [0]
+		},
+		"image.timeline-placement": {
+			"case": "image-timeline",
+			"frames": [15, 75]
+		},
+		"image.track-order": {
+			"case": "image-overlay-fit",
+			"frames": [0]
+		},
+		"text.align.center": {
+			"case": "text-plain-box",
+			"frames": [0]
+		},
+		"text.align.left": {
+			"case": "text-plain-styled",
+			"frames": [0]
+		},
+		"text.align.right": {
+			"case": "text-plain-bottom",
+			"frames": [0]
+		},
+		"text.background": {
+			"case": "text-plain-styled",
+			"frames": [0]
+		},
+		"text.background-opacity": {
+			"case": "text-plain-bottom",
+			"frames": [0]
+		},
+		"text.casing.upper": {
+			"case": "text-plain-styled",
+			"frames": [0]
+		},
+		"text.letter-spacing": {
+			"case": "text-plain-styled",
+			"frames": [0]
+		},
+		"text.line-height": {
+			"case": "text-plain-styled",
+			"frames": [0]
+		},
+		"text.plain-box": {
+			"case": "text-plain-box",
+			"frames": [0]
+		},
+		"text.plain-frame": {
+			"case": "text-plain-frame",
+			"frames": [0]
+		},
+		"transition.cut": {
+			"case": "image-scene-full",
+			"frames": [0, 30]
+		},
+		"image.animation.xPct": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.yPct": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.scale": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.rotationDeg": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.opacity": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.hold": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.animation.retained-range": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.overlay-keyed": {
+			"case": "image-keyed-overlay",
+			"frames": [0, 15, 59, 60, 61, 90, 119]
+		},
+		"image.scene-keyed": {
+			"case": "image-keyed-scene",
+			"frames": [0, 30, 59, 60, 90, 119]
+		},
+		"image.timeline-keyed": {
+			"case": "image-keyed-timeline",
+			"frames": [15, 45, 74, 75, 105, 134]
+		},
+		"image.flip-x": {
+			"case": "image-flips",
+			"frames": [0]
+		},
+		"image.flip-y": {
+			"case": "image-flips",
+			"frames": [0]
+		},
+		"image.flip-xy": {
+			"case": "image-flips",
+			"frames": [0]
+		},
+		"image.rotation": {
+			"case": "image-flips",
+			"frames": [0]
+		},
+		"image.easing.linear": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"image.easing.in": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"image.easing.out": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"image.easing.in-out": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"image.easing.bezier": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"image.easing.hold": {
+			"case": "image-keyed-easings",
+			"frames": [15, 30, 60, 89, 90]
+		},
+		"text.animation.xPct": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.yPct": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.widthPct": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.heightPct": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.rotationDeg": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.scale": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.opacity": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.hold": {
+			"case": "text-keyed-box",
+			"frames": [0, 15, 45, 59, 60, 75, 119]
+		},
+		"text.animation.fontSize": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.letterSpacing": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.lineHeight": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.bgOpacity": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.fill": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.background": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.bodyFill-inert": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.accent-inert": {
+			"case": "text-keyed-style",
+			"frames": [0, 15, 45, 75, 119]
+		},
+		"text.animation.blur": {
+			"case": "text-keyed-blur",
+			"frames": [0, 45, 75]
+		},
+		"text.content-scale": {
+			"case": "text-keyed-blur",
+			"frames": [0, 45, 75]
+		},
+		"text.legacy.normalized": {
+			"case": "text-legacy-normalized",
+			"frames": [0, 30, 59, 60, 90, 119]
+		},
+		"camera.preset.static": {
+			"case": "camera-preset-static",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slow-zoom-in": {
+			"case": "camera-preset-slow-zoom-in",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slow-zoom-out": {
+			"case": "camera-preset-slow-zoom-out",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slow-pan-left": {
+			"case": "camera-preset-slow-pan-left",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slow-pan-right": {
+			"case": "camera-preset-slow-pan-right",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slight-push-in": {
+			"case": "camera-preset-slight-push-in",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.slight-pull-out": {
+			"case": "camera-preset-slight-pull-out",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.tilt-up": {
+			"case": "camera-preset-tilt-up",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.tilt-down": {
+			"case": "camera-preset-tilt-down",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.follow-tracking": {
+			"case": "camera-preset-follow-tracking",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.orbit": {
+			"case": "camera-preset-orbit",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.handheld": {
+			"case": "camera-preset-handheld",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.ken-burns": {
+			"case": "camera-preset-ken-burns",
+			"frames": [0, 60, 119]
+		},
+		"camera.preset.glitch": {
+			"case": "camera-preset-glitch",
+			"frames": [0, 1, 60, 119]
+		},
+		"camera.custom": {
+			"case": "camera-custom",
+			"frames": [0, 1, 30, 60, 119]
+		},
+		"camera.keyed-layout": {
+			"case": "camera-custom",
+			"frames": [0, 1, 30, 60, 119]
+		},
+		"camera.custom-plus-glitch": {
+			"case": "camera-custom-glitch",
+			"frames": [0, 1, 30, 60, 119]
+		},
+		"camera.absent-default": {
+			"case": "camera-defaults",
+			"frames": [0, 60, 119]
+		},
+		"camera.unknown-default": {
+			"case": "camera-defaults",
+			"frames": [0, 60, 119]
+		},
+		"camera.pixel-offsets": {
+			"case": "camera-defaults",
+			"frames": [0, 60, 119]
+		},
+		"camera.easing.linear": {
+			"case": "camera-custom-easings",
+			"frames": [0, 30, 60, 90, 119]
+		},
+		"camera.easing.in": {
+			"case": "camera-custom-easings",
+			"frames": [0, 30, 60, 90, 119]
+		},
+		"camera.easing.out": {
+			"case": "camera-custom-easings",
+			"frames": [0, 30, 60, 90, 119]
+		},
+		"camera.easing.in-out": {
+			"case": "camera-custom-easings",
+			"frames": [0, 30, 60, 90, 119]
+		},
+		"camera.easing.bezier": {
+			"case": "camera-custom-easings",
+			"frames": [0, 30, 60, 90, 119]
+		},
+		"color.neutral": {
+			"case": "color-neutral",
+			"frames": [0, 30]
+		},
+		"color.brightness": {
+			"case": "color-extremes",
+			"frames": [0, 30]
+		},
+		"color.contrast": {
+			"case": "color-extremes",
+			"frames": [0, 30]
+		},
+		"color.saturation": {
+			"case": "color-extremes",
+			"frames": [0, 30]
+		},
+		"color.filter-order": {
+			"case": "color-extremes",
+			"frames": [0, 30]
+		},
+		"color.transparent-edges": {
+			"case": "color-transparent-edges",
+			"frames": [0, 30]
+		},
+		"color.scene": {
+			"case": "color-scene",
+			"frames": [0, 30]
+		},
+		"color.timeline": {
+			"case": "color-timeline",
+			"frames": [0, 30]
+		},
+		"mask.rectangle": {
+			"case": "mask-rectangle",
+			"frames": [0, 30]
+		},
+		"mask.feather-zero": {
+			"case": "mask-rectangle",
+			"frames": [0, 30]
+		},
+		"mask.ellipse": {
+			"case": "mask-ellipse-nonsquare",
+			"frames": [0, 30]
+		},
+		"mask.nonsquare": {
+			"case": "mask-ellipse-nonsquare",
+			"frames": [0, 30]
+		},
+		"mask.rotation": {
+			"case": "mask-rotated",
+			"frames": [0, 30]
+		},
+		"mask.inverted": {
+			"case": "mask-inverted",
+			"frames": [0, 30]
+		},
+		"mask.crop-flip": {
+			"case": "mask-crop-flip",
+			"frames": [0, 30]
+		},
+		"mask.inheritance-null": {
+			"case": "mask-inheritance-null",
+			"frames": [0, 30]
+		},
+		"mask.feather-max": {
+			"case": "mask-feather-max",
+			"frames": [0, 30]
+		},
+		"mask.feather-rotated-inverted": {
+			"case": "mask-feather-rotated-inverted",
+			"frames": [0, 30]
+		},
+		"mask.feather-transparent": {
+			"case": "mask-feather-transparent",
+			"frames": [0, 30]
+		},
+		"mask.feather-filter-region": {
+			"case": "mask-feather-filter-region",
+			"frames": [0, 30]
+		},
+		"blend.normal": {
+			"case": "blend-normal",
+			"frames": [0, 30]
+		},
+		"blend.multiply": {
+			"case": "blend-multiply",
+			"frames": [0, 30]
+		},
+		"blend.track-order": {
+			"case": "blend-multiply",
+			"frames": [0, 30]
+		},
+		"blend.screen": {
+			"case": "blend-screen",
+			"frames": [0, 30]
+		},
+		"blend.scene-isolation": {
+			"case": "blend-scene-isolation",
+			"frames": [0, 30]
+		},
+		"blend.timeline": {
+			"case": "blend-timeline",
+			"frames": [0, 30]
+		},
+		"mask.feather-small": {
+			"case": "mask-feather-small",
+			"frames": [0]
+		},
+		"reveal.type.fade": {
+			"case": "reveal-direct-fade",
+			"frames": [0, 6, 7, 15, 27, 47, 48, 59]
+		},
+		"reveal.overlay": {
+			"case": "reveal-direct-fade",
+			"frames": [0, 6, 7, 15, 27, 47, 48, 59]
+		},
+		"reveal.type.wipe": {
+			"case": "reveal-direct-wipe",
+			"frames": [0, 6, 7, 15, 27, 47, 48, 59]
+		},
+		"reveal.type.spotlight": {
+			"case": "reveal-direct-spotlight",
+			"frames": [0, 6, 7, 15, 27, 47, 48, 59]
+		},
+		"reveal.type.sketch_draw": {
+			"case": "reveal-direct-sketch_draw",
+			"frames": [0, 6, 7, 15, 27, 47, 48, 59]
+		},
+		"reveal.direction.left": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.right": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.top": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.bottom": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.top_left_to_bottom_right": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.draw_top_left_to_bottom_right": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.direction.center": {
+			"case": "reveal-direct-directions",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.timeline": {
+			"case": "reveal-camera-mask",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.camera-mask": {
+			"case": "reveal-camera-mask",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.scene": {
+			"case": "reveal-scene",
+			"frames": [0, 7, 15, 27, 48, 59]
+		},
+		"reveal.phase.dark_pixels_first": {
+			"case": "reveal-dark_pixels_first",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.phase.black_then_color": {
+			"case": "reveal-black_then_color",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.black.none": {
+			"case": "reveal-black-directions",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.black.left": {
+			"case": "reveal-black-directions",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.black.right": {
+			"case": "reveal-black-directions",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.black.top": {
+			"case": "reveal-black-directions",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.black.bottom": {
+			"case": "reveal-black-directions",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.color-build.muted_to_full": {
+			"case": "reveal-color-builds",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.color-build.none": {
+			"case": "reveal-color-builds",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"reveal.dark-alpha": {
+			"case": "reveal-dark-alpha",
+			"frames": [0, 24, 25, 26, 48]
+		},
+		"reveal.texture.clean": {
+			"case": "reveal-texture-clean",
+			"frames": [0, 7, 15, 25, 26, 48, 59]
+		},
+		"reveal.texture.paper": {
+			"case": "reveal-texture-paper",
+			"frames": [0, 7, 15, 25, 26, 48, 59]
+		},
+		"reveal.texture.ink": {
+			"case": "reveal-texture-ink",
+			"frames": [0, 7, 15, 25, 26, 48, 59]
+		},
+		"reveal.texture.dust": {
+			"case": "reveal-texture-dust",
+			"frames": [0, 7, 15, 25, 26, 48, 59]
+		},
+		"reveal.texture.glitch": {
+			"case": "reveal-texture-glitch",
+			"frames": [0, 7, 15, 25, 26, 48, 59]
+		},
+		"reveal.texture.phase-order": {
+			"case": "reveal-texture-phase",
+			"frames": [0, 24, 25, 26, 48, 59]
+		},
+		"reveal.phase.geometry": {
+			"case": "reveal-phase-geometry",
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		"transition.series.cut": {
+			"case": "transition-series-cut",
+			"frames": [0, 28, 29, 30, 57, 58, 59, 87]
+		},
+		"transition.series.fade": {
+			"case": "transition-series-fade",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.default-duration": {
+			"case": "transition-series-fade",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.authored-duration": {
+			"case": "transition-series-fade",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.last-scene": {
+			"case": "transition-series-fade",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.slide": {
+			"case": "transition-series-slide",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.zoom": {
+			"case": "transition-series-zoom",
+			"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74]
+		},
+		"transition.series.one-frame-cut": {
+			"case": "transition-series-cut",
+			"frames": [0, 28, 29, 30, 57, 58, 59, 87]
+		},
+		"transition.series.overlap": {
+			"case": "transition-series-overlap",
+			"frames": [0, 20, 21, 22, 26, 27, 28, 32, 38, 44, 45, 50, 51, 71]
+		},
+		"transition.series.wipe": {
+			"case": "transition-series-wipe",
+			"frames": [0, 17, 18, 19, 23, 24, 25, 26, 28, 29, 30, 44, 45, 46, 49, 50, 51, 52, 53, 54, 74]
+		},
+		"transition.series.flip": {
+			"case": "transition-series-flip",
+			"frames": [0, 17, 18, 19, 23, 24, 25, 26, 28, 29, 30, 44, 45, 46, 49, 50, 51, 52, 53, 54, 74]
+		},
+		"transition.series.clock_wipe": {
+			"case": "transition-series-clock_wipe",
+			"frames": [0, 17, 18, 19, 23, 24, 25, 26, 28, 29, 30, 44, 45, 46, 49, 50, 51, 52, 53, 54, 74]
+		},
+		"transition.series.pixel": {
+			"case": "transition-series-pixel",
+			"frames": [0, 17, 18, 19, 23, 24, 25, 26, 28, 29, 30, 44, 45, 46, 49, 50, 51, 52, 53, 54, 74]
+		},
+		"transition.pixel.geometry": {
+			"case": "transition-pixel-geometry",
+			"frames": [0, 17, 18, 19, 23, 24, 25, 26, 28, 29, 30, 44, 45, 46, 49, 50, 51, 52, 53, 54, 74]
+		},
+		"transition.absolute.cut": {
+			"case": "transition-absolute-cut",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.fade": {
+			"case": "transition-absolute-fade",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.slide": {
+			"case": "transition-absolute-slide",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.gap-hold": {
+			"case": "transition-absolute-slide",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.overlap": {
+			"case": "transition-absolute-slide",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.zoom": {
+			"case": "transition-absolute-zoom",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.wipe": {
+			"case": "transition-absolute-wipe",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.flip": {
+			"case": "transition-absolute-flip",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.clock_wipe": {
+			"case": "transition-absolute-clock_wipe",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.absolute.pixel": {
+			"case": "transition-absolute-pixel",
+			"frames": [0, 35, 36, 44, 45, 46, 51, 56, 57, 65, 66, 67, 70, 74, 75, 77, 78, 98]
+		},
+		"transition.scene-visual.positioned.cut": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.fade": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.slide": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.zoom": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.wipe": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.flip": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.clock_wipe": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.positioned.pixel": {
+			"case": "transition-placement-visual-positioned",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.cut": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.fade": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.slide": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.zoom": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.wipe": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.flip": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.clock_wipe": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.individual.pixel": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.scene-visual.first-clip-ignored": {
+			"case": "transition-placement-visual-individual",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.cut": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.fade": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.slide": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.zoom": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.wipe": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.flip": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.clock_wipe": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.pixel": {
+			"case": "transition-placement-timeline-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.cut": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.fade": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.slide": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.zoom": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.wipe": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.flip": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.clock_wipe": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.overlay.pixel": {
+			"case": "transition-placement-overlay-grid",
+			"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89]
+		},
+		"transition.timeline.boundary-order": {
+			"case": "transition-placement-timeline-boundary",
+			"frames": [0, 29, 30, 31, 38, 39, 40, 44, 50, 51, 68]
+		},
+		"transition.overlay.boundary-order": {
+			"case": "transition-placement-overlay-boundary",
+			"frames": [0, 29, 30, 31, 38, 39, 40, 44, 50, 51, 68]
+		},
+		"transition.scene-visual.single-hold": {
+			"case": "transition-placement-single-hold",
+			"frames": [0, 1, 14, 15, 60, 68, 69, 77, 78, 79, 89, 90, 107]
+		},
+		"effect.overlap-transform": {
+			"case": "effect-overlap-transform",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.fade_out": {
+			"case": "effect-fade_out",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.zoom_out_from_black": {
+			"case": "effect-zoom_out_from_black",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.fade_in": {
+			"case": "effect-fade_in",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.flash": {
+			"case": "effect-flash",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.overlap-color": {
+			"case": "effect-overlap-color",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.zoom_punch": {
+			"case": "effect-zoom_punch",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"effect.whip_pan": {
+			"case": "effect-whip_pan",
+			"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59]
+		},
+		"decoration.label-wrap": {
+			"case": "decoration-label-wrap",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.label-only": {
+			"case": "decoration-label-only",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.label-hidden": {
+			"case": "decoration-label-hidden",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.label-absent": {
+			"case": "decoration-label-absent",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.label-entrance": {
+			"case": "decoration-label-entrance",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.decoration-stacking": {
+			"case": "decoration-decoration-stacking",
+			"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29]
+		},
+		"decoration.vignette": {
+			"case": "decoration-vignette",
+			"frames": [0, 15, 29]
+		},
+		"decoration.grain-repeat": {
+			"case": "decoration-grain-repeat",
+			"frames": [0, 15, 29]
+		},
+		"pacing.unassigned": {
+			"case": "pacing-unassigned",
+			"frames": [0, 1, 8, 15, 29, 30, 31, 38, 59]
+		},
+		"pacing.progress-tail": {
+			"case": "pacing-progress-tail",
+			"frames": [0, 1, 8, 15, 29, 30, 31, 38, 59, 60, 61, 75, 89]
+		},
+		"pacing.gaps": {
+			"case": "pacing-gaps",
+			"frames": [0, 2, 3, 4, 11, 29, 32, 33, 44, 45, 46, 53, 74, 75, 89, 90, 91, 98, 119]
+		},
+		"pacing.minimal": {
+			"case": "pacing-minimal",
+			"frames": [0, 1, 8, 15, 29, 30, 31, 38, 59, 60, 61, 68, 89]
+		},
+		"pacing.runs": {
+			"case": "pacing-runs",
+			"frames": [
+				0, 1, 8, 15, 29, 30, 31, 38, 59, 60, 89, 90, 91, 98, 119, 149, 150, 151, 179, 180, 181, 209
+			]
+		},
+		"pacing.none": {
+			"case": "pacing-none",
+			"frames": [0]
+		},
+		"pacing.one": {
+			"case": "pacing-one",
+			"frames": [0, 1, 8, 15, 29, 30, 31, 38, 59]
+		},
+		"motion-combined-absolute": {
+			"case": "motion-combined-absolute",
+			"frames": [0, 3, 8, 15, 32, 33, 44, 45, 50, 51, 52, 57, 62, 63, 74, 89, 90, 91, 98, 110, 119]
+		},
+		"motion-combined-series": {
+			"case": "motion-combined-series",
+			"frames": [0, 3, 8, 15, 32, 33, 44, 45, 50, 51, 52, 57, 62, 63, 74, 89, 90, 91, 98, 110, 119]
+		},
+		"decoration-grain-geometry": {
+			"case": "decoration-grain-geometry",
+			"frames": [0, 15, 29]
+		},
+		"motion-combined-overlap": {
+			"case": "motion-combined-overlap",
+			"frames": [0, 20, 21, 27, 28, 35, 36, 42, 44, 45, 50, 51, 60, 71, 72, 89, 90, 98, 119]
+		},
+		"motion-combined-overlap-geometry": {
+			"case": "motion-combined-overlap-geometry",
+			"frames": [0, 20, 21, 27, 28, 35, 36, 42, 44, 45, 50, 51, 60, 71, 72, 89, 90, 98, 119]
+		}
+	}
 }

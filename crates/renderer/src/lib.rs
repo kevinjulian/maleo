@@ -2,6 +2,7 @@
 //! value the Remotion compositions receive (ADR 0009, OpenSpec p2-render-foundation).
 
 pub mod blur;
+mod correction;
 pub mod coverage;
 pub mod fonts;
 pub mod frame;

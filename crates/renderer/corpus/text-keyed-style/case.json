@@ -1,0 +1,21 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 15, 45, 75, 119],
+	"regions": [
+		{
+			"name": "text-box-and-content",
+			"rect": [30, 200, 1050, 1700]
+		}
+	],
+	"options": [
+		"text.animation.fontSize",
+		"text.animation.letterSpacing",
+		"text.animation.lineHeight",
+		"text.animation.bgOpacity",
+		"text.animation.fill",
+		"text.animation.background",
+		"text.animation.bodyFill-inert",
+		"text.animation.accent-inert"
+	]
+}

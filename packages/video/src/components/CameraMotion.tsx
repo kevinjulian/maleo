@@ -18,7 +18,7 @@ type Props = {
 	focalPoint?: { xPct: number; yPct: number } | null;
 };
 
-function glitchOffset(frame: number, fps: number) {
+export function glitchOffset(frame: number, fps: number) {
 	const sec = frame / fps;
 	const burst = Math.sin(sec * 47) > 0.85;
 	if (!burst) return { x: 0, y: 0, opacity: 1 };

@@ -1,0 +1,78 @@
+{
+	"scenes": [],
+	"hideBase": true,
+	"bgColor": "#182432",
+	"fgColor": "#fff",
+	"accentColor": "#ffd400",
+	"videoOverlays": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"track": 0,
+			"layout": {
+				"xPct": 5,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 35,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"flipX": true,
+				"flipY": false,
+				"crop": {
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 65,
+					"heightPct": 70
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"track": 1,
+			"layout": {
+				"xPct": 52,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 35,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"flipX": false,
+				"flipY": true,
+				"crop": {
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 65,
+					"heightPct": 70
+				}
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"track": 2,
+			"layout": {
+				"xPct": 5,
+				"yPct": 50,
+				"widthPct": 40,
+				"heightPct": 35,
+				"fit": "contain",
+				"rotationDeg": 15,
+				"flipX": true,
+				"flipY": true,
+				"crop": {
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 65,
+					"heightPct": 70
+				}
+			}
+		}
+	]
+}

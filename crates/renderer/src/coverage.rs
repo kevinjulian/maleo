@@ -14,7 +14,21 @@ use crate::timeline::{self, Visible};
 
 /// The element kinds this renderer draws. The corpus check (D6) requires a
 /// golden case for each one.
-pub const SUPPORTED: &[&str] = &["background", "scene-image", "timeline-image", "image-overlay", "text-plain", "caption"];
+pub const SUPPORTED: &[&str] = &[
+    "background",
+    "scene-image",
+    "timeline-image",
+    "image-overlay",
+    "text-plain",
+    "caption",
+    "transition",
+    "effect",
+    "scene-label",
+    "vignette",
+    "grain",
+    "chapter-pills",
+    "progress-bar",
+];
 
 /// One element the renderer cannot draw, or draws without one of its options.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -32,9 +46,6 @@ pub struct Inspected {
     pub problems: Vec<String>,
 }
 
-/// Movements whose keyframes do not move: `static` holds a 1.02 scale.
-const STATIC_MOVEMENTS: [&str; 2] = ["Static", "static"];
-
 /// Layout keys that do not change how a still image draws.
 const INERT_LAYOUT_KEYS: [&str; 7] = ["playbackRate", "reverse", "preservePitch", "aspectLocked", "sourceAudioExtraction", "reverseMedia", "volume"];
 
@@ -48,28 +59,30 @@ pub fn inspect(storyboard: &Storyboard, frame: i64, fps: f64, has_media: &dyn Fn
             Visible::Scene { placed, local } => inspect_scene(storyboard, placed, *local, fps, has_media, &mut out),
             Visible::TimelineVisual { placed, local } => {
                 let clip = &storyboard.visual_timeline.as_deref().unwrap_or_default()[placed.index];
-                let mut problems = layout_problems(clip.layout.as_ref());
-                problems.extend(camera_problems(clip.movement.as_deref(), clip.motion.as_ref()));
-                problems.extend(clip.reveal.as_ref().map(|_| "reveal".to_owned()));
-                problems.extend(placed.transition_at(*local).map(|t| format!("`{t}` transition")));
+                let mut problems = layout_problems(clip.layout.as_ref(), true);
+                problems.extend(placed.transitions_at(*local).filter(|t| !crate::scene::transition::series_supported(t)).map(|t| format!("`{t}` transition")));
                 problems.extend((!has_media(&clip.url)).then(|| "missing media".to_owned()));
                 out.push(visual(&clip.kind, "timeline-image", "timeline-video", path, problems));
             }
             Visible::VideoOverlay { placed, local } => {
                 let overlay = &storyboard.video_overlays[placed.index];
-                let mut problems = layout_problems(overlay.layout.as_ref());
-                problems.extend(overlay.reveal.as_ref().map(|_| "reveal".to_owned()));
-                problems.extend(placed.transition_at(*local).map(|t| format!("`{t}` transition")));
+                let mut problems = layout_problems(overlay.layout.as_ref(), true);
+                problems.extend(placed.transitions_at(*local).filter(|t| !crate::scene::transition::series_supported(t)).map(|t| format!("`{t}` transition")));
                 problems.extend((!has_media(&overlay.url)).then(|| "missing media".to_owned()));
                 out.push(visual(&overlay.kind, "image-overlay", "video-overlay", path, problems));
             }
             Visible::TextOverlay { index, .. } => out.push(inspect_text(storyboard, *index, path)),
             Visible::Caption { index, .. } => out.push(Inspected { kind: "caption", path, problems: caption_problems(storyboard, *index) }),
             Visible::Effect { index } => {
-                out.push(Inspected { kind: "effect", path, problems: vec![format!("`{}` effect", storyboard.effects[*index].effect)] })
+                let kind = &storyboard.effects[*index].effect;
+                out.push(Inspected {
+                    kind: "effect",
+                    path,
+                    problems: if crate::scene::effect::supported(kind) { Vec::new() } else { vec![format!("`{kind}` effect")] },
+                })
             }
-            Visible::ChapterPills => out.push(Inspected { kind: "chapter-pills", path, problems: vec!["chapter pills".into()] }),
-            Visible::ProgressBar => out.push(Inspected { kind: "progress-bar", path, problems: vec!["progress bar".into()] }),
+            Visible::ChapterPills => out.push(Inspected { kind: "chapter-pills", path, problems: Vec::new() }),
+            Visible::ProgressBar => out.push(Inspected { kind: "progress-bar", path, problems: Vec::new() }),
         }
     }
     out
@@ -103,12 +116,17 @@ fn inspect_scene(storyboard: &Storyboard, placed: &timeline::Placed, local: i64,
         None => vec![format!("background `{}` does not parse", storyboard.bg_color)],
     };
     out.push(Inspected { kind: "background", path: path.clone(), problems: background });
-    if let Some(transition) = placed.transition_at(local) {
-        out.push(Inspected { kind: "transition", path: path.clone(), problems: vec![format!("`{transition}` transition")] });
+    for transition in placed.transitions_at(local) {
+        let supported = crate::scene::transition::series_supported(transition);
+        out.push(Inspected {
+            kind: "transition",
+            path: path.clone(),
+            problems: if supported { Vec::new() } else { vec![format!("`{transition}` transition")] },
+        });
     }
     for (flag, kind) in [(storyboard.show_labels && !scene.label.is_empty(), "scene-label"), (scene.vignette, "vignette"), (scene.grain, "grain")] {
         if flag {
-            out.push(Inspected { kind, path: path.clone(), problems: vec![kind.replace('-', " ")] });
+            out.push(Inspected { kind, path: path.clone(), problems: Vec::new() });
         }
     }
     for at in timeline::scene_visuals(scene, local, placed.frames, placed.hold, fps) {
@@ -118,10 +136,8 @@ fn inspect_scene(storyboard: &Storyboard, placed: &timeline::Placed, local: i64,
             None => (scene.image.as_str(), "image"),
         };
         let layout = Layout::merged(scene.layout.as_ref(), clip.and_then(|c| c.layout.as_ref()));
-        let mut problems = layout_problems(layout.as_ref());
-        problems.extend(camera_problems(Some(&scene.movement), clip.and_then(|c| c.motion.as_ref()).or(scene.motion.as_ref())));
-        problems.extend(clip.and_then(|c| c.reveal.as_ref()).map(|_| "reveal".to_owned()));
-        problems.extend(at.transition.map(|t| format!("`{t}` transition")));
+        let mut problems = layout_problems(layout.as_ref(), true);
+        problems.extend(at.transition.filter(|t| !crate::scene::transition::series_supported(t)).map(|t| format!("`{t}` transition")));
         problems.extend((!has_media(url)).then(|| "missing media".to_owned()));
         let item = match at.index {
             Some(i) => format!("{path}.visualClips[{i}]"),
@@ -131,10 +147,6 @@ fn inspect_scene(storyboard: &Storyboard, placed: &timeline::Placed, local: i64,
     }
 }
 
-fn is_null_or_absent(value: Option<&Value>) -> bool {
-    value.is_none_or(Value::is_null)
-}
-
 /// Keyframe tracks other than `volume` that hold at least one key.
 fn has_keys(animation: Option<&Value>) -> bool {
     let tracks = |name: &str| animation.and_then(|a| a.get(name)).and_then(Value::as_object).cloned().unwrap_or_default();
@@ -142,27 +154,38 @@ fn has_keys(animation: Option<&Value>) -> bool {
 }
 
 /// The options of a clip layout the renderer does not draw.
-fn layout_problems(layout: Option<&Layout>) -> Vec<String> {
+fn layout_problems(layout: Option<&Layout>, visual: bool) -> Vec<String> {
     let Some(layout) = layout else { return Vec::new() };
     let mut problems = Vec::new();
-    if has_keys(layout.rest.get("animation")) {
+    let animation = layout.animation.as_ref();
+    let unsupported_tracks = animation.and_then(|a| a.get("tracks")).and_then(Value::as_object).is_some_and(|tracks| {
+        tracks.iter().any(|(name, keys)| {
+            !["xPct", "yPct", "scale", "rotationDeg", "opacity", "volume"].contains(&name.as_str()) && keys.as_array().is_some_and(|keys| !keys.is_empty())
+        })
+    }) || animation
+        .and_then(|a| a.get("colorTracks"))
+        .and_then(Value::as_object)
+        .is_some_and(|tracks| tracks.values().any(|keys| keys.as_array().is_some_and(|keys| !keys.is_empty())));
+    if has_keys(animation) && visual && unsupported_tracks {
         problems.push("keyframes".into());
     }
-    if !is_null_or_absent(layout.rest.get("mask")) {
+    if let Some(animation) = animation.and_then(Value::as_object) {
+        for option in animation.keys().filter(|key| !["tracks", "colorTracks"].contains(&key.as_str())) {
+            problems.push(format!("animation option `{option}`"));
+        }
+    }
+    if layout.local_mask().is_some() && !visual {
         problems.push("mask".into());
     }
-    let color = layout.rest.get("color").and_then(Value::as_object);
-    if color.is_some_and(|c| c.values().any(|v| v.as_f64() != Some(1.0))) {
+    if !visual && layout.color.is_some_and(|c| !c.neutral()) {
         problems.push("color adjustment".into());
     }
-    match layout.rest.get("blendMode").and_then(Value::as_str) {
+    match layout.blend_mode.as_deref() {
         None | Some("normal") => {}
-        Some(mode) => problems.push(format!("`{mode}` blend mode")),
+        Some(mode) if !visual => problems.push(format!("`{mode}` blend mode")),
+        Some(_) => {}
     }
-    if layout.rotation_deg.is_some_and(|r| r != 0.0) {
-        problems.push("rotation".into());
-    }
-    if layout.flip_x == Some(true) || layout.flip_y == Some(true) {
+    if !visual && (layout.flip_x == Some(true) || layout.flip_y == Some(true)) {
         problems.push("flip".into());
     }
     for key in layout.rest.keys() {
@@ -173,28 +196,24 @@ fn layout_problems(layout: Option<&Layout>) -> Vec<String> {
     problems
 }
 
-/// Camera motion: a custom keyframe motion, or a movement that moves.
-/// `resolveMotion` reads a missing movement as Ken Burns.
-fn camera_problems(movement: Option<&str>, motion: Option<&Value>) -> Option<String> {
-    if !is_null_or_absent(motion) {
-        return Some("camera motion".into());
-    }
-    match movement {
-        Some(m) if STATIC_MOVEMENTS.contains(&m) => None,
-        Some(m) => Some(format!("`{m}` camera motion")),
-        None => Some("Ken Burns camera motion".into()),
-    }
-}
-
 fn inspect_text(storyboard: &Storyboard, index: usize, path: String) -> Inspected {
     let text = &storyboard.text_overlays[index];
     if text.preset.as_deref() != Some("plain") {
         let preset = text.preset.as_deref().map_or("no preset".to_owned(), |p| format!("`{p}` preset"));
         return Inspected { kind: "text", path, problems: vec![preset] };
     }
-    let mut problems = layout_problems(text.layout.as_ref());
-    if text.anim.as_ref().is_some_and(|a| has_keys(Some(a))) {
-        problems.push("keyframes".into());
+    let mut problems = layout_problems(text.layout.as_ref(), false);
+    let animation = text.layout.as_ref().and_then(|layout| layout.animation.as_ref()).or(text.anim.as_ref());
+    if let Some(colors) = animation.and_then(|a| a.get("colorTracks")).and_then(Value::as_object) {
+        for (property, keys) in colors {
+            if ["fill", "background"].contains(&property.as_str())
+                && keys
+                    .as_array()
+                    .is_some_and(|keys| keys.iter().any(|key| key.get("v").and_then(Value::as_str).is_none_or(|color| parse_color(color).is_none())))
+            {
+                problems.push(format!("animated {property} color does not parse"));
+            }
+        }
     }
     match &text.style {
         None => problems.push("no text style (browser default font)".into()),
@@ -206,9 +225,6 @@ fn inspect_text(storyboard: &Storyboard, index: usize, path: String) -> Inspecte
             }
             if style.font_size.is_none() {
                 problems.push("no font size (browser default size)".into());
-            }
-            if style.scale.is_some_and(|s| s != 1.0) {
-                problems.push("content scale".into());
             }
             for (name, value) in [("fill", style.fill.as_deref()), ("background", style.background.as_deref())] {
                 if value.is_some_and(|v| parse_color(v).is_none()) {
@@ -266,13 +282,67 @@ mod tests {
     }
 
     #[test]
-    fn a_text_overlay_with_an_animation_value_is_one_entry() {
+    fn a_plain_text_overlay_with_supported_animation_has_empty_coverage() {
         let entries = report_at(
             r#"{"scenes":[],"textOverlays":[{"content":"t","preset":"plain","durationSec":2,"style":{"fontFamily":"Inter","fontSize":64},
                 "layout":{"xPct":0,"animation":{"tracks":{"opacity":[{"t":0,"v":0},{"t":1,"v":1}]}}}}]}"#,
             0,
         );
-        assert_eq!(entries, [Entry { kind: "text-plain".into(), path: "textOverlays[0]".into(), reason: "keyframes".into() }]);
+        assert_eq!(entries, []);
+    }
+
+    #[test]
+    fn supported_visual_animation_does_not_hide_video_or_unknown_options() {
+        let entries = report_at(
+            r#"{"scenes":[],"videoOverlays":[{"url":"video.mp4","kind":"video","durationSec":2,"layout":{"rotationDeg":30,"flipX":true,"animation":{"tracks":{"opacity":[{"t":0,"v":0.5}]},"futureOption":true}}}]}"#,
+            0,
+        );
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media", "animation option `futureOption`"]);
+    }
+
+    #[test]
+    fn supported_transitions_do_not_hide_simultaneous_unknown_transitions() {
+        let absolute = report_at(r#"{"scenes":[{"image":"a","startSec":0,"durationSec":2,"transition":"fade"}]}"#, 0);
+        assert!(!absolute.iter().any(|entry| entry.reason == "`fade` transition"));
+        let overlap = report_at(
+            r#"{"scenes":[{"image":"a","durationSec":0.4,"transition":"fade"},{"image":"b","durationSec":0.4,"transition":"future-transition"},{"image":"c","durationSec":1,"transition":"cut"}]}"#,
+            0,
+        );
+        assert!(overlap.iter().any(|entry| entry.reason == "`future-transition` transition"));
+        assert!(!overlap.iter().any(|entry| entry.reason == "`fade` transition"));
+    }
+
+    #[test]
+    fn supported_transitions_keep_video_media_reasons() {
+        let entries = report_at(r#"{"scenes":[],"videoOverlays":[{"url":"a","kind":"video","durationSec":2,"transition":"flip"}]}"#, 0);
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+    }
+
+    #[test]
+    fn supported_reveals_keep_video_media_reasons() {
+        let entries = report_at(
+            r#"{"scenes":[],"videoOverlays":[{"url":"a","kind":"video","reveal":{"type":"fade"}},{"url":"b","reveal":{"type":"wipe","phase":"black_then_color"}},{"url":"c","reveal":{"type":"wipe","texture":"paper"}}]}"#,
+            0,
+        );
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+    }
+
+    #[test]
+    fn supported_mask_and_color_do_not_hide_video_media() {
+        let entries = report_at(
+            r#"{"scenes":[],"videoOverlays":[{"url":"v","kind":"video","durationSec":2,"layout":{"color":{"brightness":2,"contrast":1,"saturation":1},"mask":{"shape":"rectangle","xPct":0,"yPct":0,"widthPct":100,"heightPct":100,"rotationDeg":0,"featherPct":50,"inverted":false}}}]}"#,
+            0,
+        );
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+    }
+
+    #[test]
+    fn text_animation_keeps_font_and_template_coverage() {
+        let entries = report_at(
+            r#"{"scenes":[],"textOverlays":[{"content":"x","preset":"plain","durationSec":2,"style":{"fontFamily":"Unbundled","fontSize":64},"layout":{"animation":{"tracks":{"opacity":[{"t":0,"v":1}]}}}},{"content":"y","preset":"lower-third","durationSec":2,"layout":{"animation":{"tracks":{"opacity":[{"t":0,"v":1}]}}}}]}"#,
+            0,
+        );
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["font `Unbundled`", "`lower-third` preset"]);
     }
 
     #[test]
@@ -282,15 +352,27 @@ mod tests {
     }
 
     #[test]
-    fn a_scene_with_camera_motion_is_one_entry() {
+    fn supported_camera_motion_has_empty_coverage() {
         let entries = report_at(r#"{"scenes":[{"image":"a.png","durationSec":2,"movement":"Slow Zoom In","transition":"cut"}]}"#, 0);
-        assert_eq!(entries, [Entry { kind: "scene-image".into(), path: "scenes[0].image".into(), reason: "`Slow Zoom In` camera motion".into() }]);
+        assert_eq!(entries, []);
     }
 
     #[test]
-    fn an_effect_is_one_entry() {
-        let entries = report_at(r#"{"scenes":[],"effects":[{"effect":"flash","startSec":0,"durationSec":1}]}"#, 0);
-        assert_eq!(entries, [Entry { kind: "effect".into(), path: "effects[0]".into(), reason: "`flash` effect".into() }]);
+    fn unknown_effects_remain_reported() {
+        let entries = report_at(r#"{"scenes":[],"effects":[{"effect":"unknown","startSec":0,"durationSec":1}]}"#, 0);
+        assert_eq!(entries, [Entry { kind: "effect".into(), path: "effects[0]".into(), reason: "`unknown` effect".into() }]);
+    }
+
+    #[test]
+    fn supported_effects_do_not_hide_video() {
+        for kind in ["fade_in", "fade_out", "zoom_out_from_black", "flash", "zoom_punch", "whip_pan"] {
+            let json = format!(
+                r#"{{"scenes":[],"videoOverlays":[{{"url":"a.png","kind":"video","durationSec":1}}],"effects":[{{"effect":"{kind}","durationSec":1}}]}}"#
+            );
+            let entries = report_at(&json, 0);
+            assert_eq!(entries.len(), 1);
+            assert_eq!(entries[0].reason, "`video` media");
+        }
     }
 
     #[test]

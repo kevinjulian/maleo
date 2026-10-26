@@ -1,0 +1,323 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 1.5,
+			"movement": "Orbit",
+			"transition": "pixel",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 8,
+				"yPct": 12,
+				"widthPct": 75,
+				"heightPct": 65,
+				"fit": "cover",
+				"flipX": true,
+				"crop": {
+					"xPct": 7,
+					"yPct": 9,
+					"widthPct": 82,
+					"heightPct": 78
+				},
+				"color": {
+					"brightness": 1.1,
+					"contrast": 1.2,
+					"saturation": 0.7
+				},
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 8,
+					"yPct": 12,
+					"widthPct": 80,
+					"heightPct": 70,
+					"rotationDeg": 27,
+					"featherPct": 12,
+					"inverted": false
+				},
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0.0,
+								"v": 7
+							},
+							{
+								"t": 1.5,
+								"v": 25,
+								"easing": "in-out"
+							}
+						],
+						"yPct": [
+							{
+								"t": 0.0,
+								"v": 15
+							},
+							{
+								"t": 1.5,
+								"v": 30,
+								"easing": "out"
+							}
+						],
+						"scale": [
+							{
+								"t": 0.0,
+								"v": 0.8
+							},
+							{
+								"t": 1.5,
+								"v": 1.15,
+								"easing": "in",
+								"easingRange": [0.2, 0.8]
+							}
+						],
+						"rotationDeg": [
+							{
+								"t": 0.0,
+								"v": -15
+							},
+							{
+								"t": 1.5,
+								"v": 25,
+								"easing": "linear"
+							}
+						],
+						"opacity": [
+							{
+								"t": 0.0,
+								"v": 0.9
+							},
+							{
+								"t": 1.0,
+								"v": 0.35,
+								"easing": "hold"
+							}
+						]
+					}
+				},
+				"blendMode": "multiply"
+			},
+			"label": "Motion 1",
+			"visual": "Layered scene treatments",
+			"chapter": "Part 1",
+			"grain": true,
+			"vignette": true
+		},
+		{
+			"image": "media/1.png",
+			"durationSec": 1.5,
+			"movement": "slow-zoom-out",
+			"transition": "pixel",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 8,
+				"yPct": 12,
+				"widthPct": 75,
+				"heightPct": 65,
+				"fit": "cover",
+				"flipX": true,
+				"crop": {
+					"xPct": 7,
+					"yPct": 9,
+					"widthPct": 82,
+					"heightPct": 78
+				},
+				"color": {
+					"brightness": 1.1,
+					"contrast": 1.2,
+					"saturation": 0.7
+				},
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 8,
+					"yPct": 12,
+					"widthPct": 80,
+					"heightPct": 70,
+					"rotationDeg": 27,
+					"featherPct": 12,
+					"inverted": false
+				},
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0.0,
+								"v": 7
+							},
+							{
+								"t": 1.5,
+								"v": 25,
+								"easing": "in-out"
+							}
+						],
+						"yPct": [
+							{
+								"t": 0.0,
+								"v": 15
+							},
+							{
+								"t": 1.5,
+								"v": 30,
+								"easing": "out"
+							}
+						],
+						"scale": [
+							{
+								"t": 0.0,
+								"v": 0.8
+							},
+							{
+								"t": 1.5,
+								"v": 1.15,
+								"easing": "in",
+								"easingRange": [0.2, 0.8]
+							}
+						],
+						"rotationDeg": [
+							{
+								"t": 0.0,
+								"v": -15
+							},
+							{
+								"t": 1.5,
+								"v": 25,
+								"easing": "linear"
+							}
+						],
+						"opacity": [
+							{
+								"t": 0.0,
+								"v": 0.9
+							},
+							{
+								"t": 1.0,
+								"v": 0.35,
+								"easing": "hold"
+							}
+						]
+					}
+				},
+				"blendMode": "screen"
+			},
+			"label": "Motion 2",
+			"visual": "Layered scene treatments",
+			"chapter": "Part 2",
+			"grain": true,
+			"vignette": true
+		}
+	],
+	"bgColor": "#204060",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": true,
+	"pacingDevices": {
+		"chapterPills": true,
+		"progressBar": true
+	},
+	"captionCues": [
+		{
+			"id": "base",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 4,
+			"track": 0,
+			"caption": {
+				"text": "Make every video easy to watch",
+				"words": [
+					{
+						"text": "Make",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "every",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "video",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "easy",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "to",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "watch",
+						"startSec": 2.5,
+						"endSec": 2.9
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-base",
+				"status": "current"
+			}
+		}
+	],
+	"effects": [
+		{
+			"effect": "zoom_punch",
+			"startSec": 0.1,
+			"durationSec": 1,
+			"intensity": 0.5
+		},
+		{
+			"effect": "whip_pan",
+			"startSec": 1.1,
+			"durationSec": 1,
+			"intensity": 0.6
+		},
+		{
+			"effect": "flash",
+			"startSec": 1.7,
+			"durationSec": 0.4,
+			"intensity": 0.3
+		}
+	],
+	"videoOverlays": [
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 3,
+			"durationSec": 1,
+			"track": 1,
+			"transition": "wipe",
+			"transitionDurSec": 0.3,
+			"layout": {
+				"xPct": 15,
+				"yPct": 20,
+				"widthPct": 70,
+				"heightPct": 40,
+				"fit": "stretch",
+				"flipY": true,
+				"blendMode": "screen",
+				"color": {
+					"brightness": 0.9,
+					"contrast": 1.2,
+					"saturation": 1.3
+				}
+			}
+		}
+	]
+}

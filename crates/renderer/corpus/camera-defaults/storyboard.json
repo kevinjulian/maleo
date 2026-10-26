@@ -1,0 +1,30 @@
+{
+	"scenes": [],
+	"visualTimeline": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 5,
+				"yPct": 25,
+				"widthPct": 40,
+				"heightPct": 45
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 4,
+			"layout": {
+				"xPct": 55,
+				"yPct": 25,
+				"widthPct": 40,
+				"heightPct": 45
+			},
+			"movement": "unknown"
+		}
+	]
+}

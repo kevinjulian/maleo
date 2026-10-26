@@ -1,0 +1,266 @@
+[
+	{
+		"storyboard": {
+			"scenes": [],
+			"audioOverlays": [
+				{
+					"startSec": 6.1,
+					"durationSec": 1.23
+				}
+			]
+		},
+		"chapters": [],
+		"durations": [
+			{
+				"fps": 24,
+				"frames": 176
+			},
+			{
+				"fps": 30,
+				"frames": 220
+			},
+			{
+				"fps": 60,
+				"frames": 440
+			}
+		]
+	},
+	{
+		"storyboard": {
+			"scenes": [
+				{
+					"image": "",
+					"label": "One",
+					"durationSec": 1
+				}
+			],
+			"audioOverlays": [
+				{
+					"startSec": 6.1,
+					"durationSec": 1.23
+				}
+			]
+		},
+		"chapters": [
+			{
+				"label": "One",
+				"startSec": 0,
+				"endSec": 1
+			}
+		],
+		"durations": [
+			{
+				"fps": 24,
+				"frames": 176
+			},
+			{
+				"fps": 30,
+				"frames": 220
+			},
+			{
+				"fps": 60,
+				"frames": 440
+			}
+		]
+	},
+	{
+		"storyboard": {
+			"scenes": [
+				{
+					"image": "",
+					"label": "First",
+					"durationSec": 1
+				},
+				{
+					"image": "",
+					"label": "First",
+					"durationSec": 1
+				},
+				{
+					"image": "",
+					"label": "First",
+					"durationSec": 1
+				}
+			],
+			"audioOverlays": [
+				{
+					"startSec": 6.1,
+					"durationSec": 1.23
+				}
+			]
+		},
+		"chapters": [
+			{
+				"label": "First",
+				"startSec": 0,
+				"endSec": 3
+			}
+		],
+		"durations": [
+			{
+				"fps": 24,
+				"frames": 176
+			},
+			{
+				"fps": 30,
+				"frames": 220
+			},
+			{
+				"fps": 60,
+				"frames": 440
+			}
+		]
+	},
+	{
+		"storyboard": {
+			"scenes": [
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "A",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "A",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "B",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "A",
+					"durationSec": 1.1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "",
+					"durationSec": 1.1
+				}
+			],
+			"audioOverlays": [
+				{
+					"startSec": 6.1,
+					"durationSec": 1.23
+				}
+			]
+		},
+		"chapters": [
+			{
+				"label": "A",
+				"startSec": 0,
+				"endSec": 3.3000000000000003
+			},
+			{
+				"label": "B",
+				"startSec": 3.3000000000000003,
+				"endSec": 5.5
+			},
+			{
+				"label": "A",
+				"startSec": 5.5,
+				"endSec": 6.6
+			},
+			{
+				"label": "",
+				"startSec": 6.6,
+				"endSec": 7.699999999999999
+			}
+		],
+		"durations": [
+			{
+				"fps": 24,
+				"frames": 185
+			},
+			{
+				"fps": 30,
+				"frames": 231
+			},
+			{
+				"fps": 60,
+				"frames": 462
+			}
+		]
+	},
+	{
+		"storyboard": {
+			"scenes": [
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "A",
+					"startSec": 0.1,
+					"durationSec": 1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "B",
+					"startSec": 1.4000000000000001,
+					"durationSec": 1
+				},
+				{
+					"image": "",
+					"label": "Fallback",
+					"chapter": "C",
+					"startSec": 2.7,
+					"durationSec": 1
+				}
+			],
+			"audioOverlays": [
+				{
+					"startSec": 6.1,
+					"durationSec": 1.23
+				}
+			]
+		},
+		"chapters": [
+			{
+				"label": "A",
+				"startSec": 0.1,
+				"endSec": 1.1
+			},
+			{
+				"label": "B",
+				"startSec": 1.4000000000000001,
+				"endSec": 2.4000000000000004
+			},
+			{
+				"label": "C",
+				"startSec": 2.7,
+				"endSec": 3.7
+			}
+		],
+		"durations": [
+			{
+				"fps": 24,
+				"frames": 176
+			},
+			{
+				"fps": 30,
+				"frames": 220
+			},
+			{
+				"fps": 60,
+				"frames": 440
+			}
+		]
+	}
+]

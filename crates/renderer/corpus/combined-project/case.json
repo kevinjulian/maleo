@@ -11,5 +11,6 @@
 			"name": "logo",
 			"rect": [796, 33, 1060, 139]
 		}
-	]
+	],
+	"options": ["composition.combined"]
 }

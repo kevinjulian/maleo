@@ -19,6 +19,8 @@ export default defineConfig({
 		 * by the named tool, and some are compared byte for byte. */
 		ignorePatterns: [
 			"tools/oxlint/anti-slop/**", // vendored upstream source
+			"vendor/vello_shaders/**", // retained upstream source and Cargo metadata
+			"crates/renderer/tests/fixtures/*.json", // tests/fixtures/build.ts and production pixel probes
 			".agents/**", // agent skills and prompts written by `openspec update`
 			".codex/**",
 			"packages/shared/src/editor/engine-types.generated.ts", // asserted by crates/editor-core/tests/typescript.rs

@@ -73,3 +73,5 @@ spikes/
 # The renderer's golden corpus: reference frames and media for `cargo test`.
 # render-golden.ts mounts it into the image; no process in the image reads it.
 crates/renderer/corpus/
+# Source-derived numeric fixtures and the native golden harness are test-only.
+crates/renderer/tests/

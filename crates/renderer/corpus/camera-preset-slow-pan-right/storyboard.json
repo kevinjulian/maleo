@@ -1,0 +1,11 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"movement": "slow-pan-right",
+			"durationSec": 4,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#182432"
+}

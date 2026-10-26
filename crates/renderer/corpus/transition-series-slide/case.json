@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 17, 18, 19, 23, 24, 29, 30, 44, 45, 46, 49, 53, 54, 74],
+	"regions": [
+		{
+			"name": "scene-plates",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": ["transition.series.slide"]
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "blend-layers",
+			"rect": [45, 160, 990, 1500]
+		}
+	],
+	"options": ["blend.scene-isolation"]
+}

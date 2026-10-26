@@ -29,6 +29,16 @@ function VisualEntrance({
 	children: JSX.Element;
 }): JSX.Element {
 	const frame = useCurrentFrame();
+	return (
+		<AbsoluteFill style={visualEntranceStyle(type, frame, durFrames)}>{children}</AbsoluteFill>
+	);
+}
+
+export function visualEntranceStyle(
+	type: string | null | undefined,
+	frame: number,
+	durFrames: number,
+): CSSProperties {
 	const d = Math.max(1, durFrames);
 	const p = Math.min(1, Math.max(0, frame / d));
 	const pixelP = Math.floor(p * 7) / 7;
@@ -42,7 +52,7 @@ function VisualEntrance({
 		style.transform = `scale(${1.03 - 0.03 * pixelP})`;
 		style.imageRendering = "pixelated";
 	}
-	return <AbsoluteFill style={style}>{children}</AbsoluteFill>;
+	return style;
 }
 
 type Props = {
@@ -91,7 +101,7 @@ const VIGNETTE_STYLE: React.CSSProperties = {
 	pointerEvents: "none",
 };
 
-const GRAIN_STYLE: React.CSSProperties = {
+export const GRAIN_STYLE: React.CSSProperties = {
 	position: "absolute",
 	inset: 0,
 	opacity: 0.12,

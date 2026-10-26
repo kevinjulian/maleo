@@ -28,6 +28,7 @@ FROM rust:1.98.1-slim AS editor-engine
 WORKDIR /src
 COPY rust-toolchain.toml Cargo.toml Cargo.lock ./
 COPY crates crates
+COPY vendor vendor
 RUN rustup toolchain install && cargo build --locked --release -p maleo-editor-wasm --target wasm32-unknown-unknown
 
 # The renderer's browser module (crates/renderer-wasm, ADR 0011), served to
@@ -39,6 +40,7 @@ WORKDIR /src
 RUN cargo install wasm-bindgen-cli --version 0.2.129 --locked
 COPY rust-toolchain.toml Cargo.toml Cargo.lock ./
 COPY crates crates
+COPY vendor vendor
 RUN rustup toolchain install \
 	&& cargo build --locked --release -p maleo-renderer-wasm --target wasm32-unknown-unknown \
 	&& wasm-bindgen --target web --out-dir target/renderer-wasm target/wasm32-unknown-unknown/release/maleo_renderer_wasm.wasm

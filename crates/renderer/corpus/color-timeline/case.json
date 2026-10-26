@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "timeline-color",
+			"rect": [90, 180, 900, 1370]
+		}
+	],
+	"options": ["color.timeline"]
+}

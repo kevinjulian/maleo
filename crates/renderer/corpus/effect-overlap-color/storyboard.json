@@ -1,0 +1,137 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#101820",
+	"showLabels": false,
+	"effects": [
+		{
+			"effect": "fade_in",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 0.6
+		},
+		{
+			"effect": "fade_out",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 0.6
+		},
+		{
+			"effect": "zoom_out_from_black",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 0.6
+		},
+		{
+			"effect": "flash",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 0.6
+		},
+		{
+			"effect": "flash",
+			"startSec": 0.13333333333333333,
+			"durationSec": 1,
+			"intensity": 0.6
+		}
+	],
+	"captionCues": [
+		{
+			"id": "base",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 10.0,
+			"track": 0,
+			"caption": {
+				"text": "Make every video easy to watch",
+				"words": [
+					{
+						"text": "Make",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "every",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "video",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "easy",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "to",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "watch",
+						"startSec": 2.5,
+						"endSec": 2.9
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-base",
+				"status": "current"
+			}
+		}
+	],
+	"captions": {},
+	"videoOverlays": [
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 0,
+			"layout": {
+				"xPct": 10,
+				"yPct": 20,
+				"widthPct": 20,
+				"heightPct": 30,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 2,
+			"track": 52,
+			"layout": {
+				"xPct": 70,
+				"yPct": 20,
+				"widthPct": 20,
+				"heightPct": 30,
+				"fit": "stretch"
+			}
+		}
+	]
+}

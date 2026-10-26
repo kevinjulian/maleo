@@ -7,5 +7,6 @@
 			"name": "caption",
 			"rect": [144, 800, 937, 972]
 		}
-	]
+	],
+	"options": ["caption.position.center"]
 }

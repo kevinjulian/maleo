@@ -1,0 +1,20 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 20, 21, 27, 28, 35, 36, 42, 44, 45, 50, 51, 60, 71, 72, 89, 90, 98, 119],
+	"regions": [
+		{
+			"name": "motion-stack",
+			"rect": [0, 250, 1080, 1600]
+		},
+		{
+			"name": "pacing",
+			"rect": [0, 0, 1080, 250]
+		},
+		{
+			"name": "labels-captions",
+			"rect": [0, 1600, 1080, 1920]
+		}
+	],
+	"options": ["motion-combined-overlap-geometry"]
+}

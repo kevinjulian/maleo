@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [15, 45, 74, 75, 105, 134],
+	"regions": [
+		{
+			"name": "visual-treatment",
+			"rect": [0, 0, 1080, 1500]
+		}
+	],
+	"options": ["image.timeline-keyed"]
+}

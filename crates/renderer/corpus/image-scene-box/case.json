@@ -7,5 +7,6 @@
 			"name": "visual",
 			"rect": [84, 264, 996, 1176]
 		}
-	]
+	],
+	"options": ["image.scene-box"]
 }

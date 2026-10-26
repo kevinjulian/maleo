@@ -1,0 +1,21 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 15, 59, 60, 61, 90, 119],
+	"regions": [
+		{
+			"name": "visual-treatment",
+			"rect": [0, 0, 1080, 1500]
+		}
+	],
+	"options": [
+		"image.animation.xPct",
+		"image.animation.yPct",
+		"image.animation.scale",
+		"image.animation.rotationDeg",
+		"image.animation.opacity",
+		"image.animation.hold",
+		"image.animation.retained-range",
+		"image.overlay-keyed"
+	]
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 60, 119],
+	"regions": [
+		{
+			"name": "camera-art",
+			"rect": [0, 0, 1080, 1800]
+		}
+	],
+	"options": ["camera.absent-default", "camera.unknown-default", "camera.pixel-offsets"]
+}

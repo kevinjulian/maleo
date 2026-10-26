@@ -1,0 +1,17 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 1,
+			"movement": "Static",
+			"transition": "cut",
+			"label": "",
+			"visual": "Stable labels stay readable",
+			"grain": true
+		}
+	],
+	"bgColor": "#4070b0",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": true
+}

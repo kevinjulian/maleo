@@ -1,0 +1,37 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"durationSec": 2,
+			"movement": "Slow Zoom In",
+			"transition": "cut",
+			"layout": {
+				"mask": {
+					"shape": "rectangle",
+					"xPct": 15,
+					"yPct": 20,
+					"widthPct": 65,
+					"heightPct": 55,
+					"rotationDeg": 0,
+					"featherPct": 0,
+					"inverted": false
+				}
+			},
+			"visualClips": [
+				{
+					"url": "media/landscape.jpg",
+					"durationSec": 2,
+					"layout": {
+						"mask": null,
+						"xPct": 10,
+						"yPct": 10,
+						"widthPct": 80,
+						"heightPct": 70
+					}
+				}
+			]
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false
+}

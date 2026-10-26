@@ -1,0 +1,21 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 15, 45, 59, 60, 75, 119],
+	"regions": [
+		{
+			"name": "text-box-and-content",
+			"rect": [30, 200, 1050, 1700]
+		}
+	],
+	"options": [
+		"text.animation.xPct",
+		"text.animation.yPct",
+		"text.animation.widthPct",
+		"text.animation.heightPct",
+		"text.animation.rotationDeg",
+		"text.animation.scale",
+		"text.animation.opacity",
+		"text.animation.hold"
+	]
+}

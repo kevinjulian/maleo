@@ -7,5 +7,6 @@
 			"name": "caption",
 			"rect": [130, 1184, 952, 1356]
 		}
-	]
+	],
+	"options": ["caption.position.percent"]
 }

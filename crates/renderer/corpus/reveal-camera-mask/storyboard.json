@@ -1,0 +1,33 @@
+{
+	"scenes": [],
+	"showLabels": false,
+	"visualTimeline": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 2,
+			"movement": "Orbit",
+			"reveal": {
+				"type": "spotlight",
+				"durationSec": 1.4,
+				"delaySec": 0.2
+			},
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 80,
+					"heightPct": 70,
+					"rotationDeg": 20,
+					"featherPct": 0,
+					"inverted": false
+				}
+			}
+		}
+	]
+}

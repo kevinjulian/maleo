@@ -1,0 +1,19 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [15, 30, 60, 89, 90],
+	"regions": [
+		{
+			"name": "easing-grid",
+			"rect": [0, 0, 1080, 1800]
+		}
+	],
+	"options": [
+		"image.easing.linear",
+		"image.easing.in",
+		"image.easing.out",
+		"image.easing.in-out",
+		"image.easing.bezier",
+		"image.easing.hold"
+	]
+}

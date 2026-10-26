@@ -1,8 +1,9 @@
 //! The parity gate (D6): every golden corpus case drawn by the Rust renderer
 //! and compared with its Remotion reference by SSIM, over the whole frame and
 //! over each region the case lists. A frame passes only when both scores meet
-//! the manifest thresholds, each region's box or ink sits within 2 px of the
-//! reference's, and its coverage report is empty.
+//! the manifest thresholds, geometry sits within 2 px of the reference's,
+//! and its coverage report is empty. Approved photographic cases can name a
+//! high-contrast companion for geometry while retaining every SSIM check.
 //!
 //! On failure the Rust frame and a difference image go to `target/golden/`
 //! (CI uploads that directory). References come from
@@ -31,6 +32,14 @@ struct Manifest {
     thresholds: Thresholds,
     /// Cases allowed below the default thresholds, each with its reason.
     lowered: BTreeMap<String, Lowered>,
+    /// Every declared supported option names its exercising case and frames.
+    supported_options: BTreeMap<String, OptionEvidence>,
+}
+
+#[derive(Deserialize)]
+struct OptionEvidence {
+    case: String,
+    frames: Vec<i64>,
 }
 
 #[derive(Deserialize)]
@@ -59,6 +68,16 @@ struct CaseSpec {
     frames: Vec<i64>,
     #[serde(default)]
     regions: Vec<Region>,
+    #[serde(default)]
+    options: Vec<String>,
+    #[serde(default)]
+    geometry: Option<Geometry>,
+}
+
+#[derive(Deserialize)]
+struct Geometry {
+    case: String,
+    reason: String,
 }
 
 #[derive(Deserialize)]
@@ -130,13 +149,103 @@ fn reference(case: &Case, frame: i64) -> PathBuf {
     case.dir.join("reference").join(format!("{frame}.png"))
 }
 
+fn option_problems(manifest: &Manifest, cases: &[Case]) -> Vec<String> {
+    let mut problems = Vec::new();
+    if manifest.supported_options.is_empty() {
+        problems.push("manifest.json has no supported option inventory".into());
+    }
+    for (option, evidence) in &manifest.supported_options {
+        let Some(case) = cases.iter().find(|case| case.name == evidence.case) else {
+            problems.push(format!("supported option `{option}` has no corpus case `{}`", evidence.case));
+            continue;
+        };
+        if !case.spec.options.contains(option) {
+            problems.push(format!("supported option `{option}` is not exercised by `{}`", case.name));
+        }
+        if evidence.frames.is_empty() || evidence.frames.iter().any(|frame| !case.spec.frames.contains(frame)) {
+            problems.push(format!("supported option `{option}` needs exercising frames in `{}`", case.name));
+        }
+    }
+    for case in cases {
+        if let Some(geometry) = &case.spec.geometry {
+            let companion = cases.iter().find(|c| c.name == geometry.case);
+            if geometry.reason.trim().is_empty() {
+                problems.push(format!("{}: geometry companion needs a reason", case.name));
+            }
+            match companion {
+                None => problems.push(format!("{}: missing geometry case `{}`", case.name, geometry.case)),
+                Some(c) => {
+                    if c.spec.geometry.is_some() || c.spec.regions.is_empty() {
+                        problems.push(format!("{}: geometry case must measure its own regions", case.name));
+                    }
+                    if (c.spec.width, c.spec.height) != (case.spec.width, case.spec.height)
+                        || case.spec.frames.iter().any(|frame| !c.spec.frames.contains(frame))
+                    {
+                        problems.push(format!("{}: geometry case must match dimensions and cover every frame", case.name));
+                    }
+                }
+            }
+        }
+        for option in &case.spec.options {
+            if !manifest.supported_options.contains_key(option) {
+                problems.push(format!("{}: option `{option}` is absent from the supported inventory", case.name));
+            }
+        }
+    }
+    problems
+}
+
+#[test]
+fn geometry_companions_cannot_disable_boundary_checks() {
+    let manifest = manifest();
+    let mut cases = cases();
+    let photo = cases.iter().find(|c| c.spec.geometry.is_some()).expect("photographic case");
+    let name = photo.name.clone();
+    let companion = photo.spec.geometry.as_ref().unwrap().case.clone();
+    assert!(option_problems(&manifest, &cases).is_empty());
+    let geometry = cases.iter_mut().find(|c| c.name == companion).unwrap();
+    geometry.spec.regions.clear();
+    assert!(option_problems(&manifest, &cases).iter().any(|p| p.contains("measure its own regions")));
+    let geometry = cases.iter_mut().find(|c| c.name == companion).unwrap();
+    geometry.spec.frames.clear();
+    assert!(option_problems(&manifest, &cases).iter().any(|p| p.contains("cover every frame")));
+    cases.iter_mut().find(|c| c.name == name).unwrap().spec.geometry.as_mut().unwrap().reason.clear();
+    assert!(option_problems(&manifest, &cases).iter().any(|p| p.contains("needs a reason")));
+    cases.retain(|c| c.name != companion);
+    assert!(option_problems(&manifest, &cases).iter().any(|p| p.contains("missing geometry case")));
+}
+
+#[test]
+fn removing_an_options_case_fails_the_corpus_check() {
+    let manifest = manifest();
+    let mut cases = cases();
+    assert!(option_problems(&manifest, &cases).is_empty());
+    let (option, evidence) = manifest.supported_options.first_key_value().expect("supported option");
+    cases.retain(|case| case.name != evidence.case);
+    assert!(option_problems(&manifest, &cases).iter().any(|problem| problem.contains(option) && problem.contains("no corpus case")));
+}
+
+#[test]
+fn removing_an_options_annotation_or_frame_fails_the_corpus_check() {
+    let manifest = manifest();
+    let mut cases = cases();
+    let (option, evidence) = manifest.supported_options.first_key_value().expect("supported option");
+    let case = cases.iter_mut().find(|case| case.name == evidence.case).expect("case");
+    case.spec.options.retain(|name| name != option);
+    assert!(option_problems(&manifest, &cases).iter().any(|problem| problem.contains(option) && problem.contains("not exercised")));
+    let case = cases.iter_mut().find(|case| case.name == evidence.case).expect("case");
+    case.spec.options.push(option.clone());
+    case.spec.frames.clear();
+    assert!(option_problems(&manifest, &cases).iter().any(|problem| problem.contains(option) && problem.contains("exercising frames")));
+}
+
 /// The corpus is complete: references for every frame, a case for every
 /// supported kind, the emoji font pinned, and a reason for every lowering.
 #[test]
 fn the_corpus_is_complete() {
     let manifest = manifest();
     let cases = cases();
-    let mut problems = Vec::new();
+    let mut problems = option_problems(&manifest, &cases);
     if manifest.remotion.is_empty() || manifest.image.is_empty() {
         problems.push("manifest.json does not name the Remotion version and the image that rendered the references".to_owned());
     }
@@ -174,15 +283,271 @@ fn the_corpus_is_complete() {
     assert!(problems.is_empty(), "corpus check failed:\n  {}", problems.join("\n  "));
 }
 
+#[test]
+fn animated_elements_draw_identically_out_of_order() {
+    let mut renderer = pollster::block_on(Renderer::new()).expect("renderer");
+    for case in cases().into_iter().filter(|case| {
+        case.name.starts_with("image-keyed-")
+            || case.name.starts_with("text-keyed-")
+            || case.name == "text-legacy-normalized"
+            || case.name.starts_with("camera-")
+            || case.name.starts_with("color-")
+            || case.name.starts_with("mask-")
+            || case.name.starts_with("blend-")
+            || case.name.starts_with("reveal-")
+            || case.name.starts_with("transition-")
+            || case.name.starts_with("effect-")
+            || case.name.starts_with("decoration-")
+            || case.name.starts_with("pacing-")
+            || case.name.starts_with("motion-combined-")
+    }) {
+        for (url, path) in media_files(&case.dir) {
+            let image = read_image(&path);
+            renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).expect("media");
+        }
+        let mut direct = BTreeMap::new();
+        for &frame in &case.spec.frames {
+            let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("frame");
+            assert!(drawn.coverage.is_empty(), "{} frame {frame}: {:?}", case.name, drawn.coverage);
+            direct.insert(frame, drawn.rgba);
+        }
+        for &frame in case.spec.frames.iter().rev() {
+            let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("out-of-order frame");
+            if drawn.rgba != direct[&frame] {
+                let out = repo().join("target/golden");
+                fs::create_dir_all(&out).expect("diagnostics");
+                let expected = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: direct[&frame].clone() };
+                let actual = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: drawn.rgba };
+                write_png(&out.join(format!("{}-{frame}-direct.png", case.name)), &expected);
+                write_png(&out.join(format!("{}-{frame}-seek.png", case.name)), &actual);
+                let changed = expected.rgba.iter().zip(&actual.rgba).filter(|(a, b)| a != b).count();
+                let max = expected.rgba.iter().zip(&actual.rgba).map(|(a, b)| a.abs_diff(*b)).max().unwrap_or(0);
+                panic!("{} frame {frame} differs after seeking: {changed} channels, max delta {max}; diagnostics in target/golden", case.name);
+            }
+        }
+    }
+}
+
+#[test]
+fn fractional_image_boxes_keep_reveal_grid_at_parity() {
+    let case = cases().into_iter().find(|c| c.name == "reveal-direct-directions").expect("grid fixture");
+    let mut renderer = pollster::block_on(Renderer::new()).unwrap();
+    for (url, path) in media_files(&case.dir) {
+        let image = read_image(&path);
+        renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).unwrap();
+    }
+    for frame in [15, 48] {
+        let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).unwrap();
+        let actual = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: drawn.rgba };
+        let expected = read_image(&reference(&case, frame));
+        let score = compare::ssim(&expected, &actual);
+        assert!(score >= manifest().thresholds.frame, "fractional image box frame {frame}: {score}");
+    }
+}
+
+#[test]
+fn dark_phase_geometry_matches_reference() {
+    let mut renderer = pollster::block_on(Renderer::new()).unwrap();
+    let mut failures = Vec::new();
+    for case in cases().into_iter().filter(|c| ["reveal-dark_pixels_first", "reveal-phase-geometry"].contains(&c.name.as_str())) {
+        for (url, path) in media_files(&case.dir) {
+            let image = read_image(&path);
+            renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).unwrap();
+        }
+        for frame in [7, 24, 25, 59] {
+            let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).unwrap();
+            let actual = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: drawn.rgba };
+            let expected = read_image(&reference(&case, frame));
+            if std::env::var_os("MALEO_DARK_DIAGNOSTICS").is_some() {
+                let out = repo().join("target/golden");
+                fs::create_dir_all(&out).unwrap();
+                write_png(&out.join(format!("dark-{}-{frame}.png", case.name)), &actual);
+            }
+            for region in &case.spec.regions {
+                let a = compare::ink_box(&actual, region.rect);
+                let b = compare::ink_box(&expected, region.rect);
+                if !compare::edge_delta(a, b).is_some_and(|d| d <= MAX_EDGE_DELTA) {
+                    failures.push(format!("{} frame {frame}: actual {a:?}, expected {b:?}", case.name));
+                }
+            }
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
+
+#[test]
+fn reveal_textures_match_local_source_pixels() {
+    let mut renderer = pollster::block_on(Renderer::new()).unwrap();
+    let mut failures = Vec::new();
+    for case in cases().into_iter().filter(|c| c.name.starts_with("reveal-texture-")) {
+        for (url, path) in media_files(&case.dir) {
+            let image = read_image(&path);
+            renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).unwrap();
+        }
+        let drawn = pollster::block_on(renderer.render(&case.storyboard, 48, case.spec.width, case.spec.height)).unwrap();
+        let actual = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: drawn.rgba };
+        let expected = read_image(&reference(&case, 48));
+        let score = compare::ssim(&expected, &actual);
+        if score < manifest().thresholds.frame {
+            let out = repo().join("target/golden");
+            fs::create_dir_all(&out).unwrap();
+            write_png(&out.join(format!("texture-{}.png", case.name)), &actual);
+            failures.push(format!("{}: {score}", case.name));
+        }
+    }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
+}
+
+/// High-contrast source separates clip geometry from photographic alpha gradients.
+#[test]
+fn reveal_phase_geometry_keeps_reference_boundaries() {
+    assert_cases_at_parity(|case| case.name == "reveal-phase-geometry");
+}
+
 /// Every case frame draws at parity with its Remotion reference.
 #[test]
 fn every_case_is_at_parity_with_remotion() {
+    assert_cases_at_parity(|_| true);
+}
+
+#[test]
+fn sequential_transitions_match_their_reference_presentations() {
+    assert_cases_at_parity(|case| case.name.starts_with("transition-series-"));
+}
+
+#[test]
+fn pixel_transition_rasterizes_grid_before_scaling() {
+    assert_cases_at_parity(|case| case.name == "transition-series-pixel");
+}
+
+#[test]
+fn pixel_transition_geometry_has_stable_reference_edges() {
+    assert_cases_at_parity(|case| case.name == "transition-pixel-geometry");
+}
+
+#[test]
+fn absolute_transitions_match_source_placement() {
+    assert_cases_at_parity(|case| case.name.starts_with("transition-absolute-"));
+}
+
+#[test]
+fn visual_transitions_match_their_placement_branches() {
+    assert_cases_at_parity(|case| case.name.starts_with("transition-placement-"));
+}
+
+#[test]
+fn effects_match_source_envelopes_and_stacking() {
+    assert_cases_at_parity(|case| case.name.starts_with("effect-"));
+}
+
+#[test]
+fn decorations_match_source_layers() {
+    assert_cases_at_parity(|case| case.name.starts_with("decoration-"));
+}
+
+#[test]
+fn pacing_matches_source_chapters_and_composition_duration() {
+    assert_cases_at_parity(|case| case.name.starts_with("pacing-"));
+}
+
+#[test]
+fn grain_geometry_keeps_the_original_edge_limit() {
+    assert_cases_at_parity(|case| case.name == "decoration-grain-geometry");
+}
+
+#[test]
+fn grain_pixels_follow_source_tile_and_repeat_without_time_noise() {
+    let case = cases().into_iter().find(|c| c.name == "decoration-grain-repeat").unwrap();
+    let mut renderer = pollster::block_on(Renderer::new()).unwrap();
+    let a = pollster::block_on(renderer.render(&case.storyboard, 0, case.spec.width, case.spec.height)).unwrap();
+    let b = pollster::block_on(renderer.render(&case.storyboard, 29, case.spec.width, case.spec.height)).unwrap();
+    assert_eq!(a.rgba, b.rgba, "grain has no time seed");
+    let reference = read_image(&reference(&case, 0));
+    let max = a.rgba.iter().zip(&reference.rgba).map(|(a, b)| a.abs_diff(*b)).max().unwrap();
+    assert!(max <= 2, "grain tile differs by {max} bytes; missing or shifted noise must fail");
+    let width = case.spec.width as usize;
+    for y in 0..200 {
+        for x in 0..200 {
+            let pixel = |x, y| &a.rgba[(y * width + x) * 4..(y * width + x) * 4 + 4];
+            for repeated in [pixel(x + 200, y), pixel(x, y + 200)] {
+                assert!(pixel(x, y).iter().zip(repeated).all(|(a, b)| a.abs_diff(*b) <= 1), "tile period changed beyond interpolation rounding");
+            }
+        }
+    }
+}
+
+#[test]
+fn combined_motion_treatments_match_source() {
+    assert_cases_at_parity(|case| case.name.starts_with("motion-combined-"));
+}
+
+#[test]
+fn feathered_transparency_preserves_reference_edges() {
+    assert_cases_at_parity(|case| case.name == "mask-feather-transparent");
+}
+
+#[test]
+fn combined_overlap_geometry_keeps_original_thresholds() {
+    assert_cases_at_parity(|case| case.name == "motion-combined-overlap-geometry");
+}
+
+#[test]
+fn combined_boundary_keeps_pacing_visible_with_and_without_render_history() {
+    let case = cases().into_iter().find(|c| c.name == "motion-combined-absolute").unwrap();
+    let mut renderer = pollster::block_on(Renderer::new()).unwrap();
+    for (url, path) in media_files(&case.dir) {
+        let image = read_image(&path);
+        renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).unwrap();
+    }
+    let direct = pollster::block_on(renderer.render(&case.storyboard, 33, 1080, 1920)).unwrap();
+    for variant in ["sharp", "sharp-neutral", "crop-neutral"] {
+        let mut value: serde_json::Value = read_json(&case.dir.join("storyboard.json"));
+        for scene in value["scenes"].as_array_mut().unwrap() {
+            scene["layout"]["mask"]["featherPct"] = 0.into();
+            if variant != "sharp" {
+                scene["layout"].as_object_mut().unwrap().remove("color");
+            }
+            if variant == "crop-neutral" {
+                scene["layout"].as_object_mut().unwrap().remove("mask");
+            }
+        }
+        let storyboard = Storyboard::parse(&value.to_string()).unwrap();
+        let drawn = pollster::block_on(renderer.render(&storyboard, 33, 1080, 1920)).unwrap();
+        assert_eq!(&drawn.rgba[(2 * 1080 + 5) * 4..(2 * 1080 + 5) * 4 + 4], &[255, 212, 0, 255], "{variant} clears pacing");
+    }
+    assert_eq!(&direct.rgba[(2 * 1080 + 5) * 4..(2 * 1080 + 5) * 4 + 4], &[255, 212, 0, 255]);
+    let mut overlap: serde_json::Value = read_json(&case.dir.join("storyboard.json"));
+    overlap.as_object_mut().unwrap().remove("effects");
+    let mut third = overlap["scenes"][0].clone();
+    third["chapter"] = "Third".into();
+    overlap["scenes"].as_array_mut().unwrap().push(third);
+    for (index, scene) in overlap["scenes"].as_array_mut().unwrap().iter_mut().enumerate() {
+        scene.as_object_mut().unwrap().remove("startSec");
+        scene["durationSec"] = if index == 1 { 1.0.into() } else { 1.5.into() };
+        scene["transition"] = "zoom".into();
+        scene["transitionDurSec"] = 0.8.into();
+        scene["layout"] = serde_json::json!({"widthPct":100,"heightPct":100,"opacity":0.5,"blendMode":"multiply"});
+    }
+    let overlap = Storyboard::parse(&overlap.to_string()).unwrap();
+    let drawn = pollster::block_on(renderer.render(&overlap, 36, 1080, 1920)).unwrap();
+    assert_eq!(&drawn.rgba[(2 * 1080 + 5) * 4..(2 * 1080 + 5) * 4 + 4], &[255, 212, 0, 255], "simultaneous opacity wrappers clear pacing");
+    for frame in [0, 3, 8, 15, 32, 33] {
+        let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, 1080, 1920)).unwrap();
+        if frame == 33 {
+            assert_eq!(direct.rgba, drawn.rgba);
+        }
+    }
+}
+
+fn assert_cases_at_parity(select: impl Fn(&Case) -> bool) {
     let manifest = manifest();
+    let cases = cases();
+    assert!(option_problems(&manifest, &cases).is_empty(), "invalid corpus evidence");
     let out = repo().join("target/golden");
     let mut renderer = pollster::block_on(Renderer::new()).expect("renderer");
     let mut failures = Vec::new();
     let mut scores = Vec::new();
-    for case in cases() {
+    for case in cases.into_iter().filter(select) {
         for (url, path) in media_files(&case.dir) {
             let image = read_image(&path);
             renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).expect("media");
@@ -219,10 +584,12 @@ fn every_case_is_at_parity_with_remotion() {
                         failed.push(format!("region `{}` SSIM {score:.4} < {region_min}", region.name));
                     }
                     // Position, which SSIM forgives: the box (or the ink) sits where Remotion puts it.
-                    match compare::edge_delta(compare::ink_box(&expected, region.rect), compare::ink_box(&actual, region.rect)) {
-                        Some(delta) if delta <= MAX_EDGE_DELTA => {}
-                        Some(delta) => failed.push(format!("region `{}` box edge {delta} px from the reference (at most {MAX_EDGE_DELTA})", region.name)),
-                        None => failed.push(format!("region `{}` is empty in one frame only", region.name)),
+                    if case.spec.geometry.is_none() {
+                        match compare::edge_delta(compare::ink_box(&expected, region.rect), compare::ink_box(&actual, region.rect)) {
+                            Some(delta) if delta <= MAX_EDGE_DELTA => {}
+                            Some(delta) => failed.push(format!("region `{}` box edge {delta} px from the reference (at most {MAX_EDGE_DELTA})", region.name)),
+                            None => failed.push(format!("region `{}` is empty in one frame only", region.name)),
+                        }
                     }
                 }
             }

@@ -1,0 +1,225 @@
+{
+	"scenes": [],
+	"visualTimeline": [
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"movement": "static",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6,
+						"easing": "linear"
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "linear"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "linear"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 25,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 5,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 25
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"movement": "static",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6,
+						"easing": "in"
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "in"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "in"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 25,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 55,
+				"yPct": 5,
+				"widthPct": 40,
+				"heightPct": 25
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"movement": "static",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6,
+						"easing": "out"
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "out"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "out"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 25,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 5,
+				"yPct": 35,
+				"widthPct": 40,
+				"heightPct": 25
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"movement": "static",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6,
+						"easing": "in-out"
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "in-out"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "in-out"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 25,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 55,
+				"yPct": 35,
+				"widthPct": 40,
+				"heightPct": 25
+			}
+		},
+		{
+			"url": "media/landscape.jpg",
+			"kind": "image",
+			"durationSec": 4,
+			"movement": "static",
+			"motion": {
+				"keyframes": [
+					{
+						"t": 0.15,
+						"scale": 1.04,
+						"x": -17,
+						"y": 23,
+						"rotate": -6,
+						"easing": "bezier"
+					},
+					{
+						"t": 0.6,
+						"scale": 1.2,
+						"x": 31,
+						"y": -13,
+						"rotate": 8,
+						"easing": "bezier"
+					},
+					{
+						"t": 0.9,
+						"scale": 1.08,
+						"x": 9,
+						"y": 4,
+						"rotate": 2,
+						"easing": "bezier"
+					}
+				]
+			},
+			"focalPoint": {
+				"xPct": 25,
+				"yPct": 70
+			},
+			"layout": {
+				"xPct": 5,
+				"yPct": 65,
+				"widthPct": 40,
+				"heightPct": 25
+			}
+		}
+	]
+}

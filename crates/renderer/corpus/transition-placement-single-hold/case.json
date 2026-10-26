@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 1, 14, 15, 60, 68, 69, 77, 78, 79, 89, 90, 107],
+	"regions": [
+		{
+			"name": "placement",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": ["transition.scene-visual.single-hold"]
+}

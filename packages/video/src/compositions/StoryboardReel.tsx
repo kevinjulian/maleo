@@ -71,6 +71,18 @@ export function chapterSpans(
 	return spans;
 }
 
+export function storyboardSceneTimings(
+	scenes: ReadonlyArray<{ startSec?: number | null; durationSec: number }>,
+) {
+	const hasExplicitStarts = scenes.some((s) => s.startSec != null);
+	let cursorSec = 0;
+	return scenes.map((s) => {
+		const start = hasExplicitStarts ? (s.startSec ?? cursorSec) : cursorSec;
+		cursorSec = start + s.durationSec;
+		return { startSec: start, endSec: start + s.durationSec };
+	});
+}
+
 function layoutBoxStyle(l: LayoutLike): CSSProperties | null {
 	if (!l) return null;
 	return {
@@ -89,7 +101,7 @@ function layoutObjectFit(l: LayoutLike): "contain" | "cover" | "fill" {
 
 // Black-overlay opacity for timeline effects at absolute time t (mirrors the
 // editor's effects.ts so preview + render match).
-function effectsBlackOpacity(
+export function effectsBlackOpacity(
 	effects: ReadonlyArray<{
 		effect: string;
 		startSec: number;
@@ -118,7 +130,7 @@ function effectsBlackOpacity(
 
 // White-flash opacity (pattern interrupt): triangular spike — fast attack over
 // the first 30% of the span, decay over the rest.
-function effectsWhiteOpacity(
+export function effectsWhiteOpacity(
 	effects: ReadonlyArray<{
 		effect: string;
 		startSec: number;
@@ -142,7 +154,7 @@ function effectsWhiteOpacity(
 // Whole-frame scale for zoom effects at absolute time t (mirrors the editor's
 // effects.ts so the preview zoom matches the render). zoom_punch is a fast
 // snap-in that eases back — a pattern interrupt.
-function effectsScale(
+export function effectsScale(
 	effects: ReadonlyArray<{
 		effect: string;
 		startSec: number;
@@ -168,7 +180,7 @@ function effectsScale(
 
 // Lateral whip offset (percent of frame width) for whip_pan at absolute time t:
 // a single fast sine sweep across the span.
-function effectsWhipPct(
+export function effectsWhipPct(
 	effects: ReadonlyArray<{
 		effect: string;
 		startSec: number;
@@ -377,12 +389,7 @@ export const StoryboardReel: React.FC<Storyboard> = (storyboard) => {
 	// free clips (movable, gaps allowed): honor those starts. Otherwise pack scenes
 	// sequentially as before. sceneTimings drives per-scene audio/caption sync too.
 	const hasExplicitStarts = storyboard.scenes.some((s) => s.startSec != null);
-	let cursorSec = 0;
-	const sceneTimings = storyboard.scenes.map((s) => {
-		const start = hasExplicitStarts ? (s.startSec ?? cursorSec) : cursorSec;
-		cursorSec = start + s.durationSec;
-		return { startSec: start, endSec: start + s.durationSec };
-	});
+	const sceneTimings = storyboardSceneTimings(storyboard.scenes);
 
 	// Absolute voiceover spans — a continuous music bed ducks under these and swells
 	// back up in the gaps between them (the story inter-section pauses).

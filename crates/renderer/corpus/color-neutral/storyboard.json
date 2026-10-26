@@ -1,0 +1,23 @@
+{
+	"scenes": [],
+	"hideBase": true,
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/swatches.png",
+			"durationSec": 2,
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 30,
+				"fit": "stretch",
+				"color": {
+					"brightness": 1,
+					"contrast": 1,
+					"saturation": 1
+				}
+			}
+		}
+	]
+}

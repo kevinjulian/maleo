@@ -1,0 +1,44 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 1,
+			"movement": "Static",
+			"transition": "cut",
+			"label": "Fallback 0",
+			"chapter": "A"
+		},
+		{
+			"image": "media/0.png",
+			"durationSec": 1,
+			"movement": "Static",
+			"transition": "cut",
+			"label": "Fallback 1",
+			"chapter": "B"
+		}
+	],
+	"bgColor": "#204060",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": false,
+	"pacingDevices": {
+		"chapterPills": true,
+		"progressBar": true,
+		"variant": "pill"
+	},
+	"videoOverlays": [
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 2,
+			"durationSec": 1,
+			"layout": {
+				"xPct": 20,
+				"yPct": 20,
+				"widthPct": 60,
+				"heightPct": 50,
+				"fit": "stretch"
+			}
+		}
+	]
+}

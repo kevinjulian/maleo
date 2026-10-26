@@ -1,0 +1,24 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0],
+	"regions": [
+		{
+			"name": "small-feather-0",
+			"rect": [50, 65, 990, 460]
+		},
+		{
+			"name": "small-feather-1",
+			"rect": [50, 506, 990, 901]
+		},
+		{
+			"name": "small-feather-2",
+			"rect": [50, 947, 990, 1342]
+		},
+		{
+			"name": "small-feather-3",
+			"rect": [50, 1388, 990, 1783]
+		}
+	],
+	"options": ["mask.feather-small"]
+}

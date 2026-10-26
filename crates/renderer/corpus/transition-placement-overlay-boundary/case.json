@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 29, 30, 31, 38, 39, 40, 44, 50, 51, 68],
+	"regions": [
+		{
+			"name": "placement",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": ["transition.overlay.boundary-order"]
+}

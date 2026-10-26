@@ -1,0 +1,28 @@
+{
+	"scenes": [],
+	"showLabels": false,
+	"visualTimeline": [
+		{
+			"url": "media/blue.png",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 2,
+			"movement": "Static"
+		},
+		{
+			"url": "media/swatches.png",
+			"kind": "image",
+			"startSec": 0,
+			"durationSec": 2,
+			"movement": "Static",
+			"layout": {
+				"xPct": 10,
+				"yPct": 15,
+				"widthPct": 80,
+				"heightPct": 60,
+				"blendMode": "screen",
+				"opacity": 0.6
+			}
+		}
+	]
+}

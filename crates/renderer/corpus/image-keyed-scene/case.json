@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30, 59, 60, 90, 119],
+	"regions": [
+		{
+			"name": "visual-treatment",
+			"rect": [0, 0, 1080, 1500]
+		}
+	],
+	"options": ["image.scene-keyed"]
+}

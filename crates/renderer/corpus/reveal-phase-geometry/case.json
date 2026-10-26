@@ -1,0 +1,16 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59],
+	"regions": [
+		{
+			"name": "direct-clip",
+			"rect": [80, 120, 1000, 950]
+		},
+		{
+			"name": "dark-clip",
+			"rect": [80, 970, 1000, 1770]
+		}
+	],
+	"options": ["reveal.phase.geometry"]
+}

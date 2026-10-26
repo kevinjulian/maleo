@@ -1,0 +1,21 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 29, 30, 31, 35, 36, 41, 42, 44, 59, 74, 75, 89],
+	"regions": [
+		{
+			"name": "placement",
+			"rect": [10, 10, 1070, 1910]
+		}
+	],
+	"options": [
+		"transition.timeline.cut",
+		"transition.timeline.fade",
+		"transition.timeline.slide",
+		"transition.timeline.zoom",
+		"transition.timeline.wipe",
+		"transition.timeline.flip",
+		"transition.timeline.clock_wipe",
+		"transition.timeline.pixel"
+	]
+}

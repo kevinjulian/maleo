@@ -1,0 +1,153 @@
+{
+	"scenes": [
+		{
+			"image": "media/0.png",
+			"durationSec": 1.5,
+			"movement": "Orbit",
+			"transition": "zoom",
+			"transitionDurSec": 0.8,
+			"layout": {
+				"widthPct": 100,
+				"heightPct": 100,
+				"opacity": 0.5,
+				"blendMode": "multiply"
+			},
+			"label": "Motion 1",
+			"visual": "Layered scene treatments",
+			"chapter": "Part 1",
+			"grain": true,
+			"vignette": true
+		},
+		{
+			"image": "media/1.png",
+			"durationSec": 1,
+			"movement": "slow-zoom-out",
+			"transition": "zoom",
+			"transitionDurSec": 0.8,
+			"layout": {
+				"widthPct": 100,
+				"heightPct": 100,
+				"opacity": 0.5,
+				"blendMode": "multiply"
+			},
+			"label": "Motion 2",
+			"visual": "Layered scene treatments",
+			"chapter": "Part 2",
+			"grain": true,
+			"vignette": true
+		},
+		{
+			"image": "media/0.png",
+			"durationSec": 1.5,
+			"movement": "Orbit",
+			"transition": "zoom",
+			"transitionDurSec": 0.8,
+			"layout": {
+				"widthPct": 100,
+				"heightPct": 100,
+				"opacity": 0.5,
+				"blendMode": "multiply"
+			},
+			"label": "Motion 1",
+			"visual": "Layered scene treatments",
+			"chapter": "Third",
+			"grain": true,
+			"vignette": true
+		}
+	],
+	"bgColor": "#ffffff",
+	"fgColor": "#ffffff",
+	"accentColor": "#ffd400",
+	"showLabels": true,
+	"pacingDevices": {
+		"chapterPills": true,
+		"progressBar": true
+	},
+	"captionCues": [
+		{
+			"id": "base",
+			"type": "caption",
+			"startSec": 0.0,
+			"durationSec": 4,
+			"track": 0,
+			"caption": {
+				"text": "Make every video easy to watch",
+				"words": [
+					{
+						"text": "Make",
+						"startSec": 0.0,
+						"endSec": 0.4
+					},
+					{
+						"text": "every",
+						"startSec": 0.5,
+						"endSec": 0.9
+					},
+					{
+						"text": "video",
+						"startSec": 1.0,
+						"endSec": 1.4
+					},
+					{
+						"text": "easy",
+						"startSec": 1.5,
+						"endSec": 1.9
+					},
+					{
+						"text": "to",
+						"startSec": 2.0,
+						"endSec": 2.4
+					},
+					{
+						"text": "watch",
+						"startSec": 2.5,
+						"endSec": 2.9
+					}
+				],
+				"style": {
+					"fontSize": 64,
+					"fill": "#ffffff"
+				},
+				"provenance": {
+					"origin": "manual",
+					"wordTimingOrigin": "manual"
+				},
+				"sources": [],
+				"protection": {
+					"text": false,
+					"timing": false,
+					"segmentation": false,
+					"style": false
+				},
+				"revision": 0,
+				"groupId": "group-base",
+				"status": "current"
+			}
+		}
+	],
+	"videoOverlays": [
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 3,
+			"durationSec": 1,
+			"track": 1,
+			"transition": "wipe",
+			"transitionDurSec": 0.3,
+			"layout": {
+				"xPct": 15,
+				"yPct": 20,
+				"widthPct": 70,
+				"heightPct": 40,
+				"fit": "stretch",
+				"flipY": true,
+				"blendMode": "screen",
+				"color": {
+					"brightness": 0.9,
+					"contrast": 1.2,
+					"saturation": 1.3
+				}
+			}
+		}
+	]
+}

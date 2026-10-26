@@ -1,0 +1,16 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "top",
+			"rect": [45, 180, 990, 710]
+		},
+		{
+			"name": "bottom",
+			"rect": [45, 1040, 990, 710]
+		}
+	],
+	"options": ["color.transparent-edges"]
+}

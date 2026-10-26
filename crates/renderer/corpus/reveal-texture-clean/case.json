@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 7, 15, 25, 26, 48, 59],
+	"regions": [
+		{
+			"name": "texture-alpha",
+			"rect": [50, 180, 1030, 1450]
+		}
+	],
+	"options": ["reveal.texture.clean"]
+}

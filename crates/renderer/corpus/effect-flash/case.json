@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 3, 4, 5, 11, 12, 13, 19, 26, 33, 34, 59],
+	"regions": [
+		{
+			"name": "effect-frame",
+			"rect": [0, 0, 1080, 1920]
+		}
+	],
+	"options": ["effect.flash"]
+}

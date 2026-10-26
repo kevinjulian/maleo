@@ -7,5 +7,6 @@
 			"name": "caption",
 			"rect": [60, 1454, 1020, 1723]
 		}
-	]
+	],
+	"options": ["caption.combined-a"]
 }

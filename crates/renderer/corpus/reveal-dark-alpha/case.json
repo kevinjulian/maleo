@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 24, 25, 26, 48],
+	"regions": [
+		{
+			"name": "phase-layers",
+			"rect": [20, 50, 1060, 1860]
+		}
+	],
+	"options": ["reveal.dark-alpha"]
+}

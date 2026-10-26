@@ -28,14 +28,26 @@ not per-frame draws; its module comment lists them.
 - Fonts and `Media` are CPU-side; GPU-owned state is rebuilt by
   `Renderer::replace_gpu` after device loss. Keep new GPU state rebuildable
   there, and never move supplied images onto the device only.
+- Root Cargo.toml patches `vello_shaders` to `vendor/vello_shaders`. Its local
+  bilinear correction preserves byte equality across texture allocations.
+  Pixel presentations and solid full-frame effect plates use checked raw mix
+  value 16 for Skia byte opacity.
+  Keep ordinary blend groups on their existing arithmetic. The shader and CPU
+  coarse paths share a sixteen-level inline stack; Gpu refuses deeper scenes
+  before submission. Keep its depth-budget and combined-overlap regressions.
+  CPU source images opt into checked raw quality value 3 for Skia four-bit
+  premultiplied-byte sampling. GPU intermediates keep standard filtering.
+  Keep its licenses/provenance and both Rust Docker-stage copies together.
+  Replace it only with upstream code that passes the same regression gates.
 
 ## Golden corpus (D6)
 
 ```text
 corpus/manifest.json        Remotion version, image, emoji font pin, thresholds,
-                            lowered thresholds with their reasons
+                            lowered thresholds with their reasons,
+                            supportedOptions mapping options to cases/frames
 corpus/<case>/storyboard.json
-corpus/<case>/case.json     width, height, frames, regions to score
+corpus/<case>/case.json     width, height, frames, regions to score, options exercised
 corpus/<case>/media/*       synthetic PNG/JPEG, referenced as media/<file>
 corpus/<case>/reference/<frame>.png
 ```
@@ -53,6 +65,9 @@ corpus/<case>/reference/<frame>.png
   reason. Never edit a reference to pass.
 - Add a case per option of a kind, not one per kind. Media is synthetic: no
   project, stock or third-party media.
+- Declare each supported option in `manifest.json` `supportedOptions` with its
+  case and required frames. Annotate that case's `options`. The corpus checker
+  rejects missing cases, annotations or frames, and undeclared annotations.
 - References come from the production image, never from a desktop browser
   (macOS Chrome draws text measurably heavier). Build the image, then render
   from `apps/render-worker`, where the image caches the browser exports use:
@@ -81,3 +96,17 @@ WGPU_BACKEND=vulkan cargo test -p maleo-renderer   # as CI runs it (lavapipe)
 bun crates/renderer/tests/fixtures/build.ts --check   # TS-derived fixtures current
 bun scripts/build-renderer-wasm.ts           # browser module
 ```
+
+Local compositing uses GPU correction and mask blur before outer clip layout.
+Mask geometry stays in physical pixels; explicit null removes inheritance.
+The broad SVG mask kernel follows the three-box approximation used by Skia;
+text blur retains its Gaussian kernel. Keep the solid-only atlas-anchor regression
+when changing offscreen draws. The anchor is invisible and owned by `Gpu`.
+
+Reveals retain source-local filters and textures before sampled outer transforms.
+The approved photographic `reveal-color-builds` case keeps all SSIM checks and
+names `reveal-phase-geometry` for geometry. Its high-contrast regions retain the
+two-pixel limit. Corpus validation rejects missing or incomplete companions.
+The approved change-wide policy also permits low-contrast cases with measured
+one-to-two-byte ink instability and a recorded reason. Companions must retain
+matching dimensions and frames and pass the original two-pixel geometry gate.

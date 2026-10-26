@@ -1,0 +1,16 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 1, 2, 3, 7, 8, 9, 14, 29],
+	"regions": [
+		{
+			"name": "decoration",
+			"rect": [0, 0, 1080, 1920]
+		},
+		{
+			"name": "label-area",
+			"rect": [65, 1450, 1015, 1860]
+		}
+	],
+	"options": ["decoration.decoration-stacking"]
+}

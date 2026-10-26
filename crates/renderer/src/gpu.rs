@@ -10,16 +10,20 @@ use std::pin::Pin;
 use std::sync::{Arc, Mutex};
 use std::task::{Context, Poll, Waker};
 
-use vello::peniko::{Color, ImageData};
+use vello::low_level::vello_encoding::DrawTag;
+use vello::peniko::{Blob, Color, ImageAlphaType, ImageData, ImageFormat};
 use vello::{AaConfig, AaSupport, RenderParams, Renderer, RendererOptions, Scene};
 
 /// The frame format: straight-alpha RGBA, 8 bits per channel, sRGB values.
 pub const FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba8Unorm;
+/// Matches the vendored inline blend stack; deeper scenes must fail explicitly.
+const MAX_LAYER_DEPTH: usize = 16;
 
 pub struct Gpu {
     pub device: wgpu::Device,
     pub queue: wgpu::Queue,
     vello: Renderer,
+    atlas_anchor: ImageData,
 }
 
 impl Gpu {
@@ -36,7 +40,9 @@ impl Gpu {
     pub fn from_device(device: wgpu::Device, queue: wgpu::Queue) -> Result<Self, String> {
         let options = RendererOptions { antialiasing_support: AaSupport::area_only(), ..Default::default() };
         let vello = Renderer::new(&device, options).map_err(|e| format!("vello renderer: {e}"))?;
-        Ok(Self { device, queue, vello })
+        let atlas_anchor =
+            ImageData { data: Blob::new(Arc::new(vec![0u8; 4])), format: ImageFormat::Rgba8, alpha_type: ImageAlphaType::Alpha, width: 1, height: 1 };
+        Ok(Self { device, queue, vello, atlas_anchor })
     }
 
     /// A texture vello can draw into and the host can copy or sample.
@@ -55,6 +61,27 @@ impl Gpu {
 
     /// Draws `scene` over `base` into `view`.
     pub fn draw(&mut self, scene: &Scene, view: &wgpu::TextureView, width: u32, height: u32, base: Color) -> Result<(), String> {
+        let mut depth = 0usize;
+        for tag in &scene.encoding().draw_tags {
+            if *tag == DrawTag::BEGIN_CLIP {
+                depth += 1;
+                if depth > MAX_LAYER_DEPTH {
+                    return Err(format!("compositor layer depth exceeds {MAX_LAYER_DEPTH}"));
+                }
+            } else if *tag == DrawTag::END_CLIP {
+                depth -= 1;
+            }
+        }
+        // Vello 0.11's solid-only resolver returns empty atlas dimensions without
+        // clearing cached placements. Keep its atlas alive through offscreen solids.
+        let mut anchored = Scene::new();
+        let scene = if scene.encoding().resources.patches.is_empty() {
+            anchored.append(scene, None);
+            anchored.draw_image(&self.atlas_anchor, vello::kurbo::Affine::translate((-2.0, -2.0)));
+            &anchored
+        } else {
+            scene
+        };
         let params = RenderParams { base_color: base, width, height, antialiasing_method: AaConfig::Area };
         self.vello.render_to_texture(&self.device, &self.queue, scene, view, &params).map_err(|e| format!("vello render: {e}"))
     }
@@ -73,7 +100,14 @@ impl Gpu {
     pub async fn render(&mut self, scene: &Scene, width: u32, height: u32, base: Color) -> Result<Vec<u8>, String> {
         let target = self.target(width, height);
         self.draw(scene, &target.create_view(&Default::default()), width, height, base)?;
-        self.read(&target).await
+        let mut pixels = self.read(&target).await?;
+        // Vello may retain image RGB where clipping rounded alpha to zero.
+        for pixel in pixels.as_chunks_mut::<4>().0 {
+            if pixel[3] == 0 {
+                pixel[..3].fill(0);
+            }
+        }
+        Ok(pixels)
     }
 
     /// Reads a [`FORMAT`] texture back as tightly packed RGBA rows.
@@ -154,6 +188,62 @@ mod tests {
     use vello::peniko::Fill;
 
     use super::*;
+
+    #[test]
+    fn layer_budget_matches_shader_and_refuses_deeper_scenes() {
+        assert!(include_str!("../../../vendor/vello_shaders/shader/shared/config.wgsl").contains("const BLEND_STACK_SPLIT = 16u;"));
+        assert!(include_str!("../../../vendor/vello_shaders/src/cpu/coarse.rs").contains("const BLEND_STACK_SPLIT: u32 = 16;"));
+        let mut gpu = pollster::block_on(Gpu::new()).unwrap();
+        let mut scene = Scene::new();
+        let rect = Rect::new(0.0, 0.0, 32.0, 32.0);
+        for _ in 0..=MAX_LAYER_DEPTH {
+            scene.push_layer(Fill::NonZero, vello::peniko::Mix::Normal, 0.5, Affine::IDENTITY, &rect);
+        }
+        for _ in 0..=MAX_LAYER_DEPTH {
+            scene.pop_layer();
+        }
+        let target = gpu.target(32, 32);
+        assert!(gpu.draw(&scene, &target.create_view(&Default::default()), 32, 32, Color::TRANSPARENT).unwrap_err().contains("layer depth"));
+    }
+
+    #[test]
+    fn a_solid_offscreen_pass_keeps_cached_images() {
+        let mut gpu = pollster::block_on(Gpu::new()).unwrap();
+        let mut media = crate::media::Media::default();
+        media.put("red", 1, 1, vec![255, 0, 0, 128]).unwrap();
+        let mut scene = Scene::new();
+        scene.draw_image(media.get("red").unwrap(), Affine::scale(50.0));
+        let first = pollster::block_on(gpu.render(&scene, 50, 50, Color::TRANSPARENT)).unwrap();
+        pollster::block_on(gpu.render(&Scene::new(), 20, 20, Color::BLACK)).unwrap();
+        let after = pollster::block_on(gpu.render(&scene, 50, 50, Color::TRANSPARENT)).unwrap();
+        assert_eq!(first.iter().zip(&after).filter(|(a, b)| a != b).count(), 0, "solid passes must not discard cached image pixels");
+    }
+
+    #[test]
+    fn registered_scaled_textures_are_stable_across_reallocation() {
+        let mut gpu = pollster::block_on(Gpu::new()).expect("gpu");
+        let source = image::open(concat!(env!("CARGO_MANIFEST_DIR"), "/corpus/text-keyed-blur/reference/75.png")).unwrap().to_rgba8();
+        let mut first: Option<Vec<u8>> = None;
+        for _ in 0..4 {
+            let target = gpu.target(source.width(), source.height());
+            gpu.queue.write_texture(
+                target.as_image_copy(),
+                source.as_raw(),
+                wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(source.width() * 4), rows_per_image: Some(source.height()) },
+                target.size(),
+            );
+            let image = gpu.register(target);
+            let mut scene = Scene::new();
+            scene.draw_image(&image, Affine::translate((10.2, 15.3)) * Affine::scale(1.1));
+            let rgba = pollster::block_on(gpu.render(&scene, 1080, 1920, Color::BLACK)).unwrap();
+            gpu.release(image);
+            if let Some(first) = &first {
+                assert_eq!(rgba.iter().zip(first).filter(|(a, b)| a != b).count(), 0, "same scaled texture differs after reallocation");
+            } else {
+                first = Some(rgba);
+            }
+        }
+    }
 
     #[test]
     fn a_rectangle_drawn_offscreen_reads_back_at_its_pixels() {

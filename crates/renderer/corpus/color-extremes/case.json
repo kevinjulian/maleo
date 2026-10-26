@@ -1,0 +1,32 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "row-0",
+			"rect": [50, 52, 980, 245]
+		},
+		{
+			"name": "row-1",
+			"rect": [50, 340, 980, 245]
+		},
+		{
+			"name": "row-2",
+			"rect": [50, 628, 980, 245]
+		},
+		{
+			"name": "row-3",
+			"rect": [50, 916, 980, 245]
+		},
+		{
+			"name": "row-4",
+			"rect": [50, 1204, 980, 245]
+		},
+		{
+			"name": "row-5",
+			"rect": [50, 1492, 980, 245]
+		}
+	],
+	"options": ["color.brightness", "color.contrast", "color.saturation", "color.filter-order"]
+}

@@ -1,0 +1,11 @@
+{
+	"scenes": [
+		{
+			"image": "media/landscape.jpg",
+			"movement": "orbit",
+			"durationSec": 4,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#182432"
+}

@@ -1,0 +1,12 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 30],
+	"regions": [
+		{
+			"name": "neutral",
+			"rect": [100, 180, 880, 620]
+		}
+	],
+	"options": ["color.neutral"]
+}

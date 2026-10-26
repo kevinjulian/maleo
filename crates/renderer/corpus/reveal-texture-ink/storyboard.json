@@ -1,0 +1,30 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"bgColor": "#193456",
+	"showLabels": false,
+	"videoOverlays": [
+		{
+			"url": "media/swatches.png",
+			"durationSec": 2,
+			"layout": {
+				"xPct": 8,
+				"yPct": 12,
+				"widthPct": 84,
+				"heightPct": 60,
+				"fit": "stretch"
+			},
+			"reveal": {
+				"type": "fade",
+				"texture": "ink",
+				"durationSec": 1.4,
+				"delaySec": 0.2
+			}
+		}
+	]
+}

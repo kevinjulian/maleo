@@ -1,0 +1,2339 @@
+{
+	"fps": 30,
+	"timing": "clip-local seconds = frame / fps; no key-time rounding",
+	"numeric": [
+		{
+			"name": "linear",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "linear",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.21166666666666667
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.375
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.55
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.7249999999999999
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8883333333333334
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "linear-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "linear",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.2116666666666667
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.375
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.55
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.7249999999999999
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8883333333333332
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "in",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "in",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.20019444444444445
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.24375000000000002
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.375
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.59375
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8768611111111111
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "in-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "in",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.20540909090909093
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.30340909090909096
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.45454545454545464
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.6534090909090908
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8820757575757576
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "out",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "out",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.22313888888888878
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.50625
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.7249999999999999
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.85625
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8998055555555555
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "out-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "out",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.21931481481481485
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.46249999999999997
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.6666666666666667
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.8124999999999998
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8959814814814813
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "in-out",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "in-out",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.2003888888888889
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.2875
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.55
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.8125
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8996111111111111
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "in-out-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "in-out",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.20860240963855425
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.3644578313253013
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.5963855421686748
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.786144578313253
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8947710843373493
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "bezier",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "bezier",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.2706095178158763
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.7779375767716101
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.8802447351792839
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.8983739182687369
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8999996427362971
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "bezier-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "bezier",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.24746723184841926
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.6593241286659566
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.8264324751941974
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.8843669902149793
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.8995951191129758
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "hold",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "hold",
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.2
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.2
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.2
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "hold-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.2
+				},
+				{
+					"t": 2.5,
+					"easing": "hold",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": 0.9
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.2
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.2
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.2
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.2
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.2
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.2
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.2
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.9
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.9
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.9
+				}
+			]
+		},
+		{
+			"name": "empty",
+			"keys": [],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.7
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.7
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.7
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.7
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.7
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.7
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.7
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.7
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.7
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.7
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.7
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.7
+				}
+			]
+		},
+		{
+			"name": "single",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": 0.4
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.4
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.4
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.4
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.4
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.4
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.4
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.4
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.4
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.4
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.4
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.4
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.4
+				}
+			]
+		},
+		{
+			"name": "trimmed-subcurve",
+			"keys": [
+				{
+					"t": 0,
+					"v": 0.140625
+				},
+				{
+					"t": 1,
+					"v": 0.765625,
+					"easing": "in",
+					"easingRange": [
+						0.375,
+						0.875
+					]
+				}
+			],
+			"fallback": 0.7,
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": 0.140625
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": 0.140625
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": 0.3700694444444445
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": 0.390625
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": 0.411736111111111
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": 0.765625
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": 0.765625
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": 0.765625
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": 0.765625
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": 0.765625
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": 0.765625
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": 0.765625
+				}
+			]
+		}
+	],
+	"colors": [
+		{
+			"name": "linear",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "linear",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(21, 36, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(73, 70, 56)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(128, 106, 62)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(184, 142, 67)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(235, 176, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "linear-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "linear",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(21, 36, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(73, 70, 56)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(128, 106, 62)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(184, 142, 67)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(235, 176, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "in",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "in",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(17, 34, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(31, 43, 52)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(73, 70, 56)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(142, 115, 63)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(232, 173, 71)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "in-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "in",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(19, 35, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(50, 55, 54)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(98, 86, 59)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(161, 127, 65)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(233, 174, 71)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "out",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "out",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(24, 39, 52)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(114, 97, 60)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(184, 142, 67)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(225, 169, 71)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(239, 178, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "out-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "out",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(23, 38, 52)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(100, 88, 59)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(165, 130, 65)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(211, 160, 69)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(238, 177, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "in-out",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "in-out",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(17, 34, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(45, 52, 54)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(128, 106, 62)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(211, 160, 69)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(239, 178, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "in-out-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "in-out",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(20, 36, 51)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(69, 68, 56)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(143, 116, 63)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(203, 155, 69)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(237, 177, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "bezier",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "bezier",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(39, 49, 53)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(200, 153, 68)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(233, 174, 71)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(238, 178, 72)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(239, 178, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "bezier-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "bezier",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "rgb(32, 44, 52)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "rgb(163, 128, 65)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "rgb(216, 163, 70)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "rgb(234, 175, 72)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "rgb(239, 178, 72)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "hold",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "hold",
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "#123"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "#123"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "#123"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "hold-range",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#123"
+				},
+				{
+					"t": 2.5,
+					"easing": "hold",
+					"easingRange": [
+						0.25,
+						0.85
+					],
+					"v": "#efb248"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#123"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#123"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "#123"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "#123"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "#123"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "#123"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "#123"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#efb248"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#efb248"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#efb248"
+				}
+			]
+		},
+		{
+			"name": "empty",
+			"keys": [],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#789"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#789"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#789"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#789"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "#789"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "#789"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "#789"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "#789"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "#789"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#789"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#789"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#789"
+				}
+			]
+		},
+		{
+			"name": "single",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "#abc"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "#abc"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "#abc"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "#abc"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "#abc"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "#abc"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "#abc"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "#abc"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "#abc"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "#abc"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#abc"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#abc"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#abc"
+				}
+			]
+		},
+		{
+			"name": "css-color-mix",
+			"keys": [
+				{
+					"t": 0.5,
+					"v": "red"
+				},
+				{
+					"t": 2.5,
+					"v": "#fff"
+				}
+			],
+			"fallback": "#789",
+			"samples": [
+				{
+					"frame": -1,
+					"seconds": -0.03333333333333333,
+					"value": "red"
+				},
+				{
+					"frame": 0,
+					"seconds": 0,
+					"value": "red"
+				},
+				{
+					"frame": 14,
+					"seconds": 0.4666666666666667,
+					"value": "red"
+				},
+				{
+					"frame": 15,
+					"seconds": 0.5,
+					"value": "red"
+				},
+				{
+					"frame": 16,
+					"seconds": 0.5333333333333333,
+					"value": "color-mix(in srgb, #fff 2%, red)"
+				},
+				{
+					"frame": 30,
+					"seconds": 1,
+					"value": "color-mix(in srgb, #fff 25%, red)"
+				},
+				{
+					"frame": 45,
+					"seconds": 1.5,
+					"value": "color-mix(in srgb, #fff 50%, red)"
+				},
+				{
+					"frame": 60,
+					"seconds": 2,
+					"value": "color-mix(in srgb, #fff 75%, red)"
+				},
+				{
+					"frame": 74,
+					"seconds": 2.466666666666667,
+					"value": "color-mix(in srgb, #fff 98%, red)"
+				},
+				{
+					"frame": 75,
+					"seconds": 2.5,
+					"value": "#fff"
+				},
+				{
+					"frame": 76,
+					"seconds": 2.533333333333333,
+					"value": "#fff"
+				},
+				{
+					"frame": 90,
+					"seconds": 3,
+					"value": "#fff"
+				}
+			]
+		}
+	]
+}

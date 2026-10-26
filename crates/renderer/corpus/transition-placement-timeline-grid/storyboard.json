@@ -1,0 +1,135 @@
+{
+	"scenes": [],
+	"bgColor": "#000000",
+	"showLabels": false,
+	"visualTimeline": [
+		{
+			"url": "media/0.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "cut",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 2,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "fade",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 27,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/0.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "slide",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 52,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "zoom",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 77,
+				"yPct": 5,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/0.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "wipe",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 2,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "flip",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 27,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/0.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "clock_wipe",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 52,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		},
+		{
+			"url": "media/1.png",
+			"kind": "image",
+			"startSec": 1,
+			"durationSec": 2,
+			"movement": "Static",
+			"transition": "pixel",
+			"transitionDurSec": 0.4,
+			"layout": {
+				"xPct": 77,
+				"yPct": 55,
+				"widthPct": 21,
+				"heightPct": 38,
+				"fit": "stretch"
+			}
+		}
+	]
+}
