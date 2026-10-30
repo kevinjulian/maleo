@@ -1,6 +1,7 @@
 /* The agent run loop: start a run, poll it, answer its questions, resume or cancel
  * it, and re-attach to one already in flight after a reload. */
-import { get, getOrNull, post } from "./client.ts";
+import { ApiError, get, getOrNull, post } from "./client.ts";
+import { z } from "zod";
 import type { ChatAgentContext } from "@models/agent/agent-context.ts";
 // Re-exported so this module stays the import site its consumers already use.
 export type { ChatAgentContext };
@@ -9,6 +10,7 @@ import type {
 	CaptionSet,
 	ContentType,
 	StoryClarificationSubmission,
+	TextSelection,
 } from "@maleo/shared";
 import { BASE } from "./base.ts";
 import type {
@@ -33,6 +35,7 @@ import type {
  * Nothing checked them together, so what a run had been told was discoverable
  * only by reading the call site that sent it. */
 export interface StartChatAgentInput {
+	textSelection?: TextSelection;
 	projectId: string;
 	instruction: string;
 	contentType: ContentType;
@@ -48,17 +51,28 @@ export interface StartChatAgentInput {
 
 // Start a server-side agent run; returns a job id to poll.
 export async function startChatAgent(input: StartChatAgentInput): Promise<{ jobId: string }> {
-	return post<{ jobId: string }>(`${BASE}/projects/${input.projectId}/chat`, {
-		instruction: input.instruction,
-		content_type: input.contentType,
-		scenes: input.scenes ?? [],
-		slides: input.slides,
-		posts: input.posts,
-		clips: input.clips,
-		captionSet: input.captionSet,
-		style_image_url: input.styleImageUrl,
-		envelope: input.envelope,
-	});
+	try {
+		return await post<{ jobId: string }>(`${BASE}/projects/${input.projectId}/chat`, {
+			instruction: input.instruction,
+			text_selection: input.textSelection,
+			content_type: input.contentType,
+			scenes: input.scenes ?? [],
+			slides: input.slides,
+			posts: input.posts,
+			clips: input.clips,
+			captionSet: input.captionSet,
+			style_image_url: input.styleImageUrl,
+			envelope: input.envelope,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			const selectionError = z
+				.object({ error: z.literal("text_selection_unavailable"), message: z.string() })
+				.safeParse(error.body);
+			if (selectionError.success) throw new Error(selectionError.data.message);
+		}
+		throw error;
+	}
 }
 
 export async function pollChatAgent(projectId: string, jobId: string): Promise<AgentJobState> {

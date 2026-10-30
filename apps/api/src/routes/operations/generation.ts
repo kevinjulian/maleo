@@ -40,6 +40,8 @@ import {
 	readStoryboardDocument,
 } from "@maleo/shared";
 import { agentRunBody, answerBody, editVideoBody } from "./request-schemas.ts";
+import { resolveChatTextSelection } from "../../modules/agents/core/chat-text-selection.ts";
+import { assertCapturedTextSelection } from "../../lib/text-selection-scope.ts";
 
 // Single flow: every agent run is the internal agent on the durable host
 // (modules/agents/core/service.ts, runtime/durable.ts). A route builds or fences
@@ -71,6 +73,21 @@ export function registerGenerationRoutes(app: Hono): void {
 		if (chatContextProjectMismatch(body.envelope, c.req.param("id"))) {
 			return c.json({ error: "envelope_project_mismatch" }, 400);
 		}
+		let textSelection;
+		try {
+			textSelection = await resolveChatTextSelection(
+				body.text_selection,
+				detail.project.editor_state_json?.chatModelSelection,
+			);
+		} catch (error) {
+			return c.json(
+				{
+					error: "text_selection_unavailable",
+					message: error instanceof Error ? error.message : "Choose an available text model.",
+				},
+				400,
+			);
+		}
 		// A memory entry may only cite a run of this same project. Read up front:
 		// the compiler is synchronous.
 		const ownRuns = new Set(await listWorkflowRunIds(c.req.param("id")));
@@ -97,6 +114,7 @@ export function registerGenerationRoutes(app: Hono): void {
 		});
 		const inputs = compiled.envelope.inputs;
 		const job = await startAgentJob({
+			textSelection,
 			projectId: c.req.param("id"),
 			instruction: body.instruction.trim(),
 			// SAFETY: the client's copy of a document THIS system wrote — the agent
@@ -180,6 +198,7 @@ export function registerGenerationRoutes(app: Hono): void {
 			jobId: job.id,
 			status: job.status,
 			context: job.context,
+			textSelection: job.textSelection?.selection,
 			events: job.events,
 			scenes: job.scenes,
 			slides: slidesOf(job),
@@ -210,6 +229,17 @@ export function registerGenerationRoutes(app: Hono): void {
 		if (!job || job.id !== jobId || job.projectId !== projectId)
 			return c.json({ error: "job_not_found" }, 404);
 		let answer = typeof body.answer === "string" ? body.answer : "";
+		try {
+			await assertCapturedTextSelection(job.textSelection);
+		} catch (error) {
+			return c.json(
+				{
+					error: "text_selection_unavailable",
+					message: error instanceof Error ? error.message : "This run's model is unavailable.",
+				},
+				400,
+			);
+		}
 		if (job.status !== "awaiting_input") return c.json({ error: "not_awaiting" }, 409);
 		if (body.action_id && job.pendingActionId && body.action_id !== job.pendingActionId) {
 			return c.json({ error: "stale_action" }, 409);
@@ -277,6 +307,17 @@ export function registerGenerationRoutes(app: Hono): void {
 		if (!job || job.id !== jobId || job.projectId !== projectId)
 			return c.json({ error: "job_not_found" }, 404);
 		if (job.status !== "error") return c.json({ error: `not_resumable_from_${job.status}` }, 409);
+		try {
+			await assertCapturedTextSelection(job.textSelection);
+		} catch (error) {
+			return c.json(
+				{
+					error: "text_selection_unavailable",
+					message: error instanceof Error ? error.message : "This run's model is unavailable.",
+				},
+				400,
+			);
+		}
 		let host;
 		try {
 			host = await runHost();
@@ -307,6 +348,7 @@ export function registerGenerationRoutes(app: Hono): void {
 		return c.json({
 			status: job.status,
 			context: job.context,
+			textSelection: job.textSelection?.selection,
 			events: job.events,
 			scenes: job.scenes,
 			slides: slidesOf(job),

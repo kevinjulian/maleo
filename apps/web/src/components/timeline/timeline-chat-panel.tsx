@@ -45,6 +45,7 @@ export function TimelineChatPanel({
 			messages={chat.messages}
 			setMessages={chat.setMessages}
 			onRunCommand={chat.run}
+			model={chat.model}
 			onAnswerQuestion={chat.answer}
 			busy={chat.running}
 			onStop={chat.stop}

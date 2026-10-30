@@ -27,6 +27,7 @@ import type { AgentJob, AgentScene, AgentSlide, AgentPost } from "./model.ts";
 import type { Clip } from "@maleo/shared";
 import { extractRequestedDurationSec } from "./duration.ts";
 import { createOutcomeContract } from "./outcome.ts";
+import type { CapturedTextSelection } from "@maleo/shared";
 import {
 	getContentTimelineTemplate,
 	getDefaultTimelineTemplate,
@@ -40,6 +41,7 @@ import {
 
 /** What a run is started from: the project, the instruction, and the client's live document and context. */
 export type AgentJobInput = {
+	textSelection?: CapturedTextSelection;
 	projectId: string;
 	instruction: string;
 	scenes?: AgentScene[];
@@ -211,6 +213,7 @@ export async function buildAgentJob(input: AgentJobInput): Promise<AgentJob> {
 		timelineTemplate,
 		outcomeContract,
 		context: input.context_envelope,
+		...(input.textSelection ? { textSelection: input.textSelection } : {}),
 	};
 	// Rehydrate prior research so a re-run grounds the plan instead of re-fetching —
 	// but ONLY when it still applies. A changed (non-empty) brief invalidates stale

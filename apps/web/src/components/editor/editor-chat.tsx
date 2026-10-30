@@ -46,10 +46,11 @@ import {
 	commandScopeOf,
 	withoutChip,
 	EMPTY_DRAFT_SCOPE,
-	type ChatCommandScope,
 	type ComposerDraftScope,
 } from "@models/chat/chat-composer.ts";
 import type { ChatEditorBridge } from "@hooks/editor/use-chat-session.ts";
+import type { ChatSession } from "@hooks/editor/use-chat-session.ts";
+import type { TextSelection } from "@maleo/shared";
 import { useChatScroll } from "@hooks/editor/use-chat-scroll.ts";
 import {
 	GROUND_CLAIMS_INSTRUCTION,
@@ -82,7 +83,8 @@ interface ChatPanelProps {
 	setMessages: Dispatch<SetStateAction<ChatLogMessage[]>>;
 	// Run a natural-language command against the project, with the scope its
 	// chips showed. The agent streams its own cards into the log.
-	onRunCommand: (text: string, scope?: ChatCommandScope) => Promise<void>;
+	onRunCommand: ChatSession["run"];
+	model?: ChatSession["model"];
 	// Answer a parked ask_user / approval gate. Only explicit controls call this.
 	// Resolves false when the server refused the answer.
 	onAnswerQuestion?: (
@@ -122,6 +124,7 @@ const QUICK_COMMANDS = [
 ];
 
 interface QueuedInstruction {
+	textSelection?: TextSelection;
 	text: string;
 	draft: ComposerDraftScope;
 }
@@ -145,6 +148,7 @@ export function ChatPanel({
 	onResume,
 	editor,
 	onReveal,
+	model,
 }: ChatPanelProps): JSX.Element {
 	const quick = quickCommands ?? QUICK_COMMANDS;
 	const [input, setInput] = useState("");
@@ -285,7 +289,7 @@ export function ChatPanel({
 	/* Start one run. The chips are resolved now, at launch — for a queued
 	 * instruction that is when the previous run finished, so its scope reflects
 	 * the project as it now is — and frozen onto the instruction. */
-	const launch = async (item: QueuedInstruction): Promise<void> => {
+	const launch = async (item: QueuedInstruction, onAccepted?: () => void): Promise<void> => {
 		const scope = commandScopeOf(item.text, item.draft);
 		const chips = composer?.preview(item.text, scope).chips ?? [];
 		setMessages((m) => [
@@ -294,7 +298,10 @@ export function ChatPanel({
 		]);
 		setLocalBusy(true);
 		try {
-			await onRunCommand(item.text, scope);
+			const accepted = model
+				? await onRunCommand(item.text, scope, item.textSelection, onAccepted)
+				: await onRunCommand(item.text, scope);
+			if (accepted !== false) onAccepted?.();
 		} catch (err) {
 			setMessages((m) => [
 				...m,
@@ -377,9 +384,8 @@ export function ChatPanel({
 			answer(expanded);
 			return;
 		}
-		const item: QueuedInstruction = { text: expanded, draft };
-		setInput("");
-		setDraft(EMPTY_DRAFT_SCOPE);
+		if (model && (!model.valid || model.saving || model.saveError)) return;
+		const item: QueuedInstruction = { text: expanded, draft, textSelection: model?.choice };
 		/* One project run at a time: while one executes, this becomes (or replaces)
 		 * the single visible queued instruction.
 		 *
@@ -390,9 +396,16 @@ export function ChatPanel({
 		 * two paths agree, and the status line's "Waiting for your decision" true. */
 		if (busy || queued || pending) {
 			setQueued(item);
+			setInput("");
+			setDraft(EMPTY_DRAFT_SCOPE);
 			return;
 		}
-		void launch(item);
+		void launch(item, () => {
+			if (inputRef.current?.value === text) {
+				setInput("");
+				setDraft(EMPTY_DRAFT_SCOPE);
+			}
+		});
 	};
 	const editQueued = (): void => {
 		if (!queued) return;
@@ -639,6 +652,7 @@ export function ChatPanel({
 						<CreditLimitCard summary={creditSummary} onCommand={send} />
 					) : (
 						<ChatComposerBox
+							model={model}
 							value={input}
 							onChange={setInput}
 							inputRef={inputRef}

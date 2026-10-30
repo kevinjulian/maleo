@@ -81,6 +81,9 @@ Bad — bypasses the semantic or behavior contract:
 - `onKeyDown` runs before the send rule and may claim a key with `preventDefault()`; `inputProps` carries combobox wiring. The chat's command and mention list uses both.
 - Focus is shown once, on the box. The entry grows to 120px, then scrolls. `elevated` lifts the box where it floats over a scrolling page.
 - Parts are found by `data-prompt="input"` and `data-prompt="submit"`.
+- Project chat composes its canonical model Select in `tools`. The feature owns
+  discovery, immediate preference saving, Retry, queue capture, and send validation.
+  Chat uses the shared entry height, send icon, elevation, and focus treatment.
 - Not built: an attachment-chip slot with pending and failed states, and a Cancel control. The image lab's reference chips and both labs' option popovers are still their own markup.
 
 ## Current usages and ownership

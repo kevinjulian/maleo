@@ -265,6 +265,7 @@ export function CreateContent({
 			setPosts(p.posts);
 			chat.setMessages(p.chatMessages);
 			chat.setDecisions(p.decisions);
+			chat.setChatModelSelection(p.chatModelSelection);
 			creative.hydrate(p);
 			/* Re-attaching to a live job may only start once this has run. The load
 			 * replaces the whole chat log, so a replay that began earlier has its cards
@@ -396,7 +397,11 @@ export function CreateContent({
 	// ChatPanel and the timeline editor take exactly this.
 	// Refs break chat/persistence declaration cycle without stale closures.
 	const flushEditorStateRef = useRef<
-		((overrides?: { decisions?: ConversationDecision[] }) => Promise<void>) | null
+		| ((overrides?: {
+				decisions?: ConversationDecision[];
+				chatModelSelection?: import("@maleo/shared").TextSelection;
+		  }) => Promise<void>)
+		| null
 	>(null);
 	const chatRef = useRef<ContentChat | null>(null);
 	// Playhead moves need no shell render; commands sample it at capture time.
@@ -426,6 +431,11 @@ export function CreateContent({
 			if (!flush) throw new Error("editor persistence is not ready");
 			await flush({ decisions });
 		},
+		onModelSelectionChanged: async (chatModelSelection) => {
+			const flush = flushEditorStateRef.current;
+			if (!flush) throw new Error("Editor persistence is not ready");
+			await flush({ chatModelSelection });
+		},
 	});
 
 	// Debounced persistence: versioned storyboard, decoupled editor state, project meta.
@@ -435,6 +445,7 @@ export function CreateContent({
 		commandLog,
 		presentation: { pacingDevices, presentation },
 		editorState: {
+			chatModelSelection: chat.chatModelSelection,
 			chatMessages: chat.messages,
 			settings,
 			trackFlags,

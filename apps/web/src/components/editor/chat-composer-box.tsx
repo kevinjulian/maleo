@@ -29,6 +29,8 @@ import {
 import type { ChatProjectIndex } from "@maleo/shared";
 import { PromptComposer } from "@design-system/patterns/prompt-composer.tsx";
 import type { ChatScopeChip } from "@models/chat/chat-log.ts";
+import { ChatModelPicker } from "./chat-model-picker.tsx";
+import type { ChatModelSelection } from "@hooks/editor/use-chat-model-selection.ts";
 
 type MenuItem =
 	| { kind: "command"; key: string; token: string; detail: string; command: ChatCommandOption }
@@ -41,6 +43,7 @@ type MenuItem =
 	  };
 
 export interface ChatComposerBoxProps {
+	model?: ChatModelSelection;
 	value: string;
 	onChange: (value: string) => void;
 	inputRef: RefObject<HTMLTextAreaElement | null>;
@@ -207,11 +210,18 @@ export function ChatComposerBox(props: ChatComposerBoxProps): JSX.Element {
 		<PromptComposer
 			className="fc-composer"
 			label={replyingTo ? "Reply" : "Instruction"}
+			canSubmit={
+				Boolean(value.trim()) &&
+				(Boolean(replyingTo) ||
+					!props.model ||
+					(props.model.valid && !props.model.saving && !props.model.saveError))
+			}
+			tools={props.model && <ChatModelPicker model={props.model} />}
 			value={value}
 			onValueChange={(_, event) => onInput(event)}
 			onSubmit={() => onSubmit(value)}
 			onKeyDown={onKeyDown}
-			rows={2}
+			elevated
 			inputRef={inputRef}
 			placeholder={
 				placeholder ??
@@ -222,7 +232,6 @@ export function ChatComposerBox(props: ChatComposerBoxProps): JSX.Element {
 						: "Describe a change — / for commands, @ for project items")
 			}
 			submitLabel={sendLabel}
-			submitIcon={Ic.spark(ICON.md)}
 			inputProps={{
 				"aria-autocomplete": "list",
 				"aria-expanded": menuOpen,

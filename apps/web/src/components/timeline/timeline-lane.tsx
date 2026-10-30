@@ -81,7 +81,7 @@ export function clipGeom(
 	const narrow = coarse && width < TOUCH_TRIM_MIN_PX;
 	return {
 		style: { left: c.start * pxPerSec, width },
-		cls: `${padded ? "padded" : ""} ${narrow ? "narrow" : ""}`,
+		cls: `${padded ? "padded" : ""} ${narrow ? "tl2-clip-narrow" : ""}`,
 		narrow,
 	};
 }

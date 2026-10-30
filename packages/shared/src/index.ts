@@ -1,4 +1,5 @@
 export * from "./channel.ts";
+export * from "./text-selection.ts";
 export * from "./object-keys.ts";
 export * from "./one-of.ts";
 export * from "./channel-activations.ts";

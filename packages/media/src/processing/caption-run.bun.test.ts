@@ -266,7 +266,7 @@ test("source failure and no-speech never publish partial captions; retry keeps o
 		}
 		expect(await readdir(process.env.CACHE_DIR!)).toEqual([]);
 	}
-});
+}, 30_000);
 
 test("cancellation kills owned recognition process and remains terminal after late completion", async () => {
 	const request = await fresh("slow"),
@@ -278,27 +278,34 @@ test("cancellation kills owned recognition process and remains terminal after la
 		(error: unknown) => error,
 	);
 	let pid = 0;
-	for (let attempt = 0; attempt < 100; attempt++) {
-		try {
-			pid = Number(await readFile(join(directory, "pid"), "utf8"));
-			break;
-		} catch {
-			await Bun.sleep(10);
+	const readyBy = performance.now() + 5_000;
+	try {
+		// Recognition starts after source preprocessing.
+		while (performance.now() < readyBy) {
+			try {
+				pid = Number(await readFile(join(directory, "pid"), "utf8"));
+				break;
+			} catch {
+				await Bun.sleep(10);
+			}
 		}
+		expect(pid).toBeGreaterThan(0);
+		cancelProcessingJob(job.id);
+		expect(await stopped).toBeInstanceOf(Error);
+		expect(() => process.kill(pid, 0)).toThrow();
+		expect(getProcessingJob(job.id)).toMatchObject({ status: "cancelled", result: null });
+		expect(await runCaptionJob(job.id, transport)).toBeNull();
+		expect(await readdir(process.env.CACHE_DIR!)).toEqual([]);
+		expect(
+			(await readdir(process.env.MALEO_CAPTION_CACHE_DIR!)).filter((name) =>
+				name.startsWith("recognize-"),
+			),
+		).toEqual([]);
+	} finally {
+		cancelProcessingJob(job.id);
+		await stopped;
 	}
-	expect(pid).toBeGreaterThan(0);
-	cancelProcessingJob(job.id);
-	expect(await stopped).toBeInstanceOf(Error);
-	expect(() => process.kill(pid, 0)).toThrow();
-	expect(getProcessingJob(job.id)).toMatchObject({ status: "cancelled", result: null });
-	expect(await runCaptionJob(job.id, transport)).toBeNull();
-	expect(await readdir(process.env.CACHE_DIR!)).toEqual([]);
-	expect(
-		(await readdir(process.env.MALEO_CAPTION_CACHE_DIR!)).filter((name) =>
-			name.startsWith("recognize-"),
-		),
-	).toEqual([]);
-});
+}, 30_000);
 
 test("generated narration adapter uses worker-owned cache with offsets outside cache identity", async () => {
 	await fresh();

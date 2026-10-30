@@ -37,7 +37,7 @@ A provider SHALL be responsible only for generation. Retry policy, tracing, prom
 
 ### Requirement: Provider selection is explicit and never silently substituted
 
-The system SHALL resolve a provider from persisted configuration, and SHALL fail loudly when an explicitly chosen provider is unknown, does not implement text generation, or is not healthy. Only an unconfigured default MAY fall through to the first ready provider.
+The system SHALL resolve text generation from an explicit run selection when present, then the project conversation selection, then the application default. It SHALL fail visibly when an explicitly chosen provider or model is unknown, unavailable, incompatible, or outside the configured endpoint's model options. Only an unconfigured default MAY fall through to the first ready provider; it SHALL still require a valid model for that endpoint. A custom endpoint SHALL NOT implicitly inherit a model from the built-in price catalog.
 
 Silent substitution is prohibited. Running a different AI than the one a user selected produces plausible output from the wrong model with no signal that it happened.
 
@@ -55,6 +55,19 @@ Silent substitution is prohibited. Running a different AI than the one a user se
 
 - **WHEN** no provider has been configured
 - **THEN** the system resolves the first registered provider that reports ready
+- **AND** it requests a model choice if that endpoint has no valid default
+
+#### Scenario: Conversation model overrides the application default
+
+- **WHEN** a conversation selects `deepseek-flash` while the application default names `gpt-5.5`
+- **THEN** the new chat run uses `deepseek-flash`
+- **AND** the application default is unchanged
+
+#### Scenario: Saved model is outside the current endpoint options
+
+- **WHEN** the saved selection names `gpt-5.5` and the endpoint offers only DeepSeek models
+- **THEN** a new run is refused before generation or tool effects with an actionable model-selection error
+- **AND** chat offers its model picker without losing the draft
 
 ### Requirement: A provider declares its own models, thinking levels and capabilities
 
@@ -174,7 +187,7 @@ API-owned text providers SHALL use shared provider configuration resolver and fi
 
 ### Requirement: Text generation uses API-backed models only
 
-Every text generation, the internal agent's turns and single-shot call sites alike, SHALL run on an API-backed model selected through provider settings. No local CLI runner SHALL be a text provider. Coding-agent CLIs such as Codex CLI and Claude Code SHALL interact with the product only as MCP clients.
+Every text generation, the internal agent's turns and single-shot call sites alike, SHALL run on an API-backed model. Project-chat runs SHALL use their captured selection; text generation outside a chat run SHALL use provider settings. No local CLI runner SHALL be a text provider. Coding-agent CLIs such as Codex CLI and Claude Code SHALL interact with the product only as MCP clients.
 
 #### Scenario: Only API-backed providers are offered
 
@@ -186,6 +199,11 @@ Every text generation, the internal agent's turns and single-shot call sites ali
 - **WHEN** the stored text selection names a removed CLI provider
 - **THEN** generation fails visibly naming the removed provider and the settings to change, and no other provider is substituted
 
+#### Scenario: A nested text call belongs to chat
+
+- **WHEN** a chat run invokes a planning stage that generates text
+- **THEN** that stage uses the run's captured selection rather than the application default
+
 ### Requirement: An unconfigured provider degrades rather than crashes
 
 The system SHALL report a provider whose credentials or endpoint are missing as unconfigured through its health check and SHALL remain able to start, serve settings, and generate through any other ready provider.
@@ -194,3 +212,31 @@ The system SHALL report a provider whose credentials or endpoint are missing as 
 
 - **WHEN** no API-backed text provider has credentials or a reachable endpoint
 - **THEN** the system starts normally and shows the text capability as unconfigured with a reason
+
+### Requirement: Model options belong to the configured endpoint
+
+The system SHALL obtain model options from the configured API endpoint and operator-declared model identifiers. A built-in price catalog SHALL NOT be treated as evidence that a custom endpoint supports those models. Authenticated project members SHALL receive only non-sensitive model options, availability, and discovery status. Model discovery SHALL use server-held credentials and SHALL NOT expose credentials, endpoint configuration, or raw upstream responses.
+
+#### Scenario: DeepSeek endpoint lists its models
+
+- **WHEN** the configured endpoint lists `deepseek-flash` and `deepseek-v4-pro`
+- **THEN** chat offers those models without adding unrelated GPT or Claude price-catalog entries
+- **AND** adding an extra model alone does not change an active conversation selection
+
+#### Scenario: Endpoint does not implement discovery
+
+- **WHEN** model discovery is unsupported and the operator declared model identifiers
+- **THEN** those identifiers remain selectable and are identified as operator-declared rather than discovered
+- **AND** the UI does not claim a generation succeeded
+
+#### Scenario: Discovery fails
+
+- **WHEN** discovery times out, returns an invalid response, or fails authentication
+- **THEN** chat reports discovery failure with Retry and retains the draft and saved selection
+- **AND** it does not replace the selected model or present the failure as an empty successful model list
+
+#### Scenario: Endpoint configuration changes
+
+- **WHEN** the effective endpoint or credentials change
+- **THEN** model discovery is refreshed for that configuration before it is presented as current
+- **AND** model options from the prior endpoint are not treated as current support

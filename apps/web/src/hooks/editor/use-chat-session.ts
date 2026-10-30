@@ -10,13 +10,14 @@
  * (the brief, the one-time initial run) and re-attaches after a reload. That
  * split is the two interfaces below, not two hooks.
  */
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type {
 	ChatEntityRef,
 	ContentType,
 	ConversationDecision,
 	StoryClarificationSubmission,
+	TextSelection,
 } from "@maleo/shared";
 import type { ChatCommandScope, ChatComposerSource } from "@models/chat/chat-composer.ts";
 import type { ChatLogMessage } from "@models/chat/chat-log.ts";
@@ -24,6 +25,7 @@ import type { AgentJobState } from "@models/agent/agent-wire.ts";
 import type { StartChatAgentInput } from "@api/chat.ts";
 import { useContentAgent, type AgentApply } from "./use-content-agent.ts";
 import { decisionFromAnswer, persistAcceptedDecision } from "@models/chat/decision-record.ts";
+import { useChatModelSelection, type ChatModelSelection } from "./use-chat-model-selection.ts";
 
 /* What chat can ask of the editor beside it: preview a command's scope, take
  * the user to what a run changed, and undo a run that is still the latest step.
@@ -45,7 +47,13 @@ export interface ChatSession {
 	messages: ChatLogMessage[];
 	setMessages: Dispatch<SetStateAction<ChatLogMessage[]>>;
 	/** A free-text command from the chat box, with the scope its chips showed. */
-	run: (text: string, scope?: ChatCommandScope) => Promise<void>;
+	run: (
+		text: string,
+		scope?: ChatCommandScope,
+		selection?: TextSelection,
+		onAccepted?: () => void,
+	) => Promise<boolean | void>;
+	model?: ChatModelSelection;
 	/** An explicit answer to a parked ask_user / approval gate. `batchAnswer` is
 	 *  the structured submission a pre-research clarification card sends. */
 	answer: (
@@ -69,6 +77,8 @@ export interface ChatSession {
 
 /** The container's view: the panel surface plus the runs it starts itself. */
 export interface ContentChat extends ChatSession {
+	chatModelSelection?: TextSelection;
+	setChatModelSelection: Dispatch<SetStateAction<TextSelection | undefined>>;
 	/** Start a run and resolve with its final job, so the caller can decide
 	 *  success from the result rather than a racy state read. */
 	start: (instruction: string) => Promise<AgentJobState | null>;
@@ -103,11 +113,23 @@ export function useChatSession(args: {
 	 * with what we agreed" after a reload is exactly what a recorded decision
 	 * exists to serve. */
 	onDecisionRecorded?: (decisions: ConversationDecision[]) => Promise<void>;
+	onModelSelectionChanged?: (choice: TextSelection) => Promise<void>;
 }): ContentChat {
 	const { projectId, contentType, apply, buildStart, onRunStart, onDecisionRecorded, editor } =
 		args;
 	const [messages, setMessages] = useState<ChatLogMessage[]>([]);
 	const [decisions, setDecisions] = useState<ConversationDecision[]>([]);
+	const [chatModelSelection, setChatModelSelection] = useState<TextSelection>();
+	useEffect(() => setChatModelSelection(undefined), [projectId]);
+	const model = useChatModelSelection({
+		projectId,
+		preference: chatModelSelection,
+		onSelect: async (choice) => {
+			setChatModelSelection(choice);
+			if (!args.onModelSelectionChanged) throw new Error("Editor persistence is not ready");
+			await args.onModelSelectionChanged(choice);
+		},
+	});
 	/* The ledger step each run settled as. Memory only: after a reload the
 	 * ledger is empty too, so there is nothing a stored step could undo. */
 	const settledRef = useRef(new Map<string, string>());
@@ -127,13 +149,16 @@ export function useChatSession(args: {
 	};
 
 	return {
+		chatModelSelection,
+		model,
+		setChatModelSelection,
 		messages,
 		setMessages,
 		running: agent.running,
 		interrupted: agent.interrupted,
-		run: async (text: string, scope?: ChatCommandScope): Promise<void> => {
+		run: async (text, scope, selection, onAccepted) => {
 			onRunStart();
-			await agent.run(text, scope);
+			return Boolean(await agent.run(text, scope, selection ?? model.choice, onAccepted));
 		},
 		/* Resolves true once the server accepted the answer. A refusal — a stale
 		 * action, a run no longer waiting — resolves false, so the panel can put
@@ -183,7 +208,7 @@ export function useChatSession(args: {
 		},
 		start: async (instruction: string): Promise<AgentJobState | null> => {
 			onRunStart();
-			return await agent.run(instruction);
+			return await agent.run(instruction, undefined, model.choice);
 		},
 		reattach: agent.resume,
 	};

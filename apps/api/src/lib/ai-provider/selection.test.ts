@@ -1,13 +1,19 @@
-import { afterEach, beforeEach, describe, expect, it } from "vite-plus/test";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { providersFor, resolveProvider, selectReadyProvider } from "./index.ts";
 
 const priorKey = process.env.MALEO_AI_API_KEY;
 
 beforeEach(() => {
 	delete process.env.MALEO_AI_API_KEY;
+	vi.stubGlobal(
+		"fetch",
+		vi.fn(async () => Response.json({ data: [{ id: "gpt-5.5" }, { id: "gpt-5-mini" }] })),
+	);
 });
 afterEach(() => {
+	vi.unstubAllGlobals();
 	delete process.env.MALEO_PROVIDER_TEXT;
+	delete process.env.MALEO_AI_API_MODELS;
 	if (priorKey === undefined) delete process.env.MALEO_AI_API_KEY;
 	else process.env.MALEO_AI_API_KEY = priorKey;
 });
@@ -80,6 +86,7 @@ describe("provider selection", () => {
 	});
 
 	it("accepts a model and thinking level the provider declares", () => {
+		process.env.MALEO_AI_API_MODELS = "gpt-5-mini";
 		expect(
 			resolveProvider("text", {
 				default: { providerId: "api", model: "gpt-5-mini", thinking: "high" },
@@ -92,15 +99,7 @@ describe("an endpoint's own models", () => {
 	it("an operator-declared extra model is selectable; an undeclared one is still refused", () => {
 		process.env.MALEO_AI_API_MODELS = "llama3.2, qwen3";
 		try {
-			expect(resolveProvider("text").meta.models).toEqual([
-				"gpt-5.5",
-				"gpt-5-mini",
-				"claude-opus-4-5",
-				"claude-sonnet-4-5",
-				"claude-haiku-4-5",
-				"llama3.2",
-				"qwen3",
-			]);
+			expect(resolveProvider("text").meta.models).toEqual(["llama3.2", "qwen3"]);
 			expect(
 				resolveProvider("text", { default: { providerId: "api", model: "llama3.2" } }).meta.id,
 			).toBe("api");

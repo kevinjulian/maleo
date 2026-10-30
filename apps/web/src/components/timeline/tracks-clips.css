@@ -370,12 +370,12 @@
 	.tl2-clip .tl2-clip-upload[data-preview-state] .tl2-clip-upload-line {
 		display: block;
 	}
-	.tl2-clip:not(.narrow)
+	.tl2-clip:not(.tl2-clip-narrow)
 		.tl2-clip-upload[data-preview-state]:not([data-preview-state="failed"])
 		.tl2-clip-upload-icon {
 		display: none;
 	}
-	.tl2-clip.narrow .tl2-clip-upload[data-preview-state] .tl2-clip-upload-line {
+	.tl2-clip.tl2-clip-narrow .tl2-clip-upload[data-preview-state] .tl2-clip-upload-line {
 		display: none;
 	}
 

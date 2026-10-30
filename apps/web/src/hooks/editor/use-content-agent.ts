@@ -57,7 +57,12 @@ const nextMsgId = (m: ChatLogMessage[]): number => m.reduce((a, x) => Math.max(a
 export interface ContentAgent {
 	// Resolves with the final job state (or null if it errored / never started), so
 	// callers can decide success/failure from the result, not a racy state read.
-	run: (instruction: string, scope?: ChatCommandScope) => Promise<AgentJobState | null>;
+	run: (
+		instruction: string,
+		scope?: ChatCommandScope,
+		selection?: import("@maleo/shared").TextSelection,
+		onAccepted?: () => void,
+	) => Promise<AgentJobState | null>;
 	// Explicit answer to a parked ask_user / approval gate. Free-text commands use
 	// run(); only question/approval controls call this.
 	answer: (
@@ -426,6 +431,8 @@ export function useContentAgent(args: UseContentAgentArgs): ContentAgent {
 	const run = async (
 		instruction: string,
 		scope?: ChatCommandScope,
+		selection?: import("@maleo/shared").TextSelection,
+		onAccepted?: () => void,
 	): Promise<AgentJobState | null> => {
 		if (!projectId || activeJob.current) return null;
 		// Claim the in-flight slot BEFORE any await so a double-submit (two clicks
@@ -439,7 +446,9 @@ export function useContentAgent(args: UseContentAgentArgs): ContentAgent {
 				instruction,
 				contentType,
 				...buildStart(instruction, scope),
+				textSelection: selection,
 			});
+			onAccepted?.();
 			stoppedRef.current[jobId] = false;
 			return await streamJob(jobId);
 		} catch (err) {

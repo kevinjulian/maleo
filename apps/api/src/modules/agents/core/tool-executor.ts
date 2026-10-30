@@ -1,3 +1,4 @@
+import { withTextSelection } from "../../../lib/text-selection-scope.ts";
 /* Tool dispatch seam. Validates + coerces a tool call against its registry schema,
  * enforces the approval gate for gated generates, then runs the tool's ToolDef
  * handler with an assembled ToolContext (job + helpers). Also holds the
@@ -68,6 +69,18 @@ export interface ToolCallOptions {
 }
 
 export async function runValidatedTool(
+	job: AgentJob,
+	tool: string,
+	args: Record<string, unknown>,
+	toolCallId?: string,
+	options: ToolCallOptions = {},
+): Promise<{ note: string; thumbs?: string[]; effect?: ToolEffect; suspended?: true }> {
+	return withTextSelection(job.textSelection, () =>
+		runValidatedToolInScope(job, tool, args, toolCallId, options),
+	);
+}
+
+async function runValidatedToolInScope(
 	job: AgentJob,
 	tool: string,
 	args: Record<string, unknown>,

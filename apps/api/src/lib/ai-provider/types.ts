@@ -23,13 +23,12 @@ export type ProviderHealth = "ready" | "unconfigured" | "down";
  * level is a selection error, never a silent downgrade — otherwise the UI
  * offers `max` to a runner with no such mode and the user gets `medium`
  * without being told. */
-export const THINKING_LEVELS = ["off", "low", "medium", "high", "max"] as const;
-export type ThinkingLevel = (typeof THINKING_LEVELS)[number];
+export { THINKING_LEVELS, type ThinkingLevel } from "@maleo/shared";
+import type { ThinkingLevel } from "@maleo/shared";
 
 export interface TextInput {
 	prompt: string;
-	// Which of the provider's declared models to run. Omitted means the
-	// provider's first declared model.
+	// Which supported model to run. An adapter may require an explicit choice.
 	model?: string;
 	// Must be one of the provider's declared `thinkingLevels`.
 	thinking?: ThinkingLevel;
@@ -78,8 +77,7 @@ export interface ProviderMeta {
 	id: string;
 	label: string;
 	capabilities: Capability[];
-	// Static per provider — see design decision 12. A new model is an edit to
-	// the adapter that owns it, never to UI code.
+	// Effective options. API providers refresh these from endpoint discovery and declarations.
 	models: string[];
 	thinkingLevels: ThinkingLevel[];
 	/* What this provider needs configured, as data the settings form is built

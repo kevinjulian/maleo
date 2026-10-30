@@ -188,6 +188,31 @@ export async function replayApi(context: BrowserContext, har: string): Promise<v
 			},
 		}),
 	);
+	await context.route(/\/api\/settings\/text-provider(\?|$)/, (route) =>
+		route.fulfill({
+			json: {
+				selected: { providerId: "api", model: "fixture-text" },
+				effective_provider: "api",
+				source: "settings",
+				selection_error: null,
+				providers: [
+					{
+						id: "api",
+						label: "Fixture Text",
+						models: ["fixture-text"],
+						model_options: [{ id: "fixture-text", source: "discovered" }],
+						discovery: { status: "ready", models: ["fixture-text"] },
+						thinking_levels: ["low", "medium", "high"],
+						health: "ready",
+						health_reason: null,
+						supported: true,
+						metered_per_token: true,
+						context_tokens: 200000,
+					},
+				],
+			},
+		}),
+	);
 	await context.route("**/api/operations/projects/*/storyboard-authoring**", (route) =>
 		route.fulfill({
 			json: {

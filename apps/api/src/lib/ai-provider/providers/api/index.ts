@@ -11,8 +11,8 @@
  * lever, a native adapter is an additional registry entry, which is precisely
  * the property this seam exists to provide.
  *
- * Credentials arrive from the environment rather than the settings table: this
- * package never reads the database. */
+ * Configuration resolves through the shared source at call time. This adapter
+ * never reads the database. */
 import type {
 	AiProvider,
 	ProviderHealth,
@@ -21,30 +21,24 @@ import type {
 	ThinkingLevel,
 } from "../../types.ts";
 import { estimateTokens } from "../../usage.ts";
-import { resolveConfig } from "@maleo/shared/provider-config";
+import {
+	apiConfig,
+	API_KEY_ENV,
+	API_BASE_URL_ENV,
+	API_MODELS_ENV,
+	DEFAULT_BASE_URL,
+} from "./config.ts";
+import { currentTextModels, resolveTextModel } from "./discovery.ts";
+export {
+	apiConfig,
+	API_KEY_ENV,
+	API_BASE_URL_ENV,
+	API_MODELS_ENV,
+	type ApiConfig,
+} from "./config.ts";
 
 const PROVIDER_ID = "api";
 const DEFAULT_TIMEOUT_MS = 120_000;
-const DEFAULT_BASE_URL = "https://api.openai.com/v1";
-export const API_BASE_URL_ENV = "MALEO_AI_API_BASE_URL";
-export const API_KEY_ENV = "MALEO_AI_API_KEY";
-/* Models beyond the catalog the endpoint serves — a local Ollama's `llama3.2`,
- * say — comma-separated. Operator-declared, so selecting one is still a choice
- * the provider declares rather than an arbitrary string; they price at the
- * metered fallback. */
-export const API_MODELS_ENV = "MALEO_AI_API_MODELS";
-
-/* Static catalog — design decision 12. These are the models the price table
- * knows rates for; an unlisted model still runs, and prices at the metered
- * fallback rather than free. */
-const MODELS = [
-	"gpt-5.5",
-	"gpt-5-mini",
-	"claude-opus-4-5",
-	"claude-sonnet-4-5",
-	"claude-haiku-4-5",
-] as const;
-
 /* OpenAI-style `reasoning_effort`. `off` is not declared: omitting the field
  * is not the same as disabling reasoning on a reasoning model, and claiming
  * otherwise would be the silent-downgrade failure this scale exists to avoid. */
@@ -57,31 +51,6 @@ const EFFORT = {
 } satisfies Record<ThinkingLevel, string | undefined>;
 
 const DECLARED_LEVELS: ThinkingLevel[] = ["low", "medium", "high"];
-
-/** The catalog, then the operator's extra models. */
-function declaredModels(): string[] {
-	const extra = (resolveConfig(API_MODELS_ENV) ?? "")
-		.split(",")
-		.map((model) => model.trim())
-		.filter(Boolean);
-	return [...new Set([...MODELS, ...extra])];
-}
-
-export interface ApiConfig {
-	baseUrl: string;
-	apiKey: string;
-}
-
-/* Read at call time rather than module load. The previous runner read its two
- * knobs once at import, which meant changing them required a restart — and a
- * settings UI that appears to work but does not take effect is worse than one
- * that is absent. */
-export function apiConfig(): ApiConfig {
-	return {
-		baseUrl: (resolveConfig(API_BASE_URL_ENV) ?? DEFAULT_BASE_URL).replace(/\/+$/, ""),
-		apiKey: resolveConfig(API_KEY_ENV) ?? "",
-	};
-}
 
 export function effortFor(thinking: ThinkingLevel | undefined): string | undefined {
 	if (!thinking) return undefined;
@@ -186,7 +155,7 @@ export const apiProvider: AiProvider = {
 		label: "OpenAI-compatible API",
 		capabilities: ["text"],
 		get models() {
-			return declaredModels();
+			return currentTextModels();
 		},
 		thinkingLevels: DECLARED_LEVELS,
 		config: [
@@ -209,7 +178,7 @@ export const apiProvider: AiProvider = {
 				label: "Extra models",
 				kind: "text",
 				required: false,
-				help: "Comma-separated model names the endpoint serves beyond the built-in list, e.g. llama3.2 on a local Ollama.",
+				help: "Comma-separated model IDs served by this endpoint. Declared models remain available when model discovery is unsupported.",
 			},
 		],
 		traits: {
@@ -230,7 +199,7 @@ export const apiProvider: AiProvider = {
 			if (!cfg.apiKey) {
 				throw new Error("api provider is unconfigured: MALEO_AI_API_KEY is not set");
 			}
-			const model = input.model ?? MODELS[0];
+			const model = await resolveTextModel(input.model);
 			const effort = effortFor(input.thinking);
 			const started = Date.now();
 

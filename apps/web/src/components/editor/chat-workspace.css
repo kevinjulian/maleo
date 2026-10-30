@@ -263,11 +263,6 @@
 	}
 
 	/* ── Composer foot: only live content ── */
-	.fc-composer {
-		display: flex;
-		flex-direction: column;
-		gap: var(--s-1-5);
-	}
 	.fc-queued,
 	.fc-replying {
 		display: flex;
@@ -383,7 +378,6 @@
 	}
 
 	.fc-run button:focus-visible,
-	.fc-composer button:focus-visible,
 	.fc-pinned button:focus-visible,
 	.fc-jump:focus-visible,
 	.fc-pane-resize:focus-visible,

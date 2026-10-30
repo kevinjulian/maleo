@@ -16,33 +16,17 @@ import { type JSX } from "react";
 import { Select } from "@design-system/components/select.tsx";
 import { Field } from "@design-system/components/field.tsx";
 
-export type ProviderHealth = "ready" | "unconfigured" | "down";
-
-export interface TextProviderOption {
-	id: string;
-	label: string;
-	models: string[];
-	thinking_levels: string[];
-	health: ProviderHealth;
-	health_reason: string | null;
-	metered_per_token: boolean;
-	context_tokens: number;
-	supported: boolean;
-}
-
-export interface TextProviderChoice {
-	providerId: string;
-	model?: string;
-	thinking?: string;
-}
-
-export interface TextProviderStatus {
-	selected: TextProviderChoice | null;
-	effective_provider: string | null;
-	selection_error?: string | null;
-	source: "settings" | "env" | "default";
-	providers: TextProviderOption[];
-}
+import type {
+	TextProviderChoice,
+	TextProviderOption,
+	TextProviderStatus,
+} from "@models/settings/text-provider.ts";
+export type {
+	ProviderHealth,
+	TextProviderChoice,
+	TextProviderOption,
+	TextProviderStatus,
+} from "@models/settings/text-provider.ts";
 
 /* Build the choice to submit when the user picks a provider.
  *

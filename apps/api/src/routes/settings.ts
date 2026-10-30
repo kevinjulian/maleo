@@ -84,6 +84,7 @@ import {
 	selectReadyProvider as selectReadyTextProvider,
 } from "../lib/ai-provider/index.ts";
 import { readTextProviderSelection } from "../lib/text-provider-settings.ts";
+import { textModelOptions } from "../lib/ai-provider/providers/api/discovery.ts";
 import { checkReachable as checkTextApiReachable } from "../lib/ai-provider/index.ts";
 import {
 	maskSecret as maskGlobalSecret,
@@ -247,8 +248,16 @@ export function settingsRoutes(): Hono {
 	 * literal in a React file — providers disagree on models and thinking
 	 * levels, so a hardcoded union is wrong for every provider individually and
 	 * rots the moment one adds a model. */
-	async function textProviderStatus() {
-		const selection = await readTextProviderSelection();
+	async function textProviderStatus(refresh = false) {
+		const modelOptions = await textModelOptions(refresh);
+		let selection: Awaited<ReturnType<typeof readTextProviderSelection>> = {};
+		let selectionError: string | null = null;
+		try {
+			selection = await readTextProviderSelection();
+		} catch {
+			selectionError =
+				"Saved text selection is invalid. Ask the instance owner to select an available model.";
+		}
 		const providers = await Promise.all(
 			// `internal` providers are resolvable but never offered to a user.
 			textProvidersFor("text")
@@ -257,6 +266,9 @@ export function settingsRoutes(): Hono {
 					id: provider.meta.id,
 					label: provider.meta.label,
 					models: provider.meta.models,
+					...(provider.meta.id === "api"
+						? { model_options: modelOptions.options, discovery: modelOptions.discovery }
+						: {}),
 					thinking_levels: provider.meta.thinkingLevels,
 					health: await provider.meta.health("text"),
 					// Why, not just that. "Unavailable" with no reason sends the user to
@@ -270,15 +282,21 @@ export function settingsRoutes(): Hono {
 				})),
 		);
 		let effectiveProvider: string | null = null;
-		let selectionError: string | null = null;
+		let effectiveSelection: import("@maleo/shared").TextSelection | null = null;
 		try {
-			effectiveProvider = (await selectReadyTextProvider("text", selection)).provider.meta.id;
+			if (!selectionError) {
+				const decision = await selectReadyTextProvider("text", selection);
+				effectiveProvider = decision.provider.meta.id;
+				if (decision.choice.model)
+					effectiveSelection = { ...decision.choice, model: decision.choice.model };
+			}
 		} catch (error) {
 			selectionError = error instanceof Error ? error.message : String(error);
 		}
 		return {
 			selected: selection.default ?? null,
 			effective_provider: effectiveProvider,
+			effective_selection: effectiveSelection,
 			selection_error: selectionError,
 			source: selection.default
 				? ("settings" as const)
@@ -289,7 +307,9 @@ export function settingsRoutes(): Hono {
 		};
 	}
 
-	app.get("/text-provider", async (c) => c.json(await textProviderStatus()));
+	app.get("/text-provider", async (c) =>
+		c.json(await textProviderStatus(c.req.query("refresh") === "true")),
+	);
 
 	/* The AI provider's API key. Written to the chmod-0600 global secrets file
 	 * and published into the environment, never into `global_settings` — the

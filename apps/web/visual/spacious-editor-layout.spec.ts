@@ -308,9 +308,6 @@ for (const width of [1440, 320])
 					}),
 				);
 				let imageFails = true;
-				await context.route(/\/settings\/text-provider(\?|$)/, (route) =>
-					route.fulfill({ json: { selected: { providerId: "fixture-ai" } } }),
-				);
 				await context.route(/\/settings\/image-provider(\?|$)/, (route) =>
 					imageFails
 						? route.fulfill({ status: 503, json: { error: "Provider offline" } })

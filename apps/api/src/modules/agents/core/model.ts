@@ -72,6 +72,7 @@ import type { StoryClarificationBatch } from "@maleo/shared";
 
 export interface AgentJob {
 	id: string;
+	textSelection?: import("@maleo/shared").CapturedTextSelection;
 	projectId: string;
 	/* Set on a job an MCP client started (mcp/dispatch.ts): the user the key acts
 	 * as, whose name its tool calls are traced under. A read's job is never saved

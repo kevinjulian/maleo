@@ -14,6 +14,7 @@ import { quoteForText, textProviderCostUsd, TEXT_UNIT } from "./metering/prices.
 import type { RenderedPrompt } from "./prompts/registry.ts";
 import { generationKey } from "./generation/generation-scope.ts";
 import { requirePrompt } from "./capability-scope.ts";
+import { scopedTextSelection, assertCapturedTextSelection } from "./text-selection-scope.ts";
 
 /* How the facade learns which provider the user picked.
  *
@@ -28,6 +29,11 @@ let readSelection: SelectionReader = () => ({});
 
 /** The text selection the user made, read the way every text call reads it. */
 export async function currentTextSelection(): Promise<ProviderSelection> {
+	const capture = scopedTextSelection();
+	if (capture) {
+		await assertCapturedTextSelection(capture);
+		return { default: capture.selection };
+	}
 	return await readSelection();
 }
 
@@ -78,7 +84,7 @@ export async function runPrompt(
 	/* Inside a generation scope (a tool call, a workflow node) the usage row is keyed,
 	 * so a node re-entered after its call already ran is charged once. */
 	const usageKey = generationKey(["llm", prompt]);
-	const decision = await selectReadyProvider("text", await readSelection());
+	const decision = await selectReadyProvider("text", await currentTextSelection());
 	const provider = decision.provider;
 	const generate = provider.text;
 	if (!generate) {

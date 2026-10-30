@@ -1,3 +1,5 @@
+import { setConfigSource } from "@maleo/shared/provider-config";
+import { setTextProviderSelectionReader } from "../../lib/text-runner.ts";
 /* Route-level guard for the chat flow on the internal agent runtime: each route
  * fences the run on the product record and hands it to the run host. A
  * recording host stands in for the durable one, so no server is needed. */
@@ -112,12 +114,29 @@ async function chat(projectId: string, instruction = "make a video"): Promise<Re
 }
 
 beforeEach(async () => {
+	setConfigSource({
+		resolve: (key) =>
+			(
+				({
+					MALEO_AI_API_KEY: "fixture-key",
+					MALEO_AI_API_BASE_URL: "http://127.0.0.1:1/v1",
+					MALEO_AI_API_MODELS: "fixture-model",
+				}) as Record<string, string>
+			)[key],
+	});
+	setTextProviderSelectionReader(() => ({
+		default: { providerId: "api", model: "fixture-model" },
+	}));
 	sent.length = 0;
 	setRunHostForTests(host);
 	await clearWorkflowRunsForTests();
 	clearAgentJobsForTests();
 });
-afterEach(() => setRunHostForTests(undefined));
+afterEach(() => {
+	setRunHostForTests(undefined);
+	setConfigSource(null);
+	setTextProviderSelectionReader(() => ({}));
+});
 afterAll(async () => {
 	await closeMaleoDb();
 	rmSync(tmpDir, { recursive: true, force: true });

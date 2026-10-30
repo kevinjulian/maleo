@@ -42,7 +42,7 @@ export function definitionToolsFor(
 /** Every workflow the runtime defines, for registering with Mastra (snapshots, resume). */
 export { AGENT_WORKFLOWS } from "./workflows/index.ts";
 
-/** A fixed model, or one resolved per call (the durable agent reads the current selection). */
+/** A fixed model, or one resolved per call (the durable agent reads its run capture). */
 type AgentModel = ConstructorParameters<
 	typeof Agent<"maleo-agent", ToolsInput, undefined, AgentRunContext>
 >[0]["model"];

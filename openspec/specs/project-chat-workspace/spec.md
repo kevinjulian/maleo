@@ -340,3 +340,84 @@ At phone width, the content workspace SHALL expose `Editor` and `Chat` views. Ed
 
 - **WHEN** the operating system reports a reduced-motion preference
 - **THEN** switching between Editor and Chat occurs without nonessential transition
+
+### Requirement: Chat uses the shared lab composer appearance
+
+The chat composer SHALL use the same shared composition as Image Lab and Speech Lab: a growing text entry, canonical send control, and options toolbar below the entry. Surface, border, radius, spacing, focus, and responsive behavior SHALL follow the shared composer contract. Feature-specific context, commands, mentions, queued instructions, explicit replies, Stop, and credit restrictions SHALL retain their behavior. Composer changes SHALL preserve the editor's pane sizing and resize persistence.
+
+#### Scenario: User moves between chat and labs
+
+- **WHEN** the user opens project chat, Image Lab, and Speech Lab at the same viewport and theme
+- **THEN** their input housing, send control, and option-row treatment share the same visual contract
+- **AND** chat presents model selection in its options toolbar
+
+#### Scenario: User opens completion menus
+
+- **WHEN** the user types `/` or `@` in chat
+- **THEN** command and entity completion retain their separate meanings and keyboard navigation
+- **AND** choosing a completion edits the draft without sending it
+
+#### Scenario: Keyboard and phone usage
+
+- **WHEN** the composer is used with keyboard, an input method, or at 320 CSS pixels
+- **THEN** Enter sends, Shift+Enter inserts a line, and composition confirmation does not send
+- **AND** model selection, send, pinned decisions, and Stop remain reachable without horizontal page overflow
+
+### Requirement: Users choose a model in their project conversation
+
+Project-authorized users SHALL select a configured API model directly in the chat toolbar without instance-owner permission. Chat SHALL show the effective model before sending and SHALL persist an explicit choice with the existing project conversation. Reloads, ordinary editor saves, and phone view switches SHALL preserve the choice. The conversation is the existing single conversation per project; the choice is shared within that project and SHALL NOT change another project or application defaults. Credential and endpoint editing SHALL remain instance-owner controls.
+
+#### Scenario: Member selects DeepSeek
+
+- **WHEN** a project member selects `deepseek-flash` from the chat picker and sends a message
+- **THEN** the message starts a run using that model without a console command or admin configuration mutation
+
+#### Scenario: Project reloads after selection
+
+- **WHEN** the user selects a model, the save is acknowledged, and the project immediately reloads
+- **THEN** chat restores that model
+- **AND** a later editor autosave preserves it along with transcript and decisions
+
+#### Scenario: Selection cannot be saved
+
+- **WHEN** the conversation selection save fails
+- **THEN** chat reports the failure and allows Retry without discarding the draft
+- **AND** it does not claim the choice is saved
+
+#### Scenario: New project has no explicit choice
+
+- **WHEN** a conversation has no saved model choice
+- **THEN** chat displays the current application default if valid for the endpoint
+- **AND** otherwise it asks the user to choose an available model before sending
+
+#### Scenario: Another project is open
+
+- **WHEN** the user changes the model in project A
+- **THEN** project B and the application default retain their selections
+
+#### Scenario: Member attempts to alter credentials
+
+- **WHEN** a project member uses chat model selection
+- **THEN** no credential or endpoint configuration is returned or editable
+- **AND** existing owner-only configuration endpoints remain protected
+
+### Requirement: Queued instructions capture their own model choice
+
+A queued instruction SHALL retain the model selected when it was queued. Changing the composer model SHALL affect future submissions, not an active run or an already queued instruction. Editing and resubmitting the queued instruction SHALL explicitly capture the current composer choice. A reply to a parked run SHALL use that run's captured model.
+
+#### Scenario: User changes model after queuing
+
+- **WHEN** an instruction is queued with model A and the user then selects model B
+- **THEN** the queued instruction starts with model A after the active run ends
+- **AND** its project context is rebuilt at launch as before
+
+#### Scenario: User edits a queued instruction
+
+- **WHEN** the user edits and resubmits a queued instruction while model B is selected
+- **THEN** the replacement instruction captures model B and only one instruction remains queued
+
+#### Scenario: User answers an existing decision
+
+- **WHEN** the user changes the composer model and then answers a pending clarification
+- **THEN** the suspended run continues with its captured model
+- **AND** the new composer selection applies only to the next new instruction

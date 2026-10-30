@@ -20,6 +20,7 @@ import {
 	textOf,
 } from "@maleo/shared";
 import { withGenerationScope } from "../../../../lib/generation/generation-scope.ts";
+import { withTextSelection } from "../../../../lib/text-selection-scope.ts";
 import type { AgentJob } from "../model.ts";
 import {
 	toFlowValue,
@@ -277,8 +278,10 @@ async function runOperation(
 			answer,
 			toolCallId: host.toolCallId,
 		});
-	const output = await withGenerationScope(key, () =>
-		operation.unscoped ? call() : runInOperationScope(operation, call),
+	const output = await withTextSelection(host.job.textSelection, () =>
+		withGenerationScope(key, () =>
+			operation.unscoped ? call() : runInOperationScope(operation, call),
+		),
 	);
 	// Validated before anything reaches flow state; a failing output fails the node.
 	return toFlowValue(operation.output.parse(output));

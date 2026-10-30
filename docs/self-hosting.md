@@ -148,7 +148,9 @@ Every text call and the chat agent run on an OpenAI-compatible API — OpenAI,
 Anthropic, Gemini, OpenRouter, Groq, or a self-hosted Ollama or vLLM. Set it in
 **God Mode → Providers → AI text**: the API key (stored in the data volume's
 secrets file, never in the database), the base URL, and **Extra models** for
-names beyond the built-in list (`MALEO_AI_API_MODELS`). Choose a model that
+model IDs served by the endpoint (`MALEO_AI_API_MODELS`). The API discovers
+models through `/models`; declared IDs remain available when discovery is
+unsupported. Model discovery does not prove tool-calling support. Choose a model that
 calls tools reliably: the agent builds and edits by calling tools, and a model
 that answers in prose instead changes nothing. Without a key the stack starts,
 and Settings reports text as unconfigured with the reason.

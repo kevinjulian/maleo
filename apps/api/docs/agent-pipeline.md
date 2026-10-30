@@ -21,6 +21,45 @@ build, and edits/deletes always re-confirm. Where it runs is at the end.
 6. **Tools stay atomic; the pipeline orchestrates them.** The pipeline is a
    separate, testable state machine layered above the tool registry.
 
+## Chat text selection
+
+One project owns one conversation. Its optional `chatModelSelection` preference
+is shared by authorized collaborators and persists in editor state. It does not
+change another project or the application default. Credentials and endpoint
+configuration remain instance-owner controls.
+
+`POST /api/operations/projects/:id/chat` accepts an optional choice:
+
+```json
+{
+	"instruction": "Make the opening shorter",
+	"text_selection": { "providerId": "api", "model": "deepseek-flash", "thinking": "high" }
+}
+```
+
+New runs resolve explicit submission, then project conversation preference,
+then application default. They validate model availability, supported thinking,
+and provider readiness before creation. Invalid choices return HTTP 400 with
+`error: "text_selection_unavailable"` and an actionable `message`. Malformed
+request shapes return `invalid_body`. Neither rejection starts a run.
+
+The run stores its concrete selection and an opaque endpoint binding. Polling
+and run history expose `textSelection` with provider, model, and optional
+thinking. They expose neither endpoint binding nor credentials. Duplicate starts
+retain the existing run's capture. Answers and interruption resumes retain that
+capture, while changing the next-message choice affects only new submissions.
+Agent turns and nested text requests read one isolated run selection. Tool,
+workflow-operation, stage, and approval-redraft entries restore that scope from
+the run record. Each entry rechecks readiness and endpoint compatibility.
+Credentials resolve from current secure configuration; key rotation retains the
+endpoint binding. Image, speech, and video provider choices remain independent.
+
+Runs created before capture existed retain legacy selection resolution until
+terminal. Their missing historical choice remains absent. Usage still records
+the model that ran. Before rollback to a release without capture support, wait
+until captured runs reach terminal. Preserve optional stored fields during
+rollback; no data deletion or database migration is needed.
+
 ## Format profile (unifies long and short video)
 
 The only thing that differs across formats is configuration. Image and text

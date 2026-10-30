@@ -159,7 +159,9 @@ An active run SHALL survive API restart or redeploy without losing its durable p
 
 ### Requirement: Selected provider remains authoritative
 
-The agent SHALL honor the API-backed provider, model, and thinking level selected through existing settings. An unavailable or incompatible selection SHALL fail visibly rather than silently fall back to another provider or billing mode. Usage and metering SHALL reflect the model actually used. Every environment SHALL run the same runtime; environments SHALL differ only in the selected model, and tests SHALL use a scripted model through that runtime.
+The agent SHALL honor the API-backed provider, model, and thinking level captured for its run. A new run SHALL capture an explicit submission selection, otherwise the conversation selection, otherwise the existing application default, and validate it before model execution or tool effects. Agent turns and nested text-generation calls SHALL use the captured selection across durable steps, retries, answers, and interruption recovery. An unavailable or incompatible selection SHALL fail visibly rather than silently fall back to another provider or billing mode. Usage and metering SHALL reflect the model actually used. Every environment SHALL run the same runtime; environments SHALL differ only in the selected model, and tests SHALL use a scripted model through that runtime.
+
+Captured selection SHALL contain no credentials. Changes to conversation or application defaults SHALL NOT retarget an existing run. A run started before selection capture existed SHALL retain legacy resolution until it ends, with actual model usage recorded; the system SHALL NOT invent a historical model snapshot.
 
 #### Scenario: Development uses the production runtime
 
@@ -182,6 +184,36 @@ The agent SHALL honor the API-backed provider, model, and thinking level selecte
 
 - **WHEN** a model turn completes
 - **THEN** the run records the actual model and token usage or its documented estimate for metering
+
+#### Scenario: Agent invokes a nested planning workflow
+
+- **WHEN** a run captured model A and its planning workflow issues a text-generation call
+- **THEN** the agent and that call both use model A
+- **AND** their usage records name the model that actually ran
+
+#### Scenario: Parked run resumes after configuration changes
+
+- **WHEN** a run captured model A, parked on a question, and a user selected model B before restart and resume
+- **THEN** the resumed run uses model A if its configured provider remains compatible
+- **AND** an unavailable or changed endpoint produces an explicit error instead of substitution
+
+#### Scenario: Concurrent projects select different models
+
+- **WHEN** project A starts with model A and project B starts with model B concurrently
+- **THEN** each run and its nested text calls retain their own selection
+- **AND** neither run changes process-wide selection state
+
+#### Scenario: Legacy run resumes after upgrade
+
+- **WHEN** an existing run without a captured selection resumes
+- **THEN** it uses the prior resolution behavior and records actual usage
+- **AND** newly started runs always capture a validated selection
+
+#### Scenario: Existing active run is returned for a second submission
+
+- **WHEN** a second submission is associated with an already active project run
+- **THEN** the existing run retains its original captured selection
+- **AND** the second submission cannot overwrite that selection
 
 ### Requirement: Generated media stays on durable media transport
 

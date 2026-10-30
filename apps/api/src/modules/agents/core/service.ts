@@ -28,6 +28,7 @@ import { executionId, runState } from "./runtime/run-state.ts";
 import type { DirectCall } from "./runtime/direct-call.ts";
 import { endAgentRun, failAgentRun } from "./runtime/settle.ts";
 import type { AgentRunContext } from "./runtime/tools/registry-tools.ts";
+import { assertCapturedTextSelection } from "../../../lib/text-selection-scope.ts";
 
 /** How long a run may wait on the user before it is abandoned. */
 export const INPUT_WAIT_MS = 24 * 60 * 60 * 1000;
@@ -78,6 +79,7 @@ export function runContext(job: AgentJob): RequestContext<AgentRunContext> {
 		["runId", job.id],
 		["projectId", job.projectId],
 		["contentType", job.contentType],
+		["textSelection", job.textSelection],
 	]);
 }
 
@@ -119,6 +121,7 @@ export async function startAgentRun(
 	options: RunCallOptions = {},
 ): Promise<void> {
 	// One object for the whole run in this process: every tool reads and writes this job.
+	await assertCapturedTextSelection(job.textSelection);
 	JOBS.set(job.id, job);
 	const state = runState(job);
 	state.instruction = instruction;
@@ -165,6 +168,7 @@ export async function answerAgentRun(
 ): Promise<AnswerOutcome> {
 	const job = await getAgentJob(runId);
 	if (!job || !awaitsAction(job, actionId)) return "stale";
+	await assertCapturedTextSelection(job.textSelection);
 	JOBS.set(job.id, job);
 	job.status = "running";
 	job.pendingActionId = undefined;

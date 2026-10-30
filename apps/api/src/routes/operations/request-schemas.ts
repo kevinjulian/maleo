@@ -18,6 +18,7 @@ import {
 	CaptionSetSchema,
 	storyClarificationSubmissionSchema,
 	storyExtensionPolicySchema,
+	textSelectionSchema,
 } from "@maleo/shared";
 
 const jsonObject = z.record(z.string(), z.unknown());
@@ -51,6 +52,7 @@ export const storyboardApprovalBody = z
 export const agentRunBody = z
 	.object({
 		instruction: z.string(),
+		text_selection: textSelectionSchema,
 		scenes: z.array(z.unknown()),
 		style_image_url: z.string(),
 		clips: z.array(jsonObject),

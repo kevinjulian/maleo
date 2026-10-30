@@ -6,6 +6,7 @@
  * breaks on a transient backend error. */
 import { post, put } from "./client.ts";
 import type {
+	TextSelection,
 	ConversationDecision,
 	Config,
 	ContentType,
@@ -54,6 +55,7 @@ export async function createProject(input: {
 	 *  direction was dropped at create and only reappeared once the debounced
 	 *  autosave ran. */
 	editorState?: {
+		chatModelSelection?: TextSelection;
 		chat?: ChatLogMessage[];
 		settings?: unknown;
 		direction?: unknown;
@@ -117,6 +119,7 @@ export async function createProject(input: {
 		...(input.editorState
 			? {
 					editor_state: {
+						chatModelSelection: input.editorState.chatModelSelection,
 						chat: input.editorState.chat ?? [],
 						settings: input.editorState.settings ?? null,
 						direction: input.editorState.direction ?? null,
@@ -162,6 +165,7 @@ export async function saveStoryboard(
 export async function saveEditorState(
 	projectId: string,
 	state: {
+		chatModelSelection?: TextSelection;
 		chat?: ChatLogMessage[];
 		settings?: unknown;
 		trackFlags?: unknown;
@@ -180,6 +184,7 @@ export async function saveEditorState(
 		// here is only a shape guard rather than a meaningful distinction — the editor
 		// state holds `{}` from load, so `{}` is what normally persists.
 		editor_state: {
+			chatModelSelection: state.chatModelSelection,
 			chat: state.chat ?? [],
 			settings: state.settings ?? null,
 			track_flags: state.trackFlags ?? null,

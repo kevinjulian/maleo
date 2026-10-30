@@ -20,6 +20,8 @@ import type { ChatCommandScope, ComposerFocusPreview } from "@models/chat/chat-c
 import type { ChatEditorBridge } from "@hooks/editor/use-chat-session.ts";
 import type { CreditSummary } from "@api/credits.ts";
 import type { BlockerResolution, BlockerState } from "@api/blockers.ts";
+import type { TextSelection } from "@maleo/shared";
+import type { ChatModelSelection } from "@hooks/editor/use-chat-model-selection.ts";
 
 let creditBody: CreditSummary | null = null;
 /** What the credits endpoint answers for the rest of this test. */
@@ -182,7 +184,8 @@ export function fakeEditor(
 
 export interface Harness {
 	host: HTMLElement;
-	runs: Array<{ text: string; scope?: ChatCommandScope }>;
+	runs: Array<{ text: string; scope?: ChatCommandScope; textSelection?: TextSelection }>;
+	setModelChoice: (choice: TextSelection) => void;
 	answers: Array<{
 		jobId: string;
 		answer: string;
@@ -206,6 +209,8 @@ export async function mount(
 		refuseAnswers?: boolean;
 		onJump?: boolean;
 		projectId?: string;
+		modelChoice?: TextSelection;
+		refuseRuns?: boolean;
 	} = {},
 ): Promise<Harness> {
 	const host = document.createElement("div");
@@ -218,6 +223,7 @@ export async function mount(
 		stops: 0,
 		resumes: 0,
 		setBusy: () => {},
+		setModelChoice: () => {},
 		setMessages: () => {},
 		messages: () => [],
 		textarea: () => host.querySelector("textarea")!,
@@ -226,10 +232,30 @@ export async function mount(
 	function App() {
 		const [messages, setMessages] = useState<ChatLogMessage[]>(opts.messages ?? []);
 		const [busy, setBusy] = useState(Boolean(opts.busy));
+		const [modelChoice, setModelChoice] = useState(opts.modelChoice);
+		h.setModelChoice = (choice) => act(() => setModelChoice(choice));
+		const model: ChatModelSelection | undefined = modelChoice
+			? {
+					choice: modelChoice,
+					choices: ["deepseek-flash", "deepseek-v4-pro"].map((id) => ({
+						selection: { providerId: "api", model: id },
+						source: "discovered",
+					})),
+					valid: true,
+					loading: false,
+					error: null,
+					saving: false,
+					saveError: null,
+					select: async (choice) => setModelChoice(choice),
+					retry: () => {},
+					retrySave: () => {},
+				}
+			: undefined;
 		current = messages;
 		h.setBusy = (b) => act(() => setBusy(b));
 		h.setMessages = (next) => act(() => setMessages(next));
 		return createElement(ChatPanel, {
+			model,
 			scenes: [],
 			messages,
 			setMessages,
@@ -242,8 +268,15 @@ export async function mount(
 			onResume: () => {
 				h.resumes++;
 			},
-			onRunCommand: async (text: string, scope?: ChatCommandScope) => {
-				h.runs.push({ text, scope });
+			onRunCommand: async (
+				text: string,
+				scope?: ChatCommandScope,
+				textSelection?: TextSelection,
+				onAccepted?: () => void,
+			) => {
+				h.runs.push({ text, scope, ...(textSelection ? { textSelection } : {}) });
+				if (opts.refuseRuns) return false;
+				onAccepted?.();
 			},
 			onAnswerQuestion: async (
 				jobId: string,

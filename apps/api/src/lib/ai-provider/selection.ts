@@ -17,6 +17,7 @@ import { refreshConfig } from "@maleo/shared/provider-config";
 import type { Capability } from "./capabilities.ts";
 import type { AiProvider, ThinkingLevel } from "./types.ts";
 import { getProvider, providersFor, REMOVED_PROVIDERS } from "./registry.ts";
+import { resolveTextModel } from "./providers/api/discovery.ts";
 
 /* Persisted as one row under `ai.text.provider`. Shaped as a map from day one:
  * the requirement is scalar (one AI for everything) but per-task routing is the
@@ -125,7 +126,6 @@ export async function selectReadyProvider(
 		const provider = getProvider(explicit.choice.providerId);
 		if (!provider || !implementsCapability(provider, capability))
 			throw unknownProvider(explicit.source, explicit.choice.providerId, capability);
-		assertChoiceSupported(provider, explicit.choice);
 		const health = await provider.meta.health(capability);
 		if (health !== "ready") {
 			const reason = await provider.meta.healthReason?.(capability);
@@ -133,14 +133,22 @@ export async function selectReadyProvider(
 				`selected ${explicit.source} provider "${explicit.choice.providerId}" is ${health}${reason ? ` (${reason})` : ""}; choose a ready provider`,
 			);
 		}
-		return { provider, choice: explicit.choice, source: explicit.source, health };
+		const choice =
+			provider.meta.id === "api"
+				? { ...explicit.choice, model: await resolveTextModel(explicit.choice.model) }
+				: explicit.choice;
+		assertChoiceSupported(provider, choice);
+		return { provider, choice, source: explicit.source, health };
 	}
 	const candidates = providersFor(capability).filter((provider) => !provider.meta.internal);
 	for (const provider of candidates) {
 		if ((await provider.meta.health(capability)) === "ready") {
 			return {
 				provider,
-				choice: { providerId: provider.meta.id },
+				choice: {
+					providerId: provider.meta.id,
+					...(provider.meta.id === "api" ? { model: await resolveTextModel() } : {}),
+				},
 				source: "default",
 				health: "ready",
 			};

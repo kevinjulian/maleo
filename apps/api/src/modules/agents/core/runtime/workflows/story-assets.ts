@@ -35,6 +35,7 @@ import { markBuilt, runState } from "../run-state.ts";
 import { NO_PLAN_NOTE } from "../tools/preconditions.ts";
 import { runFor, type AgentRunContext } from "../tools/registry-tools.ts";
 import { runStage } from "./stage-step.ts";
+import { withTextSelection } from "../../../../../lib/text-selection-scope.ts";
 
 export const PLAN_GATE =
 	"Review the story plan. Approve to generate assets, or approve all to auto-chain this build.";
@@ -125,7 +126,7 @@ const approve = createStep({
 		const reply = resumeData.answer;
 		await reloadStoryPlan(job);
 		if (isResearchAgainRequest(reply)) {
-			const researched = await researchPlanAgain(job);
+			const researched = await withTextSelection(job.textSelection, () => researchPlanAgain(job));
 			if (researched.outcome === "failed") return await suspend(await revisionQuestion(job));
 			return await suspend(
 				await approvalQuestion(
@@ -143,7 +144,9 @@ const approve = createStep({
 		}
 		if (choice === "reject") return await suspend(await revisionQuestion(job));
 		if (state.awaitingRevision) {
-			const revised = await revisePlan(job, reply, LABEL);
+			const revised = await withTextSelection(job.textSelection, () =>
+				revisePlan(job, reply, LABEL),
+			);
 			if (revised.outcome === "limit_reached")
 				return { ok: false, note: revised.note, approved: false };
 			if (revised.outcome === "failed") return await suspend(await revisionQuestion(job));

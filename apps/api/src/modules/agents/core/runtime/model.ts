@@ -1,3 +1,5 @@
+import type { CapturedTextSelection } from "@maleo/shared";
+import { withTextSelection } from "../../../../lib/text-selection-scope.ts";
 /* The internal agent's model: the selected API text provider, handed to Mastra.
  *
  * Mastra owns tool calls only when the model returns them for Mastra to run, so
@@ -172,23 +174,31 @@ export class AgentLanguageModel {
 }
 
 /** The agent's model, from the user's text selection. */
-export async function resolveAgentModel(): Promise<ResolvedAgentModel> {
-	const decision = await selectReadyProvider("text", await currentTextSelection());
-	const providerId = decision.provider.meta.id;
-	if (providerId !== API_PROVIDER) {
-		throw new Error(
-			`text provider "${providerId}" cannot run the agent: the agent needs an API-backed model. Select an API provider in settings.`,
-		);
-	}
-	const modelId = decision.choice.model ?? decision.provider.meta.models[0];
-	if (!modelId) throw new Error(`text provider "${providerId}" declares no model`);
-	const thinking = decision.choice.thinking;
-	const inner = new ModelRouterLanguageModel(agentModel(modelId));
-	const slots = semaphoreFor(providerId, decision.provider.meta.traits.maxConcurrency);
-	return {
-		model: new AgentLanguageModel(inner, slots, { provider: providerId, model: modelId, thinking }),
-		providerId,
-		modelId,
-		thinking,
-	};
+export async function resolveAgentModel(
+	capture?: CapturedTextSelection,
+): Promise<ResolvedAgentModel> {
+	return withTextSelection(capture, async () => {
+		const decision = await selectReadyProvider("text", await currentTextSelection());
+		const providerId = decision.provider.meta.id;
+		if (providerId !== API_PROVIDER) {
+			throw new Error(
+				`text provider "${providerId}" cannot run the agent: the agent needs an API-backed model. Select an API provider in settings.`,
+			);
+		}
+		const modelId = decision.choice.model;
+		if (!modelId) throw new Error(`text provider "${providerId}" declares no model`);
+		const thinking = decision.choice.thinking;
+		const inner = new ModelRouterLanguageModel(agentModel(modelId));
+		const slots = semaphoreFor(providerId, decision.provider.meta.traits.maxConcurrency);
+		return {
+			model: new AgentLanguageModel(inner, slots, {
+				provider: providerId,
+				model: modelId,
+				thinking,
+			}),
+			providerId,
+			modelId,
+			thinking,
+		};
+	});
 }

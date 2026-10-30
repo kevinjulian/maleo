@@ -23,12 +23,14 @@ import { preconditionFor } from "./preconditions.ts";
 import type { AgentJob } from "../../model.ts";
 import type { AnyToolDef, ContentType, ToolArgs } from "../../types.ts";
 import { withGenerationScope } from "../../../../../lib/generation/generation-scope.ts";
+import { assertCapturedTextSelection } from "../../../../../lib/text-selection-scope.ts";
 
 /** What every agent call carries: the run it advances and that run's project. */
 export interface AgentRunContext {
 	runId: string;
 	projectId: string;
 	contentType: ContentType;
+	textSelection?: import("@maleo/shared").CapturedTextSelection;
 }
 
 /* Registry entries the agent does not call directly: asking and finishing are
@@ -57,6 +59,7 @@ export async function runFor(
 	 * abandoned — makes no further change, on whichever worker it is still running. */
 	if (job.status !== "running")
 		throw new ToolScopeError(`this run is ${job.status}: it makes no further changes`);
+	await assertCapturedTextSelection(job.textSelection);
 	return job;
 }
 

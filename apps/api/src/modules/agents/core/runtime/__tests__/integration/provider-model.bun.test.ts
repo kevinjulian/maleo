@@ -9,8 +9,28 @@ import { ModelRouterLanguageModel } from "@mastra/core/llm";
 import { closeMaleoDb } from "@maleo/db/connection";
 import { Semaphore } from "../../../../../../lib/ai-provider/semaphore.ts";
 import { listUsageRecords } from "../../../../../../lib/credit-service.ts";
-import { setTextProviderSelectionReader } from "../../../../../../lib/text-runner.ts";
+import {
+	currentTextSelection,
+	runPrompt,
+	setTextProviderSelectionReader,
+} from "../../../../../../lib/text-runner.ts";
+import { withTextSelection } from "../../../../../../lib/text-selection-scope.ts";
+import { z } from "zod";
+import { createEngineRegistry } from "../../../engine/registry.ts";
+import { defineOperation } from "../../../engine/types.ts";
+import { runToolFlow } from "../../../engine/host.ts";
+import { runValidatedTool } from "../../../tool-executor.ts";
+import type { WorkflowDefinition } from "@maleo/shared";
 import { AgentLanguageModel, agentModel, resolveAgentModel } from "../../model.ts";
+import {
+	textEndpointIdentity,
+	discoverTextModels,
+} from "../../../../../../lib/ai-provider/providers/api/discovery.ts";
+import { capturedTextSelectionSchema } from "@maleo/shared";
+import { savedVideoRun } from "../support/video-fixture.ts";
+import { loadRun, saveRun } from "../../../run-repository.ts";
+import { runContext } from "../../../service.ts";
+import { clearAgentJobsForTests } from "../../../session-store.ts";
 
 interface SeenRequest {
 	model?: string;
@@ -22,6 +42,7 @@ const seen: SeenRequest[] = [];
 let inFlight = 0;
 let maxInFlight = 0;
 let delayMs = 0;
+let availableModels = ["gpt-5-mini", "gpt-5.5"];
 
 const usage = { prompt_tokens: 21, completion_tokens: 7, total_tokens: 28 };
 
@@ -52,6 +73,8 @@ function sse(model: string): Response {
 const server = Bun.serve({
 	port: 0,
 	fetch: async (req) => {
+		if (new URL(req.url).pathname.endsWith("/models"))
+			return Response.json({ data: availableModels.map((id) => ({ id })) });
 		// SAFETY: the agent posts an OpenAI chat-completions body; only these fields are read.
 		const body = (await req.json()) as SeenRequest;
 		seen.push(body);
@@ -88,8 +111,162 @@ beforeEach(() => {
 	inFlight = 0;
 	maxInFlight = 0;
 	delayMs = 0;
+	availableModels = ["gpt-5-mini", "gpt-5.5"];
 	process.env.MALEO_AI_API_BASE_URL = BASE_URL;
 	process.env.MALEO_AI_API_KEY = "sk-test";
+});
+
+describe("captured model recovery", () => {
+	test("concurrent projects retain isolated agent and independently entered nested workflow selections", async () => {
+		await discoverTextModels(true);
+		const first = await savedVideoRun("Model A");
+		const second = await savedVideoRun("Model B");
+		first.textSelection = {
+			selection: { providerId: "api", model: "gpt-5-mini" },
+			endpointIdentity: textEndpointIdentity(),
+		};
+		second.textSelection = {
+			selection: { providerId: "api", model: "gpt-5.5" },
+			endpointIdentity: textEndpointIdentity(),
+		};
+		setTextProviderSelectionReader(() => ({ default: { providerId: "api", model: "gpt-5.5" } }));
+		const definition: WorkflowDefinition = {
+			id: "nested",
+			root: {
+				type: "sequence",
+				id: "root",
+				steps: [
+					{ type: "step", id: "text", op: "nested.text" },
+					{ type: "end", id: "end", outcome: { ok: true, note: "done" } },
+				],
+			},
+		};
+		const registry = createEngineRegistry({
+			definitions: [definition],
+			operations: [
+				defineOperation({
+					id: "nested.text",
+					description: "Exercise scoped text through the production workflow engine",
+					input: z.object({}),
+					output: z.object({ text: z.string() }),
+					prompts: [],
+					tools: [],
+					capabilities: [],
+					unscoped: "Test operation sends a raw fixture prompt",
+					run: async (_input, context) => ({
+						text: (await runPrompt(`nested ${context.job.id}`)).stdout,
+					}),
+				}),
+			],
+			facts: [],
+			rules: [],
+			contracts: [],
+		});
+		const before = (await listUsageRecords()).length;
+		delayMs = 20;
+		await Promise.all(
+			[first, second].map(async (job) => {
+				const model = await resolveAgentModel(job.textSelection);
+				await new Agent({
+					id: job.id,
+					name: job.id,
+					instructions: "x",
+					model: model.model,
+				}).generate("continue");
+				await runToolFlow({
+					registry,
+					job,
+					toolCallId: "nested-call",
+					workflow: "nested",
+					input: {},
+				});
+			}),
+		);
+		expect(seen.map((request) => request.model ?? "").sort((a, b) => a.localeCompare(b))).toEqual(
+			["gpt-5-mini", "gpt-5-mini", "gpt-5.5", "gpt-5.5"].sort((a, b) => a.localeCompare(b)),
+		);
+		const records = (await listUsageRecords()).slice(0, 4);
+		expect((await listUsageRecords()).length).toBe(before + 4);
+		expect(records.map((record) => record.model ?? "").sort((a, b) => a.localeCompare(b))).toEqual(
+			seen.map((request) => request.model ?? "").sort((a, b) => a.localeCompare(b)),
+		);
+		clearAgentJobsForTests();
+		const recovered = (await loadRun(first.id))!;
+		await runToolFlow({
+			registry,
+			job: recovered,
+			toolCallId: "nested-call",
+			workflow: "nested",
+			input: {},
+		});
+		expect(seen).toHaveLength(4);
+		expect((await listUsageRecords()).length).toBe(before + 4);
+		expect((await currentTextSelection()).default?.model).toBe("gpt-5.5");
+		await withTextSelection(first.textSelection, async () => {
+			expect((await currentTextSelection()).default?.model).toBe("gpt-5-mini");
+			await withTextSelection(undefined, async () =>
+				expect((await currentTextSelection()).default?.model).toBe("gpt-5.5"),
+			);
+		});
+	}, 30_000);
+	test("unavailable captured model blocks tool effects and text billing", async () => {
+		const job = await savedVideoRun("Removed model");
+		job.textSelection = {
+			selection: { providerId: "api", model: "removed-model" },
+			endpointIdentity: textEndpointIdentity(),
+		};
+		const scenes = structuredClone(job.scenes);
+		const before = (await listUsageRecords()).length;
+		await expect(runValidatedTool(job, "add_scene", { name: "Do not add" })).rejects.toThrow(
+			"does not offer model",
+		);
+		expect(job.scenes).toEqual(scenes);
+		expect((await listUsageRecords()).length).toBe(before);
+		expect(seen).toEqual([]);
+	});
+	test("restart and changed application default retain persisted run model", async () => {
+		const job = await savedVideoRun("Captured model");
+		job.textSelection = {
+			selection: { providerId: "api", model: "gpt-5-mini", thinking: "high" },
+			endpointIdentity: textEndpointIdentity(),
+		};
+		await saveRun(job);
+		clearAgentJobsForTests();
+		setTextProviderSelectionReader(() => ({ default: { providerId: "api", model: "gpt-5.5" } }));
+		const recovered = await loadRun(job.id);
+		const context = runContext(recovered!);
+		const captured = capturedTextSelectionSchema.parse(context.get("textSelection"));
+		const resolved = await resolveAgentModel(captured);
+		await new Agent({
+			id: "restored",
+			name: "restored",
+			instructions: "x",
+			model: resolved.model,
+		}).generate("continue");
+		expect(seen.at(-1)).toMatchObject({ model: "gpt-5-mini", reasoning_effort: "high" });
+		expect((await loadRun(job.id))?.textSelection).toEqual(job.textSelection);
+	});
+	test("changed endpoint and removed model fail before generation", async () => {
+		const capture = {
+			selection: { providerId: "api", model: "gpt-5-mini" },
+			endpointIdentity: textEndpointIdentity(),
+		};
+		process.env.MALEO_AI_API_BASE_URL = `${BASE_URL}/changed`;
+		await expect(resolveAgentModel(capture)).rejects.toThrow("endpoint changed");
+		process.env.MALEO_AI_API_BASE_URL = BASE_URL;
+		availableModels = ["gpt-5.5"];
+		await discoverTextModels(true);
+		await expect(resolveAgentModel(capture)).rejects.toThrow("does not offer model");
+		expect(seen).toEqual([]);
+	});
+	test("legacy runs retain global resolution without inventing capture", async () => {
+		await discoverTextModels(true);
+		const job = await savedVideoRun("Legacy model");
+		expect(job.textSelection).toBeUndefined();
+		setTextProviderSelectionReader(() => ({ default: { providerId: "api", model: "gpt-5.5" } }));
+		expect((await resolveAgentModel(runContext(job).get("textSelection"))).modelId).toBe("gpt-5.5");
+		expect((await loadRun(job.id))?.textSelection).toBeUndefined();
+	});
 });
 afterEach(() => {
 	setTextProviderSelectionReader(() => ({}));
@@ -148,9 +325,9 @@ describe("the selected API provider runs the agent", () => {
 		expect(records[0]).toMatchObject({ provider: "api", model: "gpt-5-mini", quantity: 28 });
 	});
 
-	test("with no model chosen, the provider's first declared model runs", async () => {
+	test("a custom endpoint requires an explicit model", async () => {
 		setTextProviderSelectionReader(() => ({ default: { providerId: "api" } }));
-		expect((await resolveAgentModel()).modelId).toBe("gpt-5.5");
+		await expect(resolveAgentModel()).rejects.toThrow("Choose a text model");
 	});
 });
 

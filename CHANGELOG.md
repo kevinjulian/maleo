@@ -17,6 +17,11 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- Project chat offers endpoint models in its composer. The shared project choice
+  persists after reload. Each run and queued instruction retains its model
+  through replies and recovery. Model discovery reports failures with Retry;
+  instance credentials and global defaults remain owner-controlled.
+
 - Rust compare mode decodes complete local video sources and mixes audio through
   bounded decoder and PCM pools. An explicit audio selector keeps reference
   audio as default and gives Rust sole output ownership when selected. Rust

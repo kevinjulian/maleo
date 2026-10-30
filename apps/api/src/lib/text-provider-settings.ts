@@ -15,26 +15,34 @@
  * separate rows make a torn write possible: provider updated, model still
  * pointing at the previous provider's catalog. */
 import type { ProviderChoice, ProviderSelection } from "./ai-provider/index.ts";
+import { textSelectionSchema } from "@maleo/shared";
+import { z } from "zod";
 import {
 	getGlobalSetting,
 	setGlobalSetting,
 	TEXT_PROVIDER_SETTING,
 } from "@maleo/db/global-settings";
 
+const textProviderSelectionSchema = z
+	.object({
+		default: textSelectionSchema.partial({ model: true }).optional(),
+	})
+	.strict();
+
 export async function readTextProviderSelection(): Promise<ProviderSelection> {
 	const raw = await getGlobalSetting(TEXT_PROVIDER_SETTING);
 	if (!raw) return {};
 	try {
-		// SAFETY: the row is written only by `writeTextProviderSelection` below, as
-		// `{ default: ProviderChoice }`; a row from a bad write fails the check under it.
-		const parsed = JSON.parse(raw) as ProviderSelection;
-		// A row that survived a bad write must not take the generation path down
-		// with it — an unreadable selection is treated as unconfigured, which
-		// falls through to the env default and then the first ready provider.
-		if (!parsed?.default?.providerId) return {};
-		return { default: parsed.default };
+		const parsed = textProviderSelectionSchema.safeParse(JSON.parse(raw));
+		if (!parsed.success)
+			throw new Error(
+				"Saved text selection is invalid. Ask the instance owner to select an available model.",
+			);
+		return parsed.data;
 	} catch {
-		return {};
+		throw new Error(
+			"Saved text selection is invalid. Ask the instance owner to select an available model.",
+		);
 	}
 }
 

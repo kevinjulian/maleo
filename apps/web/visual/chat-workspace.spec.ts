@@ -23,11 +23,10 @@ const VIDEO_HAR = resolve(HERE, "fixtures/api-editor-chat.har");
 const OUT = resolve(HERE, ".output/chat-workspace");
 const VIDEO = EDITOR_CHAT_FIXTURE_PROJECT_ID;
 const FROZEN_NOW = new Date("2026-08-04T09:00:00Z").getTime();
-/* Height budgets for the composer area at 1440x900, in CSS pixels: idle is the
- * two-row input with padding and a context line; pending adds a compact
- * decision (question, one row of choices and Stop). */
-const COMPOSER_IDLE_MAX_PX = 110;
-const COMPOSER_PENDING_MAX_PX = 210;
+/* The model picker adds one compact 32px tools row to the prior housing budgets.
+ * Pending also holds the question, one row of choices and Stop. */
+const COMPOSER_IDLE_MAX_PX = 142;
+const COMPOSER_PENDING_MAX_PX = 242;
 
 async function freeze(page: Page): Promise<void> {
 	await page.addInitScript(`{

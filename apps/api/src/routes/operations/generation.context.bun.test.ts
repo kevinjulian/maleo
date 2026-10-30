@@ -1,3 +1,5 @@
+import { setConfigSource } from "@maleo/shared/provider-config";
+import { setTextProviderSelectionReader } from "../../lib/text-runner.ts";
 /* The chat route's context boundary.
  *
  * Three things are checked here rather than in the compiler's own tests, because
@@ -59,12 +61,29 @@ function envelope(projectId: string, overrides: Record<string, unknown> = {}) {
 }
 
 beforeEach(async () => {
+	setConfigSource({
+		resolve: (key) =>
+			(
+				({
+					MALEO_AI_API_KEY: "fixture-key",
+					MALEO_AI_API_BASE_URL: "http://127.0.0.1:1/v1",
+					MALEO_AI_API_MODELS: "fixture-model",
+				}) as Record<string, string>
+			)[key],
+	});
+	setTextProviderSelectionReader(() => ({
+		default: { providerId: "api", model: "fixture-model" },
+	}));
 	sent.length = 0;
 	setRunHostForTests(host);
 	await clearWorkflowRunsForTests();
 	clearAgentJobsForTests();
 });
-afterEach(() => setRunHostForTests(undefined));
+afterEach(() => {
+	setRunHostForTests(undefined);
+	setConfigSource(null);
+	setTextProviderSelectionReader(() => ({}));
+});
 afterAll(async () => {
 	await closeMaleoDb();
 	rmSync(tmpDir, { recursive: true, force: true });

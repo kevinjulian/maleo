@@ -195,6 +195,17 @@ for (const width of [1440, 320]) {
 			await expect(page).toHaveScreenshot(`preview-readiness-${width}.png`);
 			await expect(clip("video:902")).toHaveClass(/hidden/);
 			const readyDownloads = downloads.filter((name) => name.endsWith("ready.png")).length;
+			// URL-only fixture clips first receive durable media identities on load.
+			await expect
+				.poll(() =>
+					writes.some((body) =>
+						JSON.parse(body).commands?.some(
+							({ command }: { command: { type: string; scope?: { mediaAssets?: unknown[] } } }) =>
+								command.type === "scope.replace" && command.scope?.mediaAssets?.length === 4,
+						),
+					),
+				)
+				.toBe(true);
 			const baselineWrites = writes.length;
 			if (width === 320) {
 				await clip("video:901").tap();
@@ -217,7 +228,7 @@ for (const width of [1440, 320]) {
 				await expect(clip(id).locator(".tl2-clip-upload[data-preview-state]")).toHaveCount(0);
 			expect(await clip("video:901").getAttribute("style")).toBe(geometry);
 			expect(downloads.filter((name) => name.endsWith("ready.png")).length).toBe(readyDownloads);
-			expect(writes.length).toBe(baselineWrites);
+			expect(writes.length, JSON.stringify(writes)).toBe(baselineWrites);
 			const readinessWrites = writes.length - baselineWrites;
 			await expect(play).toBeEnabled();
 			const description = await play.getAttribute("aria-describedby");

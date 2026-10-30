@@ -81,6 +81,7 @@ export type AgentPostOut = _AgentPost;
  *  transcript, the pending tool, the suspension cursor) which the browser has no
  *  business seeing. This is the projection sent over the wire. */
 export interface AgentJobState {
+	textSelection?: import("@maleo/shared").TextSelection;
 	status: "running" | "done" | "needs_attention" | "error" | "awaiting_input";
 	/** Frozen run context returned so reattached editors restore fencing. */
 	context?: ChatContextEnvelope;

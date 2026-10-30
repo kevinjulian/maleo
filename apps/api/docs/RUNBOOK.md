@@ -39,6 +39,25 @@ curl -sf http://localhost:8090/health
 
 Suggested liveness probe: `GET /health` every 10s, fail after 3 misses.
 
+## Text model discovery
+
+`GET /api/settings/text-provider` returns model options to authenticated members.
+Each API provider includes `model_options` with `id` and `source` (`discovered`
+or `declared`), plus `discovery` with `status`, model IDs, and a safe error when
+needed. This projection excludes endpoint URLs, credentials, and raw responses.
+Use `GET /api/settings/text-provider?refresh=true` for Retry.
+
+Discovery uses the effective endpoint and server-held credentials with a
+10-second timeout. Results expire after 60 seconds. Concurrent requests share
+one discovery request. Endpoint, credential, or declared-model changes invalidate
+the cache. Unsupported `/models` responses retain operator-declared IDs.
+Authentication, timeout, and malformed-response errors remain visible.
+
+Extra models declare available IDs. They do not select a model or prove that
+generation works. The pricing catalog does not define endpoint support. Custom
+endpoints require an explicit model choice. Invalid saved choices fail without
+substitution. Global selection and credential writes remain instance-owner only.
+
 ## Common issues
 
 | Symptom                                        | Cause                           | Fix                                                                                                                            |

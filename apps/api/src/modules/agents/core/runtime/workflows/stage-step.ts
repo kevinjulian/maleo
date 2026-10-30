@@ -14,6 +14,7 @@ import { persist } from "../../persistence.ts";
 import { RetryableStageError } from "../../stage-failure.ts";
 import type { AgentJob } from "../../model.ts";
 import { withGenerationScope } from "../../../../../lib/generation/generation-scope.ts";
+import { withTextSelection } from "../../../../../lib/text-selection-scope.ts";
 import { runState } from "../run-state.ts";
 
 /** What a step hands the next: whether the pipeline may continue, and what to say. */
@@ -39,7 +40,9 @@ export async function runStage(
 	const recorded = state.stepOutcomes?.[stepKey];
 	if (recorded) return recorded;
 	// The stage's generations are keyed to this step, so a retry resumes them (generation-scope.ts).
-	const outcome = await withGenerationScope(stepKey, () => runStageOnce(job, pipeline, stage));
+	const outcome = await withTextSelection(job.textSelection, () =>
+		withGenerationScope(stepKey, () => runStageOnce(job, pipeline, stage)),
+	);
 	if (!outcome.suspended)
 		state.stepOutcomes = {
 			...state.stepOutcomes,

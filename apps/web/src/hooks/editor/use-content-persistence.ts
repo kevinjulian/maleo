@@ -28,6 +28,7 @@ import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import type { SaveState } from "@models/content/create-content-model.ts";
 import type { ElementSourceMap, RenderOverrides } from "@models/presets/element-sources.ts";
 import type { ConversationDecision } from "@maleo/shared";
+import type { TextSelection } from "@maleo/shared";
 
 /** The stored fields outside the editable scope. */
 interface PresentationBundle {
@@ -36,6 +37,7 @@ interface PresentationBundle {
 }
 
 interface EditorStateBundle {
+	chatModelSelection?: TextSelection;
 	chatMessages: ChatLogMessage[];
 	settings: GlobalSettings;
 	trackFlags: TrackFlags;
@@ -89,6 +91,9 @@ export function useContentPersistence(input: {
 		setSaveError,
 	} = input;
 	const [retrying, setRetrying] = useState(false);
+	const pendingEditorState = useRef<Promise<void>>(Promise.resolve());
+	const latestEditorState = useRef(es);
+	latestEditorState.current = es;
 	// Set when a presentation field changed and has not been written yet.
 	const presentationDirty = useRef(false);
 	const pendingPresentation = useRef<Promise<unknown>>(Promise.resolve());
@@ -134,18 +139,26 @@ export function useContentPersistence(input: {
 	 * needs it durable NOW holds the new value, while `es` still holds the old one
 	 * until React re-renders. */
 	const writeEditorState = (overrides?: Partial<EditorStateBundle>): Promise<void> => {
-		const next = { ...es, ...overrides };
-		return saveEditorState(projectId, {
-			chat: next.chatMessages,
-			settings: next.settings,
-			trackFlags: next.trackFlags,
-			hookVariants: next.hookVariants,
-			direction: next.direction,
-			elementSources: next.elementSources,
-			renderOverrides: next.renderOverrides,
-			activePresetId: next.activePresetId,
-			decisions: next.decisions,
-		});
+		const next = { ...latestEditorState.current, ...overrides };
+		latestEditorState.current = next;
+		const write = pendingEditorState.current
+			.catch(() => {})
+			.then(() =>
+				saveEditorState(projectId, {
+					chatModelSelection: next.chatModelSelection,
+					chat: next.chatMessages,
+					settings: next.settings,
+					trackFlags: next.trackFlags,
+					hookVariants: next.hookVariants,
+					direction: next.direction,
+					elementSources: next.elementSources,
+					renderOverrides: next.renderOverrides,
+					activePresetId: next.activePresetId,
+					decisions: next.decisions,
+				}),
+			);
+		pendingEditorState.current = write;
+		return write;
 	};
 
 	// Editor state saves on its own debounce, decoupled from
@@ -154,6 +167,7 @@ export function useContentPersistence(input: {
 	useDebouncedSave(
 		true,
 		[
+			es.chatModelSelection,
 			es.chatMessages,
 			es.settings,
 			es.trackFlags,

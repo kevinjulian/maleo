@@ -3,6 +3,7 @@
  * run's step/tool history from the DB instead of the in-memory job.events shape.
  * Read-only; the durable Inngest path owns writes. */
 import type { Hono } from "hono";
+import { capturedTextSelectionSchema } from "@maleo/shared";
 import { getContentProject } from "@maleo/db/project-detail";
 import {
 	getWorkflowRun,
@@ -26,6 +27,8 @@ export function registerRunRoutes(app: Hono): void {
 			instruction: r.instruction,
 			createdAt: r.created_at,
 			updatedAt: r.updated_at,
+			textSelection: capturedTextSelectionSchema.safeParse(r.snapshot?.textSelection).data
+				?.selection,
 		}));
 		return c.json({ runs });
 	});
@@ -48,6 +51,8 @@ export function registerRunRoutes(app: Hono): void {
 				instruction: run.instruction,
 				createdAt: run.created_at,
 				updatedAt: run.updated_at,
+				textSelection: capturedTextSelectionSchema.safeParse(run.snapshot?.textSelection).data
+					?.selection,
 				outcomeContract: run.snapshot?.outcomeContract ?? null,
 				outcomeEvaluation: run.snapshot?.outcomeEvaluation ?? null,
 			},

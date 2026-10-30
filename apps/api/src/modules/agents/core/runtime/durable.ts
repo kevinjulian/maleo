@@ -66,9 +66,10 @@ export interface DurableRuntime {
 	host: RunHost;
 }
 
-/** The agent resolves the user's text selection on every model call, so a settings change reaches runs already parked. */
+/** Resolve each call from durable run capture; legacy runs retain global selection. */
 export function createDurableAgent(
-	model: Parameters<typeof createInternalAgent>[0] = async () => (await resolveAgentModel()).model,
+	model: Parameters<typeof createInternalAgent>[0] = async ({ requestContext }) =>
+		(await resolveAgentModel(requestContext.get("textSelection"))).model,
 ): InngestAgent {
 	return createInngestAgent({ agent: createInternalAgent(model), inngest, retries: RETRIES });
 }

@@ -7,6 +7,8 @@ import type { Bookmark } from "@maleo/shared";
  * editor_state (chat/media/settings/track-flags) and persisted project references.
  * No React, no I/O — the effect just fans the result out to setters. */
 import {
+	textSelectionSchema,
+	type TextSelection,
 	fromTimelineDoc,
 	migrateLaneGroups,
 	seedChapters,
@@ -118,6 +120,7 @@ export interface LoadedProjectDetail {
 }
 
 export interface ParsedProject {
+	chatModelSelection?: TextSelection;
 	projectId: string;
 	/** Saved caption state before editor-only lane migration. */
 	persistedCaptionState: string;
@@ -201,6 +204,7 @@ export interface ParsedProject {
  * snake_case because that is how they persist, and every value is optional
  * because a project saved by an older build has fewer of them. */
 export interface EditorStateJson {
+	chatModelSelection?: unknown;
 	chat?: ChatLogMessage[];
 	decisions?: unknown;
 	media_assets?: MediaAsset[];
@@ -405,6 +409,7 @@ export function parseLoadedProject(detail: LoadedProjectDetail): ParsedProject {
 	// effect leaving them at their initial useState values on mount).
 	const agentEdit = readAgentEditMarker(latestStoryboard);
 	const base: ParsedProject = {
+		chatModelSelection: textSelectionSchema.safeParse(editorState?.chatModelSelection).data,
 		...(agentEdit ? { agentEdit } : {}),
 		projectId: project.id,
 		commandSeq: detail.commandSeq ?? 0,
