@@ -1,0 +1,29 @@
+{
+	"scenes": [],
+	"hideBase": true,
+	"showLabels": false,
+	"bgColor": "#193456",
+	"videoOverlays": [
+		{
+			"url": "media/numbered.mp4",
+			"kind": "video",
+			"startSec": 0,
+			"durationSec": 2,
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"fit": "stretch"
+			},
+			"reveal": {
+				"type": "wipe",
+				"direction": "left",
+				"phase": "black_then_color",
+				"durationSec": 1.4,
+				"delaySec": 0.2,
+				"texture": "paper"
+			}
+		}
+	]
+}

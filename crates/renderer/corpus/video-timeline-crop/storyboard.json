@@ -1,0 +1,31 @@
+{
+	"scenes": [],
+	"hideBase": false,
+	"showLabels": false,
+	"bgColor": "#193456",
+	"visualTimeline": [
+		{
+			"url": "media/numbered.mp4",
+			"kind": "video",
+			"startSec": 0,
+			"durationSec": 2,
+			"mediaStartSec": 0.25,
+			"sourceDurationSec": 1.75,
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"fit": "cover",
+				"flipX": true,
+				"flipY": true,
+				"crop": {
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 65,
+					"heightPct": 60
+				}
+			}
+		}
+	]
+}

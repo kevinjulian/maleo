@@ -1,4 +1,4 @@
-//! Image scene visuals, visual-timeline images and image overlays, laid out as
+//! Image/video scene visuals, visual timelines and overlays, laid out as
 //! `StoryboardScene.tsx`, `AnimatedVisual.tsx`, `VisualMediaFrame.tsx`,
 //! `CameraMotion.tsx` and the overlay branch of `StoryboardReel.tsx` do.
 //!
@@ -10,7 +10,7 @@ use vello::kurbo::{Affine, Rect};
 use vello::peniko::{Color, Fill, ImageBrush, ImageData, Mix};
 
 use super::{Canvas, Treatments, background, camera, reveal};
-use crate::media::draw_placeholder;
+use crate::media::{Source, draw_placeholder};
 use crate::storyboard::{Crop, FocalPoint, Layout, Scene, Storyboard, TimelineVisual, VideoOverlay};
 use crate::timeline;
 use maleo_editor_core::keyframes::sample_clip_property;
@@ -85,6 +85,7 @@ pub fn crop_geometry(source: (f64, f64), destination: (f64, f64), crop: Crop, fi
 enum Content {
     Camera(Option<FocalPoint>, camera::Sample),
     Image(Fit),
+    Video(Fit),
 }
 
 fn image_size(image: &ImageData) -> (f64, f64) {
@@ -131,7 +132,7 @@ fn draw_content(canvas: &mut Canvas<'_>, image: &ImageData, rect: Rect, content:
     // Blink's axis-aligned overflow clip snaps its paint edges independently
     // of the fractional layout used by camera and outer transforms.
     canvas.clipped(paint_rect(rect), |canvas| match content {
-        Content::Image(fit) => draw_css_image_at(canvas, image, paint_rect(fit_rect(image_size(image), rect, fit)), Affine::IDENTITY),
+        Content::Image(fit) | Content::Video(fit) => draw_css_image_at(canvas, image, paint_rect(fit_rect(image_size(image), rect, fit)), Affine::IDENTITY),
         Content::Camera(focal, sample) => {
             // `scale` about `transform-origin` (the focal point, else the centre).
             let origin = match focal {
@@ -155,8 +156,8 @@ fn draw_content(canvas: &mut Canvas<'_>, image: &ImageData, rect: Rect, content:
 
 /// `VisualMediaFrame`: the source crop (when any) inside `container`, then the content.
 /// The crop's destination size is the layout's box in frame pixels.
-fn draw_media(canvas: &mut Canvas<'_>, url: &str, container: Rect, layout: Option<&Layout>, content: Content) {
-    let Some(image) = canvas.media.get(url).cloned() else {
+fn draw_media(canvas: &mut Canvas<'_>, source: Source<'_>, container: Rect, layout: Option<&Layout>, content: Content) {
+    let Some(image) = canvas.media.resolve(source).cloned() else {
         draw_placeholder(canvas.scene, Affine::IDENTITY, container);
         return;
     };
@@ -195,16 +196,16 @@ pub(super) fn outer_transform(rect: Rect, rotation: f64, scale: f64) -> Affine {
 /// `heightPct`, the frame height when a wrapper fills it (crop, flip, mask,
 /// color), else `auto`: the image's own aspect for an `<Img>`, nothing for
 /// the absolutely positioned camera.
-fn visual_box(canvas: &Canvas<'_>, layout: &Layout, url: &str, content: Content) -> Rect {
+fn visual_box(canvas: &Canvas<'_>, layout: &Layout, source: Source<'_>, content: Content) -> Rect {
     let (x, y) = (canvas.width * layout.x_pct.unwrap_or(0.0) / 100.0, canvas.height * layout.y_pct.unwrap_or(0.0) / 100.0);
     let width = canvas.width * layout.width_pct.unwrap_or(100.0) / 100.0;
     let color_adjusted = layout.color.is_some_and(|c| !c.neutral());
     let wrapped = layout.crop.is_some() || layout.flip_x == Some(true) || layout.flip_y == Some(true) || layout.local_mask().is_some() || color_adjusted;
     let height = match (layout.height_pct, wrapped, content) {
         (Some(pct), _, _) => canvas.height * pct / 100.0,
-        (None, true, _) => canvas.height,
+        (None, true, _) | (None, false, Content::Video(_)) => canvas.height,
         (None, false, Content::Camera(..)) => 0.0,
-        (None, false, Content::Image(_)) => match canvas.media.get(url) {
+        (None, false, Content::Image(_)) => match canvas.media.resolve(source) {
             Some(image) => width * f64::from(image.height) / f64::from(image.width),
             // No image, no intrinsic size: a square marks where it goes.
             None => width,
@@ -217,13 +218,13 @@ fn visual_box(canvas: &Canvas<'_>, layout: &Layout, url: &str, content: Content)
 fn draw_corrected(
     canvas: &mut Canvas<'_>,
     treatments: &mut dyn Treatments,
-    url: &str,
+    source: Source<'_>,
     rect: Rect,
     layout: Option<&Layout>,
     content: Content,
 ) -> Result<(), String> {
     let Some(color) = layout.and_then(|l| l.color).filter(|c| !c.neutral()) else {
-        draw_media(canvas, url, rect, layout, content);
+        draw_media(canvas, source, rect, layout, content);
         return Ok(());
     };
     if rect.is_zero_area() {
@@ -233,7 +234,7 @@ fn draw_corrected(
     let mut scene = vello::Scene::new();
     draw_media(
         &mut Canvas { scene: &mut scene, media: canvas.media, width: canvas.width, height: canvas.height, pixelated: canvas.pixelated },
-        url,
+        source,
         rect,
         layout,
         content,
@@ -246,13 +247,13 @@ fn draw_corrected(
 fn draw_treated(
     canvas: &mut Canvas<'_>,
     treatments: &mut dyn Treatments,
-    url: &str,
+    source: Source<'_>,
     rect: Rect,
     layout: Option<&Layout>,
     content: Content,
 ) -> Result<(), String> {
     let Some(mask) = layout.and_then(Layout::local_mask) else {
-        return draw_corrected(canvas, treatments, url, rect, layout, content);
+        return draw_corrected(canvas, treatments, source, rect, layout, content);
     };
     if rect.is_zero_area() {
         return Ok(());
@@ -265,7 +266,7 @@ fn draw_treated(
         silhouette.fill(Fill::NonZero, Affine::IDENTITY, if mask.inverted { Color::BLACK } else { Color::WHITE }, None, &path);
         let (image, bounds) = treatments.blur_mask(&silhouette, bounds, sigma as f32)?;
         canvas.scene.push_layer(Fill::NonZero, Mix::Normal, 1.0, Affine::IDENTITY, &rect);
-        let result = draw_corrected(canvas, treatments, url, rect, layout, content);
+        let result = draw_corrected(canvas, treatments, source, rect, layout, content);
         if result.is_ok() {
             canvas.scene.push_luminance_mask_layer(Fill::NonZero, 1.0, Affine::IDENTITY, &rect);
             canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, if mask.inverted { Color::WHITE } else { Color::BLACK }, None, &rect);
@@ -280,7 +281,7 @@ fn draw_treated(
     }
     let path = super::mask::path(rect, mask);
     canvas.scene.push_clip_layer(vello::peniko::Fill::EvenOdd, Affine::IDENTITY, &path);
-    let result = draw_corrected(canvas, treatments, url, rect, layout, content);
+    let result = draw_corrected(canvas, treatments, source, rect, layout, content);
     canvas.scene.pop_layer();
     result
 }
@@ -288,20 +289,20 @@ fn draw_treated(
 fn draw_revealed(
     canvas: &mut Canvas<'_>,
     treatments: &mut dyn Treatments,
-    url: &str,
+    source: Source<'_>,
     rect: Rect,
     layout: Option<&Layout>,
     content: Content,
     at: Option<reveal::At<'_>>,
 ) -> Result<(), String> {
-    reveal::draw(canvas, treatments, rect, at, |canvas, treatments| draw_treated(canvas, treatments, url, rect, layout, content))
+    reveal::draw(canvas, treatments, rect, at, |canvas, treatments| draw_treated(canvas, treatments, source, rect, layout, content))
 }
 
 /// `AnimatedVisual` around media: no layout fills the frame.
 fn draw_visual(
     canvas: &mut Canvas<'_>,
     treatments: &mut dyn Treatments,
-    url: &str,
+    source: Source<'_>,
     layout: Option<&Layout>,
     content: Content,
     seconds: f64,
@@ -310,16 +311,18 @@ fn draw_visual(
     match layout {
         None => {
             let frame = canvas.frame();
-            draw_revealed(canvas, treatments, url, frame, None, content, at)
+            draw_revealed(canvas, treatments, source, frame, None, content, at)
         }
         Some(layout) => {
             let sample = |property, fallback| sample_clip_property(layout.animation.as_ref(), property, seconds, fallback);
             let x = sample("xPct", layout.x_pct.unwrap_or(0.0)) - layout.x_pct.unwrap_or(0.0);
             let y = sample("yPct", layout.y_pct.unwrap_or(0.0)) - layout.y_pct.unwrap_or(0.0);
-            let rect = visual_box(canvas, layout, url, content) + vello::kurbo::Vec2::new(x * canvas.width / 100.0, y * canvas.height / 100.0);
+            let rect = visual_box(canvas, layout, source, content) + vello::kurbo::Vec2::new(x * canvas.width / 100.0, y * canvas.height / 100.0);
             let transform = outer_transform(rect, sample("rotationDeg", layout.rotation_deg.unwrap_or(0.0)), sample("scale", 1.0));
             canvas.transformed(transform, |canvas| {
-                canvas.group(sample("opacity", layout.opacity.unwrap_or(1.0)), |canvas| draw_revealed(canvas, treatments, url, rect, Some(layout), content, at))
+                canvas.group(sample("opacity", layout.opacity.unwrap_or(1.0)), |canvas| {
+                    draw_revealed(canvas, treatments, source, rect, Some(layout), content, at)
+                })
             })
         }
     }
@@ -370,7 +373,16 @@ fn draw_scene_content(
             let clip = at.index.map(|i| &clips[i]);
             let url = clip.map_or(scene.image.as_str(), |c| c.url.as_str());
             let merged = Layout::merged(base, clip.and_then(|c| c.layout.as_ref()));
+            let video = clip.filter(|clip| clip.kind.as_deref() == Some("video"));
+            let path = format!("scenes[{}].visualClips[{}]", placed.index, at.index.unwrap_or_default());
+            let source = match video {
+                Some(clip) => {
+                    Source::Video { path: &path, url, time: crate::media_requests::source_position(&clip.rest, merged.as_ref(), at.local, fps, true).ok() }
+                }
+                None => Source::Image(url),
+            };
             let sample = camera::sample(Some(&scene.movement), clip.and_then(|c| c.motion.as_ref()).or(scene.motion.as_ref()), at.local, at.motion_frames, fps);
+            let content = if video.is_some() { Content::Video(Fit::Cover) } else { Content::Camera(focal, sample) };
             let reveal = clip.and_then(|c| c.reveal.as_ref()).map(|reveal| reveal::At { reveal, frame: at.local, frames: at.motion_frames, fps });
             let kind = clip.filter(|_| at.index.is_some_and(|i| i > 0)).and_then(|clip| clip.transition.as_deref());
             let duration = timeline::transition_frames(kind, clip.and_then(|clip| clip.transition_dur_sec), fps);
@@ -380,13 +392,13 @@ fn draw_scene_content(
                 layout.height_pct = layout.height_pct.or(Some(100.0));
                 canvas.blended(layout.blend_mode.as_deref(), |canvas| {
                     super::transition::draw_visual_entrance(canvas, treatments, transition_rect, kind, at.local, duration, |canvas, treatments| {
-                        draw_visual(canvas, treatments, url, Some(&layout), Content::Camera(focal, sample), at.local as f64 / fps, reveal)
+                        draw_visual(canvas, treatments, source, Some(&layout), content, at.local as f64 / fps, reveal)
                     })
                 })?;
             } else {
                 canvas.blended(merged.as_ref().and_then(|l| l.blend_mode.as_deref()), |canvas| {
                     super::transition::draw_visual_entrance(canvas, treatments, transition_rect, kind, at.local, duration, |canvas, treatments| {
-                        draw_revealed(canvas, treatments, url, container, merged.as_ref(), Content::Camera(focal, sample), reveal)
+                        draw_revealed(canvas, treatments, source, container, merged.as_ref(), content, reveal)
                     })
                 })?;
             }
@@ -446,14 +458,27 @@ pub fn draw_timeline_visual(
 ) -> Result<(), String> {
     let frames = placed.frames;
     let sample = camera::sample(clip.movement.as_deref(), clip.motion.as_ref(), local, frames, fps);
+    let path = format!("visualTimeline[{}]", placed.index);
+    let (source, content) = if clip.kind == "video" {
+        (
+            Source::Video {
+                path: &path,
+                url: &clip.url,
+                time: crate::media_requests::source_position(&clip.rest, clip.layout.as_ref(), local, fps, true).ok(),
+            },
+            Content::Video(Fit::of(clip.layout.as_ref())),
+        )
+    } else {
+        (Source::Image(&clip.url), Content::Camera(clip.focal_point, sample))
+    };
     canvas.blended(clip.layout.as_ref().and_then(|l| l.blend_mode.as_deref()), |canvas| {
         super::transition::draw_absolute(canvas, treatments, placed, local, |canvas, treatments| {
             draw_visual(
                 canvas,
                 treatments,
-                &clip.url,
+                source,
                 clip.layout.as_ref(),
-                Content::Camera(clip.focal_point, sample),
+                content,
                 local as f64 / fps,
                 clip.reveal.as_ref().map(|reveal| reveal::At { reveal, frame: local, frames, fps }),
             )
@@ -471,14 +496,27 @@ pub fn draw_overlay(
     fps: f64,
 ) -> Result<(), String> {
     let frames = placed.frames;
+    let path = format!("videoOverlays[{}]", placed.index);
+    let (source, content) = if overlay.kind == "video" {
+        (
+            Source::Video {
+                path: &path,
+                url: &overlay.url,
+                time: crate::media_requests::source_position(&overlay.rest, overlay.layout.as_ref(), local, fps, false).ok(),
+            },
+            Content::Video(Fit::of(overlay.layout.as_ref())),
+        )
+    } else {
+        (Source::Image(&overlay.url), Content::Image(Fit::of(overlay.layout.as_ref())))
+    };
     canvas.blended(overlay.layout.as_ref().and_then(|l| l.blend_mode.as_deref()), |canvas| {
         super::transition::draw_absolute(canvas, treatments, placed, local, |canvas, treatments| {
             draw_visual(
                 canvas,
                 treatments,
-                &overlay.url,
+                source,
                 overlay.layout.as_ref(),
-                Content::Image(Fit::of(overlay.layout.as_ref())),
+                content,
                 local as f64 / fps,
                 overlay.reveal.as_ref().map(|reveal| reveal::At { reveal, frame: local, frames, fps }),
             )

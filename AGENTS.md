@@ -89,6 +89,7 @@ the change into private historical record.
 | `crates/renderer`      | `maleo-renderer`       | Rust frame renderer (parley + vello on wgpu) drawn from the render storyboard, held at parity with Remotion by a golden corpus    |
 | `crates/renderer-wasm` | `maleo-renderer-wasm`  | browser build of the renderer and the preview session (`wasm-bindgen`, ADR 0011), loaded only by the editor's hidden compare mode |
 | `crates/preview`       | `maleo-preview`        | host-free preview session: playback clock, frame scheduler, preview states and the platform adapter interfaces                    |
+| `crates/media`         | `maleo-media`          | host-free media source requests and per-clip readiness reduction                                                                  |
 | `spikes`               | —                      | throwaway P0 proof code (gpui + wgpu, Kotlin Multiplatform bindings); outside the Cargo workspace and CI                          |
 
 `apps/` holds deployables built from maleo source; `infra/` holds deployables

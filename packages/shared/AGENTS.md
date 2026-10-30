@@ -36,6 +36,7 @@ src/
   video-presentation.ts    one-primary-presentation grammar + category/template mapping
   video-attention.ts       deterministic viewer-load scoring + overload lint
   timeline-template.ts     global timeline framework schema + prompt variables
+  preview-media-dependencies.ts full placed-source inventory before mute/visibility filtering
   project-materials.ts     Project Materials (Story/Visual/Voice/Rules): the
                            project's generation context, its stage routing, and
                            the adapters that read pre-materials fields into it

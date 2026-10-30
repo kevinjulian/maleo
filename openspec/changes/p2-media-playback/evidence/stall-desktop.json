@@ -1,0 +1,37 @@
+{
+	"readinessWaitMs": 1320,
+	"worstMs": 78,
+	"atPx": 0,
+	"transport": "Play",
+	"moved": true,
+	"decodedFrames": {
+		"900": 94
+	},
+	"coldStarts": [],
+	"localUrls": {
+		"blob:http://127.0.0.1:3031/6b671814-a39d-4335-ad59-76d4337b2680": "http://127.0.0.1:3031/stall-probe.mp4"
+	},
+	"audioEvents": [
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 0
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 0
+		},
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 6.037333333333334
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 6.037333333333334
+		}
+	],
+	"nativeSamples": []
+}

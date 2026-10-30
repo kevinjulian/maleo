@@ -148,6 +148,7 @@ export interface TimelineStageView {
 	previewFps: number;
 	previewDims: { w: number; h: number };
 	previewProps: PreviewApi["previewProps"];
+	previewMedia: PreviewApi["previewMedia"];
 	previewForDoc: PreviewApi["previewForDoc"];
 	previewStoryboard: PreviewApi["previewStoryboard"];
 	aspect: PreviewApi["aspect"];
@@ -222,6 +223,7 @@ export function TimelineStage({
 		previewFps,
 		previewDims,
 		previewProps,
+		previewMedia,
 		previewForDoc,
 		previewFrames,
 		gen,
@@ -464,7 +466,9 @@ export function TimelineStage({
 				</div>
 				{compare && (
 					<RustComparePanel
+						playbackRate={playbackRate}
 						storyboard={draftProps}
+						readiness={previewMedia.readiness}
 						playhead={playhead}
 						playerRef={playerRef}
 						fps={previewFps}

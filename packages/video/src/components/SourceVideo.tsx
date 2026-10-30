@@ -1,3 +1,4 @@
+import { heldVideoFrame } from "@maleo/shared";
 import { Freeze, OffthreadVideo, useCurrentFrame, useVideoConfig } from "remotion";
 import type { ComponentProps } from "react";
 
@@ -15,14 +16,10 @@ export function SourceVideo({
 	const frame = useCurrentFrame(),
 		{ fps } = useVideoConfig();
 	if (sourceDurationSec == null) return <OffthreadVideo {...props} />;
-	// Leave one decoded source frame inside the exclusive endpoint at slow rates.
-	const end = Math.max(
-		0,
-		Math.floor(sourceDurationSec * fps - Math.max(1, 1 / (props.playbackRate ?? 1))),
-	);
+	const [held, frozen] = heldVideoFrame(sourceDurationSec, props.playbackRate ?? 1, fps, frame);
 	return (
-		<Freeze frame={end} active={frame > end}>
-			<OffthreadVideo {...props} muted={props.muted || frame > end} />
+		<Freeze frame={held} active={frozen}>
+			<OffthreadVideo {...props} muted={props.muted || frozen} />
 		</Freeze>
 	);
 }

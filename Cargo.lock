@@ -683,6 +683,7 @@ dependencies = [
 name = "maleo-editor-core"
 version = "0.0.0"
 dependencies = [
+ "maleo-media",
  "serde",
  "serde_json",
  "ts-rs",
@@ -694,6 +695,15 @@ version = "0.0.0"
 dependencies = [
  "maleo-app-core",
  "maleo-editor-core",
+ "maleo-media",
+ "serde_json",
+]
+
+[[package]]
+name = "maleo-media"
+version = "0.0.0"
+dependencies = [
+ "serde",
  "serde_json",
 ]
 
@@ -707,6 +717,7 @@ version = "0.0.0"
 dependencies = [
  "image",
  "maleo-editor-core",
+ "maleo-media",
  "parley",
  "pollster",
  "serde",
@@ -720,8 +731,10 @@ name = "maleo-renderer-wasm"
 version = "0.0.0"
 dependencies = [
  "js-sys",
+ "maleo-media",
  "maleo-preview",
  "maleo-renderer",
+ "serde",
  "serde_json",
  "wasm-bindgen",
  "wasm-bindgen-futures",

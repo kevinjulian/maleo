@@ -61,9 +61,8 @@ RUN apt-get update \
 FROM oven/bun:1.3.1 AS runtime
 WORKDIR /app
 
-# Dependencies first, from the workspace manifests alone, so the install layer
-# depends only on them: a source-only change reuses it instead of fetching every
-# package again.
+# Dependencies first, from workspace manifests and dependency patches, so a
+# source-only change reuses the install layer.
 #
 # `bun run check:deploy` fails when a workspace manifest is missing from this
 # list, because the symptom otherwise is a frozen-lockfile error inside a
@@ -81,6 +80,7 @@ COPY packages/video/package.json packages/video/
 COPY apps/media-worker/package.json apps/media-worker/
 COPY apps/render-worker/package.json apps/render-worker/
 COPY apps/web/package.json apps/web/
+COPY patches patches
 # The root prepare script installs git hooks; the image has no git checkout.
 RUN VP_GIT_HOOKS=0 bun install --frozen-lockfile
 

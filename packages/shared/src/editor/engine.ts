@@ -102,6 +102,17 @@ export interface Engine {
 	canvasEdit(doc: number, json: string): EngineResult<string>;
 	/** `{layout, axis, value}` → the patch an aspect-locked size field writes. */
 	canvasSizePatch(json: string): EngineResult<string>;
+	/** Open temporary source readiness state, independent of authored documents. */
+	decoderOpen(): number;
+	decoderRequest(owner: number, request: number, kind: 1 | 2, slots: 1 | 2): EngineResult<void>;
+	decoderShouldYield(owner: number, lease: number): boolean;
+	decoderRelease(owner: number, lease: number): void;
+	decoderClose(owner: number): void;
+	decoderGrants(): EngineResult<string>;
+	mediaOpen(): number;
+	mediaClose(handle: number): EngineResult<void>;
+	/** `{type: update|complete|retry|snapshot, ...}` → `{accepted, snapshot, requests}`. */
+	mediaDispatch(handle: number, json: string): EngineResult<string>;
 }
 
 interface Exports {
@@ -160,6 +171,15 @@ interface Exports {
 	canvas_layout(doc: number, ptr: number, len: number): number;
 	canvas_edit(doc: number, ptr: number, len: number): number;
 	canvas_size_patch(ptr: number, len: number): number;
+	decoder_open(): number;
+	decoder_request(owner: number, request: number, kind: number, slots: number): number;
+	decoder_should_yield(owner: number, lease: number): number;
+	decoder_release(owner: number, lease: number): void;
+	decoder_close(owner: number): void;
+	decoder_grants(): number;
+	media_open(): number;
+	media_close(handle: number): number;
+	media_dispatch(handle: number, ptr: number, len: number): number;
 }
 
 /* Every export, checked to exist with the right kind, so a stale or foreign
@@ -219,6 +239,15 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 		canvas_layout: call("canvas_layout"),
 		canvas_edit: call("canvas_edit"),
 		canvas_size_patch: call("canvas_size_patch"),
+		decoder_open: call("decoder_open"),
+		decoder_request: call("decoder_request"),
+		decoder_should_yield: call("decoder_should_yield"),
+		decoder_release: call("decoder_release"),
+		decoder_close: call("decoder_close"),
+		decoder_grants: call("decoder_grants"),
+		media_open: call("media_open"),
+		media_close: call("media_close"),
+		media_dispatch: call("media_dispatch"),
 	};
 }
 
@@ -352,5 +381,15 @@ function engineOf(wasm: Exports): Engine {
 		canvasLayout: (doc, json) => result(wasm.canvas_layout(doc, ...write(json))),
 		canvasEdit: (doc, json) => result(wasm.canvas_edit(doc, ...write(json))),
 		canvasSizePatch: (json) => result(wasm.canvas_size_patch(...write(json))),
+		decoderOpen: () => wasm.decoder_open(),
+		decoderRequest: (owner, request, kind, slots) =>
+			done(result(wasm.decoder_request(owner, request, kind, slots))),
+		decoderShouldYield: (owner, lease) => wasm.decoder_should_yield(owner, lease) !== 0,
+		decoderRelease: (owner, lease) => wasm.decoder_release(owner, lease),
+		decoderClose: (owner) => wasm.decoder_close(owner),
+		decoderGrants: () => result(wasm.decoder_grants()),
+		mediaOpen: () => wasm.media_open(),
+		mediaClose: (handle) => done(result(wasm.media_close(handle))),
+		mediaDispatch: (handle, json) => result(wasm.media_dispatch(handle, ...write(json))),
 	};
 }

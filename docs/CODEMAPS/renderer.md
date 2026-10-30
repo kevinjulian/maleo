@@ -29,7 +29,9 @@ storyboard JSON ──storyboard.rs──> Storyboard (drawn fields decoded, the
 | `src/coverage.rs`          | Declared support table (`SUPPORTED`) and the per-frame coverage report |
 | `src/paint.rs`             | CSS colors, linear and radial gradients                                |
 | `src/fonts.rs`             | Inter v20 and Noto Color Emoji from `fonts/`, no system fonts          |
-| `src/media.rs`             | Host-supplied images by URL; the missing-media placeholder             |
+| `src/media.rs`             | Images by URL, video intervals by placement, shared CPU cache IDs      |
+| `src/media_requests.rs`    | Visible image/video requests and production source-time mapping        |
+| `src/audio_requests.rs`    | Full production audio mix inputs, using existing placement rules       |
 | `src/scene/*.rs`           | One module per layer, ported from the composition source               |
 | `src/correction.rs`        | GPU brightness, contrast and saturation on straight sRGB channels      |
 | `src/blur.rs`              | Shadow alpha blur and full-color content blur, each in two GPU passes  |
@@ -88,8 +90,10 @@ dark-pixels-first and black-then-color preserve source phase/color-build order.
 The dark SVG matrix retains alpha replacement semantics. Paper/dust use local
 physical mask pixels; ink/glitch retain ordered contrast and drop shadows.
 Clips transform with their reveal layers inside opacity groups. Prepared filtered
-scenes append directly, avoiding an extra neutral GPU copy. Video media remains
-unsupported even when its reveal is supported.
+scenes append directly, avoiding an extra neutral GPU copy. Decoded video uses
+the same crop, mask, color, blend, motion, reveal and transition pipeline in
+scene visuals, visual timelines and overlays. Video does not use image camera
+motion. Missing video coverage names the placement and required source interval.
 
 Patch-free offscreen scenes keep a transparent image anchor outside the canvas.
 This avoids Vello 0.11's solid-only resolver shrinking its GPU atlas while cached
@@ -121,7 +125,28 @@ annotations or frames. Random-access tests compare exact bytes independently
 of the production-reference SSIM and region-edge checks. Unsupported media,
 templates and unbundled fonts remain in coverage.
 
+Video cases give production Remotion an encoded synthetic movie. The native
+golden host supplies its decoded PNG presentation samples, indexed by half-open
+source intervals in `case.json`. Selection windows match production nearest-PTS
+sampling, with later-frame ties and original presentation intervals retained
+separately. Source SHA-256 checks prevent stale movie
+revisions. The gate compares production references, fresh direct draws,
+sequential frames and reverse seek order without changing thresholds.
+
 ## Hosts
+
+`maleo_media::pcm` mixes decoded float windows at the selected mono/stereo
+device rate. Its reservation budget includes PCM copies and output. Renderer
+WASM exports `PcmBudget` and `mix_audio` independently of GPU initialization.
+The browser audio adapter decodes bounded intervals from complete local Files
+under the existing two-audio-decoder broker. `AudioTempo` applies global transport
+speed through pinned upstream Stretch with a 1x bypass. `createAudioOutput`
+activates the device from a user gesture and transfers bounded PCM blocks to
+the AudioWorklet. Its consumed sample counter and absolute render-frame endpoint
+provide output-position input. `compare-audio.ts` routes those observations to
+the native session. Reference audio is the default. The compare selector mutes
+reference output before starting Rust, and closes Rust output before restoring
+the prior reference mute state. Normal preview and export stay on Remotion.
 
 - Native: the test harness (`cargo test -p maleo-renderer`), on Metal locally
   and on lavapipe (`WGPU_BACKEND=vulkan`) in CI.
@@ -136,19 +161,49 @@ templates and unbundled fonts remain in coverage.
 ## Preview session
 
 `crates/preview` (`maleo-preview`) is host-free: no GPU, renderer or IO. It
-holds the storyboard, the playback clock (the host supplies the time), the
+holds the storyboard, the playback clock, the
 frame scheduler (one draw in flight, the latest due frame wins, passed-over
 frames count as dropped) and the preview states (`loading`, `ready`,
-`playing`, `paused`, `device-lost`, `failed`). It decides which frame to draw;
+`playing`, `paused`, `buffering`, `stalled`, `device-lost`, `failed`). It decides which frame to draw;
 the host draws it with `Renderer::draw`. On device loss the host requests a new
 device and calls `Renderer::replace_gpu`, which keeps fonts and the supplied
-images. The `Decoder` and `AudioOutput` traits are defined for the media
-change to implement.
+images. The `Decoder` and `AudioOutput` traits describe platform adapters.
+
+`audio_clock.rs` maps consumed output frames and platform timestamps to audible
+position. Without output timestamps, fallback requires both reported device
+latencies. Physical accuracy remains device acceptance work.
+An attached audio owner overrides host time, including intentional silent gaps.
+Seek/new Play invalidates old observations while retaining ownership until a
+fresh output generation arrives. Rate applies once after audible-frame mapping.
+Explicit detach anchors the host clock at the accepted audible position.
+`Session::play_audio` validates and changes ownership atomically. Audio updates
+do not invalidate an unchanged visual frame. The browser protocol carries whole
+source readiness, input/output generations, buffering and named failures. Main
+output consumes worker PCM under one reservation budget. GPU recovery completes
+a current redraw before clock resume. Pausing or replacing media fences old work.
 
 On the web the session runs in a dedicated worker that owns the transferred
-canvas and fetches and decodes images; the main thread sends the protocol in
+canvas and decodes validated local Files; the main thread sends the protocol in
 `apps/web/src/models/timeline/preview-protocol.ts` through
 `preview-client.ts`.
+
+`preview-worker/visual-media.ts` routes visible frame requests through the native
+`MediaPool`. Images and video share the 256 MiB visual budget. Image decode
+jobs have their own two-job queue and supply CPU RGBA. Child video workers
+consume the same global two-slot codec broker as source validation;
+`decoder-router.ts` and `services/preview-media/compare-bridge.ts` route grants
+through editor WASM. A video worker transfers each decoded `VideoFrame`;
+`cache_video_frame` copies it into a device texture with
+`copyExternalImageToTexture` and registers it with vello, so no frame bytes
+cross into WASM. Rotated sources fall back to canvas RGBA. A placement and its
+prefetch share one video worker: the client serves the earliest requested time
+first and cancels per consumer. Device recovery drops texture frames and the
+pool forgets every cached frame.
+Complete source Files remain owned by `services/preview-media/session.ts`.
+Consumer acknowledgements precede temporary-file removal. Cache IDs share bytes
+across placements and evict every associated binding together. Missing video
+intervals retain exact-path coverage; video support is still awaiting its
+production-reference corpus cases.
 
 Photographic `reveal-color-builds` retains full-frame and region SSIM. Its approved
 geometry companion, `reveal-phase-geometry`, measures the same boxes/timing with

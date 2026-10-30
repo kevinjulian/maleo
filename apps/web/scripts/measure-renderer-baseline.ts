@@ -41,6 +41,7 @@ try {
 					g.baseline.worker = this;
 					g.baseline.started = performance.now();
 					this.addEventListener("message", (event: MessageEvent<PreviewEvent>) => {
+						if (event.data.type !== "state") return;
 						const state = event.data.state;
 						if (state?.times?.count && !state.coverage?.length && g.baseline.firstComplete === null)
 							g.baseline.firstComplete = performance.now() - g.baseline.started;

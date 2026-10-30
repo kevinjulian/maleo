@@ -34,8 +34,10 @@ import { buildEditorWasm, loadParityInputs } from "./editor-engine.mts";
  * line). A size pass (one object builder, one sort) recovered 9 KB raw; the
  * rest is the rules and libm's trigonometry. The user chose one module with a
  * raised budget over a second module that would ship serde_json again. */
-const MAX_GZIP_BYTES = 240 * 1024;
-const MAX_RAW_BYTES = 620 * 1024;
+/* `p2-media-playback` (2026-10-27): shared readiness measured 709,094 B raw /
+ * 267,126 B gzip. User accepted increased limits to retain one editor module. */
+const MAX_GZIP_BYTES = 270 * 1024;
+const MAX_RAW_BYTES = 700 * 1024;
 const MAX_EDIT_TRANSFER_BYTES = 4 * 1024;
 const MAX_EDIT_MEDIAN_MS_AT_2000_CLIPS = 0.5;
 /* Task 4.2: a pointer sample shares a ~16 ms frame with paint, so one policy

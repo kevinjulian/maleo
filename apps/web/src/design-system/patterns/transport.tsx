@@ -22,6 +22,7 @@ export interface TransportControlsProps {
 	durationSec: number;
 	/** Playback cannot start yet: nothing loaded, or the renderer is not ready. */
 	disabled?: boolean;
+	"aria-describedby"?: string;
 	before?: ReactNode;
 	after?: ReactNode;
 }
@@ -32,6 +33,7 @@ export function TransportControls({
 	currentSec,
 	durationSec,
 	disabled,
+	"aria-describedby": describedBy,
 	before,
 	after,
 }: TransportControlsProps): JSX.Element {
@@ -47,6 +49,7 @@ export function TransportControls({
 					aria-label={playing ? "Pause" : "Play"}
 					title={playing ? "Pause (Space / K)" : "Play (Space / K)"}
 					disabled={disabled}
+					aria-describedby={describedBy}
 					className="tw:rounded-full! tw:text-foreground!"
 					onClickCapture={onTogglePlay}
 				>

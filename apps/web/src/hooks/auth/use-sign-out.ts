@@ -4,8 +4,11 @@
  * account on this browser must not open in this one's workspace. On failure
  * nothing is left — the session is still live, and saying so is the answer. */
 import { useCallback, useState } from "react";
+import { disposePreviewMediaSessions } from "@services/preview-media/session.ts";
 import { signOut } from "@api/auth.ts";
 import { forgetStoredWorkspace } from "@models/core/active-workspace.ts";
+
+const MEDIA_CLEANUP_MS = 5000;
 
 export interface SignOutState {
 	pending: boolean;
@@ -21,6 +24,12 @@ export function useSignOut(onSignedOut: () => void): SignOutState {
 		setError(null);
 		try {
 			await signOut();
+			// Private preview files go before the next account; a stuck worker must not trap the user.
+			// Orphan reclaim removes whatever outlives the bound.
+			await Promise.race([
+				disposePreviewMediaSessions(),
+				new Promise((resolve) => setTimeout(resolve, MEDIA_CLEANUP_MS)),
+			]);
 			forgetStoredWorkspace();
 			onSignedOut();
 		} catch (err) {

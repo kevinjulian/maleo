@@ -11,6 +11,8 @@ import { execFileSync } from "node:child_process";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { FIXTURE_PROJECT_ID } from "./screens.ts";
+import { replayApi } from "./har.ts";
 import {
 	buildEditorWasm,
 	parityCases,
@@ -27,6 +29,28 @@ declare global {
 		engineParity(wasmBase64: string, cases: ParityCase[]): Promise<ParityResult[]>;
 	}
 }
+
+test("normal editor startup loads editor WASM without renderer resources", async ({
+	page,
+	context,
+}) => {
+	const requests: string[] = [];
+	const workers: string[] = [];
+	page.on("request", (request) => requests.push(request.url()));
+	page.on("worker", (worker) => workers.push(worker.url()));
+	await replayApi(context, join(import.meta.dirname, "fixtures/api.har"));
+	await page.goto(`/content/${FIXTURE_PROJECT_ID}`);
+	await expect(page.locator(".tl2-timeline")).toBeVisible({ timeout: 60_000 });
+	await page.locator(".tl2-timeline [data-transport='play']").click();
+	await expect(page.locator(".tl2-timeline [data-transport='play']")).toHaveAttribute(
+		"aria-label",
+		"Pause",
+	);
+	await page.locator(".tl2-timeline [data-transport='play']").click();
+	expect(requests.some((url) => new URL(url).pathname === "/editor-engine.wasm")).toBe(true);
+	expect(requests.filter((url) => new URL(url).pathname.startsWith("/renderer/"))).toEqual([]);
+	expect(workers.filter((url) => new URL(url).pathname.startsWith("/renderer/"))).toEqual([]);
+});
 
 /* The loader and runner, bundled for the page by the repo's own bundler. */
 function browserBundle(): string {

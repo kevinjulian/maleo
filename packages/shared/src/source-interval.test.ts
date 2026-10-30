@@ -1,6 +1,7 @@
 import { expect, test } from "vite-plus/test";
 import {
 	assertSourceInterval,
+	heldVideoFrame,
 	canRetainClipWindow,
 	clipSourceRange,
 	clipsPastSource,
@@ -397,4 +398,22 @@ test("clips placed past their source's measured length need a trim; scene plates
 			{ id: "v", label: "beach.mov audio", source: "generated", metadata: { duration: 5 } },
 		]).size,
 	).toBe(0);
+});
+
+test("export SourceVideo hold is identical to the pre-preview inline rule", () => {
+	// The former SourceVideo body: Freeze at `end`, active and muted past it.
+	const legacy = (duration: number, rate: number, fps: number, frame: number) => {
+		const end = Math.max(0, Math.floor(duration * fps - Math.max(1, 1 / rate)));
+		return { freezeAt: end, active: frame > end };
+	};
+	for (const duration of [0, 0.01, 1 / 30, 1, 2.5, 7.333, 60])
+		for (const rate of [0.1, 0.25, 0.5, 1, 1.5, 2, 4, 16])
+			for (const fps of [24, 25, 30, 60])
+				for (let frame = 0; frame < duration * fps + 40; frame++) {
+					const [held, frozen] = heldVideoFrame(duration, rate, fps, frame);
+					const before = legacy(duration, rate, fps, frame);
+					expect(frozen).toBe(before.active);
+					// Freeze reads its frame only while active.
+					if (frozen) expect(held).toBe(before.freezeAt);
+				}
 });

@@ -1,0 +1,12 @@
+{
+	"downloads": [
+		"/clip-readiness-ready.png",
+		"/clip-readiness-shared.png",
+		"/clip-readiness-shared.png",
+		"/clip-readiness-held.png"
+	],
+	"geometry": "left: 108px; width: 44px;",
+	"readinessWrites": 0,
+	"editingWrites": 1,
+	"errors": []
+}

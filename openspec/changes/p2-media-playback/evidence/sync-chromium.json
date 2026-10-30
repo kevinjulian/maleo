@@ -1,0 +1,129 @@
+{
+	"machine": ["MacBookPro18,3", "Apple M1 Pro", "17179869184"],
+	"os": "26.5.2",
+	"browser": "151.0.7922.34",
+	"backend": "Chromium WebGPU / ANGLE Metal, headless",
+	"sampleRate": 48000,
+	"outputLatencyMs": 16,
+	"baseLatencyMs": 5.333333333333333,
+	"draws": 12821,
+	"clicks": 364,
+	"onsets": 9,
+	"overall": {
+		"clicks": 358,
+		"p95AbsMs": 33.250244140625,
+		"maxAbsMs": 66.88427734375
+	},
+	"byRate": {
+		"0.5x": {
+			"clicks": 45,
+			"p50Ms": -21.706787109375,
+			"p95AbsMs": 60.71044921875,
+			"maxAbsMs": 66.88427734375
+		},
+		"1x": {
+			"clicks": 195,
+			"p50Ms": -14.505859375,
+			"p95AbsMs": 16.510009765625,
+			"maxAbsMs": 17.64111328125
+		},
+		"2x": {
+			"clicks": 118,
+			"p50Ms": -7.709228515625,
+			"p95AbsMs": 28.014892578125,
+			"maxAbsMs": 34.73291015625
+		}
+	},
+	"segments": [
+		{
+			"label": "play 1x from 0",
+			"rate": 1,
+			"settleMs": 2191.989990234375,
+			"drawMs": 36.5,
+			"audioMs": 2191.989990234375,
+			"audioBy": "click",
+			"clicks": 116,
+			"p95AbsMs": 14.888916015625,
+			"maxAbsMs": 17.64111328125
+		},
+		{
+			"label": "rate 2x in place",
+			"rate": 2,
+			"settleMs": 121.89990234375,
+			"drawMs": 121.89990234375,
+			"audioMs": 95.681884765625,
+			"audioBy": "onset",
+			"clicks": 59,
+			"p95AbsMs": 26.786865234375,
+			"maxAbsMs": 34.73291015625
+		},
+		{
+			"label": "play 0.5x from 300",
+			"rate": 0.5,
+			"settleMs": 491.299072265625,
+			"drawMs": 9.199951171875,
+			"audioMs": 491.299072265625,
+			"audioBy": "onset",
+			"clicks": 31,
+			"p95AbsMs": 66.341064453125,
+			"maxAbsMs": 66.88427734375
+		},
+		{
+			"label": "seek 500 at 0.5x",
+			"rate": 0.5,
+			"settleMs": 476.5888671875,
+			"drawMs": 7,
+			"audioMs": 476.5888671875,
+			"audioBy": "onset",
+			"clicks": 14,
+			"p95AbsMs": 49.189208984375,
+			"maxAbsMs": 49.189208984375
+		},
+		{
+			"label": "rate 1x in place",
+			"rate": 1,
+			"settleMs": 86.199951171875,
+			"drawMs": 86.199951171875,
+			"audioMs": 47.83984375,
+			"audioBy": "onset",
+			"clicks": 40,
+			"p95AbsMs": 15.67333984375,
+			"maxAbsMs": 16.43701171875
+		},
+		{
+			"label": "seek 100 at 1x",
+			"rate": 1,
+			"settleMs": 47.48583984375,
+			"drawMs": 14.099853515625,
+			"audioMs": 47.48583984375,
+			"audioBy": "onset",
+			"clicks": 39,
+			"p95AbsMs": 16.7001953125,
+			"maxAbsMs": 16.80908203125
+		},
+		{
+			"label": "rate 2x in place",
+			"rate": 2,
+			"settleMs": 85.879150390625,
+			"drawMs": 1.400146484375,
+			"audioMs": 85.879150390625,
+			"audioBy": "onset",
+			"clicks": 30,
+			"p95AbsMs": 26.003662109375,
+			"maxAbsMs": 26.83935546875
+		},
+		{
+			"label": "seek 550 at 2x",
+			"rate": 2,
+			"settleMs": 90.70068359375,
+			"drawMs": 7.60009765625,
+			"audioMs": 90.70068359375,
+			"audioBy": "onset",
+			"clicks": 29,
+			"p95AbsMs": 29.86328125,
+			"maxAbsMs": 31.7451171875
+		}
+	],
+	"errors": [],
+	"pageErrors": []
+}

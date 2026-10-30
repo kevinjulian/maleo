@@ -1,0 +1,5024 @@
+[
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.02546296296296296, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.46249999999999997, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.023599537037037037, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.3640625, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.027326388888888893, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.5609375000000001, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.024189814814814813, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.434375, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.03484342086755234, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.7609375254302566, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2895833333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.022222222222222223, "time": 0.3104166666666667 },
+			{ "frame": 37, "gain": 0.2, "time": 0.39375 },
+			{ "frame": 52, "gain": 0.9, "time": 0.55 },
+			{ "frame": 56, "gain": 0.9, "time": 0.5916666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 0.8 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 0.925 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.0395833333333333 },
+			{ "frame": 100, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.02546296296296296, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.46249999999999997, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 56, "gain": 0.9, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 1.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 1.55 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "legacy-music",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0.6, "time": 0.3 },
+			{ "frame": 29, "gain": 0.6, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.6, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.6, "time": 0.8 },
+			{ "frame": 56, "gain": 0.6, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.6, "time": 1.3 },
+			{ "frame": 88, "gain": 0.6, "time": 1.55 },
+			{ "frame": 99, "gain": 0.6, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.008259837962962962, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.127421875, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.7244999999999998, "time": 0.8 },
+			{ "frame": 56, "gain": 0.4319999999999993, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.315, "time": 1.3 },
+			{ "frame": 88, "gain": 0.18, "time": 1.55 },
+			{ "frame": 99, "gain": 0.015, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.009564236111111112, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.19632812500000002, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.7244999999999998, "time": 0.8 },
+			{ "frame": 56, "gain": 0.4319999999999993, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.315, "time": 1.3 },
+			{ "frame": 88, "gain": 0.18, "time": 1.55 },
+			{ "frame": 99, "gain": 0.015, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.008466435185185184, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.15203125, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.7244999999999998, "time": 0.8 },
+			{ "frame": 56, "gain": 0.4319999999999993, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.315, "time": 1.3 },
+			{ "frame": 88, "gain": 0.18, "time": 1.55 },
+			{ "frame": 99, "gain": 0.015, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.6299999999999997, "time": 0.8 },
+			{ "frame": 56, "gain": 0.17999999999999897, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0, "time": 1.3 },
+			{ "frame": 88, "gain": 0, "time": 1.55 },
+			{ "frame": 99, "gain": 0, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2791666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.022222222222222223, "time": 0.3208333333333333 },
+			{ "frame": 37, "gain": 0.2, "time": 0.4875 },
+			{ "frame": 52, "gain": 0.9, "time": 0.8 },
+			{ "frame": 56, "gain": 0.9, "time": 0.8833333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 1.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 1.55 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 1.7791666666666668 },
+			{ "frame": 100, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.008148148148148147, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0.148, "time": 0.675 },
+			{ "frame": 52, "gain": 0.288, "time": 1.3 },
+			{ "frame": 56, "gain": 0.28800000000000003, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 88, "gain": 0.16457142857142856, "time": 2.8 },
+			{ "frame": 99, "gain": 0.013714285714285714, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.003398333333333333, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0.052425, "time": 0.675 },
+			{ "frame": 52, "gain": 0.24047999999999994, "time": 1.3 },
+			{ "frame": 56, "gain": 0.16127999999999984, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 88, "gain": 0.07405714285714285, "time": 2.8 },
+			{ "frame": 99, "gain": 0.006171428571428571, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.003935, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0.080775, "time": 0.675 },
+			{ "frame": 52, "gain": 0.24047999999999994, "time": 1.3 },
+			{ "frame": 56, "gain": 0.16127999999999984, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 88, "gain": 0.07405714285714285, "time": 2.8 },
+			{ "frame": 99, "gain": 0.006171428571428571, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.0034833333333333326, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0.06255, "time": 0.675 },
+			{ "frame": 52, "gain": 0.24047999999999994, "time": 1.3 },
+			{ "frame": 56, "gain": 0.16127999999999984, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 88, "gain": 0.07405714285714285, "time": 2.8 },
+			{ "frame": 99, "gain": 0.006171428571428571, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0, "time": 0.675 },
+			{ "frame": 52, "gain": 0.20159999999999992, "time": 1.3 },
+			{ "frame": 56, "gain": 0.05759999999999967, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0, "time": 2.3 },
+			{ "frame": 88, "gain": 0, "time": 2.8 },
+			{ "frame": 99, "gain": 0, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.2583333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.007111111111111111, "time": 0.3416666666666667 },
+			{ "frame": 37, "gain": 0.064, "time": 0.675 },
+			{ "frame": 52, "gain": 0.28800000000000003, "time": 1.3 },
+			{ "frame": 56, "gain": 0.28800000000000003, "time": 1.4666666666666668 },
+			{ "frame": 76, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 88, "gain": 0.16457142857142856, "time": 2.8 },
+			{ "frame": 99, "gain": 0.013714285714285714, "time": 3.2583333333333333 },
+			{ "frame": 100, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.02546296296296296, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.46249999999999997, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 5.3 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.22916666666666666, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.46249999999999997, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.014631712962962963, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.22571875, "time": 1.05 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 2.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.558, "time": 4.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 5.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.21239583333333334, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.3640625, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.016942361111111116, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.34778125000000004, "time": 1.05 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 2.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.558, "time": 4.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 5.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.24593750000000006, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.5609375000000001, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.014997685185185185, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.2693125, "time": 1.05 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 2.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.558, "time": 4.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 5.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.21770833333333334, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.434375, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0, "time": 1.05 },
+			{ "frame": 52, "gain": 0.6299999999999997, "time": 2.3 },
+			{ "frame": 56, "gain": 0.17999999999999897, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0, "time": 4.3 },
+			{ "frame": 88, "gain": 0, "time": 5.3 },
+			{ "frame": 99, "gain": 0, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.3135907878079711, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.7609375254302566, "time": 1.05 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.022222222222222223, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.2, "time": 1.05 },
+			{ "frame": 52, "gain": 0.9, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 5.3 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.21666666666666667 },
+			{ "frame": 28, "gain": 0.2, "time": 0.3 },
+			{ "frame": 29, "gain": 0.2, "time": 0.3833333333333333 },
+			{ "frame": 37, "gain": 0.2, "time": 1.05 },
+			{ "frame": 52, "gain": 0.9, "time": 2.3 },
+			{ "frame": 56, "gain": 0.9, "time": 2.6333333333333333 },
+			{ "frame": 76, "gain": 0.9, "time": 4.3 },
+			{ "frame": 88, "gain": 0.6, "time": 5.3 },
+			{ "frame": 99, "gain": 0.6, "time": 6.216666666666667 },
+			{ "frame": 100, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.02546296296296296, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0.46249999999999997, "time": 1.8 },
+			{ "frame": 52, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 56, "gain": 0.9, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 8.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 10.3 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.014631712962962963, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0.22571875, "time": 1.8 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 4.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0.558, "time": 8.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 10.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.016942361111111116, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0.34778125000000004, "time": 1.8 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 4.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0.558, "time": 8.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 10.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.014997685185185185, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0.2693125, "time": 1.8 },
+			{ "frame": 52, "gain": 0.7973999999999998, "time": 4.3 },
+			{ "frame": 56, "gain": 0.6263999999999996, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0.558, "time": 8.3 },
+			{ "frame": 88, "gain": 0.31885714285714284, "time": 10.3 },
+			{ "frame": 99, "gain": 0.02657142857142857, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0, "time": 1.8 },
+			{ "frame": 52, "gain": 0.6299999999999997, "time": 4.3 },
+			{ "frame": 56, "gain": 0.17999999999999897, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0, "time": 8.3 },
+			{ "frame": 88, "gain": 0, "time": 10.3 },
+			{ "frame": 99, "gain": 0, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 24,
+			"frames": 144,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 28,
+					"frames": 72,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 27, "gain": 0, "time": 0.13333333333333333 },
+			{ "frame": 28, "gain": 0, "time": 0.3 },
+			{ "frame": 29, "gain": 0.022222222222222223, "time": 0.4666666666666667 },
+			{ "frame": 37, "gain": 0.2, "time": 1.8 },
+			{ "frame": 52, "gain": 0.9, "time": 4.3 },
+			{ "frame": 56, "gain": 0.9, "time": 4.966666666666667 },
+			{ "frame": 76, "gain": 0.9, "time": 8.3 },
+			{ "frame": 88, "gain": 0.5142857142857142, "time": 10.3 },
+			{ "frame": 99, "gain": 0.04285714285714285, "time": 12.133333333333335 },
+			{ "frame": 100, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.018611111111111113, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.48, "time": 0.4 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.017483333333333333, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.3792, "time": 0.4 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.019738888888888896, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.5808000000000002, "time": 0.4 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.017833333333333333, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.456, "time": 0.4 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.02437333257699504, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.7759722363250714, "time": 0.4 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.016666666666666666, "time": 0.30833333333333335 },
+			{ "frame": 48, "gain": 0.2, "time": 0.4 },
+			{ "frame": 66, "gain": 0.9, "time": 0.55 },
+			{ "frame": 72, "gain": 0.9, "time": 0.6 },
+			{ "frame": 96, "gain": 0.9, "time": 0.8 },
+			{ "frame": 111, "gain": 0.5, "time": 0.925 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.0416666666666667 },
+			{ "frame": 126, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.018611111111111113, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.48, "time": 0.5 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 72, "gain": 0.9, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.9, "time": 1.3 },
+			{ "frame": 111, "gain": 0.5, "time": 1.55 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "legacy-music",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0.6, "time": 0.3 },
+			{ "frame": 37, "gain": 0.6, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.6, "time": 0.5 },
+			{ "frame": 66, "gain": 0.6, "time": 0.8 },
+			{ "frame": 72, "gain": 0.6, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.6, "time": 1.3 },
+			{ "frame": 111, "gain": 0.6, "time": 1.55 },
+			{ "frame": 125, "gain": 0.6, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.006119166666666666, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.13271999999999998, "time": 0.5 },
+			{ "frame": 66, "gain": 0.7537499999999995, "time": 0.8 },
+			{ "frame": 72, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.315, "time": 1.3 },
+			{ "frame": 111, "gain": 0.175, "time": 1.55 },
+			{ "frame": 125, "gain": 0.011666666666666665, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.006908611111111113, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.20328000000000007, "time": 0.5 },
+			{ "frame": 66, "gain": 0.7537499999999995, "time": 0.8 },
+			{ "frame": 72, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.315, "time": 1.3 },
+			{ "frame": 111, "gain": 0.175, "time": 1.55 },
+			{ "frame": 125, "gain": 0.011666666666666665, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.006241666666666667, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.1596, "time": 0.5 },
+			{ "frame": 66, "gain": 0.7537499999999995, "time": 0.8 },
+			{ "frame": 72, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.315, "time": 1.3 },
+			{ "frame": 111, "gain": 0.175, "time": 1.55 },
+			{ "frame": 125, "gain": 0.011666666666666665, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0, "time": 0.5 },
+			{ "frame": 66, "gain": 0.6749999999999993, "time": 0.8 },
+			{ "frame": 72, "gain": 1.9984014443252818e-16, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0, "time": 1.3 },
+			{ "frame": 111, "gain": 0, "time": 1.55 },
+			{ "frame": 125, "gain": 0, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.016666666666666666, "time": 0.31666666666666665 },
+			{ "frame": 48, "gain": 0.2, "time": 0.5 },
+			{ "frame": 66, "gain": 0.9, "time": 0.8 },
+			{ "frame": 72, "gain": 0.9, "time": 0.8999999999999999 },
+			{ "frame": 96, "gain": 0.9, "time": 1.3 },
+			{ "frame": 111, "gain": 0.5, "time": 1.55 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 1.7833333333333334 },
+			{ "frame": 126, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.005955555555555556, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0.1536, "time": 0.7 },
+			{ "frame": 66, "gain": 0.288, "time": 1.3 },
+			{ "frame": 72, "gain": 0.28800000000000003, "time": 1.5 },
+			{ "frame": 96, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 111, "gain": 0.16, "time": 2.8 },
+			{ "frame": 125, "gain": 0.010666666666666666, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.0025175999999999996, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0.054604799999999995, "time": 0.7 },
+			{ "frame": 66, "gain": 0.24839999999999987, "time": 1.3 },
+			{ "frame": 72, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 96, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 111, "gain": 0.072, "time": 2.8 },
+			{ "frame": 125, "gain": 0.0048, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.002842400000000001, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0.08363520000000002, "time": 0.7 },
+			{ "frame": 66, "gain": 0.24839999999999987, "time": 1.3 },
+			{ "frame": 72, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 96, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 111, "gain": 0.072, "time": 2.8 },
+			{ "frame": 125, "gain": 0.0048, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.002568, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0.065664, "time": 0.7 },
+			{ "frame": 66, "gain": 0.24839999999999987, "time": 1.3 },
+			{ "frame": 72, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 96, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 111, "gain": 0.072, "time": 2.8 },
+			{ "frame": 125, "gain": 0.0048, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0, "time": 0.7 },
+			{ "frame": 66, "gain": 0.21599999999999975, "time": 1.3 },
+			{ "frame": 72, "gain": 6.394884621840902e-17, "time": 1.5 },
+			{ "frame": 96, "gain": 0, "time": 2.3 },
+			{ "frame": 111, "gain": 0, "time": 2.8 },
+			{ "frame": 125, "gain": 0, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.005333333333333333, "time": 0.3333333333333333 },
+			{ "frame": 48, "gain": 0.064, "time": 0.7 },
+			{ "frame": 66, "gain": 0.28800000000000003, "time": 1.3 },
+			{ "frame": 72, "gain": 0.28800000000000003, "time": 1.5 },
+			{ "frame": 96, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 111, "gain": 0.16, "time": 2.8 },
+			{ "frame": 125, "gain": 0.010666666666666666, "time": 3.2666666666666666 },
+			{ "frame": 126, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.018611111111111113, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.48, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.5, "time": 5.3 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.22333333333333336, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.48, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.010839666666666666, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.23510399999999998, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 2.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.558, "time": 4.3 },
+			{ "frame": 111, "gain": 0.31, "time": 5.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.20980000000000001, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.3792, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.012238111111111116, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.36009600000000014, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 2.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.558, "time": 4.3 },
+			{ "frame": 111, "gain": 0.31, "time": 5.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.23686666666666675, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.5808000000000002, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.011056666666666668, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.28272, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 2.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.558, "time": 4.3 },
+			{ "frame": 111, "gain": 0.31, "time": 5.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.21400000000000002, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.456, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0, "time": 1.1 },
+			{ "frame": 66, "gain": 0.6749999999999993, "time": 2.3 },
+			{ "frame": 72, "gain": 1.9984014443252818e-16, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0, "time": 4.3 },
+			{ "frame": 111, "gain": 0, "time": 5.3 },
+			{ "frame": 125, "gain": 0, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.2924799909239405, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.7759722363250714, "time": 1.1 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.016666666666666666, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.2, "time": 1.1 },
+			{ "frame": 66, "gain": 0.9, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.5, "time": 5.3 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 36, "gain": 0.2, "time": 0.3 },
+			{ "frame": 37, "gain": 0.2, "time": 0.36666666666666664 },
+			{ "frame": 48, "gain": 0.2, "time": 1.1 },
+			{ "frame": 66, "gain": 0.9, "time": 2.3 },
+			{ "frame": 72, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 96, "gain": 0.9, "time": 4.3 },
+			{ "frame": 111, "gain": 0.6, "time": 5.3 },
+			{ "frame": 125, "gain": 0.6, "time": 6.233333333333333 },
+			{ "frame": 126, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.018611111111111113, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0.48, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 72, "gain": 0.9, "time": 5.1 },
+			{ "frame": 96, "gain": 0.9, "time": 8.3 },
+			{ "frame": 111, "gain": 0.5, "time": 10.3 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.010839666666666666, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0.23510399999999998, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 4.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 96, "gain": 0.558, "time": 8.3 },
+			{ "frame": 111, "gain": 0.31, "time": 10.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.012238111111111116, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0.36009600000000014, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 4.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 96, "gain": 0.558, "time": 8.3 },
+			{ "frame": 111, "gain": 0.31, "time": 10.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.011056666666666668, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0.28272, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.8144999999999997, "time": 4.3 },
+			{ "frame": 72, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 96, "gain": 0.558, "time": 8.3 },
+			{ "frame": 111, "gain": 0.31, "time": 10.3 },
+			{ "frame": 125, "gain": 0.020666666666666667, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.6749999999999993, "time": 4.3 },
+			{ "frame": 72, "gain": 1.9984014443252818e-16, "time": 5.1 },
+			{ "frame": 96, "gain": 0, "time": 8.3 },
+			{ "frame": 111, "gain": 0, "time": 10.3 },
+			{ "frame": 125, "gain": 0, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 30,
+			"frames": 180,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 36,
+					"frames": 90,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 35, "gain": 0, "time": 0.16666666666666666 },
+			{ "frame": 36, "gain": 0, "time": 0.3 },
+			{ "frame": 37, "gain": 0.016666666666666666, "time": 0.43333333333333335 },
+			{ "frame": 48, "gain": 0.2, "time": 1.9000000000000001 },
+			{ "frame": 66, "gain": 0.9, "time": 4.3 },
+			{ "frame": 72, "gain": 0.9, "time": 5.1 },
+			{ "frame": 96, "gain": 0.9, "time": 8.3 },
+			{ "frame": 111, "gain": 0.5, "time": 10.3 },
+			{ "frame": 125, "gain": 0.03333333333333333, "time": 12.166666666666668 },
+			{ "frame": 126, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008819444444444446, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.48, "time": 0.4 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008532638888888888, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.3792, "time": 0.4 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.00910625, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.5808000000000002, "time": 0.4 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008618055555555556, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.456, "time": 0.4 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.010329388233934336, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.7759722363250714, "time": 0.4 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.25,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "voiceover",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29583333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008333333333333333, "time": 0.30416666666666664 },
+			{ "frame": 96, "gain": 0.2, "time": 0.4 },
+			{ "frame": 132, "gain": 0.9, "time": 0.55 },
+			{ "frame": 144, "gain": 0.9, "time": 0.6 },
+			{ "frame": 192, "gain": 0.9, "time": 0.8 },
+			{ "frame": 222, "gain": 0.5, "time": 0.925 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.0458333333333334 },
+			{ "frame": 252, "gain": 0, "time": 1.05 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008819444444444446, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.48, "time": 0.5 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 144, "gain": 0.9, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.9, "time": 1.3 },
+			{ "frame": 222, "gain": 0.5, "time": 1.55 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "legacy-music",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0.6, "time": 0.3 },
+			{ "frame": 73, "gain": 0.6, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.6, "time": 0.5 },
+			{ "frame": 132, "gain": 0.6, "time": 0.8 },
+			{ "frame": 144, "gain": 0.6, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.6, "time": 1.3 },
+			{ "frame": 222, "gain": 0.6, "time": 1.55 },
+			{ "frame": 251, "gain": 0.6, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0029864236111111107, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.13271999999999998, "time": 0.5 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 144, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.315, "time": 1.3 },
+			{ "frame": 222, "gain": 0.175, "time": 1.55 },
+			{ "frame": 251, "gain": 0.005833333333333333, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0031871875, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.20328000000000007, "time": 0.5 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 144, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.315, "time": 1.3 },
+			{ "frame": 222, "gain": 0.175, "time": 1.55 },
+			{ "frame": 251, "gain": 0.005833333333333333, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.003016319444444444, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.1596, "time": 0.5 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 144, "gain": 0.3150000000000001, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.315, "time": 1.3 },
+			{ "frame": 222, "gain": 0.175, "time": 1.55 },
+			{ "frame": 251, "gain": 0.005833333333333333, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0, "time": 0.5 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 0.8 },
+			{ "frame": 144, "gain": 1.9984014443252818e-16, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0, "time": 1.3 },
+			{ "frame": 222, "gain": 0, "time": 1.55 },
+			{ "frame": 251, "gain": 0, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 0.5,
+					"loopSource": true,
+					"embedded": false,
+					"kind": "music",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.29166666666666663 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008333333333333333, "time": 0.30833333333333335 },
+			{ "frame": 96, "gain": 0.2, "time": 0.5 },
+			{ "frame": 132, "gain": 0.9, "time": 0.8 },
+			{ "frame": 144, "gain": 0.9, "time": 0.8999999999999999 },
+			{ "frame": 192, "gain": 0.9, "time": 1.3 },
+			{ "frame": 222, "gain": 0.5, "time": 1.55 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 1.7916666666666667 },
+			{ "frame": 252, "gain": 0, "time": 1.8 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0028222222222222225, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0.1536, "time": 0.7 },
+			{ "frame": 132, "gain": 0.288, "time": 1.3 },
+			{ "frame": 144, "gain": 0.28800000000000003, "time": 1.5 },
+			{ "frame": 192, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 222, "gain": 0.16, "time": 2.8 },
+			{ "frame": 251, "gain": 0.005333333333333333, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0012286999999999999, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0.054604799999999995, "time": 0.7 },
+			{ "frame": 132, "gain": 0.288, "time": 1.3 },
+			{ "frame": 144, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 192, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 222, "gain": 0.072, "time": 2.8 },
+			{ "frame": 251, "gain": 0.0024, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0013113, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0.08363520000000002, "time": 0.7 },
+			{ "frame": 132, "gain": 0.288, "time": 1.3 },
+			{ "frame": 144, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 192, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 222, "gain": 0.072, "time": 2.8 },
+			{ "frame": 251, "gain": 0.0024, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.001241, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0.065664, "time": 0.7 },
+			{ "frame": 132, "gain": 0.288, "time": 1.3 },
+			{ "frame": 144, "gain": 0.12960000000000002, "time": 1.5 },
+			{ "frame": 192, "gain": 0.1296, "time": 2.3 },
+			{ "frame": 222, "gain": 0.072, "time": 2.8 },
+			{ "frame": 251, "gain": 0.0024, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0, "time": 0.7 },
+			{ "frame": 132, "gain": 0.288, "time": 1.3 },
+			{ "frame": 144, "gain": 6.394884621840902e-17, "time": 1.5 },
+			{ "frame": 192, "gain": 0, "time": 2.3 },
+			{ "frame": 222, "gain": 0, "time": 2.8 },
+			{ "frame": 251, "gain": 0, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 1,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "ambient",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.2833333333333333 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.0026666666666666666, "time": 0.31666666666666665 },
+			{ "frame": 96, "gain": 0.064, "time": 0.7 },
+			{ "frame": 132, "gain": 0.28800000000000003, "time": 1.3 },
+			{ "frame": 144, "gain": 0.28800000000000003, "time": 1.5 },
+			{ "frame": 192, "gain": 0.28800000000000003, "time": 2.3 },
+			{ "frame": 222, "gain": 0.16, "time": 2.8 },
+			{ "frame": 251, "gain": 0.005333333333333333, "time": 3.283333333333333 },
+			{ "frame": 252, "gain": 0, "time": 3.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008819444444444446, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.48, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.5, "time": 5.3 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.2116666666666667, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.48, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005290236111111111, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.23510399999999998, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.558, "time": 4.3 },
+			{ "frame": 222, "gain": 0.31, "time": 5.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.20478333333333334, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.3792, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005645875, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.36009600000000014, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.558, "time": 4.3 },
+			{ "frame": 222, "gain": 0.31, "time": 5.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.21855000000000002, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.5808000000000002, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005343194444444444, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.28272, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.558, "time": 4.3 },
+			{ "frame": 222, "gain": 0.31, "time": 5.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.20683333333333334, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.456, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 1.9984014443252818e-16, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0, "time": 4.3 },
+			{ "frame": 222, "gain": 0, "time": 5.3 },
+			{ "frame": 251, "gain": 0, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.24790531761442405, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.7759722363250714, "time": 1.1 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "sfx",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008333333333333333, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.2, "time": 1.1 },
+			{ "frame": 132, "gain": 0.9, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.5, "time": 5.3 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 2,
+					"loopSource": false,
+					"embedded": true,
+					"kind": "sfx",
+					"gainMode": "native",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.26666666666666666 },
+			{ "frame": 72, "gain": 0.2, "time": 0.3 },
+			{ "frame": 73, "gain": 0.2, "time": 0.3333333333333333 },
+			{ "frame": 96, "gain": 0.2, "time": 1.1 },
+			{ "frame": 132, "gain": 0.9, "time": 2.3 },
+			{ "frame": 144, "gain": 0.9, "time": 2.6999999999999997 },
+			{ "frame": 192, "gain": 0.9, "time": 4.3 },
+			{ "frame": 222, "gain": 0.6, "time": 5.3 },
+			{ "frame": 251, "gain": 0.6, "time": 6.266666666666667 },
+			{ "frame": 252, "gain": 0, "time": 6.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "linear", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": []
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008819444444444446, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0.48, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 144, "gain": 0.9, "time": 5.1 },
+			{ "frame": 192, "gain": 0.9, "time": 8.3 },
+			{ "frame": 222, "gain": 0.5, "time": 10.3 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005290236111111111, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0.23510399999999998, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 192, "gain": 0.558, "time": 8.3 },
+			{ "frame": 222, "gain": 0.31, "time": 10.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005645875, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0.36009600000000014, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 192, "gain": 0.558, "time": 8.3 },
+			{ "frame": 222, "gain": 0.31, "time": 10.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "in-out", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": null
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.005343194444444444, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0.28272, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 144, "gain": 0.5580000000000002, "time": 5.1 },
+			{ "frame": 192, "gain": 0.558, "time": 8.3 },
+			{ "frame": 222, "gain": 0.31, "time": 10.3 },
+			{ "frame": 251, "gain": 0.010333333333333333, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "bezier", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 0
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.8999999999999999, "time": 4.3 },
+			{ "frame": 144, "gain": 1.9984014443252818e-16, "time": 5.1 },
+			{ "frame": 192, "gain": 0, "time": 8.3 },
+			{ "frame": 222, "gain": 0, "time": 10.3 },
+			{ "frame": 251, "gain": 0, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	},
+	{
+		"mix": {
+			"fps": 60,
+			"frames": 360,
+			"sources": [
+				{
+					"path": "audioOverlays[0]",
+					"url": "fixture.wav",
+					"startFrame": 72,
+					"frames": 180,
+					"mediaStartSec": 0.3,
+					"playbackRate": 4,
+					"loopSource": false,
+					"embedded": false,
+					"kind": "accent_hit",
+					"gainMode": "overlay",
+					"volume": 0.7,
+					"volumeKeys": [
+						{ "t": 0, "v": 0.2 },
+						{ "t": 1, "v": 0.9, "easing": "hold", "easingRange": [0.2, 0.8] },
+						{ "t": 2.5, "v": 0.6, "easing": "hold" }
+					],
+					"fadeInSec": 0.4,
+					"fadeOutSec": 0.6,
+					"duckUnderVoice": 1
+				}
+			],
+			"voiceoverRanges": [
+				{ "startSec": 0.5, "endSec": 1.8 },
+				{ "startSec": 2.4, "endSec": 4.5 }
+			],
+			"legacyVoiceover": { "startSec": 0.5, "endSec": 1.8 }
+		},
+		"samples": [
+			{ "frame": 71, "gain": 0, "time": 0.23333333333333334 },
+			{ "frame": 72, "gain": 0, "time": 0.3 },
+			{ "frame": 73, "gain": 0.008333333333333333, "time": 0.36666666666666664 },
+			{ "frame": 96, "gain": 0.2, "time": 1.9000000000000001 },
+			{ "frame": 132, "gain": 0.9, "time": 4.3 },
+			{ "frame": 144, "gain": 0.9, "time": 5.1 },
+			{ "frame": 192, "gain": 0.9, "time": 8.3 },
+			{ "frame": 222, "gain": 0.5, "time": 10.3 },
+			{ "frame": 251, "gain": 0.016666666666666666, "time": 12.233333333333334 },
+			{ "frame": 252, "gain": 0, "time": 12.3 }
+		]
+	}
+]

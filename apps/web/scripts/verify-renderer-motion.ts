@@ -63,6 +63,7 @@ try {
 						NativeWorker.prototype.postMessage.call(this, message);
 					g.motionProbe.started = performance.now();
 					this.addEventListener("message", (event: MessageEvent<PreviewEvent>) => {
+						if (event.data.type !== "state") return;
 						const state = event.data.state;
 						if (
 							state?.times?.count &&
@@ -339,9 +340,24 @@ try {
 					pacingDevices: { progressBar: true },
 					effects: [{ effect: "fade_in", startSec: 0, durationSec: 1 }],
 				});
-				send({ type: "storyboard", json, fps, durationFrames, images: [] });
-				send({ type: "resize", width: 100, height: 100 });
-				send({ type: "seek", frame });
+				const generation = (window.motionProbe.events.at(-1)?.generation ?? 0) + 1;
+				send({
+					type: "storyboard",
+					generation,
+					json,
+					fps,
+					durationFrames,
+					images: [],
+					readiness: {
+						revision: "motion-static",
+						sourceGeneration: 0,
+						sequence: 0,
+						ready: true,
+						blockers: [],
+					},
+				});
+				send({ type: "resize", generation, width: 100, height: 100 });
+				send({ type: "seek", generation, frame });
 			},
 			{ fps: fps!, frame: frame!, durationFrames: durationFrames! },
 		);

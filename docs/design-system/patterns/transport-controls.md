@@ -38,6 +38,15 @@ TransportControls
 - Use one time-format recipe and the current timebase; do not round display and model independently.
 - Global playback shortcuts must not fire while a user edits text or interacts with a nested popup.
 - Feature supplies readiness/seek policy; shared controls do not create their own timer.
+- Every playback command checks complete-source readiness. This includes keyboard,
+  replay, selection and imperative Player calls. Blocked requests do not seek or
+  queue autoplay. Completion enables Play and requires a fresh command.
+- Media changes pause sound and picture together. Paused scrubbing and editing
+  remain available. Play uses the existing `disabled` prop while sources load.
+- The feature places a canonical Note immediately below the existing toolbar to
+  explain loading or failure. It wraps at phone widths. `aria-describedby` on
+  Play connects that explanation without changing transport geometry. Clip
+  menus and phone actions retain recovery ownership.
 
 ## Variants, density and responsive behavior
 

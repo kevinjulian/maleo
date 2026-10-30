@@ -1,0 +1,36 @@
+{
+	"observations": [
+		{
+			"rate": 0.5,
+			"preservesPitch": true,
+			"sampleRate": 48000,
+			"hz": 439.453125,
+			"db": -40.29901123046875,
+			"playing": true
+		},
+		{
+			"rate": 1,
+			"preservesPitch": true,
+			"sampleRate": 48000,
+			"hz": 439.453125,
+			"db": -40.1917839050293,
+			"playing": true
+		},
+		{
+			"rate": 2,
+			"preservesPitch": true,
+			"sampleRate": 48000,
+			"hz": 439.453125,
+			"db": -40.26036071777344,
+			"playing": true
+		},
+		{
+			"rate": 2,
+			"preservesPitch": false,
+			"sampleRate": 48000,
+			"hz": 878.90625,
+			"db": -45.186100006103516,
+			"playing": true
+		}
+	]
+}

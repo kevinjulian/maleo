@@ -15,6 +15,7 @@ import type { EditorChromeStore } from "@stores/editor-chrome-store.ts";
 import type { TimelineDocumentStore } from "@stores/timeline-document-store.ts";
 import type { DocumentWriters } from "@stores/document-writers.ts";
 import type { TimelineStageOps, TimelineStageView } from "./timeline-stage.tsx";
+import { PreviewClipActions } from "./media/preview-clip-state.tsx";
 
 interface TimelineStageMenusProps {
 	store: TimelineDocumentStore;
@@ -78,6 +79,7 @@ export function TimelineStageMenus({
 								style={{ left: ctxMenu.x, top: ctxMenu.y }}
 								role="menu"
 							>
+								<PreviewClipActions ids={selectionIds()} menu onDone={() => setCtxMenu(null)} />
 								<button
 									type="button"
 									role="menuitem"
@@ -197,6 +199,7 @@ export function TimelineStageMenus({
 								role="menu"
 							>
 								<div className="tl2-ctxhead">{scene.name || "Scene"}</div>
+								<PreviewClipActions ids={[`scene:${scene.id}`]} menu onDone={close} />
 								<button
 									type="button"
 									role="menuitem"

@@ -70,13 +70,14 @@
       "name": "@maleo/web",
       "version": "0.1.0",
       "dependencies": {
+        "@base-ui/react": "^1.8.0",
         "@maleo/shared": "workspace:*",
         "@maleo/video": "workspace:*",
-        "@base-ui/react": "^1.8.0",
         "@remotion/captions": "4.0.462",
         "@remotion/media-utils": "^4.0.0",
         "@remotion/player": "^4.0.466",
         "@remotion/preload": "4.0.462",
+        "@soundtouchjs/core": "2.1.1",
         "@videojs/react": "10.0.1",
         "bun-plugin-tailwind": "^0.1.2",
         "html-to-image": "^1.11.13",
@@ -108,9 +109,9 @@
       "name": "@maleo/auth",
       "version": "0.1.0",
       "dependencies": {
+        "@better-auth/api-key": "1.7.4",
         "@maleo/db": "workspace:*",
         "@maleo/shared": "workspace:*",
-        "@better-auth/api-key": "1.7.4",
         "better-auth": "^1.7.4",
       },
       "devDependencies": {
@@ -147,11 +148,11 @@
       "name": "@maleo/media",
       "version": "0.1.0",
       "dependencies": {
+        "@hono/node-server": "^2.0.2",
+        "@huggingface/inference": "^4.13.26",
         "@maleo/inngest": "workspace:*",
         "@maleo/shared": "workspace:*",
         "@maleo/storage": "workspace:*",
-        "@hono/node-server": "^2.0.2",
-        "@huggingface/inference": "^4.13.26",
         "@remotion/captions": "4.0.462",
         "@remotion/install-whisper-cpp": "4.0.462",
         "hono": "^4.6.0",
@@ -226,6 +227,9 @@
     "@embedded-postgres/linux-x64",
     "inngest-cli",
   ],
+  "patchedDependencies": {
+    "mediabunny@1.45.0": "patches/mediabunny@1.45.0.patch",
+  },
   "overrides": {
     "@remotion/player": "4.0.462",
     "react": "^19.2.6",
@@ -255,30 +259,6 @@
     "@ai-sdk/provider-v6": ["@ai-sdk/provider@3.0.14", "", { "dependencies": { "json-schema": "^0.4.0" } }, "sha512-5X1k57JBJ4H7H1QjX7CnJYAB1I19r/trVZTMcSms7/kLNZ8RaU4Nt2agcwZzv82Hfx6Q7/TOLU7agAKeFfc8cA=="],
 
     "@ai-sdk/provider-v7": ["@ai-sdk/provider@4.0.17", "", { "dependencies": { "json-schema": "^0.4.0" } }, "sha512-VYMBxIQdcHqbIf1j+YZlI9Ati6LZ4wJe0GGd4z4a5H/KxTggjeOiyaVYTnfF7LHZK5jMQ+rofmzz4QPqf++NUw=="],
-
-    "@maleo/api": ["@maleo/api@workspace:apps/api"],
-
-    "@maleo/auth": ["@maleo/auth@workspace:packages/auth"],
-
-    "@maleo/db": ["@maleo/db@workspace:packages/db"],
-
-    "@maleo/inngest": ["@maleo/inngest@workspace:packages/inngest"],
-
-    "@maleo/media": ["@maleo/media@workspace:packages/media"],
-
-    "@maleo/media-worker": ["@maleo/media-worker@workspace:apps/media-worker"],
-
-    "@maleo/render-worker": ["@maleo/render-worker@workspace:apps/render-worker"],
-
-    "@maleo/shared": ["@maleo/shared@workspace:packages/shared"],
-
-    "@maleo/stock": ["@maleo/stock@workspace:packages/stock"],
-
-    "@maleo/storage": ["@maleo/storage@workspace:packages/storage"],
-
-    "@maleo/video": ["@maleo/video@workspace:packages/video"],
-
-    "@maleo/web": ["@maleo/web@workspace:apps/web"],
 
     "@aws-crypto/crc32": ["@aws-crypto/crc32@5.2.0", "", { "dependencies": { "@aws-crypto/util": "^5.2.0", "@aws-sdk/types": "^3.222.0", "tslib": "^2.6.2" } }, "sha512-nLbCWqQNgUiwwtFsen1AdzAtvuLRsQS8rYgMuxCrdKf9kOssamGLuPwyTY9wyYblNr9+1XM8v6zoDTPPSIeANg=="],
 
@@ -615,6 +595,30 @@
     "@lukeed/csprng": ["@lukeed/csprng@1.1.0", "", {}, "sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA=="],
 
     "@lukeed/uuid": ["@lukeed/uuid@2.0.1", "", { "dependencies": { "@lukeed/csprng": "^1.1.0" } }, "sha512-qC72D4+CDdjGqJvkFMMEAtancHUQ7/d/tAiHf64z8MopFDmcrtbcJuerDtFceuAfQJ2pDSfCKCtbqoGBNnwg0w=="],
+
+    "@maleo/api": ["@maleo/api@workspace:apps/api"],
+
+    "@maleo/auth": ["@maleo/auth@workspace:packages/auth"],
+
+    "@maleo/db": ["@maleo/db@workspace:packages/db"],
+
+    "@maleo/inngest": ["@maleo/inngest@workspace:packages/inngest"],
+
+    "@maleo/media": ["@maleo/media@workspace:packages/media"],
+
+    "@maleo/media-worker": ["@maleo/media-worker@workspace:apps/media-worker"],
+
+    "@maleo/render-worker": ["@maleo/render-worker@workspace:apps/render-worker"],
+
+    "@maleo/shared": ["@maleo/shared@workspace:packages/shared"],
+
+    "@maleo/stock": ["@maleo/stock@workspace:packages/stock"],
+
+    "@maleo/storage": ["@maleo/storage@workspace:packages/storage"],
+
+    "@maleo/video": ["@maleo/video@workspace:packages/video"],
+
+    "@maleo/web": ["@maleo/web@workspace:apps/web"],
 
     "@mastra/core": ["@mastra/core@1.71.0", "", { "dependencies": { "@a2a-js/sdk-v0_3": "npm:@a2a-js/sdk@~0.3.14", "@a2a-js/sdk-v1": "npm:@a2a-js/sdk@~1.0.1", "@ai-sdk/provider-utils-v6": "npm:@ai-sdk/provider-utils@4.0.40", "@ai-sdk/provider-utils-v7": "npm:@ai-sdk/provider-utils@5.0.13", "@ai-sdk/provider-v5": "npm:@ai-sdk/provider@2.0.3", "@ai-sdk/provider-v6": "npm:@ai-sdk/provider@3.0.14", "@ai-sdk/provider-v7": "npm:@ai-sdk/provider@4.0.17", "@isaacs/ttlcache": "^2.1.5", "@lukeed/uuid": "^2.0.1", "@mastra/schema-compat": "1.3.11", "@standard-schema/spec": "^1.1.0", "chat": "^4.37.0", "croner": "^10.0.1", "dotenv": "^17.3.1", "execa": "^9.6.1", "fastq": "^1.20.1", "gray-matter": "^4.0.3", "hono": "^4.13.7", "hono-openapi": "^1.3.1", "ignore": "^7.0.5", "jpeg-js": "^0.4.4", "json-schema": "^0.4.0", "lru-cache": "^11.2.7", "p-map": "^7.0.4", "p-retry": "^7.1.1", "picomatch": "^4.0.3", "posthog-node": "^5.46.1", "re2js": "^2.8.6", "ws": "^8.21.3", "xxhash-wasm": "^1.1.0" }, "peerDependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-qpv0qbyzyFWBWVlzP+G4oea6e3e3JyxmeNAtS5wuzWc0/iHv47DWRYNJXbDC0kleYd6L4afFPh7dLxCsuyCSKg=="],
 
@@ -1221,6 +1225,10 @@
     "@smithy/util-utf8": ["@smithy/util-utf8@4.3.3", "", { "dependencies": { "@smithy/core": "^3.24.3", "tslib": "^2.6.2" } }, "sha512-c1QpRBn3aMsoqE64dd4Imgjy8Pynfw+eR7GkjElquxUFSnezwYVaOFm8JcYa+Bo/5ssbEyPKcT3+4bmrWYh6eQ=="],
 
     "@smithy/util-waiter": ["@smithy/util-waiter@4.4.3", "", { "dependencies": { "@smithy/core": "^3.24.3", "tslib": "^2.6.2" } }, "sha512-WSHSF865zDGFGtJdMmYPI2Blq/MbUrn5CB4bLDg4ARbQ9z7oA87ZZ/FSiwNZbQrU/EiVyl9lpINswALgI4lZXA=="],
+
+    "@soundtouchjs/core": ["@soundtouchjs/core@2.1.1", "", { "dependencies": { "@soundtouchjs/interpolation-strategy-lanczos": "2.1.1" } }, "sha512-ccBiG9/zHdM1Sx1RUkXWBgRYFI1HCiUHHwRK8gAvVNgmcafBgUzRP6Czn7pUPcHgSQus+i3Eu3DlfBR24wqspA=="],
+
+    "@soundtouchjs/interpolation-strategy-lanczos": ["@soundtouchjs/interpolation-strategy-lanczos@2.1.1", "", {}, "sha512-EX4qVLnOJ9pKfL7iSPJSJDKDAoZ4d7JO7KTKMPVo2XIhlmT/2hTZC5dWL/R9Jv3XC7kyQeteeGcogWP6DPi47A=="],
 
     "@standard-community/standard-json": ["@standard-community/standard-json@0.3.6", "", { "dependencies": { "quansync": "^0.2.11" }, "peerDependencies": { "@standard-schema/spec": "^1.0.0", "@types/json-schema": "^7.0.15", "@valibot/to-json-schema": "^1.3.0", "arktype": "^2.1.20", "effect": "^3.20.0", "sury": "^10.0.0", "typebox": "^1.0.17", "valibot": "^1.4.2", "zod": "^3.25.0 || ^4.0.0", "zod-to-json-schema": "^3.24.5" }, "optionalPeers": ["@valibot/to-json-schema", "arktype", "effect", "sury", "typebox", "valibot", "zod", "zod-to-json-schema"] }, "sha512-tuXKz1Ps4al0W4xhfwii7v4lskKtOv3QE7mcouRVThrBdOR6JzY4Vea3nsxcEnte84bOJvMvXGmOMWE3IBbHyA=="],
 
@@ -2504,8 +2512,6 @@
 
     "@ai-sdk/provider-utils-v7/@ai-sdk/provider": ["@ai-sdk/provider@4.0.4", "", { "dependencies": { "json-schema": "^0.4.0" } }, "sha512-tbHKNLirllUNF3ZlkCsXnwab2ZV1Sl4b1H/Cp9ruCce15IBmskE8Gwkk0yo9xDWY+jho2of7lVXtwSsyrq7cwQ=="],
 
-    "@maleo/video/bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
-
     "@aws-crypto/sha1-browser/@smithy/util-utf8": ["@smithy/util-utf8@2.3.0", "", { "dependencies": { "@smithy/util-buffer-from": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A=="],
 
     "@aws-crypto/sha256-browser/@smithy/util-utf8": ["@smithy/util-utf8@2.3.0", "", { "dependencies": { "@smithy/util-buffer-from": "^2.2.0", "tslib": "^2.6.2" } }, "sha512-R8Rdn8Hy72KKcebgLiv8jQcQkXoLMOGGv5uI1/k0l+snqkOzQ1R0ChUBCxWMlBsFMekWjq0wRudIweFs7sKT5A=="],
@@ -2541,6 +2547,9 @@
     "@jridgewell/gen-mapping/@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
 
     "@jridgewell/trace-mapping/@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.5", "", {}, "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og=="],
+
+    "@maleo/video/bun-types": ["bun-types@1.4.2", "", { "dependencies": { "@types/node": "*" } }, "sha512-bxV1FgK7yBIzjRe5zBozIM4Bem11ZJcCXSrjWRG3YWLt8yFDePu4cLjpebO8OvPeIE9trbyPF4fuj3Cia4Fj3w=="],
+
 
     "@modelcontextprotocol/client/zod": ["zod@4.6.5", "", {}, "sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q=="],
 
@@ -2689,6 +2698,7 @@
     "@isaacs/cliui/strip-ansi/ansi-regex": ["ansi-regex@6.2.2", "", {}, "sha512-Bq3SmSpyFHaWjPk8If9yc6svM8c56dB5BAtW4Qbw5jHTwwXXcTLoRMkpDJp6VL0XzlWaCHTXrkFURMYmD0sLqg=="],
 
     "@isaacs/cliui/wrap-ansi/ansi-styles": ["ansi-styles@6.2.3", "", {}, "sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg=="],
+
 
     "@oxc-resolver/binding-wasm32-wasi/@emnapi/core/@emnapi/wasi-threads": ["@emnapi/wasi-threads@1.2.2", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-c95qOXkHdydNKhscBTebqEC1CVAZpyqOfVfBzQ1qgzyl3gfeldUjIggDbIZgDKsHLgnsM+igH7TJ/eAasaVuMA=="],
 

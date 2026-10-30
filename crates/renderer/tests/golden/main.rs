@@ -17,6 +17,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use compare::Image;
+use maleo_media::visual_pool::FrameIdentity;
 use maleo_renderer::coverage::{self, SUPPORTED};
 use maleo_renderer::frame::Renderer;
 use maleo_renderer::storyboard::Storyboard;
@@ -72,6 +73,22 @@ struct CaseSpec {
     options: Vec<String>,
     #[serde(default)]
     geometry: Option<Geometry>,
+    #[serde(default, rename = "videoFrames")]
+    video_frames: Vec<VideoFrames>,
+}
+
+#[derive(Deserialize)]
+struct VideoFrames {
+    url: String,
+    revision: String,
+    frames: Vec<VideoSample>,
+}
+
+#[derive(Deserialize)]
+struct VideoSample {
+    start: f64,
+    end: f64,
+    file: String,
 }
 
 #[derive(Deserialize)]
@@ -138,6 +155,46 @@ fn media_files(dir: &Path) -> Vec<(String, PathBuf)> {
 fn read_image(path: &Path) -> Image {
     let decoded = image::open(path).unwrap_or_else(|e| panic!("{}: {e}", path.display())).to_rgba8();
     Image { width: decoded.width() as usize, height: decoded.height() as usize, rgba: decoded.into_raw() }
+}
+
+fn load_images(renderer: &mut Renderer, case: &Case) {
+    for (url, path) in media_files(&case.dir) {
+        if case.spec.video_frames.iter().any(|source| source.url == url) {
+            continue;
+        }
+        let image = read_image(&path);
+        renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).expect("media");
+    }
+}
+
+/// Decode once during fixture authoring; native CI consumes the exact presentation samples.
+fn supply_video_frames(renderer: &mut Renderer, case: &Case, frame: i64) {
+    for request in maleo_renderer::media_requests::video_requests(&case.storyboard, frame, FPS) {
+        let time = request.time.expect("supported source time");
+        let source = case.spec.video_frames.iter().find(|source| source.url == request.url).expect("video sample inventory");
+        let index = source
+            .frames
+            .iter()
+            .enumerate()
+            .min_by(|(_, a), (_, b)| (a.start - time).abs().total_cmp(&(b.start - time).abs()).then_with(|| b.start.total_cmp(&a.start)))
+            .map(|(index, _)| index)
+            .expect("source samples");
+        let sample = &source.frames[index];
+        let start = if index == 0 { 0.0 } else { (source.frames[index - 1].start + sample.start) / 2.0 };
+        let end = source.frames.get(index + 1).map_or(sample.end, |next| (sample.start + next.start) / 2.0);
+        assert!(start <= time && time < end, "source selection window");
+        let image = read_image(&case.dir.join(&sample.file));
+        let identity = FrameIdentity {
+            source_id: source.url.clone(),
+            revision: source.revision.clone(),
+            start,
+            end,
+            presentation: Some([sample.start, sample.end]),
+            width: image.width as u32,
+            height: image.height as u32,
+        };
+        renderer.put_video(&request, identity, image.rgba).expect("video frame");
+    }
 }
 
 fn write_png(path: &Path, image: &Image) {
@@ -263,6 +320,17 @@ fn the_corpus_is_complete() {
     }
     let mut drawn: BTreeSet<&str> = BTreeSet::new();
     for case in &cases {
+        for source in &case.spec.video_frames {
+            assert_eq!(sha256::hex(&fs::read(case.dir.join(&source.url)).expect("source video")), source.revision, "{}: source revision", case.name);
+            assert!(!source.frames.is_empty(), "{}: source samples", case.name);
+            for (index, sample) in source.frames.iter().enumerate() {
+                assert!(sample.start.is_finite() && sample.end.is_finite() && sample.start < sample.end, "invalid presentation interval");
+                assert!(case.dir.join(&sample.file).is_file(), "missing decoded sample");
+                if index > 0 {
+                    assert_eq!(source.frames[index - 1].end, sample.start, "sample continuity");
+                }
+            }
+        }
         let media: BTreeSet<String> = media_files(&case.dir).into_iter().map(|(url, _)| url).collect();
         for &frame in &case.spec.frames {
             if !reference(case, frame).is_file() {
@@ -302,18 +370,18 @@ fn animated_elements_draw_identically_out_of_order() {
             || case.name.starts_with("motion-combined-")
             || case.name.starts_with("shape-")
             || case.name.starts_with("composition-")
+            || case.name.starts_with("video-")
     }) {
-        for (url, path) in media_files(&case.dir) {
-            let image = read_image(&path);
-            renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).expect("media");
-        }
+        load_images(&mut renderer, &case);
         let mut direct = BTreeMap::new();
         for &frame in &case.spec.frames {
+            supply_video_frames(&mut renderer, &case, frame);
             let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("frame");
             assert!(drawn.coverage.is_empty(), "{} frame {frame}: {:?}", case.name, drawn.coverage);
             direct.insert(frame, drawn.rgba);
         }
         for &frame in case.spec.frames.iter().rev() {
+            supply_video_frames(&mut renderer, &case, frame);
             let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("out-of-order frame");
             if drawn.rgba != direct[&frame] {
                 let out = repo().join("target/golden");
@@ -410,6 +478,37 @@ fn reveal_phase_geometry_keeps_reference_boundaries() {
 #[test]
 fn every_case_is_at_parity_with_remotion() {
     assert_cases_at_parity(|_| true);
+}
+
+#[test]
+fn video_frames_match_production() {
+    assert!(cases().iter().any(|case| case.name.starts_with("video-")), "video corpus is required");
+    assert_cases_at_parity(|case| case.name.starts_with("video-"));
+}
+
+#[test]
+fn sequential_video_frames_equal_direct_draws() {
+    let cases: Vec<_> = cases().into_iter().filter(|case| case.name.starts_with("video-")).collect();
+    assert!(!cases.is_empty(), "video corpus is required");
+    for case in cases {
+        let mut direct = BTreeMap::new();
+        for &frame in &case.spec.frames {
+            let mut renderer = pollster::block_on(Renderer::new()).expect("direct renderer");
+            supply_video_frames(&mut renderer, &case, frame);
+            let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("direct video frame");
+            assert!(drawn.coverage.is_empty(), "{} {frame}: {:?}", case.name, drawn.coverage);
+            direct.insert(frame, drawn.rgba);
+        }
+        let mut renderer = pollster::block_on(Renderer::new()).expect("sequential renderer");
+        for frame in 0..=*case.spec.frames.last().expect("frames") {
+            supply_video_frames(&mut renderer, &case, frame);
+            let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("sequential video frame");
+            assert!(drawn.coverage.is_empty(), "{} {frame}: {:?}", case.name, drawn.coverage);
+            if let Some(expected) = direct.get(&frame) {
+                assert_eq!(&drawn.rgba, expected, "{} frame {frame}", case.name);
+            }
+        }
+    }
 }
 
 #[test]
@@ -560,10 +659,7 @@ fn assert_cases_at_parity(select: impl Fn(&Case) -> bool) {
     let mut failures = Vec::new();
     let mut scores = Vec::new();
     for case in cases.into_iter().filter(select) {
-        for (url, path) in media_files(&case.dir) {
-            let image = read_image(&path);
-            renderer.put_image(&url, image.width as u32, image.height as u32, image.rgba).expect("media");
-        }
+        load_images(&mut renderer, &case);
         let lowered = manifest.lowered.get(&case.name);
         let frame_min = lowered.and_then(|l| l.frame).unwrap_or(manifest.thresholds.frame);
         let region_min = lowered.and_then(|l| l.region).unwrap_or(manifest.thresholds.region);
@@ -575,6 +671,7 @@ fn assert_cases_at_parity(select: impl Fn(&Case) -> bool) {
                 continue;
             }
             let expected = read_image(&path);
+            supply_video_frames(&mut renderer, &case, frame);
             let drawn = pollster::block_on(renderer.render(&case.storyboard, frame, case.spec.width, case.spec.height)).expect("frame");
             let actual = Image { width: drawn.width as usize, height: drawn.height as usize, rgba: drawn.rgba };
             let mut failed = Vec::new();

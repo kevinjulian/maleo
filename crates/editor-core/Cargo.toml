@@ -7,6 +7,7 @@ publish.workspace = true
 description = "Host-free editor command engine shared by every Maleo controller"
 
 [dependencies]
+maleo-media = { path = "../media" }
 serde = { version = "1.0.229", features = ["derive", "rc"] }
 # `float_roundtrip`: the default float parser is not always correctly rounded
 # (it read 1.9666666666666666 from the corpus as …663), which would change a

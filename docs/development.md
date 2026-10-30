@@ -297,6 +297,205 @@ fetches `/editor-engine.wasm` before it mounts the editor, so run
 `bun scripts/editor-engine.mts build` first (the Docker image and the browser
 suites build it themselves); without it the editor says it could not start.
 
+Temporary preview readiness also uses this module. `media_open` creates an
+independent handle. `media_dispatch(handle, ptr, len)` accepts JSON actions:
+`update` with `dependencies`, `complete` with `request` and `completion`,
+`retry` with `sourceId`, `invalidate` with the current `request` and `message`,
+or `snapshot`. It returns
+`{accepted, snapshot, requests}` through the existing output buffer and status
+convention. `media_close` disposes the handle. These calls do not edit documents
+or undo history. `crates/media/README.md` owns the source readiness contract.
+The boundary has no renderer dependency. Normal preview and diagnostic compare
+resolve completed sources locally without changing authored/export URLs.
+
+The source-download adapter runs in `/preview-media-worker.js`, independently of
+renderer WASM. It uses temporary OPFS files under `preview-media/<session-id>/`.
+The memory backend has a 64 MiB total compressed-byte ceiling shared by all media
+workers in the tab when OPFS is unavailable. The main-thread reservation ledger
+accounts for complete and in-progress files; borrowed Files add no duplicate charge.
+Quota failure blocks source completion. Pending-upload File leases do not copy
+or delete upload staging. Disposing the adapter aborts outstanding downloads,
+waits for their cleanup and removes only its own temporary session directory.
+The timeline scopes ownership by workspace and project. Switching scope or
+unmounting revokes preview-owned object URLs, aborts downloads, waits for codec
+probes and closes the native readiness handle. Sign-out waits for all live media
+sessions before navigating. Late replies cannot restore readiness. Ready siblings
+survive Retry and dependency changes. Explicit local-source invalidation requires
+Retry; it does not silently stream the remote original.
+
+Stored Files retain the response MIME type. SVG bytes use a distinct worker
+reply and remain validating until a serialized DOM image probe completes on
+the main thread. The probe rasterizes one pixel for initial decode, closes its
+bitmap and revokes its temporary URL. Cancellation closes the DOM image before
+disposal completes. Normal preview retains the original SVG File and its vector
+scaling. Renderer-worker SVG rasterization remains outside the diagnostic
+renderer's existing image capability.
+
+Timeline clips show native preview readiness independently of upload state.
+Desktop clip menus and phone clip actions expose the full state and **Retry
+preview** for failed sources. Retry keeps completed siblings and updates every
+clip sharing that source. These notifications do not write the document or undo
+history. Compact clips retain their named status icon and existing hit geometry.
+
+The common playback command rejects starts until native readiness is complete.
+Keyboard commands, replay and imperative Player calls use the same gate.
+Blocked starts retain no autoplay intent. Editing and paused seeking remain
+available. Changing required media pauses normal and compare output and requires
+a fresh Play. Template Studio uses the same complete-source owner for resolved
+audio cues. Its preview substitutes local URLs without changing saved templates.
+
+OPFS sessions hold exclusive Web Locks named `maleo-preview-media:<session-id>`.
+Opening a session reclaims other preview directories only when their ownership
+lock can be acquired without waiting. Active tabs/workers retain their files.
+Worker crashes release locks; a later session can remove the abandoned directory.
+Without Web Locks, automatic orphan reclamation is skipped because absence of an
+owner cannot be proved. Upload-staging directories are never traversed or removed.
+Reload starts with fresh byte/codec validation; readiness is never persisted.
+
+Common Play gating and per-clip loading controls remain in the later groups of
+OpenSpec change `p2-media-playback`.
+
+Normal source probes acquire video/audio slots through the same editor WASM:
+`decoder_open`, `decoder_request(owner, request, kind, slots)`, `decoder_grants`,
+`decoder_should_yield(owner, lease)`, `decoder_release(owner, lease)` and
+`decoder_close`. Kinds are 1 for video and 2
+for audio. Rust grants at most two slots of each kind across all source workers
+in the tab. The main thread only routes grants. A worker returns a slot after its
+finite probe iterator closes the codec; termination releases that owner's slots.
+The hidden renderer module also exports `MediaPool` for decoded-frame cache and
+reservation policy. It needs no GPU initialization and is not imported by normal
+preview. `crates/media/README.md` defines ownership and portable accounting.
+
+The local video adapter creates `/preview-video-worker.js` only after a native
+decoder grant. Each logical placement has one active request and one replaceable
+latest request. Complete Files and validated track metadata cross the boundary;
+the decoder receives no source URL. Samples match pinned production Remotion:
+truncate requested stream ticks, select the nearest presentation timestamp, and
+choose the later frame on a tie. Do not subtract the first track timestamp.
+Before a nonzero first timestamp, production holds the first frame. Cache
+`start`/`end` describe selection windows; `presentation` retains the original
+sample interval. A fresh seek can return a narrower valid cache window when
+the previous sample timestamp is not available. Seeks reset the iterator
+and reject older generations. Shared sources can have independent placements.
+Transparent WebM needs both video slots for its color and alpha decoders.
+Waiting owners trigger a yield after the active request finishes.
+
+Before copying RGBA, the worker reserves both canvas and ImageData bytes through
+the native pool. It clears the canvas before transferring the output. Disposal
+closes samples and hidden library codecs before returning decoder slots.
+`packages/video/scripts/probe-video-selection.ts` measures encoded frame IDs in
+the production image. The browser decoder probe checks those recorded IDs,
+including CFR/VFR, boundary ties, nonzero timestamps and source rates.
+
+Portable audio contracts live in `crates/media/src/audio.rs`. The renderer's
+`audio_requests::project` uses the production render storyboard, including its
+resolved derivatives and native-audio suppression. It does not use draft export
+rows. `bun scripts/audio-mix-fixtures.ts --check` checks TS-derived gain and
+document/render fixtures against the Rust tests. `crates/media/src/pcm.rs` mixes
+bounded interleaved float windows at the requested mono/stereo output rate.
+Float headroom stays unclipped until final device output. Missing PCM reports
+buffering instead of inserting silence. The renderer WASM exposes `PcmBudget`
+and `mix_audio` without GPU initialization.
+
+`audio-client.ts` decodes complete local Files through `/preview-audio-worker.js`.
+It acquires the shared native audio grant before constructing a worker. Each job
+reserves PCM before copying, terminates its worker before returning the grant,
+and retains the PCM reservation until consumer release detaches the buffer.
+Retained, flattened and WASM input copies share the 16 MiB budget. Callers must
+reserve output copies separately. Requested PCM windows stay within two seconds.
+Codec-internal surfaces are separate process-memory measurements. The real
+browser probe is `preview-audio-decode.spec.ts`.
+
+`audio-tempo.ts` wraps pinned `@soundtouchjs/core` 2.1.1 `Stretch` for global
+transport speed only. Authored rates, pitch settings and reverse stay on their
+validated processed derivatives. At 1x it bypasses time stretching. Fixed FIFO
+capacity, overlap state and tail padding are reserved before allocation through
+the same PCM budget. Backpressure bounds queued output to two seconds. Reset
+clears input, output and overlap state before changing speed. Finish flushes the
+upstream tail and returns exactly the selected input-frame count divided by
+global rate. Disposal detaches owned FIFOs and returns the reservation.
+`preview-audio-tempo.spec.ts` captures actual Rust-mixed browser output at
+0.5x/1x/2x, checks pitch, exact output length and cleanup. Its AudioBuffer capture
+does not establish production AudioWorklet scheduling or physical-device sound.
+`createAudioOutput` creates/resumes AudioContext from the main-thread Play
+gesture, then loads `/preview-audio-worklet.js`. Rust-mixed, tempo-processed
+stereo blocks transfer to its bounded queue. Accepted transfers detach producer
+buffers. Consumed or flushed block acknowledgements return PCM reservations.
+Underruns hold the consumed position. Flush and platform suspension invalidate
+old generations. Disposal closes output before releasing retained reservations.
+The real worklet probe is `preview-audio-output.spec.ts`; compare ownership and
+editor transport integration remain separate tasks.
+
+For audio adapter work, use `crates/media/README.md` for the ownership and output
+position contract. Worklet `frames` counts consumed stereo frame pairs within
+one generation. Its `renderFrame` records their endpoint on AudioContext's
+sample clock. The running browser probe checks that endpoint against the last
+captured sample. Silence inside a valid block counts. Underflow silence does
+not count, and seeking resets the counter only after invalidating the queue.
+
+`timestamp()` returns context/performance times, an initialized platform output
+timestamp pair when available, and separate reported latency estimates. Missing
+fields are explicit `null`. Map the render-frame endpoint back to audible sample
+position using the README formula. If output timestamps are unavailable, use a
+calibrated latency estimate. The sum of valid reported base/output latency is
+the platform estimate; missing latency is not zero. Keep that estimation method
+in acceptance evidence. The output counter, rather than host time, supplies the
+clock input for both audible material and intentional narration gaps.
+The pinned MediaBunny 1.45.0 patch corrects CPU alpha merging: `copyTo` uses the
+visible rectangle, so output dimensions must exclude decoder padding. The patch
+also preserves the color space. Its browser regression checks numbered pixels
+in transparent VP9 frames. Remove the patch only after equivalent upstream code
+passes that probe.
+
+Compare preview sends validated local File bindings through the existing preview
+protocol. Every storyboard carries an input generation and a readiness revision
+from the complete placed-source inventory, including muted and hidden clips.
+Readiness updates carry a source generation and increasing sequence. Rust rejects
+Play until readiness succeeds. Completion never starts playback automatically.
+Buffering and stalled states hold position. Seek and buffering invalidate the
+old audio observations until a fresh output anchor arrives. Malformed inputs keep
+the accepted storyboard and position. Replies identify both the accepted input
+generation and the request they answer, so a refused replacement cannot strand
+commands on an unaccepted generation. The browser worker probe is
+`preview-media-state.spec.ts`.
+
+The compare worker prefetches the next video frame without binding it to the
+current placement. During image or gap spans, it warms the first upcoming video
+within two seconds so decoder startup does not wait for that clip's entrance.
+A missing current frame holds playback and Rust-owned audio.
+Local decode retries use the reference transport's 1.5-second threshold and at
+most two attempts. Device loss holds the native clock immediately. Device
+recreation has two attempts with 1.5-second timeouts, and late devices cannot
+replace an accepted one or report another loss. Pause cancels playback intent.
+
+`compare-audio.ts` joins the existing output adapter to the preview worker. It
+prepares scripts without creating an AudioContext. Play primes bounded local
+blocks, then attaches their consumed-sample clock. Frame observations continue
+while another decode is pending. Seek flushes and replaces the output generation.
+Media invalidation pauses without queuing autoplay. GPU or local buffering can
+resume only under the same active intent. Suspension requires a fresh gesture.
+Decoder recovery failure closes output and leaves a named paused/stalled state.
+`preview-audio-session.spec.ts` exercises this boundary with actual Files, video,
+worklet capture, GPU loss and real context suspension. Product ownership controls
+and physical synchronization acceptance remain separate tasks.
+
+The renderer worker owns one native `MediaPool` for visible images and
+video intervals. Two image jobs run independently of the two video slots. Video
+workers borrow those Files; the main thread routes global editor-WASM grants
+without moving RGBA through React. One RGBA buffer per native cache ID backs all
+placement bindings. The worker reserves temporary copies, uploads to WASM, then
+detaches the JS ArrayBuffer before converting its reservation into cached bytes.
+Opaque codec/bitmap surfaces remain separate process-memory measurements.
+
+Compare startup retains its video decoder script as a local blob before it
+reports readiness, including projects whose first video starts later.
+Later seeks, worker replacement and cache misses need no remote source or script
+fetch. Source removal and sign-out wait for consumer acknowledgements before
+deleting temporary bytes. Worker errors terminate owned execution before native
+decoder ownership is returned. Missing requested video intervals keep placeholders
+and exact placement paths in coverage. Video support remains marked unfinished
+until production golden parity is accepted.
+
 Rust generates the command vocabulary and scope structure in
 `engine-types.generated.ts`; TS refines opaque payloads with the existing domain
 schemas. There is no TS command executor. Shared `execute`/`applyCommand`/
@@ -414,6 +613,14 @@ Player at the same playhead, with the frame time (last, p50, p95) and the
 elements the renderer does not draw yet. It needs a browser with WebGPU and a
 built module; without WebGPU the panel says so and the preview works as usual.
 Without the parameter the editor never requests the module.
+
+Reference audio is selected by default. Use **Compare audio output** to select
+**Rust audio**. Rust mutes the reference Player before starting its worklet.
+Its clock follows consumed audio and output timestamps. Selecting Rust while
+paused waits for Play. Selecting reference or leaving compare mode closes Rust
+output before restoring the reference Player's previous mute state. Audio
+suspension requires a fresh Play or **Retry audio**. This diagnostic choice does
+not change the document or export inputs.
 
 The compare renderer includes keyed layout/plain text, camera motion, local
 color correction, crop/flips, rectangle/ellipse masks and feather, supported

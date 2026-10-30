@@ -7,7 +7,7 @@
 # scripts/check-deploy.ts measures the resulting context and fails when it grows
 # past the stated budget.
 
-# Dependency trees. The images install their own from package.json + bun.lock.
+# Dependency trees. Images install from manifests, bun.lock and patches/.
 node_modules/
 **/node_modules/
 

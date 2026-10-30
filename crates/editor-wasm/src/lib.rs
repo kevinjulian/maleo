@@ -20,6 +20,7 @@
 
 pub mod app;
 pub mod canvas;
+pub mod media;
 
 use std::cell::RefCell;
 use std::collections::BTreeMap;
@@ -418,6 +419,58 @@ mod abi {
 
     fn unit(result: Result<(), String>) -> u32 {
         status(result.map(|()| String::new()))
+    }
+
+    thread_local! {
+        static MEDIA: RefCell<super::media::MediaSessions> = RefCell::new(super::media::MediaSessions::default());
+        static DECODERS: RefCell<maleo_media::decoder::Decoders> = RefCell::new(maleo_media::decoder::Decoders::default());
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn media_open() -> u32 {
+        MEDIA.with(|media| media.borrow_mut().open())
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn media_close(handle: u32) -> u32 {
+        unit(MEDIA.with(|media| media.borrow_mut().close(handle)))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn media_dispatch(handle: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| MEDIA.with(|media| media.borrow_mut().dispatch(handle, &json))))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_open() -> u32 {
+        DECODERS.with_borrow_mut(|pool| pool.open())
+    }
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_request(owner: u32, request: u32, kind: u32, slots: u32) -> u32 {
+        unit(
+            match kind {
+                1 => Ok(maleo_media::decoder::Kind::Video),
+                2 => Ok(maleo_media::decoder::Kind::Audio),
+                _ => Err(crate::invalid("Unknown decoder kind")),
+            }
+            .and_then(|kind| DECODERS.with_borrow_mut(|pool| pool.request(owner, request, kind, slots).map_err(crate::invalid))),
+        )
+    }
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_should_yield(owner: u32, lease: u32) -> u32 {
+        u32::from(DECODERS.with_borrow(|pool| pool.should_yield(owner, lease)))
+    }
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_release(owner: u32, lease: u32) {
+        DECODERS.with_borrow_mut(|pool| pool.release(owner, lease));
+    }
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_close(owner: u32) {
+        DECODERS.with_borrow_mut(|pool| pool.close(owner));
+    }
+    #[unsafe(no_mangle)]
+    pub extern "C" fn decoder_grants() -> u32 {
+        status(DECODERS.with_borrow_mut(|pool| maleo_editor_core::json::to_js_string(&pool.grants()).map_err(crate::invalid)))
     }
 
     #[unsafe(no_mangle)]

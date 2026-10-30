@@ -1,0 +1,85 @@
+{
+	"ffmpeg": "ffmpeg version 8.1 Copyright (c) 2000-2026 the FFmpeg developers",
+	"encode": [
+		"-v",
+		"error",
+		"-y",
+		"-f",
+		"rawvideo",
+		"-pixel_format",
+		"rgb24",
+		"-video_size",
+		"160x96",
+		"-framerate",
+		"12",
+		"-i",
+		"pipe:0",
+		"-c:v",
+		"libx264",
+		"-preset",
+		"veryfast",
+		"-crf",
+		"18",
+		"-pix_fmt",
+		"yuv420p",
+		"-threads",
+		"1",
+		"-fflags",
+		"+bitexact",
+		"-flags:v",
+		"+bitexact",
+		"/Users/macbookpro/Documents/projects/maleo/data/video-parity-corpus/source/numbered.mp4"
+	],
+	"revision": "18daedccad54acefe5fdba8fa3738676d39abcc6f5246e946005090204393f94",
+	"width": 160,
+	"height": 96,
+	"count": 24,
+	"rate": 12,
+	"cases": [
+		{
+			"name": "video-scene-clock",
+			"options": ["video.scene", "video.source-rate", "video.selected-end-hold"],
+			"frames": [0, 5, 12, 24, 36, 45, 59]
+		},
+		{
+			"name": "video-timeline-crop",
+			"options": ["video.timeline", "video.crop", "video.flip", "video.fit"],
+			"frames": [0, 5, 12, 24, 36, 45, 59]
+		},
+		{
+			"name": "video-overlay-mask-color",
+			"options": ["video.overlay", "video.mask", "video.feather", "video.color", "video.rotation"],
+			"frames": [0, 5, 12, 24, 36, 45, 59]
+		},
+		{
+			"name": "video-overlap-motion",
+			"options": ["video.simultaneous-source-times", "video.blend", "video.motion"],
+			"frames": [0, 5, 12, 24, 36, 41]
+		},
+		{
+			"name": "video-reveal",
+			"options": ["video.reveal", "video.reveal-phase", "video.texture"],
+			"frames": [0, 6, 7, 15, 24, 25, 26, 47, 48, 59]
+		},
+		{
+			"name": "video-timeline-transition",
+			"options": ["video.timeline-transition"],
+			"frames": [0, 21, 22, 23, 28, 33, 34, 45, 51]
+		},
+		{
+			"name": "video-scene-transition",
+			"options": ["video.scene-transition"],
+			"frames": [0, 17, 18, 19, 23, 29, 30, 40]
+		},
+		{
+			"name": "video-overlay-mask-color-geometry",
+			"options": ["video-overlay-mask-color.geometry"],
+			"frames": [0, 5, 12, 24, 36, 45, 59]
+		},
+		{
+			"name": "video-overlap-motion-geometry",
+			"options": ["video-overlap-motion.geometry"],
+			"frames": [0, 5, 12, 24, 36, 41]
+		}
+	]
+}

@@ -24,6 +24,7 @@ import type { ClipInspectorKind } from "@models/timeline/timeline-editor-model.t
 
 /** What the inspector and the contextual bar are currently about. */
 export interface ClipSubject {
+	clipId?: string;
 	kind: ClipInspectorKind;
 	title: string;
 	/** The clip's media, so the bar can say when its file is still uploading. */
@@ -39,22 +40,24 @@ export interface ClipSubject {
  *  inspector's render closure for the same reason the group list was — the
  *  phone bar needs the same answer and could not see it there. */
 export function resolveClipSubject(sel: {
-	videoOverlay?: { kind: string; url?: string } | null;
-	audio?: { kind: AudioOverlayKind; origin?: AudioOrigin; url?: string } | null;
-	text?: { preset?: string } | null;
+	videoOverlay?: { id?: number; kind: string; url?: string } | null;
+	audio?: { id?: number; kind: AudioOverlayKind; origin?: AudioOrigin; url?: string } | null;
+	text?: { id?: number; preset?: string } | null;
 	effectId?: number | null;
 	transitionId?: number | null;
-	scene?: { name: string } | null;
+	scene?: { id?: number; name: string } | null;
 }): ClipSubject | null {
 	if (sel.videoOverlay)
 		return {
 			kind: "broll",
+			clipId: sel.videoOverlay.id == null ? undefined : `video:${sel.videoOverlay.id}`,
 			title: `Overlay · ${sel.videoOverlay.kind}`,
 			mediaUrl: sel.videoOverlay.url,
 		};
 	if (sel.audio)
 		return {
 			kind: "audio",
+			clipId: sel.audio.id == null ? undefined : `audio:${sel.audio.id}`,
 			title: audioKindLabel(sel.audio.kind, sel.audio.origin),
 			mediaUrl: sel.audio.url,
 		};
@@ -64,7 +67,12 @@ export function resolveClipSubject(sel: {
 	}
 	if (sel.effectId != null) return { kind: "effect", title: "Effect" };
 	if (sel.transitionId != null) return { kind: "transition", title: "Transition" };
-	if (sel.scene) return { kind: "scene", title: `Scene · ${sel.scene.name}` };
+	if (sel.scene)
+		return {
+			kind: "scene",
+			title: `Scene · ${sel.scene.name}`,
+			clipId: sel.scene.id == null ? undefined : `scene:${sel.scene.id}`,
+		};
 	return null;
 }
 

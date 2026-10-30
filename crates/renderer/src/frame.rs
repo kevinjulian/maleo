@@ -11,7 +11,7 @@ use crate::correction::Correction;
 use crate::coverage::{self, Entry};
 use crate::fonts::Fonts;
 use crate::gpu::Gpu;
-use crate::media::Media;
+use crate::media::{Media, Source};
 use crate::paint::Rgba;
 use crate::scene::text::WordBrush;
 use crate::scene::{Canvas, Treatments, background, caption, composition, effect, image, shape, text};
@@ -33,6 +33,8 @@ pub struct Renderer {
     fonts: Fonts,
     layouts: LayoutContext<WordBrush>,
     media: Media,
+    /// Cache IDs whose image is a texture registered with this device's vello renderer.
+    textures: std::collections::HashSet<u64>,
 }
 
 /// Treatments drawn offscreen on the renderer's device; the images stay
@@ -145,7 +147,7 @@ impl Renderer {
     pub fn with_gpu(gpu: Gpu) -> Self {
         let blur = Blur::new(&gpu.device);
         let correction = Correction::new(&gpu.device);
-        Self { gpu, blur, correction, fonts: Fonts::new(), layouts: LayoutContext::new(), media: Media::default() }
+        Self { gpu, blur, correction, fonts: Fonts::new(), layouts: LayoutContext::new(), media: Media::default(), textures: std::collections::HashSet::new() }
     }
 
     pub fn gpu(&self) -> &Gpu {
@@ -154,11 +156,18 @@ impl Renderer {
 
     /// Moves the renderer to a new device after the old one was lost (OpenSpec
     /// p2-preview-runtime D6). The GPU-owned parts are rebuilt; fonts and the
-    /// supplied images are CPU-side and stay, so no image is supplied again.
-    pub fn replace_gpu(&mut self, gpu: Gpu) {
+    /// supplied CPU images stay, so they are not supplied again. Texture frames
+    /// belonged to the lost device: they are dropped and their IDs returned, so
+    /// the host can forget them and decode again.
+    pub fn replace_gpu(&mut self, gpu: Gpu) -> Vec<u64> {
         self.blur = Blur::new(&gpu.device);
         self.correction = Correction::new(&gpu.device);
         self.gpu = gpu;
+        let dropped: Vec<u64> = self.textures.drain().collect();
+        for id in &dropped {
+            self.media.remove_frame(*id);
+        }
+        dropped
     }
 
     /// Supplies the decoded image for `url` (straight-alpha RGBA).
@@ -166,8 +175,69 @@ impl Renderer {
         self.media.put(url, width, height, rgba)
     }
 
+    /// Supplies one typed placement interval after the adapter accepts its native lease.
+    pub fn put_video(
+        &mut self,
+        request: &crate::media_requests::VideoRequest,
+        identity: maleo_media::visual_pool::FrameIdentity,
+        rgba: Vec<u8>,
+    ) -> Result<(), String> {
+        let time = request.time.ok_or("Video request is blocked")?;
+        if request.blocker.is_some() || !time.is_finite() || identity.start > time || time >= identity.end {
+            return Err("Video frame does not cover the requested source time".into());
+        }
+        self.media.put_video(&request.path, &request.url, identity, rgba)
+    }
+
+    pub fn remove_video(&mut self, path: &str) {
+        self.media.remove_video(path);
+    }
+
+    pub fn cache_media_frame(&mut self, id: u64, identity: maleo_media::visual_pool::FrameIdentity, rgba: Vec<u8>) -> Result<(), String> {
+        self.media.cache_frame(id, identity, rgba)
+    }
+
+    pub fn bind_video(&mut self, request: &crate::media_requests::VideoRequest, id: u64) -> Result<(), String> {
+        self.media.bind_video(request, id)
+    }
+
+    pub fn bind_image(&mut self, url: &str, id: u64) -> Result<(), String> {
+        self.media.bind_image(url, id)
+    }
+
+    /// A decoded frame already on this renderer's device, such as a browser
+    /// `VideoFrame` copied into `texture`. The texture must be `Rgba8Unorm` with
+    /// `COPY_SRC`, holding straight alpha.
+    pub fn cache_media_texture(&mut self, id: u64, identity: maleo_media::visual_pool::FrameIdentity, texture: wgpu::Texture) -> Result<(), String> {
+        let image = self.gpu.register(texture);
+        if let Err(error) = self.media.cache_frame_image(id, identity, image.clone()) {
+            self.gpu.release(image);
+            return Err(error);
+        }
+        self.textures.insert(id);
+        Ok(())
+    }
+
+    pub fn remove_media_frame(&mut self, id: u64) {
+        if let Some(image) = self.media.remove_frame(id)
+            && self.textures.remove(&id)
+        {
+            self.gpu.release(image);
+        }
+    }
+
     pub fn coverage(&self, storyboard: &Storyboard, frame: i64) -> Vec<Entry> {
-        coverage::report(storyboard, frame, FPS, &|url| self.media.has(url))
+        self.media_coverage(storyboard, frame, FPS)
+    }
+
+    fn media_coverage(&self, storyboard: &Storyboard, frame: i64, fps: f64) -> Vec<Entry> {
+        let mut entries = coverage::report(storyboard, frame, fps, &|url| self.media.has(url));
+        for request in crate::media_requests::video_requests(storyboard, frame, fps) {
+            if self.media.resolve(Source::Video { path: &request.path, url: &request.url, time: request.time }).is_some() {
+                entries.retain(|entry| entry.path != request.path || entry.reason != "missing media");
+            }
+        }
+        entries
     }
 
     /// Builds the frame's scene. The returned images are treatment textures to
@@ -181,7 +251,7 @@ impl Renderer {
         fps: f64,
         duration_frames: i64,
     ) -> Result<(Scene, Vec<ImageData>), String> {
-        let Self { gpu, blur, correction, fonts, layouts, media } = self;
+        let Self { gpu, blur, correction, fonts, layouts, media, .. } = self;
         let mut scene = Scene::new();
         let mut shadows = GpuTreatments { gpu, blur, correction, registered: Vec::new() };
         let mut canvas = Canvas { scene: &mut scene, media, width: f64::from(width), height: f64::from(height), pixelated: false };
@@ -270,7 +340,7 @@ impl Renderer {
         if !fps.is_finite() || fps <= 0.0 || duration_frames < 1 {
             return Err("invalid render timing".into());
         }
-        let coverage = coverage::report(storyboard, frame, fps, &|url| self.media.has(url));
+        let coverage = self.media_coverage(storyboard, frame, fps);
         let (scene, shadows) = self.compose(storyboard, frame, width, height, fps, duration_frames)?;
         let rgba = self.gpu.render(&scene, width, height, Color::TRANSPARENT).await;
         for image in shadows {
@@ -294,7 +364,7 @@ impl Renderer {
         if !fps.is_finite() || fps <= 0.0 || duration_frames < 1 {
             return Err("invalid render timing".into());
         }
-        let coverage = coverage::report(storyboard, frame, fps, &|url| self.media.has(url));
+        let coverage = self.media_coverage(storyboard, frame, fps);
         let (scene, shadows) = self.compose(storyboard, frame, width, height, fps, duration_frames)?;
         let drawn = self.gpu.draw(&scene, view, width, height, Color::TRANSPARENT);
         for image in shadows {
@@ -307,6 +377,49 @@ impl Renderer {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn video_placements_draw_independent_samples_and_never_reuse_a_wrong_interval() {
+        pollster::block_on(async {
+            let mut renderer = Renderer::new().await.unwrap();
+            let storyboard = Storyboard::parse(r#"{"scenes":[],"videoOverlays":[{"url":"same","kind":"video","durationSec":2,"layout":{"widthPct":50}},{"url":"same","kind":"video","durationSec":2,"mediaStartSec":1,"layout":{"xPct":50,"widthPct":50,"heightPct":100}}]}"#).unwrap();
+            let requests = crate::media_requests::video_requests(&storyboard, 0, FPS);
+            for (index, request) in requests.iter().enumerate() {
+                let start = index as f64;
+                let identity = maleo_media::visual_pool::FrameIdentity {
+                    source_id: "same".into(),
+                    revision: "r".into(),
+                    start,
+                    end: start + 0.5,
+                    presentation: Some([start, start + 0.5]),
+                    width: 1,
+                    height: 1,
+                };
+                let rgba = if index == 0 { vec![255, 0, 0, 255] } else { vec![0, 0, 255, 255] };
+                renderer.put_video(request, identity, rgba).unwrap();
+            }
+            let frame = renderer.render(&storyboard, 0, 80, 60).await.unwrap();
+            assert!(!frame.coverage.iter().any(|entry| entry.reason == "missing media"));
+            let pixel = |frame: &Frame, x: usize, y: usize| frame.rgba[(y * 80 + x) * 4..(y * 80 + x) * 4 + 4].to_vec();
+            assert_eq!(pixel(&frame, 10, 50), [255, 0, 0, 255]);
+            assert_eq!(pixel(&frame, 70, 50), [0, 0, 255, 255]);
+            let later = renderer.render(&storyboard, 30, 80, 60).await.unwrap();
+            assert_eq!(
+                later.coverage.iter().filter(|entry| entry.reason == "missing media").map(|entry| entry.path.as_str()).collect::<Vec<_>>(),
+                ["videoOverlays[0]", "videoOverlays[1]"]
+            );
+            assert_ne!(pixel(&later, 10, 50), [255, 0, 0, 255]);
+            assert_ne!(pixel(&later, 70, 50), [0, 0, 255, 255]);
+            renderer.remove_video(&requests[0].path);
+            let removed = renderer.render(&storyboard, 0, 80, 60).await.unwrap();
+            assert_eq!(
+                removed.coverage.iter().filter(|entry| entry.reason == "missing media").map(|entry| entry.path.as_str()).collect::<Vec<_>>(),
+                ["videoOverlays[0]"]
+            );
+            assert_ne!(pixel(&removed, 10, 50), [255, 0, 0, 255]);
+            assert_eq!(pixel(&removed, 70, 50), [0, 0, 255, 255]);
+        });
+    }
 
     #[test]
     fn session_timing_controls_effects_and_progress_without_changing_the_storyboard() {
@@ -368,6 +481,52 @@ mod tests {
         renderer.replace_gpu(pollster::block_on(Gpu::new()).unwrap());
         let after = pollster::block_on(renderer.render(&storyboard, 55, 100, 100)).unwrap();
         assert_eq!(after.rgba, before.rgba);
+    }
+
+    #[test]
+    fn texture_frames_draw_like_cpu_frames_and_drop_with_their_device() {
+        let rgba: Vec<u8> = (0..4 * 4).flat_map(|i| [i as u8 * 15, 255 - i as u8 * 15, 90, 200]).collect();
+        let identity = maleo_media::visual_pool::FrameIdentity {
+            source_id: "s".into(),
+            revision: "r".into(),
+            start: 0.0,
+            end: 1.0,
+            presentation: None,
+            width: 4,
+            height: 4,
+        };
+        let storyboard = Storyboard::parse(r#"{"scenes":[{"image":"frame","durationSec":2,"movement":"Static","transition":"cut"}]}"#).unwrap();
+        let mut cpu = renderer();
+        cpu.cache_media_frame(1, identity.clone(), rgba.clone()).unwrap();
+        cpu.bind_image("frame", 1).unwrap();
+        let expected = pollster::block_on(cpu.render(&storyboard, 0, 64, 64)).unwrap();
+
+        let mut gpu = renderer();
+        let texture = gpu.gpu().device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("cached video frame"),
+            size: wgpu::Extent3d { width: 4, height: 4, depth_or_array_layers: 1 },
+            mip_level_count: 1,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8Unorm,
+            usage: wgpu::TextureUsages::COPY_SRC | wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::TEXTURE_BINDING,
+            view_formats: &[],
+        });
+        gpu.gpu().queue.write_texture(
+            texture.as_image_copy(),
+            &rgba,
+            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(16), rows_per_image: Some(4) },
+            texture.size(),
+        );
+        gpu.cache_media_texture(1, identity, texture).unwrap();
+        gpu.bind_image("frame", 1).unwrap();
+        let drawn = pollster::block_on(gpu.render(&storyboard, 0, 64, 64)).unwrap();
+        assert!(drawn.coverage.is_empty());
+        assert_eq!(drawn.rgba, expected.rgba, "a registered texture must draw exactly as its CPU bytes");
+
+        assert_eq!(gpu.replace_gpu(pollster::block_on(Gpu::new()).unwrap()), vec![1]);
+        let lost = pollster::block_on(gpu.render(&storyboard, 0, 64, 64)).unwrap();
+        assert!(!lost.coverage.is_empty(), "a texture from the lost device must not draw");
     }
 
     #[test]

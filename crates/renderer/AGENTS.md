@@ -7,7 +7,8 @@ draws what `packages/video/src` draws for the same storyboard. Architecture:
 The renderer draws a frame when asked; when and which frame is the preview
 session's call (`crates/preview`). `crates/renderer-wasm` composes the two and
 exports the session (`init`, `set_storyboard`, `seek`, `play`, `pause`,
-`tick`, `resize`, `put_image`, `report_remotion`, `state`, `lose_device`),
+`tick`, `resize`, `put_image`, `image_requests`, `video_requests`, `put_video`, `remove_video`,
+`report_remotion`, `state`, `lose_device`),
 not per-frame draws; its module comment lists them.
 
 ## Rules
@@ -24,7 +25,16 @@ not per-frame draws; its module comment lists them.
   draw it, and add a corpus case for it, in the same change.
 - Text uses the bundled fonts only (`fonts/`). Do not enable parley's
   `system` feature.
-- No IO: hosts decode media and pass bytes (`Renderer::put_image`).
+- No IO: hosts decode media and pass bytes (`Renderer::put_image`, `Renderer::put_video`).
+  Video supply uses placement paths and source presentation intervals; a still
+  image at the same URL cannot satisfy a requested video frame. Hosts accept
+  native pool generations/revisions before supply and remove evicted placements.
+  Cache-backed hosts use `cache_media_frame` once per native frame ID and bind
+  placements to that ID. Eviction removes the buffer and every image/video binding.
+- `audio_requests::project` owns production storyboard-to-mix projection. Reuse
+  the timeline's placement rules. Portable timing, volume keys, fades and ducking
+  live in `maleo_media::audio`; IO and output devices remain host-owned.
+  `scripts/audio-mix-fixtures.ts` derives gain and document/render references.
 - Fonts and `Media` are CPU-side; GPU-owned state is rebuilt by
   `Renderer::replace_gpu` after device loss. Keep new GPU state rebuildable
   there, and never move supplied images onto the device only.
@@ -48,7 +58,8 @@ corpus/manifest.json        Remotion version, image, emoji font pin, thresholds,
                             supportedOptions mapping options to cases/frames
 corpus/<case>/storyboard.json
 corpus/<case>/case.json     width, height, frames, regions to score, options exercised
-corpus/<case>/media/*       synthetic PNG/JPEG, referenced as media/<file>
+corpus/<case>/media/*       synthetic PNG/JPEG/MP4/WebM, referenced as media/<file>
+corpus/<case>/frames/*      decoded video presentation samples for the native host
 corpus/<case>/reference/<frame>.png
 ```
 
@@ -65,6 +76,19 @@ corpus/<case>/reference/<frame>.png
   reason. Never edit a reference to pass.
 - Add a case per option of a kind, not one per kind. Media is synthetic: no
   project, stock or third-party media.
+- Video cases declare `videoFrames` in `case.json`: source URL, SHA-256 revision,
+  and contiguous half-open presentation intervals with decoded PNG paths.
+  The native host supplies the requested placement and source interval before
+  each draw. It never loads a movie as a still image. Corpus checks reject a
+  changed source hash, missing sample, or invalid interval. Native CI needs no
+  FFmpeg process. Author inputs with
+  `bun crates/renderer/tests/fixtures/build-video.ts`; its default output stays
+  under `data/video-parity-corpus` until production references pass review.
+  Production Remotion consumes the encoded movie, not the decoded PNGs.
+  Hosts retain original sample intervals in `FrameIdentity.presentation` and
+  use `start`/`end` for nearest-PTS selection windows. Equal-distance ties choose
+  the later frame. Source times before a nonzero first PTS select the first
+  sample, matching the pinned production extractor.
 - Declare each supported option in `manifest.json` `supportedOptions` with its
   case and required frames. Annotate that case's `options`. The corpus checker
   rejects missing cases, annotations or frames, and undeclared annotations.

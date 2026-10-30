@@ -3,10 +3,13 @@
 //! of preview states for every platform. Host-free: no GPU, no renderer, no
 //! IO. A host composes it with the renderer and its drawing surface
 //! (`crates/renderer-wasm` on the web) and supplies the time, the storyboard
-//! and the images.
+//! and decoded media. An activated audio output supplies consumed-sample and
+//! platform-timestamp observations; sessions without it retain host time.
 
 pub mod adapters;
+pub mod audio_clock;
 pub mod clock;
+pub mod media;
 pub mod scheduler;
 pub mod session;
 pub mod stats;

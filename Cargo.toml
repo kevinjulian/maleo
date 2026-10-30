@@ -6,6 +6,7 @@ members = [
 	"crates/app-core",
 	"crates/editor-core",
 	"crates/editor-wasm",
+	"crates/media",
 	"crates/preview",
 	"crates/renderer",
 	"crates/renderer-wasm",

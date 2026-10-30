@@ -1,0 +1,1798 @@
+[
+	{
+		"name": "interval 0.25x",
+		"operation": {
+			"type": "interval",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 4.5
+			}
+		}
+	},
+	{
+		"name": "time 0.25x reverse=False elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 0.25x reverse=False elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 3.75
+		}
+	},
+	{
+		"name": "time 0.25x reverse=False elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 4.5
+		}
+	},
+	{
+		"name": "time 0.25x reverse=False elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 4.5
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=False 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 4.0
+			}
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=False 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 4.0,
+				"end": 4.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=False 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": false,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 3.625,
+				"end": 4.25
+			}
+		}
+	},
+	{
+		"name": "time 0.25x reverse=True elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 4.5
+		}
+	},
+	{
+		"name": "time 0.25x reverse=True elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 4.25
+		}
+	},
+	{
+		"name": "time 0.25x reverse=True elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 0.25x reverse=True elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=True 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 4.0,
+				"end": 4.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=True 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 4.0
+			}
+		}
+	},
+	{
+		"name": "split trim 0.25x reverse=True 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.25,
+			"reverse": true,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 3.75,
+				"end": 4.375
+			}
+		}
+	},
+	{
+		"name": "retime from 0.25x",
+		"operation": {
+			"type": "retime",
+			"start": 3.5,
+			"duration": 4,
+			"previous": 0.25,
+			"next": 2
+		},
+		"expected": {
+			"ok": 0.5
+		}
+	},
+	{
+		"name": "scene hold 0.25x frame=0",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.25,
+			"fps": 30,
+			"frame": 0
+		},
+		"expected": {
+			"ok": [0, false]
+		}
+	},
+	{
+		"name": "scene hold 0.25x frame=57",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.25,
+			"fps": 30,
+			"frame": 57
+		},
+		"expected": {
+			"ok": [56, true]
+		}
+	},
+	{
+		"name": "scene hold 0.25x frame=90",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.25,
+			"fps": 30,
+			"frame": 90
+		},
+		"expected": {
+			"ok": [56, true]
+		}
+	},
+	{
+		"name": "interval 0.5x",
+		"operation": {
+			"type": "interval",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 5.5
+			}
+		}
+	},
+	{
+		"name": "time 0.5x reverse=False elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 0.5x reverse=False elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 4.0
+		}
+	},
+	{
+		"name": "time 0.5x reverse=False elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 5.5
+		}
+	},
+	{
+		"name": "time 0.5x reverse=False elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 5.5
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=False 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 4.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=False 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 4.5,
+				"end": 5.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=False 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": false,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 3.75,
+				"end": 5.0
+			}
+		}
+	},
+	{
+		"name": "time 0.5x reverse=True elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 5.5
+		}
+	},
+	{
+		"name": "time 0.5x reverse=True elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 5.0
+		}
+	},
+	{
+		"name": "time 0.5x reverse=True elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 0.5x reverse=True elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=True 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 4.5,
+				"end": 5.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=True 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 4.5
+			}
+		}
+	},
+	{
+		"name": "split trim 0.5x reverse=True 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 0.5,
+			"reverse": true,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 4.0,
+				"end": 5.25
+			}
+		}
+	},
+	{
+		"name": "retime from 0.5x",
+		"operation": {
+			"type": "retime",
+			"start": 3.5,
+			"duration": 4,
+			"previous": 0.5,
+			"next": 2
+		},
+		"expected": {
+			"ok": 1.0
+		}
+	},
+	{
+		"name": "scene hold 0.5x frame=0",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.5,
+			"fps": 30,
+			"frame": 0
+		},
+		"expected": {
+			"ok": [0, false]
+		}
+	},
+	{
+		"name": "scene hold 0.5x frame=57",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.5,
+			"fps": 30,
+			"frame": 57
+		},
+		"expected": {
+			"ok": [57, false]
+		}
+	},
+	{
+		"name": "scene hold 0.5x frame=90",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 0.5,
+			"fps": 30,
+			"frame": 90
+		},
+		"expected": {
+			"ok": [58, true]
+		}
+	},
+	{
+		"name": "interval 1x",
+		"operation": {
+			"type": "interval",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 7.5
+			}
+		}
+	},
+	{
+		"name": "time 1x reverse=False elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 1x reverse=False elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 4.5
+		}
+	},
+	{
+		"name": "time 1x reverse=False elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 7.5
+		}
+	},
+	{
+		"name": "time 1x reverse=False elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 7.5
+		}
+	},
+	{
+		"name": "split trim 1x reverse=False 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 5.5
+			}
+		}
+	},
+	{
+		"name": "split trim 1x reverse=False 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 5.5,
+				"end": 7.5
+			}
+		}
+	},
+	{
+		"name": "split trim 1x reverse=False 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": false,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 4.0,
+				"end": 6.5
+			}
+		}
+	},
+	{
+		"name": "time 1x reverse=True elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 7.5
+		}
+	},
+	{
+		"name": "time 1x reverse=True elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 6.5
+		}
+	},
+	{
+		"name": "time 1x reverse=True elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 1x reverse=True elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "split trim 1x reverse=True 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 5.5,
+				"end": 7.5
+			}
+		}
+	},
+	{
+		"name": "split trim 1x reverse=True 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 5.5
+			}
+		}
+	},
+	{
+		"name": "split trim 1x reverse=True 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 1,
+			"reverse": true,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 4.5,
+				"end": 7.0
+			}
+		}
+	},
+	{
+		"name": "retime from 1x",
+		"operation": {
+			"type": "retime",
+			"start": 3.5,
+			"duration": 4,
+			"previous": 1,
+			"next": 2
+		},
+		"expected": {
+			"ok": 2.0
+		}
+	},
+	{
+		"name": "scene hold 1x frame=0",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 1,
+			"fps": 30,
+			"frame": 0
+		},
+		"expected": {
+			"ok": [0, false]
+		}
+	},
+	{
+		"name": "scene hold 1x frame=57",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 1,
+			"fps": 30,
+			"frame": 57
+		},
+		"expected": {
+			"ok": [57, false]
+		}
+	},
+	{
+		"name": "scene hold 1x frame=90",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 1,
+			"fps": 30,
+			"frame": 90
+		},
+		"expected": {
+			"ok": [59, true]
+		}
+	},
+	{
+		"name": "interval 2x",
+		"operation": {
+			"type": "interval",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 11.5
+			}
+		}
+	},
+	{
+		"name": "time 2x reverse=False elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 2x reverse=False elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 5.5
+		}
+	},
+	{
+		"name": "time 2x reverse=False elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 11.5
+		}
+	},
+	{
+		"name": "time 2x reverse=False elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 11.5
+		}
+	},
+	{
+		"name": "split trim 2x reverse=False 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 7.5
+			}
+		}
+	},
+	{
+		"name": "split trim 2x reverse=False 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 7.5,
+				"end": 11.5
+			}
+		}
+	},
+	{
+		"name": "split trim 2x reverse=False 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": false,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 4.5,
+				"end": 9.5
+			}
+		}
+	},
+	{
+		"name": "time 2x reverse=True elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 11.5
+		}
+	},
+	{
+		"name": "time 2x reverse=True elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 9.5
+		}
+	},
+	{
+		"name": "time 2x reverse=True elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 2x reverse=True elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "split trim 2x reverse=True 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 7.5,
+				"end": 11.5
+			}
+		}
+	},
+	{
+		"name": "split trim 2x reverse=True 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 7.5
+			}
+		}
+	},
+	{
+		"name": "split trim 2x reverse=True 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 2,
+			"reverse": true,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 5.5,
+				"end": 10.5
+			}
+		}
+	},
+	{
+		"name": "retime from 2x",
+		"operation": {
+			"type": "retime",
+			"start": 3.5,
+			"duration": 4,
+			"previous": 2,
+			"next": 2
+		},
+		"expected": {
+			"ok": 4.0
+		}
+	},
+	{
+		"name": "scene hold 2x frame=0",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 2,
+			"fps": 30,
+			"frame": 0
+		},
+		"expected": {
+			"ok": [0, false]
+		}
+	},
+	{
+		"name": "scene hold 2x frame=57",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 2,
+			"fps": 30,
+			"frame": 57
+		},
+		"expected": {
+			"ok": [57, false]
+		}
+	},
+	{
+		"name": "scene hold 2x frame=90",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 2,
+			"fps": 30,
+			"frame": 90
+		},
+		"expected": {
+			"ok": [59, true]
+		}
+	},
+	{
+		"name": "interval 4x",
+		"operation": {
+			"type": "interval",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 19.5
+			}
+		}
+	},
+	{
+		"name": "time 4x reverse=False elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 4x reverse=False elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 7.5
+		}
+	},
+	{
+		"name": "time 4x reverse=False elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 19.5
+		}
+	},
+	{
+		"name": "time 4x reverse=False elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 19.5
+		}
+	},
+	{
+		"name": "split trim 4x reverse=False 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 11.5
+			}
+		}
+	},
+	{
+		"name": "split trim 4x reverse=False 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 11.5,
+				"end": 19.5
+			}
+		}
+	},
+	{
+		"name": "split trim 4x reverse=False 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": false,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 5.5,
+				"end": 15.5
+			}
+		}
+	},
+	{
+		"name": "time 4x reverse=True elapsed=-1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"elapsed": -1
+		},
+		"expected": {
+			"ok": 19.5
+		}
+	},
+	{
+		"name": "time 4x reverse=True elapsed=1",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"elapsed": 1
+		},
+		"expected": {
+			"ok": 15.5
+		}
+	},
+	{
+		"name": "time 4x reverse=True elapsed=4",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"elapsed": 4
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "time 4x reverse=True elapsed=6",
+		"operation": {
+			"type": "time",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"elapsed": 6
+		},
+		"expected": {
+			"ok": 3.5
+		}
+	},
+	{
+		"name": "split trim 4x reverse=True 0..2",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"from": 0,
+			"to": 2
+		},
+		"expected": {
+			"ok": {
+				"start": 11.5,
+				"end": 19.5
+			}
+		}
+	},
+	{
+		"name": "split trim 4x reverse=True 2..4",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"from": 2,
+			"to": 4
+		},
+		"expected": {
+			"ok": {
+				"start": 3.5,
+				"end": 11.5
+			}
+		}
+	},
+	{
+		"name": "split trim 4x reverse=True 0.5..3",
+		"operation": {
+			"type": "slice",
+			"start": 3.5,
+			"duration": 4,
+			"rate": 4,
+			"reverse": true,
+			"from": 0.5,
+			"to": 3
+		},
+		"expected": {
+			"ok": {
+				"start": 7.5,
+				"end": 17.5
+			}
+		}
+	},
+	{
+		"name": "retime from 4x",
+		"operation": {
+			"type": "retime",
+			"start": 3.5,
+			"duration": 4,
+			"previous": 4,
+			"next": 2
+		},
+		"expected": {
+			"ok": 8.0
+		}
+	},
+	{
+		"name": "scene hold 4x frame=0",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 4,
+			"fps": 30,
+			"frame": 0
+		},
+		"expected": {
+			"ok": [0, false]
+		}
+	},
+	{
+		"name": "scene hold 4x frame=57",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 4,
+			"fps": 30,
+			"frame": 57
+		},
+		"expected": {
+			"ok": [57, false]
+		}
+	},
+	{
+		"name": "scene hold 4x frame=90",
+		"operation": {
+			"type": "hold",
+			"duration": 2,
+			"rate": 4,
+			"fps": 30,
+			"frame": 90
+		},
+		"expected": {
+			"ok": [59, true]
+		}
+	},
+	{
+		"name": "scene window 2/6 preserve=False",
+		"operation": {
+			"type": "scene",
+			"selected": 2,
+			"scene": 6,
+			"preserve": false
+		},
+		"expected": {
+			"ok": 6
+		}
+	},
+	{
+		"name": "scene window 2/6 preserve=True",
+		"operation": {
+			"type": "scene",
+			"selected": 2,
+			"scene": 6,
+			"preserve": true
+		},
+		"expected": {
+			"ok": 2
+		}
+	},
+	{
+		"name": "scene window 8/6 preserve=True",
+		"operation": {
+			"type": "scene",
+			"selected": 8,
+			"scene": 6,
+			"preserve": true
+		},
+		"expected": {
+			"ok": 6
+		}
+	},
+	{
+		"name": "scene window 0.25/6 preserve=True",
+		"operation": {
+			"type": "scene",
+			"selected": 0.25,
+			"scene": 6,
+			"preserve": true
+		},
+		"expected": {
+			"ok": 0.25
+		}
+	},
+	{
+		"name": "invalid interval -1/2/1",
+		"operation": {
+			"type": "interval",
+			"start": -1,
+			"duration": 2,
+			"rate": 1
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "invalid interval 0/0/1",
+		"operation": {
+			"type": "interval",
+			"start": 0,
+			"duration": 0,
+			"rate": 1
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "invalid interval 0/2/0.125",
+		"operation": {
+			"type": "interval",
+			"start": 0,
+			"duration": 2,
+			"rate": 0.125
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "invalid interval 0/2/8",
+		"operation": {
+			"type": "interval",
+			"start": 0,
+			"duration": 2,
+			"rate": 8
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse valid derivative 0.25x",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 0.25,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"ok": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"mediaStartSec": 9.5
+			}
+		}
+	},
+	{
+		"name": "reverse valid derivative 1x",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 1,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"ok": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"mediaStartSec": 8
+			}
+		}
+	},
+	{
+		"name": "reverse valid derivative 2x",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"ok": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"mediaStartSec": 6
+			}
+		}
+	},
+	{
+		"name": "reverse valid derivative 4x",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 4,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"ok": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"mediaStartSec": 2
+			}
+		}
+	},
+	{
+		"name": "reverse rejects missing",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": null,
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects replaced",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000003",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects stale",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r2"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects extended",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 20,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects before interval",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 0,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects unmanaged",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "https://example.invalid/file.mp4",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": 2,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "reverse rejects negative derivative",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": true,
+			"derivative": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000002",
+				"sourceUrl": "/api/media/00000000-0000-4000-8000-000000000001",
+				"sourceRevision": "r1",
+				"startSec": -1,
+				"durationSec": 12
+			},
+			"revision": "r1"
+		},
+		"expected": {
+			"error": true
+		}
+	},
+	{
+		"name": "forward needs no derivative",
+		"operation": {
+			"type": "reverse",
+			"url": "/api/media/00000000-0000-4000-8000-000000000001",
+			"start": 4,
+			"duration": 2,
+			"rate": 2,
+			"reverse": false
+		},
+		"expected": {
+			"ok": {
+				"url": "/api/media/00000000-0000-4000-8000-000000000001",
+				"mediaStartSec": 4
+			}
+		}
+	}
+]

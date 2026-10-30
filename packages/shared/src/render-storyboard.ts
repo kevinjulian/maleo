@@ -278,7 +278,7 @@ function firstSceneImage(scene: Scene, refs: RefsState): string {
 
 // The image the render should use for a scene: prefer the scene's own generated
 // frame (scene.src), then any attached/default reference image.
-function sceneRenderImage(scene: Scene, refs: RefsState): string {
+export function sceneRenderImage(scene: Scene, refs: RefsState): string {
 	const primaryClip = scene.visualClips?.find((clip) => clip.primary) ?? scene.visualClips?.[0];
 	return primaryClip?.url ?? scene.src ?? firstSceneImage(scene, refs);
 }

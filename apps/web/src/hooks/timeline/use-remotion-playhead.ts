@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { RefObject, SyntheticEvent } from "react";
 import type { PlayerRef } from "@remotion/player";
 import { flushSync } from "react-dom";
@@ -26,7 +26,10 @@ export function useRemotionPlayhead(
 	fps: number,
 	durationFrames: number,
 	syncKey?: unknown,
+	playbackReady = true,
 ): RemotionPlayhead {
+	const ready = useRef(playbackReady);
+	ready.current = playbackReady;
 	const playhead = useMemo(() => createPlayheadHandle(0), []);
 	const [playing, setPlaying] = useState(false);
 	const [stalled, setStalled] = useState(false);
@@ -68,14 +71,28 @@ export function useRemotionPlayhead(
 	const [player, setPlayer] = useState<PlayerRef | null>(null);
 	const playerRef = useMemo<RefObject<PlayerRef | null>>(() => {
 		let current: PlayerRef | null = null;
+		let original: PlayerRef | null = null;
 		return {
 			get current(): PlayerRef | null {
 				return current;
 			},
 			set current(next: PlayerRef | null) {
-				if (next === current) return;
-				current = next;
-				setPlayer(next);
+				if (next === original) return;
+				original = next;
+				const play = (...args: Parameters<PlayerRef["play"]>): void => {
+					if (ready.current) next?.play(...args);
+				};
+				// Every imperative caller, including replay, shares this gate.
+				current = next
+					? new Proxy(next, {
+							get(target, key) {
+								if (key === "play") return play;
+								// SAFETY: the proxy forwards only existing Player properties, including inherited events.
+								return key in target ? target[key as keyof PlayerRef] : undefined;
+							},
+						})
+					: null;
+				setPlayer(current);
 			},
 		};
 	}, []);
@@ -102,6 +119,13 @@ export function useRemotionPlayhead(
 	 * "Pause" and never start anything, so it is kept as intent and handed to the
 	 * player when it lands. */
 	const playWhenReady = useRef(false);
+	useLayoutEffect(() => {
+		if (playbackReady) return;
+		playWhenReady.current = false;
+		resetStall();
+		player?.pause();
+		setPlaying(false);
+	}, [playbackReady, player, resetStall]);
 	const maxFrame = Math.max(0, durationFrames - 1);
 	const durationSec = Math.max(0, maxFrame / fps);
 
@@ -125,6 +149,10 @@ export function useRemotionPlayhead(
 
 	const togglePlay = useCallback(
 		(event?: SyntheticEvent): void => {
+			if (!ready.current && !player?.isPlaying()) {
+				playWhenReady.current = false;
+				return;
+			}
 			resetStall();
 			if (!player) {
 				playWhenReady.current = !playWhenReady.current;

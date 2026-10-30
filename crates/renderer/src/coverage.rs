@@ -19,6 +19,9 @@ pub const SUPPORTED: &[&str] = &[
     "scene-image",
     "timeline-image",
     "image-overlay",
+    "scene-video",
+    "timeline-video",
+    "video-overlay",
     "text-plain",
     "shape-rect",
     "shape-circle",
@@ -52,11 +55,11 @@ pub struct Inspected {
     pub problems: Vec<String>,
 }
 
-/// Layout keys that do not change how a still image draws.
+/// Media timing is checked by media_requests; these keys do not alter visual treatments.
 const INERT_LAYOUT_KEYS: [&str; 7] = ["playbackRate", "reverse", "preservePitch", "aspectLocked", "sourceAudioExtraction", "reverseMedia", "volume"];
 
 /// Every element visible at `frame` with its problems. `has_media` says
-/// whether the host supplied an image URL.
+/// whether source media exists. Renderer refines video availability by placement and interval.
 pub fn inspect(storyboard: &Storyboard, frame: i64, fps: f64, has_media: &dyn Fn(&str) -> bool) -> Vec<Inspected> {
     let mut out = Vec::new();
     for visible in timeline::visible(storyboard, frame, fps) {
@@ -125,7 +128,9 @@ fn visual(kind: &str, image: &'static str, video: &'static str, path: String, mu
     if kind == "image" {
         Inspected { kind: image, path, problems }
     } else {
-        problems.insert(0, format!("`{kind}` media"));
+        if kind != "video" {
+            problems.insert(0, format!("`{kind}` media"));
+        }
         Inspected { kind: video, path, problems }
     }
 }
@@ -377,12 +382,12 @@ mod tests {
     }
 
     #[test]
-    fn supported_visual_animation_does_not_hide_video_or_unknown_options() {
+    fn supported_video_animation_does_not_hide_unknown_options() {
         let entries = report_at(
             r#"{"scenes":[],"videoOverlays":[{"url":"video.mp4","kind":"video","durationSec":2,"layout":{"rotationDeg":30,"flipX":true,"animation":{"tracks":{"opacity":[{"t":0,"v":0.5}]},"futureOption":true}}}]}"#,
             0,
         );
-        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media", "animation option `futureOption`"]);
+        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["animation option `futureOption`"]);
     }
 
     #[test]
@@ -398,27 +403,27 @@ mod tests {
     }
 
     #[test]
-    fn supported_transitions_keep_video_media_reasons() {
+    fn supported_video_transitions_have_no_blanket_media_reason() {
         let entries = report_at(r#"{"scenes":[],"videoOverlays":[{"url":"a","kind":"video","durationSec":2,"transition":"flip"}]}"#, 0);
-        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+        assert!(entries.is_empty());
     }
 
     #[test]
-    fn supported_reveals_keep_video_media_reasons() {
+    fn supported_video_reveals_have_no_blanket_media_reason() {
         let entries = report_at(
             r#"{"scenes":[],"videoOverlays":[{"url":"a","kind":"video","reveal":{"type":"fade"}},{"url":"b","reveal":{"type":"wipe","phase":"black_then_color"}},{"url":"c","reveal":{"type":"wipe","texture":"paper"}}]}"#,
             0,
         );
-        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+        assert!(entries.is_empty());
     }
 
     #[test]
-    fn supported_mask_and_color_do_not_hide_video_media() {
+    fn supported_video_mask_and_color_have_no_blanket_media_reason() {
         let entries = report_at(
             r#"{"scenes":[],"videoOverlays":[{"url":"v","kind":"video","durationSec":2,"layout":{"color":{"brightness":2,"contrast":1,"saturation":1},"mask":{"shape":"rectangle","xPct":0,"yPct":0,"widthPct":100,"heightPct":100,"rotationDeg":0,"featherPct":50,"inverted":false}}}]}"#,
             0,
         );
-        assert_eq!(entries.iter().map(|e| e.reason.as_str()).collect::<Vec<_>>(), ["`video` media"]);
+        assert!(entries.is_empty());
     }
 
     #[test]
@@ -463,14 +468,14 @@ mod tests {
     }
 
     #[test]
-    fn supported_effects_do_not_hide_video() {
+    fn supported_effects_do_not_hide_unknown_media() {
         for kind in ["fade_in", "fade_out", "zoom_out_from_black", "flash", "zoom_punch", "whip_pan"] {
             let json = format!(
-                r#"{{"scenes":[],"videoOverlays":[{{"url":"a.png","kind":"video","durationSec":1}}],"effects":[{{"effect":"{kind}","durationSec":1}}]}}"#
+                r#"{{"scenes":[],"videoOverlays":[{{"url":"a.png","kind":"future-video","durationSec":1}}],"effects":[{{"effect":"{kind}","durationSec":1}}]}}"#
             );
             let entries = report_at(&json, 0);
             assert_eq!(entries.len(), 1);
-            assert_eq!(entries[0].reason, "`video` media");
+            assert_eq!(entries[0].reason, "`future-video` media");
         }
     }
 

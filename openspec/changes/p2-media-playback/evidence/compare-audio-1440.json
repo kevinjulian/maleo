@@ -1,0 +1,31 @@
+{
+	"report": {
+		"contexts": ["closed", "closed"],
+		"peak": 0.0624847412109375,
+		"preview": {
+			"status": "paused",
+			"message": null,
+			"position": 1.908421666642825,
+			"frame": 57,
+			"dropped": 1,
+			"times": {
+				"last": 8.599999904632568,
+				"p50": 9,
+				"p95": 17.200000047683716,
+				"count": 63
+			},
+			"drift": -0.673589998569486,
+			"coverage": [],
+			"generation": 3,
+			"mediaGeneration": 1,
+			"mediaReady": true,
+			"blockers": [],
+			"clockOwner": "host",
+			"error": null
+		},
+		"reference": []
+	},
+	"initialWrites": 1,
+	"ownershipWrites": 0,
+	"errors": []
+}

@@ -17,6 +17,12 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- Rust compare mode decodes complete local video sources and mixes audio through
+  bounded decoder and PCM pools. An explicit audio selector keeps reference
+  audio as default and gives Rust sole output ownership when selected. Rust
+  follows consumed audio and output timestamps, with bounded recovery and named
+  failures. Normal preview and export remain on Remotion.
+
 - Rust compare mode draws keyed image/plain-text animation, camera presets and paths, local correction and masks with feather, blends, reveals, placement-specific transitions, timeline effects, scene labels, vignette, grain, chapter pills and progress. Unsupported media and templates remain visible in coverage. Option-level production goldens and exact seek checks cover the port. Remotion remains the normal preview and export renderer.
 
 - Editing on the preview canvas runs in the shared Rust core (`crates/app-core` `canvas/`), so every client gets the same boxes, snapping and commands. The web canvas sends pointer, touch and key input to the engine through new `canvas_*` editor-engine calls and draws what comes back. An element is picked where it is drawn at the playhead, including an animated one. Shift-click on the canvas adds or removes an element from the selection, and a multi-selection moves, resizes and rotates as one group box in one undo step. A two-finger pinch scales the selection and a twist rotates it. Inspector layout edits use the same engine rules. The engine's size budget is now 240 KB gzip and 620 KB raw.
@@ -31,6 +37,14 @@ entry here. See `CONTRIBUTING.md`.
 - `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
 
 ### Changed
+
+- Preview Play waits for complete local bytes and validation for every placed
+  source, including muted audio, hidden video and later clips. Clip badges show
+  progress or failure, and clip actions offer Retry. Keyboard, replay and
+  programmatic starts use the same gate. Media changes pause playback and require
+  a fresh Play after loading. Editing and paused scrubbing remain available.
+  Template Studio applies this gate to its audio cues. Preview cache state does
+  not change authored source URLs or export inputs.
 
 - Text and Shapes no longer offer new variant creation. New timeline shapes keep their intended proportions across project aspect ratios, so Circle starts round.
 - **Breaking:** writable projects and saved element definitions retire stock visual presets. Run the explicit read-only/apply visual cleanup before starting an existing installation. Cleanup deletes retired clips without ripple, preserves surviving composition timing, deletes empty saved definitions, and leaves media objects intact. Stale editors must reload; historical restore creates a cleaned head. See the self-hosting cleanup procedure.

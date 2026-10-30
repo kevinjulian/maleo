@@ -21,6 +21,7 @@ import { usePhoneLayout } from "@hooks/editor/use-phone-layout.ts";
 import { usePendingMediaVersion } from "@hooks/editor/use-pending-media-version.ts";
 import { usePendingUpload } from "@hooks/editor/use-pending-upload.ts";
 import { ClipUploadBadge } from "@components/timeline/media/pending-upload.tsx";
+import { PreviewClipBadge } from "./media/preview-clip-state.tsx";
 import { isPendingMedia, resolveMediaUrl } from "@models/core/pending-media-sources.ts";
 import { FreeClipRange, type ClipGeometry } from "./free-clip-range.tsx";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
@@ -348,7 +349,7 @@ const MediaClipView = memo(function MediaClipView({
 	const pct = resizing && originalDur ? Math.round((c.dur / originalDur) * 100) : null;
 	const body = (
 		<>
-			{upload && <ClipUploadBadge state={upload} />}
+			{upload ? <ClipUploadBadge state={upload} /> : <PreviewClipBadge id={c.id} />}
 			{c.media === "image" || c.media === "video" ? (
 				// Full-width thumbnail strip. Video without a poster shows its first frame.
 				thumb ? (

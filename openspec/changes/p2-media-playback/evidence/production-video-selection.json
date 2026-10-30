@@ -1,0 +1,390 @@
+{
+	"image": "sha256:a83ea6dea45681c80a287330411b13b743f25d0a3788d85fa46497e875f5e762",
+	"fps": 1200,
+	"observations": [
+		{
+			"source": "cfr-av.mp4",
+			"frame": 0,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0,
+			"id": 0
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 49,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.04083333333333333,
+			"id": 0
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 50,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.041666666666666664,
+			"id": 1
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 51,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.0425,
+			"id": 1
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.08333333333333333,
+			"id": 1
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 120,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.1,
+			"id": 1
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 480,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.4,
+			"id": 5
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 1080,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.9,
+			"id": 11
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 1440,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.2,
+			"id": 14
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 2100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.75,
+			"id": 21
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 2388,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.99,
+			"id": 23
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 240,
+			"rate": 0.25,
+			"sourceStart": 0.25,
+			"sourceTime": 0.3,
+			"id": 4
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 240,
+			"rate": 0.5,
+			"sourceStart": 0.25,
+			"sourceTime": 0.35,
+			"id": 4
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 240,
+			"rate": 1,
+			"sourceStart": 0.25,
+			"sourceTime": 0.45,
+			"id": 5
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 240,
+			"rate": 2,
+			"sourceStart": 0.25,
+			"sourceTime": 0.65,
+			"id": 8
+		},
+		{
+			"source": "cfr-av.mp4",
+			"frame": 240,
+			"rate": 4,
+			"sourceStart": 0.25,
+			"sourceTime": 1.05,
+			"id": 13
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 0,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0,
+			"id": 0
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 49,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.04083333333333333,
+			"id": 0
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 50,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.041666666666666664,
+			"id": 0
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 51,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.0425,
+			"id": 0
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.08333333333333333,
+			"id": 2
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 120,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.1,
+			"id": 2
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 480,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.4,
+			"id": 5
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 1080,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.9,
+			"id": 11
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 1440,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.2,
+			"id": 14
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 2100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.75,
+			"id": 21
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 2388,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.99,
+			"id": 23
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 240,
+			"rate": 0.25,
+			"sourceStart": 0.25,
+			"sourceTime": 0.3,
+			"id": 3
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 240,
+			"rate": 0.5,
+			"sourceStart": 0.25,
+			"sourceTime": 0.35,
+			"id": 5
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 240,
+			"rate": 1,
+			"sourceStart": 0.25,
+			"sourceTime": 0.45,
+			"id": 5
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 240,
+			"rate": 2,
+			"sourceStart": 0.25,
+			"sourceTime": 0.65,
+			"id": 8
+		},
+		{
+			"source": "vfr-silent.mp4",
+			"frame": 240,
+			"rate": 4,
+			"sourceStart": 0.25,
+			"sourceTime": 1.05,
+			"id": 12
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 0,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 49,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.04083333333333333,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 50,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.041666666666666664,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 51,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.0425,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.08333333333333333,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 120,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.1,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 480,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.4,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 1080,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 0.9,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 1440,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.2,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 2100,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.75,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 2388,
+			"rate": 1,
+			"sourceStart": 0,
+			"sourceTime": 1.99,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 240,
+			"rate": 0.25,
+			"sourceStart": 0.25,
+			"sourceTime": 0.3,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 240,
+			"rate": 0.5,
+			"sourceStart": 0.25,
+			"sourceTime": 0.35,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 240,
+			"rate": 1,
+			"sourceStart": 0.25,
+			"sourceTime": 0.45,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 240,
+			"rate": 2,
+			"sourceStart": 0.25,
+			"sourceTime": 0.65,
+			"id": 0
+		},
+		{
+			"source": "nonzero-silent.mp4",
+			"frame": 240,
+			"rate": 4,
+			"sourceStart": 0.25,
+			"sourceTime": 1.05,
+			"id": 0
+		}
+	]
+}

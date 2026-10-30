@@ -26,6 +26,7 @@ export interface VuiRemotionPreviewProps<T extends object> {
 	playbackRate?: number;
 	clickToPlay?: boolean;
 	spaceKeyToPlayOrPause?: boolean;
+	playbackReady?: boolean;
 	style?: CSSProperties;
 	acknowledgeRemotionLicense?: boolean;
 	onFrame?: (frame: number) => void;
@@ -45,6 +46,7 @@ export function VuiRemotionPreview<T extends object>({
 	playbackRate = 1,
 	clickToPlay = true,
 	spaceKeyToPlayOrPause = true,
+	playbackReady = true,
 	style,
 	acknowledgeRemotionLicense = false,
 	onFrame,
@@ -97,8 +99,8 @@ export function VuiRemotionPreview<T extends object>({
 			loop={loop}
 			initiallyMuted={initiallyMuted}
 			playbackRate={playbackRate}
-			clickToPlay={clickToPlay}
-			spaceKeyToPlayOrPause={spaceKeyToPlayOrPause}
+			clickToPlay={playbackReady && clickToPlay}
+			spaceKeyToPlayOrPause={playbackReady && spaceKeyToPlayOrPause}
 			style={style}
 			acknowledgeRemotionLicense={acknowledgeRemotionLicense}
 			{...(currentFrame == null ? {} : { initialFrame: currentFrame })}

@@ -19,6 +19,11 @@ export function provideEditorEngine(engine: Engine | (() => Engine)): void {
 	executor = undefined;
 }
 
+/** Whether a host has provided the engine yet; a page provides it once its WASM loads. */
+export function hasEditorEngine(): boolean {
+	return source !== undefined;
+}
+
 /** The provided engine, for shared code that calls it directly (`p1-app-core`). */
 export function editorEngine(): Engine {
 	if (!source) throw new Error("no editor engine provided: call provideEditorEngine first");

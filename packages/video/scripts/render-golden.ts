@@ -54,6 +54,8 @@ const MIME: Record<string, string> = {
 	".png": "image/png",
 	".jpg": "image/jpeg",
 	".jpeg": "image/jpeg",
+	".mp4": "video/mp4",
+	".webm": "video/webm",
 };
 
 /** Replaces every `media/<file>` string in the storyboard with a data URI. */

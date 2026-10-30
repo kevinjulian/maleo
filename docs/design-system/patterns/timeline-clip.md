@@ -62,6 +62,29 @@ A clip whose asset is still importing (OpenSpec `use-media-while-uploading` D7) 
 
 Story: `Patterns/Timeline/Pending clip badge`.
 
+### Preview readiness badge
+
+Preview readiness is independent of upload state. The same feature-owned badge
+geometry exposes `Preview queued`, `Loading preview`, `Validating preview` or
+`Preview failed: <reason>`. A ready clip shows no badge.
+
+- Loading is a progress line along the clip's bottom edge, with no icon. It
+  shows measured byte progress when total bytes are known; unknown totals,
+  queued work and validation use an indeterminate line.
+- Failure shows a warning icon without a line. Color alone never identifies the
+  state: every badge keeps its accessible name.
+- Narrow clips, too short for a readable line, show a small loader icon
+  instead. The badge accepts no input and preserves selection, time geometry
+  and trim handles.
+- Phone clip actions show the full state and Retry for failed sources. Retry
+  changes preview state only. It creates no document edit or undo entry.
+- A clip with multiple sources reports the native aggregate state. Shared
+  source updates reach every referencing clip, including muted and hidden clips.
+- While upload is pending, its badge keeps its own upload label. Preview state
+  remains available in clip actions. Completion does not imply preview readiness.
+
+Story: `Patterns/Timeline/Preview clip badge`.
+
 ## Accessibility and states
 
 Selected, focused, dragging/resizing, locked/unavailable and pending media where supported. Gesture cancellation restores valid geometry. Controls keep their accessible behavior when composed; color/hover alone cannot carry essential meaning. Values and allowed actions come from the feature; this pattern does not own IO or authority.

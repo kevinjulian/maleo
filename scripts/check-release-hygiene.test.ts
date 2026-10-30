@@ -106,6 +106,18 @@ describe("release hygiene", () => {
 		).toBe(true);
 	});
 
+	test("flags email addresses but not versioned package specifiers", () => {
+		const root = fixture();
+		writeFileSync(
+			join(root, "fixture.json"),
+			'{"patch":"mediabunny@1.45.0.patch","owner":"dev@mail2.org"}\n',
+		);
+		const emails = checkReleaseTree(root).filter(
+			(item) => item.rule === "private-email" && item.file === "fixture.json",
+		);
+		expect(emails).toHaveLength(1);
+	});
+
 	test("reports banned identifier and missing notice coverage", () => {
 		const root = fixture();
 		writeFileSync(join(root, "README.md"), "Use Focal and Supertonic.\n");

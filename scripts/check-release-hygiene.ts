@@ -161,7 +161,10 @@ export function checkReleaseTree(root: string, trackedFiles?: string[]): Release
 			);
 		}
 		if (rel.startsWith("scripts/check-release-hygiene")) continue;
-		for (const match of content.matchAll(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi)) {
+		// The first domain label needs a letter, so `name@1.2.3.patch` package specifiers pass.
+		for (const match of content.matchAll(
+			/[A-Z0-9._%+-]+@[A-Z0-9-]*[A-Z][A-Z0-9.-]*\.[A-Z]{2,}/gi,
+		)) {
 			if (!match[0].toLowerCase().endsWith("@example.com"))
 				findings.push(finding(rel, "private-email", "non-example email address remains"));
 		}

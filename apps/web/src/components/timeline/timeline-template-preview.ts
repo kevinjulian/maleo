@@ -301,8 +301,11 @@ export function usePreviewSfx(
 ): PreviewSfx {
 	const [audio, setAudio] = useState<TimelineTemplatePreviewAudio | null>(null);
 	const [status, setStatus] = useState<"idle" | "loading" | "ready" | "missing">("idle");
+	const identity = JSON.stringify([cue, exactUrl, kind]);
+	const [owner, setOwner] = useState("");
 	useEffect(() => {
 		let active = true;
+		setOwner(identity);
 		const value = cue.trim();
 		if (!value) {
 			setAudio(null);
@@ -320,6 +323,7 @@ export function usePreviewSfx(
 			};
 		}
 		setStatus("loading");
+		setAudio(null);
 		void (
 			kind === "music"
 				? resolveTimelineTemplatePreviewMusic(value)
@@ -340,6 +344,8 @@ export function usePreviewSfx(
 		return () => {
 			active = false;
 		};
-	}, [cue, exactUrl, kind]);
-	return { audio, status };
+	}, [cue, exactUrl, kind, identity]);
+	return owner === identity
+		? { audio, status }
+		: { audio: null, status: cue.trim() ? "loading" : "idle" };
 }

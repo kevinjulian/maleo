@@ -1,0 +1,43 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"hideBase": false,
+	"showLabels": false,
+	"bgColor": "#ffffff",
+	"videoOverlays": [
+		{
+			"url": "media/numbered.mp4",
+			"kind": "video",
+			"startSec": 0,
+			"durationSec": 2,
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 80,
+				"heightPct": 75,
+				"fit": "stretch",
+				"rotationDeg": 12,
+				"color": {
+					"brightness": 0.8,
+					"contrast": 1.3,
+					"saturation": 0.5
+				},
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 15,
+					"widthPct": 80,
+					"heightPct": 65,
+					"rotationDeg": -20,
+					"featherPct": 4,
+					"inverted": false
+				}
+			}
+		}
+	]
+}

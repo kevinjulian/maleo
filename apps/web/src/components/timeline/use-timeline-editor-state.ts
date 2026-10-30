@@ -60,6 +60,18 @@ export function useTimelineEditorState({
 	const { settings, setSettings, hookVariants, setHookVariants, pacingDevices } = creative;
 	const { refs, setRefs, pool, setPool, ensureMediaAsset, mediaAssets } = library;
 	const imports = useProjectMediaImport(projectId, library, store, writers);
+	// Upload progress patches rows at every percent; keep the map identity while its files are unchanged.
+	const heldFiles = useRef<ReadonlyMap<string, File>>(new Map());
+	const pendingFiles = useMemo(() => {
+		const next = new Map(
+			imports.rows.flatMap((row) => (row.file ? [[row.key, row.file] as const] : [])),
+		);
+		const held = heldFiles.current;
+		if (next.size === held.size && [...next].every(([key, file]) => held.get(key) === file))
+			return held;
+		heldFiles.current = next;
+		return next;
+	}, [imports.rows]);
 	// Per-type editor views, projected from the canonical clip document (source of
 	// truth) by the store. Clip-native reads: no legacy derived-array props — the
 	// same memoized projection the parent used, now sourced at the editor seam.
@@ -160,6 +172,7 @@ export function useTimelineEditorState({
 		previewDims,
 		previewStoryboard,
 		previewProps,
+		previewMedia,
 		previewForDoc,
 		brandPalette,
 		previewDuration,
@@ -171,6 +184,8 @@ export function useTimelineEditorState({
 		togglePlay,
 		playerRef,
 	} = usePreviewComposition({
+		projectId,
+		pendingFiles,
 		onPlayheadReady,
 		config,
 		refs,
@@ -180,7 +195,6 @@ export function useTimelineEditorState({
 		trackFlags,
 		captions,
 		pacingDevices,
-		deps: [scenes, overlays, audioOverlays, videoOverlays, effects, transitions],
 	});
 	const { stepRate } = usePlaybackRate(chromeStore);
 	/* One selection, one set of transitions — see `selection/selection-model.ts`.
@@ -490,6 +504,7 @@ export function useTimelineEditorState({
 		previewForDoc,
 		brandPalette,
 		previewFrames,
+		previewMedia,
 		playhead,
 		playing,
 		stalled,

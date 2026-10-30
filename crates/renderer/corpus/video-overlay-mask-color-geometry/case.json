@@ -1,0 +1,140 @@
+{
+	"width": 1080,
+	"height": 1920,
+	"frames": [0, 5, 12, 24, 36, 45, 59],
+	"options": ["video-overlay-mask-color.geometry"],
+	"regions": [
+		{
+			"name": "video",
+			"rect": [0, 0, 1080, 1920]
+		}
+	],
+	"videoFrames": [
+		{
+			"url": "media/numbered.mp4",
+			"revision": "18daedccad54acefe5fdba8fa3738676d39abcc6f5246e946005090204393f94",
+			"frames": [
+				{
+					"start": 0,
+					"end": 0.08333333333333333,
+					"file": "frames/00.png"
+				},
+				{
+					"start": 0.08333333333333333,
+					"end": 0.16666666666666666,
+					"file": "frames/01.png"
+				},
+				{
+					"start": 0.16666666666666666,
+					"end": 0.25,
+					"file": "frames/02.png"
+				},
+				{
+					"start": 0.25,
+					"end": 0.3333333333333333,
+					"file": "frames/03.png"
+				},
+				{
+					"start": 0.3333333333333333,
+					"end": 0.4166666666666667,
+					"file": "frames/04.png"
+				},
+				{
+					"start": 0.4166666666666667,
+					"end": 0.5,
+					"file": "frames/05.png"
+				},
+				{
+					"start": 0.5,
+					"end": 0.5833333333333334,
+					"file": "frames/06.png"
+				},
+				{
+					"start": 0.5833333333333334,
+					"end": 0.6666666666666666,
+					"file": "frames/07.png"
+				},
+				{
+					"start": 0.6666666666666666,
+					"end": 0.75,
+					"file": "frames/08.png"
+				},
+				{
+					"start": 0.75,
+					"end": 0.8333333333333334,
+					"file": "frames/09.png"
+				},
+				{
+					"start": 0.8333333333333334,
+					"end": 0.9166666666666666,
+					"file": "frames/10.png"
+				},
+				{
+					"start": 0.9166666666666666,
+					"end": 1,
+					"file": "frames/11.png"
+				},
+				{
+					"start": 1,
+					"end": 1.0833333333333333,
+					"file": "frames/12.png"
+				},
+				{
+					"start": 1.0833333333333333,
+					"end": 1.1666666666666667,
+					"file": "frames/13.png"
+				},
+				{
+					"start": 1.1666666666666667,
+					"end": 1.25,
+					"file": "frames/14.png"
+				},
+				{
+					"start": 1.25,
+					"end": 1.3333333333333333,
+					"file": "frames/15.png"
+				},
+				{
+					"start": 1.3333333333333333,
+					"end": 1.4166666666666667,
+					"file": "frames/16.png"
+				},
+				{
+					"start": 1.4166666666666667,
+					"end": 1.5,
+					"file": "frames/17.png"
+				},
+				{
+					"start": 1.5,
+					"end": 1.5833333333333333,
+					"file": "frames/18.png"
+				},
+				{
+					"start": 1.5833333333333333,
+					"end": 1.6666666666666667,
+					"file": "frames/19.png"
+				},
+				{
+					"start": 1.6666666666666667,
+					"end": 1.75,
+					"file": "frames/20.png"
+				},
+				{
+					"start": 1.75,
+					"end": 1.8333333333333333,
+					"file": "frames/21.png"
+				},
+				{
+					"start": 1.8333333333333333,
+					"end": 1.9166666666666667,
+					"file": "frames/22.png"
+				},
+				{
+					"start": 1.9166666666666667,
+					"end": 2,
+					"file": "frames/23.png"
+				}
+			]
+		}
+	]
+}

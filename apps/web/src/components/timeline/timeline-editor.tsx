@@ -35,6 +35,7 @@ import { TimelineSceneDrawer } from "./timeline-scene-drawer.tsx";
 import { TimelinePanelHost } from "./timeline-panel-host.tsx";
 import { TimelineTracks } from "./timeline-tracks.tsx";
 import { TimelineStage } from "./timeline-stage.tsx";
+import { PreviewClipProvider } from "./media/preview-clip-state.tsx";
 import { TimelineClipInspectorSheet, useDockedInspector } from "./timeline-clip-inspector.tsx";
 import { TimelineBottomBar } from "./timeline-bottom-bar.tsx";
 import { clipGroupOptions, resolveClipSubject } from "./clip-property-groups.tsx";
@@ -276,108 +277,110 @@ export function TimelineEditor(props: TimelineEditorProps): JSX.Element {
 	);
 
 	return (
-		<div className="tl2">
-			{genErr && (
-				<div role="alert" className="tl2-err">
-					<span style={{ flex: 1 }}>{genErr}</span>
-					<IconButton size="xs" onClick={() => setGenErr(null)} title="Dismiss">
-						{Ic.x(ICON.sm)}
-					</IconButton>
-				</div>
-			)}
+		<PreviewClipProvider media={editor.previewMedia}>
+			<div className="tl2">
+				{genErr && (
+					<div role="alert" className="tl2-err">
+						<span style={{ flex: 1 }}>{genErr}</span>
+						<IconButton size="xs" onClick={() => setGenErr(null)} title="Dismiss">
+							{Ic.x(ICON.sm)}
+						</IconButton>
+					</div>
+				)}
 
-			<TimelinePhoneWorkspace
-				phone={phone}
-				chromeStore={chromeStore}
-				panel={{ store, writers, library, chat, projectId, ops: panelOps, view: panelView }}
-			>
-				<div className="tl2-body">
-					{phone && tools}
+				<TimelinePhoneWorkspace
+					phone={phone}
+					chromeStore={chromeStore}
+					panel={{ store, writers, library, chat, projectId, ops: panelOps, view: panelView }}
+				>
+					<div className="tl2-body">
+						{phone && tools}
 
-					{/* The splitter's height override is desktop-only, along with the
+						{/* The splitter's height override is desktop-only, along with the
 				    splitter. A value dragged on a desktop session would otherwise
 				    still apply after a rotation to phone width, sizing the timeline
 				    from a layout that no longer exists — and there would be no
 				    control on screen to correct it with. */}
-					<VuiEditorWorkspace
-						contractVersion={1}
-						mode="embedded"
-						label="Content timeline editor"
-						className="tl2-stage tl2-content-vui-shell"
-						rootRef={stageRef}
-						/* Desktop only: at phone width the docked column has nowhere to go
+						<VuiEditorWorkspace
+							contractVersion={1}
+							mode="embedded"
+							label="Content timeline editor"
+							className="tl2-stage tl2-content-vui-shell"
+							rootRef={stageRef}
+							/* Desktop only: at phone width the docked column has nowhere to go
 					   beside a preview, and the same inspector becomes the sheet below. */
-						inspector={
-							!phone && dockedInspector ? (
+							inspector={
+								!phone && dockedInspector ? (
+									<>
+										{dockedInspector}
+										{separator("inspector", "Resize preview and inspector")}
+									</>
+								) : undefined
+							}
+							tools={
+								!phone ? (
+									<>
+										<div className="tl2-tools">{tools}</div>
+										{separator("tools", "Resize tools and preview")}
+									</>
+								) : undefined
+							}
+							style={paneSizing.style}
+							preview={
 								<>
-									{dockedInspector}
-									{separator("inspector", "Resize preview and inspector")}
+									<TimelineStage
+										store={store}
+										writers={writers}
+										chromeStore={chromeStore}
+										library={library}
+										creative={creative}
+										projectId={projectId}
+										trackFlags={trackFlags}
+										canvasRef={canvasRef}
+										ops={stageOps}
+										view={stageView}
+									/>
 								</>
-							) : undefined
-						}
-						tools={
-							!phone ? (
+							}
+							timeline={
 								<>
-									<div className="tl2-tools">{tools}</div>
-									{separator("tools", "Resize tools and preview")}
+									{separator("timeline", "Resize upper panels and timeline")}
+									<TimelineTracks
+										store={store}
+										chromeStore={chromeStore}
+										trackFlags={trackFlags}
+										trackRef={trackRef}
+										writers={writers}
+										selection={selectionStore}
+										ops={trackOps}
+										view={trackView}
+									/>
 								</>
-							) : undefined
-						}
-						style={paneSizing.style}
-						preview={
-							<>
-								<TimelineStage
-									store={store}
-									writers={writers}
-									chromeStore={chromeStore}
-									library={library}
-									creative={creative}
-									projectId={projectId}
-									trackFlags={trackFlags}
-									canvasRef={canvasRef}
-									ops={stageOps}
-									view={stageView}
-								/>
-							</>
-						}
-						timeline={
-							<>
-								{separator("timeline", "Resize upper panels and timeline")}
-								<TimelineTracks
-									store={store}
-									chromeStore={chromeStore}
-									trackFlags={trackFlags}
-									trackRef={trackRef}
-									writers={writers}
-									selection={selectionStore}
-									ops={trackOps}
-									view={trackView}
-								/>
-							</>
-						}
-					/>
-
-					{phone && <TimelineClipInspectorSheet {...inspectorBag} />}
-
-					{editorScene && (
-						<TimelineSceneDrawer
-							scene={editorScene}
-							index={scenes.findIndex((s) => s.id === editorScene.id)}
-							aspect={aspect}
-							library={library}
-							projectReferences={projectReferences}
-							projectId={projectId}
-							genBusy={Boolean(gen[editorScene.id])}
-							genEndBusy={Boolean(genEnd[editorScene.id])}
-							onClose={() => setSelection((prev) => ({ ...prev, editorSceneId: undefined }))}
-							onGenerate={(slot) => genFrame(editorScene.id, slot)}
-							onClearEnd={() => upd(editorScene.id, "endSrc", undefined)}
-							onUpd={upd}
-							onToggleRef={(cat, id) => toggleSceneRef(editorScene.id, cat, id)}
+							}
 						/>
-					)}
-				</div>
-			</TimelinePhoneWorkspace>
-		</div>
+
+						{phone && <TimelineClipInspectorSheet {...inspectorBag} />}
+
+						{editorScene && (
+							<TimelineSceneDrawer
+								scene={editorScene}
+								index={scenes.findIndex((s) => s.id === editorScene.id)}
+								aspect={aspect}
+								library={library}
+								projectReferences={projectReferences}
+								projectId={projectId}
+								genBusy={Boolean(gen[editorScene.id])}
+								genEndBusy={Boolean(genEnd[editorScene.id])}
+								onClose={() => setSelection((prev) => ({ ...prev, editorSceneId: undefined }))}
+								onGenerate={(slot) => genFrame(editorScene.id, slot)}
+								onClearEnd={() => upd(editorScene.id, "endSrc", undefined)}
+								onUpd={upd}
+								onToggleRef={(cat, id) => toggleSceneRef(editorScene.id, cat, id)}
+							/>
+						)}
+					</div>
+				</TimelinePhoneWorkspace>
+			</div>
+		</PreviewClipProvider>
 	);
 }

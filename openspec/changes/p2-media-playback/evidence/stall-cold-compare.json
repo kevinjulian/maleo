@@ -1,0 +1,1149 @@
+{
+	"readinessWaitMs": 1315,
+	"worstMs": 123,
+	"atPx": 0,
+	"transport": "Play",
+	"moved": true,
+	"decodedFrames": {
+		"900": 94
+	},
+	"coldStarts": [0.9795310000476837],
+	"localUrls": {
+		"blob:http://127.0.0.1:3031/15956542-40d8-4a07-8727-c4963a2fda82": "http://127.0.0.1:3031/stall-probe.mp4"
+	},
+	"audioEvents": [
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 0
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 0
+		},
+		{
+			"action": "resume",
+			"state": "running",
+			"currentTime": 0
+		},
+		{
+			"action": "resume",
+			"state": "running",
+			"currentTime": 0.032
+		},
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 6.058666666666666
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 6.058666666666666
+		}
+	],
+	"native": {
+		"status": "paused",
+		"message": null,
+		"position": 0,
+		"frame": 0,
+		"dropped": 0,
+		"times": {
+			"last": 4.5,
+			"p50": 6.600000023841858,
+			"p95": 8.300000071525574,
+			"count": 181
+		},
+		"drift": -0.8585799971389552,
+		"coverage": [],
+		"generation": 2,
+		"mediaGeneration": 1,
+		"mediaReady": true,
+		"blockers": [],
+		"clockOwner": "host",
+		"error": null
+	},
+	"nativeSamples": [
+		{
+			"position": 0,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.045085666571299234,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.07832366661898293,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.11249366666666669,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.15428633335717523,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.17916199995231624,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.21242500002384182,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.2451479999523163,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.2792199999761581,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.3115753333094915,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.345848333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.3791903333333334,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.4125146666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.4453936666428248,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.47922566659514115,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.5035723334287008,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.5451186666905085,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.57834,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.6209866666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.6459270000238417,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.6790540000476838,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.7116763333333334,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.7457593333571753,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.7784953334048589,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.8126906665951411,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.8452206665951412,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.8790976666905087,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.9126226666905084,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.945849,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 0.9795310000476837,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.0287449999761582,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.0455220000476835,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.0866256665712992,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.1117513333571754,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.1459753334048592,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.1790663334287006,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.211986333404859,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.2452146665951411,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.2791956665951412,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.3121346665712994,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.345787666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.3792569999761581,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.4125280000476839,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.454289666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.479390333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.5124553334048587,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.5458833333810171,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.578366333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.6116003333094917,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.6458956666428248,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.678726666595141,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.7123976666428247,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.7458249999999997,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.7791689999523164,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.8125310000476835,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.8450580000476835,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.8791239999523162,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.9124763334048587,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.945744333357175,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 1.9791783333333333,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.012583666690509,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.046009666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.0792346665951413,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.1124956666666668,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.145919000023842,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.179218999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.2126489999523162,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.2454160000238415,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.2791449999523166,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.3126763333333336,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.3457583333571757,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.3791803333333337,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.412481666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.445909666642825,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.4792006665951414,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.512510666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.5454776666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.5790200000476835,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.6124410000238423,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.6458180000000002,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.679041000047684,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.712552333309491,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.745466333404859,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.7783673333810173,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.801858,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.845825666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.896009666666666,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.912327666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.9460280000476837,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 2.979238999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.021421666642825,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.0454450000238418,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.088128666690509,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.1125483334287005,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.1450803334287003,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.1792613333571755,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.212811666618982,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.2453986666428247,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.2792266665951413,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.312595666690508,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.345622666571299,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.379152999952316,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.4118299999999993,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.4451579999523156,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.4782189999761584,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.512576333428701,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.545145333333333,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.579203333333333,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.6120663334287006,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.645308666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.679129666571299,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.711698666595141,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.7452176665951407,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.7792259999761577,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.8116519999523164,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.8459210000238424,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.8785440000476834,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.912591333428701,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.9458563333810166,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 3.9792013333333327,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.012162333333333,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.045820666618982,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.087407333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.112621666571299,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.145954000023841,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.179231999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.212551000047684,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.2457219999761575,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.279386333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.3125623334287,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.345690333333334,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.379370333381017,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.411586333309491,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.445836666618983,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.478200666595141,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.511723666595141,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.544990666666666,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.578559000047684,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.612323,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.645457000023842,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.679491333404859,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.7036206665712985,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.7450803334287,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.778470333404859,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.812619666571298,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.845488666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.879327666618982,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.912501666666666,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.945618666571299,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 4.978463000023843,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.0126230000715255,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.045953000023841,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.078619999952317,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.112495333404858,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.145853333381018,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.178401333381016,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.212513666666666,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.2451946665951406,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.278436666642825,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.312601666690508,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.345716666595141,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.379234999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.411746999976157,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.44532,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.479148000071526,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.5118863333810175,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.545162333333334,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.578683333333333,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.612475333404859,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.6455166666666665,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.67918866659514,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.712518666666667,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.745386666642824,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.778709999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.812342,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.845220999976158,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.879286333357174,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.912053333428702,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.9450743334287,
+			"status": "playing",
+			"error": null,
+			"coverage": []
+		},
+		{
+			"position": 5.9450743334287,
+			"status": "paused",
+			"error": null,
+			"coverage": []
+		}
+	]
+}

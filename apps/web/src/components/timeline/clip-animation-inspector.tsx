@@ -43,8 +43,13 @@ export function ClipAnimationInspector(props: AnimationInspectorProps) {
 		"clipId" in request ? request.clipId : `${request.fromClipId}:${request.toClipId}`;
 	const [replay, setReplay] = useState<(ReplayWindow & { identity: string }) | null>(null);
 	useEffect(() => {
+		if (!view.previewMedia.readiness.ready) {
+			setReplay(null);
+			return;
+		}
 		const player = view.playerRef.current;
-		if (!player || !replay || replay.identity !== identity) return;
+		if (!player || !replay || replay.identity !== identity || !view.previewMedia.readiness.ready)
+			return;
 		const end = Math.ceil(replay.end * view.previewFps);
 		const stop = ({ detail }: { detail: { frame: number } }) => {
 			if (detail.frame >= end) {
@@ -62,7 +67,7 @@ export function ClipAnimationInspector(props: AnimationInspectorProps) {
 			player.removeEventListener("frameupdate", stop);
 			player.pause();
 		};
-	}, [replay, identity, view.playerRef, view.previewFps]);
+	}, [replay, identity, view.playerRef, view.previewFps, view.previewMedia.readiness.ready]);
 	const onReplay = (window: ReplayWindow | null) => setReplay(window && { ...window, identity });
 	return (
 		<div
@@ -127,6 +132,7 @@ function AnimationSection({
 			? edgeAnimationState(info.animation, edge, info.duration, info.values, info.audio)
 			: "none";
 	const play = (time = seconds) => {
+		if (!view.previewMedia.readiness.ready) return;
 		const window = info
 			? Math.min(info.duration, Math.max(time + 0.3, 0.8))
 			: Math.max(0.8, time + 0.6);
@@ -274,7 +280,12 @@ function AnimationSection({
 								/>
 							</PropertyRow>
 						)}
-						<Button size="sm" variant="ghost" onClick={() => play()}>
+						<Button
+							size="sm"
+							variant="ghost"
+							disabled={!view.previewMedia.readiness.ready}
+							onClick={() => play()}
+						>
 							Replay in preview
 						</Button>
 					</InspectorSection>

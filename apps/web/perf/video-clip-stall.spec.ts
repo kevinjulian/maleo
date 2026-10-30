@@ -1,13 +1,32 @@
 import { devices, expect, test } from "@playwright/test";
 import { execFileSync } from "node:child_process";
+import { writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { FIXTURE_PROJECT_ID } from "../visual/screens.ts";
 import { replayApi } from "../visual/har.ts";
+import type { PreviewState } from "../src/models/timeline/preview-protocol.ts";
 
+test.use({
+	launchOptions: {
+		args: [
+			"--enable-unsafe-webgpu",
+			...(process.platform === "darwin" ? ["--use-angle=metal"] : []),
+		],
+	},
+});
 const HAR = resolve(dirname(fileURLToPath(import.meta.url)), "../visual/fixtures/api.har");
 let videoPath: string;
-type AudioRecoveryState = typeof globalThis & { __freezeNextAudioResume?: boolean };
+type AudioRecoveryState = typeof globalThis & {
+	__freezeNextAudioResume?: boolean;
+	__freezeAudioUntilReleased?: boolean;
+};
+type AudioProbeState = typeof globalThis & {
+	__stallLocalUrls: Record<string, string>;
+	__stallPreviewStates: PreviewState[];
+	__stallColdStarts: number[];
+	__stallAudioEvents: Array<{ action: string; state: string; currentTime: number }>;
+};
 
 test.beforeAll(async ({ browserName }, testInfo) => {
 	console.log(`STALL_BROWSER ${browserName}`);
@@ -66,7 +85,16 @@ test("Play unlocks shared audio tags during a trusted click", async ({ page, con
 	await expect(transport).toHaveAttribute("aria-label", "Play");
 });
 
-for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio recovery"]) {
+for (const variant of [
+	"desktop",
+	"phone",
+	"compare",
+	"cold compare",
+	"recovery",
+	"phone recovery",
+	"audio recovery",
+]) {
+	const compare = variant.includes("compare");
 	const phone = variant.includes("phone");
 	const audioRecovery = variant === "audio recovery";
 	const recovery = variant.includes("recovery") && !audioRecovery;
@@ -84,8 +112,94 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 		test(
 			recovery || audioRecovery ? "preview stall recovery" : "video clip stall",
 			async ({ page, context }, testInfo) => {
+				test.setTimeout(45_000);
 				await replayApi(context, HAR);
-				if (audioRecovery)
+				if (variant === "cold compare") {
+					await context.route("**/renderer/preview-worker.js", async (route) => {
+						const response = await route.fetch();
+						await route.fulfill({
+							response,
+							body:
+								`const NativeWorker=Worker;let delayedVideo=false;globalThis.Worker=class extends NativeWorker{postMessage(message,...rest){if(!delayedVideo&&message?.type==="init"&&message.source?.metadata?.width){delayedVideo=true;self.postMessage({type:"cold-video-init"});setTimeout(()=>super.postMessage(message,...rest),600);}else super.postMessage(message,...rest);}};\n` +
+								(await response.text()),
+						});
+					});
+				}
+				await page.addInitScript(() => {
+					const probe = globalThis as AudioProbeState;
+					probe.__stallAudioEvents = [];
+					probe.__stallLocalUrls = {};
+					probe.__stallPreviewStates = [];
+					probe.__stallColdStarts = [];
+					const files = new WeakMap<Blob, string>();
+					const create = URL.createObjectURL;
+					URL.createObjectURL = (blob) => {
+						const url = create(blob);
+						if (blob instanceof Blob && files.has(blob))
+							probe.__stallLocalUrls[url] = files.get(blob)!;
+						return url;
+					};
+					const NativeWorker = Worker;
+					globalThis.Worker = class extends NativeWorker {
+						private sourceUrls = new Map<number, string>();
+						constructor(url: string | URL, options?: WorkerOptions) {
+							super(url, options);
+							if (String(url).includes("/renderer/preview-worker.js"))
+								this.addEventListener(
+									"message",
+									(event: MessageEvent<{ type: string; state: PreviewState }>) => {
+										if (event.data.type === "cold-video-init") {
+											probe.__stallColdStarts.push(
+												probe.__stallPreviewStates.at(-1)?.position ?? 0,
+											);
+											event.stopImmediatePropagation();
+											return;
+										}
+										if (event.data.type === "state")
+											probe.__stallPreviewStates.push(event.data.state);
+									},
+								);
+							if (String(url).includes("/preview-media-worker.js"))
+								this.addEventListener(
+									"message",
+									(event: MessageEvent<{ type: string; file: File; requestId: number }>) => {
+										if (event.data.type === "complete" && event.data.file instanceof File) {
+											const source = this.sourceUrls.get(event.data.requestId);
+											if (source) files.set(event.data.file, source);
+										}
+									},
+								);
+						}
+						override postMessage(message: unknown, transfer: Transferable[]): void;
+						override postMessage(message: unknown, options?: StructuredSerializeOptions): void;
+						override postMessage(
+							message: unknown,
+							options: Transferable[] | StructuredSerializeOptions = [],
+						): void {
+							// SAFETY: instrumentation observes the source-client load contract without changing it.
+							const load = message as {
+								type?: string;
+								source?: { requestId: number; target?: { url: string } };
+							};
+							if (load.type === "load" && load.source?.target?.url)
+								this.sourceUrls.set(load.source.requestId, load.source.target.url);
+							if (Array.isArray(options)) super.postMessage(message, options);
+							else super.postMessage(message, options);
+						}
+					};
+					for (const action of ["resume", "suspend", "close"] as const) {
+						const original = AudioContext.prototype[action];
+						AudioContext.prototype[action] = function () {
+							probe.__stallAudioEvents.push({
+								action,
+								state: this.state,
+								currentTime: this.currentTime,
+							});
+							return original.call(this);
+						};
+					}
+				});
+				if (audioRecovery || recovery)
 					await page.addInitScript(() => {
 						const audioProbe = globalThis as AudioRecoveryState;
 						const resume = AudioContext.prototype.resume;
@@ -95,22 +209,18 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 							return frozen ?? getTimestamp.call(this);
 						};
 						AudioContext.prototype.resume = function () {
-							if (audioProbe.__freezeNextAudioResume) {
+							if (audioProbe.__freezeNextAudioResume || audioProbe.__freezeAudioUntilReleased) {
 								audioProbe.__freezeNextAudioResume = false;
-								frozen = getTimestamp.call(this);
+								frozen ??= getTimestamp.call(this);
 							} else frozen = null;
 							return resume.call(this);
 						};
 					});
 				const delayMs = Number(process.env.STALL_PROBE_DELAY_MS ?? (phone ? 1500 : 800));
-				let releaseMedia = () => {};
-				const mediaReady = new Promise<void>((resolve) => {
-					releaseMedia = resolve;
-				});
+
 				await context.route("**/stall-probe.mp4*", async (route) => {
 					console.log(`STALL_REQUEST ${JSON.stringify({ delayMs, url: route.request().url() })}`);
-					if (recovery) await mediaReady;
-					else await new Promise((resolve) => setTimeout(resolve, delayMs));
+					await new Promise((resolve) => setTimeout(resolve, delayMs));
 					await route.fulfill({ path: videoPath, contentType: "video/mp4" });
 				});
 				await page.addInitScript((secondClip) => {
@@ -170,9 +280,15 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 						realFetch,
 					);
 				}, phone);
-				await page.goto(`/content/${FIXTURE_PROJECT_ID}`);
+				await page.goto(`/content/${FIXTURE_PROJECT_ID}${compare ? "?renderer=compare" : ""}`);
 				await page.locator(".tl2-timeline").waitFor({ state: "visible", timeout: 60_000 });
-				await page.waitForTimeout(1500);
+				const readinessStart = Date.now();
+				await expect(page.locator(".tl2-timeline [data-transport='play']")).toBeEnabled();
+				const readinessWaitMs = Date.now() - readinessStart;
+				if (compare) {
+					await page.getByRole("combobox", { name: "Compare audio output" }).click();
+					await page.getByRole("option", { name: "Rust audio", exact: true }).click();
+				}
 				if (audioRecovery) {
 					const transport = page.locator(".tl2-timeline [data-transport='play']");
 					const head = page.locator("[data-vui-slot='playhead']");
@@ -196,6 +312,13 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 					return;
 				}
 				if (recovery) {
+					const transport = page.locator(".tl2-timeline [data-transport='play']");
+					await transport.click();
+					await page.waitForTimeout(700);
+					await transport.click();
+					await page.evaluate(() => {
+						(globalThis as AudioRecoveryState).__freezeAudioUntilReleased = true;
+					});
 					const labels = await page.evaluate(async () => {
 						const transport = document.querySelector<HTMLButtonElement>(
 							".tl2-timeline [data-transport='play']",
@@ -224,8 +347,9 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 					expect(
 						await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
 					).toBe(true);
-					releaseMedia();
-					const transport = page.locator(".tl2-timeline [data-transport='play']");
+					await page.evaluate(() => {
+						(globalThis as AudioRecoveryState).__freezeAudioUntilReleased = false;
+					});
 					if (phone) await transport.click();
 					else {
 						await transport.focus();
@@ -238,12 +362,14 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 					return;
 				}
 				const result = await page.evaluate(
-					async (sampleMs) => {
+					async ({ sampleMs, compare }) => {
 						const head = document.querySelector<HTMLElement>("[data-vui-slot='playhead']")!;
 						const transport = document.querySelector<HTMLButtonElement>(
 							".tl2-timeline [data-transport='play']",
 						)!;
 						const read = (): number => {
+							if (compare)
+								return (globalThis as AudioProbeState).__stallPreviewStates.at(-1)?.frame ?? 0;
 							const match = /translateX\(([-0-9.]+)px\)/.exec(head.style.transform);
 							return match ? Number(match[1]) : 0;
 						};
@@ -265,8 +391,11 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 								return;
 							}
 							for (const video of document.querySelectorAll<HTMLVideoElement>("video")) {
-								if (video.src.includes("stall-probe.mp4")) {
-									const id = new URL(video.src).searchParams.get("clip") ?? "900";
+								const source = (globalThis as AudioProbeState).__stallLocalUrls[
+									video.src.split("#")[0]!
+								];
+								if (source?.includes("stall-probe.mp4")) {
+									const id = new URL(source).searchParams.get("clip") ?? "900";
 									decodedFrames[id] = Math.max(
 										decodedFrames[id] ?? 0,
 										video.getVideoPlaybackQuality().totalVideoFrames,
@@ -291,12 +420,48 @@ for (const variant of ["desktop", "phone", "recovery", "phone recovery", "audio 
 						running = false;
 						const label = transport.getAttribute("aria-label");
 						transport.click();
-						return { worstMs: Math.round(worstMs), atPx, transport: label, moved, decodedFrames };
+						return {
+							worstMs: Math.round(worstMs),
+							atPx,
+							transport: label,
+							moved,
+							decodedFrames,
+							coldStarts: (globalThis as AudioProbeState).__stallColdStarts,
+							localUrls: (globalThis as AudioProbeState).__stallLocalUrls,
+							audioEvents: (globalThis as AudioProbeState).__stallAudioEvents,
+							native: (globalThis as AudioProbeState).__stallPreviewStates.at(-1),
+							nativeSamples: (globalThis as AudioProbeState).__stallPreviewStates
+								.filter((state) => state.clockOwner === "audio")
+								.map((state) => ({
+									position: state.position,
+									status: state.status,
+									error: state.error,
+									coverage: state.coverage,
+								})),
+						};
 					},
-					phone ? 11000 : 7000,
+					{ sampleMs: phone ? 11000 : 7000, compare },
 				);
-				console.log(`STALL ${JSON.stringify(result)}`);
+				writeFileSync(
+					testInfo.outputPath("stall.json"),
+					JSON.stringify({ readinessWaitMs, ...result }, null, 2),
+				);
+				const { nativeSamples, localUrls: _urls, ...summary } = result;
+				console.log(
+					`STALL ${JSON.stringify({ readinessWaitMs, ...summary, maximumNativePosition: Math.max(0, ...nativeSamples.map((state) => state.position)) })}`,
+				);
 				expect(result.moved).toBe(true);
+				if (variant === "cold compare") {
+					expect(result.coldStarts).toHaveLength(1);
+					expect(result.coldStarts[0]).toBeLessThanOrEqual(1.5);
+				}
+				if (compare) {
+					expect(Math.max(...result.nativeSamples.map((state) => state.position))).toBeGreaterThan(
+						5,
+					);
+					expect(result.native?.coverage).toEqual([]);
+					expect(result.nativeSamples.some((state) => state.status === "playing")).toBe(true);
+				}
 				expect(result.decodedFrames["900"]).toBeGreaterThan(1);
 				if (phone) expect(result.decodedFrames["901"]).toBeGreaterThan(1);
 				expect(result.worstMs).toBeLessThanOrEqual(250);

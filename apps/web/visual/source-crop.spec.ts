@@ -40,6 +40,8 @@ for (const width of [1440, 320])
 			await context.route(`**${url}`, (route) =>
 				route.fulfill({ body: source, contentType: "image/png" }),
 			);
+			// Preview loads complete local bytes through a signature, then draws from a blob URL.
+			await context.route(`**${url}/sign`, (route) => route.fulfill({ json: { url } }));
 			const first = editorChatProjectDetail.storyboards[0]!;
 			let saved = {
 				...first.storyboard_json,
@@ -108,7 +110,7 @@ for (const width of [1440, 320])
 			await expect.poll(() => layout()?.crop?.widthPct).toBe(50);
 			expect(saved.clips.find((clip) => clip.id === "video:98")?.video?.url).toBe(url);
 			if (width === 1440) {
-				const image = page.locator(`.tl2-canvas img[src$="${url}"]`).first();
+				const image = page.locator('.tl2-canvas img[src^="blob:"]').first();
 				await expect(image).toBeVisible();
 				await expect
 					.poll(

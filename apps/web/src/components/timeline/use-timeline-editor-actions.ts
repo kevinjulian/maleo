@@ -65,6 +65,7 @@ export function useTimelineEditorActions(
 		previewDims,
 		previewStoryboard,
 		previewProps,
+		previewMedia,
 		previewForDoc,
 		brandPalette,
 		previewFrames,
@@ -511,6 +512,7 @@ export function useTimelineEditorActions(
 		previewProps,
 		previewForDoc,
 		previewFrames,
+		previewMedia,
 		brandPalette,
 		gen,
 		animateBusy,
@@ -597,6 +599,7 @@ export function useTimelineEditorActions(
 	const trackView: TimelineTracksView = {
 		playhead,
 		playing,
+		playbackReady: previewMedia.readiness.ready,
 		total,
 		pxPerSec,
 		freeClips,

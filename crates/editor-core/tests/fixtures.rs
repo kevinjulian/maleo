@@ -315,7 +315,13 @@ fn the_engine_depends_on_nothing_that_does_io() {
     let names: Vec<&str> = dependencies.lines().filter_map(|line| line.split_once('=').map(|(name, _)| name.trim())).filter(|name| !name.is_empty()).collect();
     // `ts-rs` is optional and compile-time only (the `typescript` feature derives
     // the TS boundary types); it never runs inside a host.
-    assert_eq!(names, ["serde", "serde_json", "ts-rs"], "add a dependency here only after checking it does no IO");
+    // maleo-media is host-free: its source is scanned below and production dependencies stay serde-only.
+    let media_manifest = read(&Path::new(env!("CARGO_MANIFEST_DIR")).join("../media/Cargo.toml"));
+    let media_dependencies = media_manifest.split("[dependencies]").nth(1).expect("media dependencies").split("\n[").next().unwrap();
+    let media_names: Vec<_> =
+        media_dependencies.lines().filter_map(|line| line.split_once('=').map(|(name, _)| name.trim())).filter(|name| !name.is_empty()).collect();
+    assert_eq!(media_names, ["serde"], "media policy must remain host-free");
+    assert_eq!(names, ["maleo-media", "serde", "serde_json", "ts-rs"], "add a dependency here only after checking it does no IO");
     assert!(dependencies.lines().any(|line| line.starts_with("ts-rs") && line.contains("optional = true")), "ts-rs stays optional");
 }
 
@@ -346,7 +352,7 @@ fn a_command_adding_an_infographic_clip_is_refused() {
 fn the_engine_source_reaches_no_host_api() {
     const FORBIDDEN: [&str; 6] = ["std::fs", "std::net", "std::process", "std::env", "std::time", "std::thread"];
     let src = Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
-    for path in files_with_ext(&src, "rs") {
+    for path in files_with_ext(&src, "rs").into_iter().chain(files_with_ext(&Path::new(env!("CARGO_MANIFEST_DIR")).join("../media/src"), "rs")) {
         let text = read(&path);
         for api in FORBIDDEN {
             assert!(!text.contains(api), "{} uses {api}; host IO belongs to the binding or the host", path.display());

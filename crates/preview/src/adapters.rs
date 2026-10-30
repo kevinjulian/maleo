@@ -1,7 +1,6 @@
-//! The media adapters a platform supplies to the session. This change defines
-//! them and implements neither: the media change (video frames, the decoder
-//! pool, the frame cache and audio output) implements them per platform. A
-//! session without them plays static layers and captions on the host clock.
+//! Platform media interfaces. Hosts decode and output PCM, while `audio_clock`
+//! maps consumed samples and platform timestamps into portable playback position.
+//! Sessions without attached audio use the host clock.
 
 /// One decoded video frame, straight-alpha RGBA, `width * height * 4` bytes.
 pub struct VideoFrame {
@@ -18,8 +17,8 @@ pub trait Decoder {
     fn frame(&mut self, url: &str, time: f64) -> Option<VideoFrame>;
 }
 
-/// Plays the storyboard's audio. Implemented by the media change, which then
-/// makes the output position the session's master clock (design D2).
+/// Plays storyboard audio. Native hosts can implement this interface; browser
+/// hosts publish revisioned `audio_clock::Observation` through the session boundary.
 pub trait AudioOutput {
     fn play(&mut self, position: f64, rate: f64);
     fn pause(&mut self);

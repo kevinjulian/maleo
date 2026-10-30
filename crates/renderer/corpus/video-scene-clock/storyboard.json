@@ -1,0 +1,31 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"movement": "Zoom In",
+			"transition": "cut",
+			"visualClips": [
+				{
+					"url": "media/numbered.mp4",
+					"kind": "video",
+					"startSec": 0,
+					"durationSec": 2,
+					"mediaStartSec": 0.2,
+					"sourceDurationSec": 1.2,
+					"layout": {
+						"xPct": 10,
+						"yPct": 10,
+						"widthPct": 80,
+						"heightPct": 75,
+						"fit": "stretch",
+						"playbackRate": 1.5
+					}
+				}
+			]
+		}
+	],
+	"hideBase": false,
+	"showLabels": false,
+	"bgColor": "#193456"
+}

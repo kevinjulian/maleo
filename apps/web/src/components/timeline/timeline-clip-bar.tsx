@@ -31,6 +31,7 @@ import {
 import { usePendingUpload } from "@hooks/editor/use-pending-upload.ts";
 import { pendingUploadLabel } from "@models/core/pending-media-sources.ts";
 import { ClipUploadBadge } from "./media/pending-upload.tsx";
+import { PreviewClipBadge, PreviewClipActions } from "./media/preview-clip-state.tsx";
 
 export interface ClipBarActions {
 	captions?: () => void;
@@ -124,6 +125,11 @@ export function TimelineClipBar({
 						<ClipUploadBadge state={upload} />
 					</span>
 				)}
+				{!upload && subject.clipId && (
+					<span className="tl2-clipbar-upload">
+						<PreviewClipBadge id={subject.clipId} />
+					</span>
+				)}
 			</span>
 			<span className="tl2-clipbar-groups">
 				{groups.map((g) => (
@@ -174,6 +180,9 @@ export function TimelineClipBar({
 					</p>
 				)}
 				<div className="tl2-clipactions">
+					{subject.clipId && (
+						<PreviewClipActions ids={[subject.clipId]} onDone={() => onSheet("none")} />
+					)}
 					{actions.captions && (
 						<button type="button" className="tl2-clipaction" onClick={() => act(actions.captions!)}>
 							{Ic.type(ICON.md)}

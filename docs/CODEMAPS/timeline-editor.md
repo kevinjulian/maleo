@@ -179,6 +179,18 @@ and retired stored selections resolve to none without changing other policy.
 
 - Preview: `Player` + `StoryboardReel` from `@maleo/video/composition`,
   `playbackRate` state, playhead synced via `use-remotion-playhead.ts`.
+- Preview media readiness (`hooks/timeline/use-preview-media.ts`): the shared
+  projection `previewMediaDependencies` lists every source a clip needs, and
+  only clips with sources or blockers. A session (`services/preview-media/
+  session.ts`) loads each source completely into session-owned local storage,
+  validates it, and reports progress to the Rust readiness engine
+  (`crates/media` through the editor WASM). Play is refused until every source
+  is ready: `use-remotion-playhead.ts` pauses when readiness drops, and the
+  transport disables Play with the toolbar status
+  (`components/timeline/media/preview-clip-state.tsx`) as its description.
+  Clip bars show a badge only while a source loads or fails; clip menus and the phone actions sheet
+  offer Retry for failed sources. Sessions follow the workspace and project
+  scope and close on sign-out.
 - Editing on the preview canvas is the shared Rust core's: `crates/app-core`
   `canvas/` owns the screen mapping, element boxes at the playhead, hit
   testing, gestures and snapping, the group and mask boxes, and the command a

@@ -1,0 +1,296 @@
+{
+	"browser": "chromium",
+	"version": "151.0.7922.34",
+	"results": [
+		{
+			"type": "complete",
+			"id": "cfr-av.mp4",
+			"probe": {
+				"container": "MP4",
+				"codecs": ["avc", "aac"],
+				"videoTracks": 1,
+				"audioTracks": 1,
+				"video": {
+					"width": 160,
+					"height": 96,
+					"firstTimestamp": 0,
+					"slots": 1
+				}
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "vfr-silent.mp4",
+			"probe": {
+				"container": "MP4",
+				"codecs": ["avc"],
+				"videoTracks": 1,
+				"audioTracks": 0,
+				"video": {
+					"width": 160,
+					"height": 96,
+					"firstTimestamp": 0,
+					"slots": 1
+				}
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "nonzero-silent.mp4",
+			"probe": {
+				"container": "MP4",
+				"codecs": ["avc"],
+				"videoTracks": 1,
+				"audioTracks": 0,
+				"video": {
+					"width": 160,
+					"height": 96,
+					"firstTimestamp": 5,
+					"slots": 1
+				}
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "silent.webm",
+			"probe": {
+				"container": "WebM",
+				"codecs": ["vp9"],
+				"videoTracks": 1,
+				"audioTracks": 0,
+				"video": {
+					"width": 160,
+					"height": 96,
+					"firstTimestamp": 0,
+					"slots": 1
+				}
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "impulses-44100.wav",
+			"probe": {
+				"container": "WAVE",
+				"codecs": ["pcm-s16"],
+				"videoTracks": 0,
+				"audioTracks": 1,
+				"video": null
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "impulses-48000.wav",
+			"probe": {
+				"container": "WAVE",
+				"codecs": ["pcm-s16"],
+				"videoTracks": 0,
+				"audioTracks": 1,
+				"video": null
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "failed",
+			"id": "unsupported.mkv",
+			"message": "Unsupported video codec: unknown",
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "audio-only-unsupported-video.mkv",
+			"probe": {
+				"container": "Matroska",
+				"codecs": ["aac"],
+				"videoTracks": 0,
+				"audioTracks": 1,
+				"video": null
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "failed",
+			"id": "malformed.bin",
+			"message": "Media container is unsupported or malformed",
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "image.png",
+			"probe": {
+				"container": "image",
+				"codecs": ["image"],
+				"videoTracks": 0,
+				"audioTracks": 0,
+				"video": null
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "failed",
+			"id": "silent-as-audio.mp4",
+			"message": "Audio source has no audio track",
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "failed",
+			"id": "silent-as-both.mp4",
+			"message": "Audio source has no audio track",
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		},
+		{
+			"type": "complete",
+			"id": "shared-av.mp4",
+			"probe": {
+				"container": "MP4",
+				"codecs": ["avc", "aac"],
+				"videoTracks": 1,
+				"audioTracks": 1,
+				"video": {
+					"width": 160,
+					"height": 96,
+					"firstTimestamp": 0,
+					"slots": 1
+				}
+			},
+			"decoderCounts": {
+				"video": {
+					"active": 0,
+					"max": 1
+				},
+				"audio": {
+					"active": 0,
+					"max": 1
+				}
+			}
+		}
+	],
+	"cleanup": null,
+	"hashes": {
+		"cfr-av.mp4": "044b27a30771af5ae518263a7bf63616aadf7c06060c3132459d6ea5c7f3a337",
+		"vfr-silent.mp4": "62aa9c1410f42c19aee073f4d937a67c6f44ee1b375b8339e094eef625d95e60",
+		"nonzero-silent.mp4": "403fdadb00c7d37ce547a21a9b00737d8dbadd2373240ffdc82184e4cf891cce",
+		"silent.webm": "ff9ac23de4657be900a5770d96c27e410d0c90e57b3fa4ed6a7987c20b1039ad",
+		"impulses-44100.wav": "0baaf9543d446255b0c3a0f8c06dfa526bbb55f18ed0e28ebace18d904440725",
+		"impulses-48000.wav": "1aa34fde514507bbd1b2fb9c2ac6eca534ce80a3355233b1386bfb614ba04f19",
+		"unsupported.mkv": "7f624149e2014573a9d3a8fe37fe9d1f947fda8048b95c2020f3882aa79db709",
+		"audio-only-unsupported-video.mkv": "d910288622da25ec94a2b995131a5b52a299cc71e6d2bc921b22315f132bbdae",
+		"malformed.bin": "08bb5e5d6eaac1049ede0893d30ed022b1a4d9b5b48db414871f51c9cb35283d",
+		"image.png": "a8d6521154cd3f366042898dbae03b4f9d547cfec4bc7a2cd73b4bd2143e77f5",
+		"silent-as-audio.mp4": "403fdadb00c7d37ce547a21a9b00737d8dbadd2373240ffdc82184e4cf891cce",
+		"silent-as-both.mp4": "403fdadb00c7d37ce547a21a9b00737d8dbadd2373240ffdc82184e4cf891cce",
+		"shared-av.mp4": "044b27a30771af5ae518263a7bf63616aadf7c06060c3132459d6ea5c7f3a337"
+	}
+}

@@ -6,23 +6,26 @@
  * template tiles echo — is derived here so the component does not recompute it
  * inline.
  */
-import { useCallback, useEffect, useMemo, type RefObject } from "react";
+import { useCallback, useEffect, useMemo, useRef, type RefObject } from "react";
 import type { PlayerRef } from "@remotion/player";
 import { storyboardSeconds, type Storyboard } from "@maleo/video/composition";
 import { buildRenderStoryboardFromDoc, type CaptionConfig } from "@maleo/shared";
 import { aspectOf } from "@models/core/measures.ts";
-import { decodableAudioUrl } from "@models/timeline/audio-decode-url.ts";
+import { withPreviewLocalSources } from "@models/timeline/preview-local-sources.ts";
+import { usePreviewMedia } from "./use-preview-media.ts";
+import type { MediaAsset } from "@maleo/shared/editor";
 import type { PacingDevices, TrackFlags } from "@maleo/shared";
 import { FORMAT_DIMS } from "@models/timeline/timeline-editor-model.ts";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import { useRemotionPlayhead, type RemotionPlayhead } from "./use-remotion-playhead.ts";
-import { usePendingMediaVersion } from "@hooks/editor/use-pending-media-version.ts";
-import { withResolvedPending } from "@models/core/pending-media-sources.ts";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 
 const PREVIEW_FPS = 30;
+const NO_ASSETS: readonly MediaAsset[] = [];
+const NO_FILES: ReadonlyMap<string, File> = new Map();
 
 export interface PreviewComposition {
+	previewMedia: ReturnType<typeof usePreviewMedia>;
 	aspect: ReturnType<typeof aspectOf>;
 	previewFps: number;
 	previewDims: (typeof FORMAT_DIMS)[string];
@@ -49,7 +52,9 @@ export interface PreviewComposition {
 }
 
 export function usePreviewComposition(args: {
-	mediaAssets?: unknown;
+	projectId?: string | null;
+	pendingFiles?: ReadonlyMap<string, File>;
+	mediaAssets?: readonly MediaAsset[];
 	config: Parameters<typeof buildRenderStoryboardFromDoc>[0];
 	refs: Parameters<typeof buildRenderStoryboardFromDoc>[1];
 	getDoc: () => Parameters<typeof buildRenderStoryboardFromDoc>[2];
@@ -57,9 +62,6 @@ export function usePreviewComposition(args: {
 	trackFlags: TrackFlags;
 	captions: CaptionConfig;
 	pacingDevices: PacingDevices;
-	/** The derived arrays are dependencies only: they mirror the same store, so
-	 *  listing them is what makes a document mutation recompute the memo. */
-	deps: unknown[];
 	/* Publishes the playhead to whoever needs to read it from outside.
 	 *
 	 * This hook creates the handle, so this hook hands it out — a consumer that
@@ -77,7 +79,6 @@ export function usePreviewComposition(args: {
 		trackFlags,
 		captions,
 		pacingDevices,
-		deps,
 		onPlayheadReady,
 	} = args;
 
@@ -85,7 +86,16 @@ export function usePreviewComposition(args: {
 	const aspect = aspectOf(format);
 	const previewDims = FORMAT_DIMS[format] ?? FORMAT_DIMS["9:16"]!;
 
-	const pendingVersion = usePendingMediaVersion();
+	const doc = getDoc();
+	const stop = useRef<() => void>(() => {});
+	const media = usePreviewMedia({
+		stop: () => stop.current(),
+		projectId: args.projectId ?? null,
+		pendingFiles: args.pendingFiles ?? NO_FILES,
+		doc,
+		refs,
+		mediaAssets: mediaAssets ?? NO_ASSETS,
+	});
 	const previewForDoc = useCallback(
 		(doc: Parameters<typeof buildRenderStoryboardFromDoc>[2]) => {
 			const built = buildRenderStoryboardFromDoc(config, refs, doc, {
@@ -103,26 +113,13 @@ export function usePreviewComposition(args: {
 						: undefined,
 				backgroundFill: settings.backgroundFill || undefined,
 			}).storyboard;
-			/* Stock audio plays through this origin in the PREVIEW only.
-			 *
-			 * The hosts send no cache-control, so the browser re-downloaded the same
-			 * effect on every session, and no CORS header, so the same file could be
-			 * played but not decoded for a waveform. The passthrough fixes both — and
-			 * it belongs here rather than in the shared builder, because the render
-			 * worker fetches these hosts directly and has no origin to pass through.
-			 * The document is untouched: this is how the preview READS a url. */
-			const audioOverlays = built.audioOverlays?.map((a) =>
-				a.url ? { ...a, url: decodableAudioUrl(a.url) } : a,
-			);
-			// Files still importing play from the session's copy, then the managed URL;
-			// the document keeps its pending references either way.
-			const resolved = withResolvedPending(audioOverlays ? { ...built, audioOverlays } : built);
-			// SAFETY: the shared render builder supplies composition inputs; renderer
-			// handles the same optional defaults used by the existing preview path.
+			const resolved = withPreviewLocalSources(built, (url) => media.session?.resolve(url));
+			// SAFETY: builder supplies composition inputs; preview only substitutes local media.
 			return resolved as Storyboard;
 		},
 		[
-			pendingVersion,
+			media.session,
+			media.version,
 			mediaAssets,
 			config,
 			refs,
@@ -135,11 +132,7 @@ export function usePreviewComposition(args: {
 			settings.backgroundFill,
 		],
 	);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const previewStoryboard = useMemo(
-		() => previewForDoc(getDoc()),
-		[previewForDoc, getDoc, ...deps],
-	);
+	const previewStoryboard = useMemo(() => previewForDoc(doc), [previewForDoc, doc]);
 
 	const previewProps = previewStoryboard;
 	const brandPalette = {
@@ -161,12 +154,19 @@ export function usePreviewComposition(args: {
 		seek: seekPreview,
 		togglePlay,
 		playerRef,
-	} = useRemotionPlayhead(PREVIEW_FPS, previewFrames);
+	} = useRemotionPlayhead(
+		PREVIEW_FPS,
+		previewFrames,
+		media.readiness.revision,
+		media.readiness.ready,
+	);
+	stop.current = () => playerRef.current?.pause();
 	useEffect(() => {
 		onPlayheadReady?.(playhead);
 	}, [onPlayheadReady, playhead]);
 
 	return {
+		previewMedia: media,
 		aspect,
 		previewFps: PREVIEW_FPS,
 		previewDims,

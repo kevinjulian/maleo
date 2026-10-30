@@ -99,6 +99,16 @@ test("timeline renews managed video after signature expiry and project reload", 
 				headers: { location: signed, "cache-control": "private, no-store" },
 			});
 		});
+		// Complete-source preview loading asks for a fresh signature through the sign endpoint.
+		await context.route(`**/api/media/${MEDIA_ID}/sign`, (route) => {
+			const signed = `${mediaBase}?issued=${Date.now()}`;
+			firstSigned ||= signed;
+			signatures++;
+			return route.fulfill({
+				json: { url: signed },
+				headers: { "cache-control": "private, no-store" },
+			});
+		});
 		await page.goto(`/content/${FIXTURE_PROJECT_ID}`, { waitUntil: "domcontentloaded" });
 		await page.locator(".tl2-timeline").waitFor({ state: "visible" });
 		await expect(page.locator(".tl2-remotion-stage video").first()).toBeVisible();

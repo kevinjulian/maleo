@@ -23,6 +23,25 @@ Desktop timeline editor places its existing rail/panel in VUI's public tools slo
 
 Timeline chrome and labels suppress browser text selection so scrubbing, clip selection and dragging do not highlight text. Inputs, textareas and editable content retain native text selection; inspector and chat content remain outside this rule.
 
+Preview Play waits for complete local bytes, track validation and initial decode
+for every placed source, including hidden video and muted audio. Unplaced
+library assets do not block Play. The common command gates keyboard, replay and
+imperative starts. Media changes pause playback. Completion requires a fresh
+Play. Editing and paused scrubbing remain available.
+
+Feature-owned TimelineClip badges show queued, loading, validating or failed
+preview state independently of upload state; a ready clip shows no badge. Known byte totals show
+measured progress. Unknown totals remain indeterminate. Clips without external
+media need no source badge. Desktop clip menus and phone actions expose full
+state and Retry. A short status at the end of the toolbar's leading group ("Preparing preview ·
+1/8", or "Preview unavailable") explains loading or failure. Its full sentence
+is visually hidden and connects to Play through aria-describedby. It sits in
+the toolbar row, so it never moves the timeline or the transport. Readiness never writes the document or undo
+history. Template Studio uses the same source owner for its audio cues. Compare
+mode defaults to reference audio and offers an explicit session-local Rust audio
+choice through canonical Select. Returning ownership closes Rust output before
+restoring the reference Player's prior mute state.
+
 Inspector and contextual-panel bodies hide scrollbar chrome while retaining native overflow, keyboard focus scrolling and nested list scrolling. Chat and nested scrolling content hide scrollbar chrome; history retains native overflow and a zero minimum height. Timeline navigation scrollbars remain available. Desktop tools and inspector rails share container/button geometry, states and focus rings; portalled tooltips avoid clipping inside scrollable rails. Phone bottom rails retain horizontal scrolling and touch floors.
 
 Editor tool destinations use PanelHeader's `tool` density: quieter compact desktop titles, clear phone sheet titles and visible close actions. Assets source tabs read Media / References / Stock; References explains workspace ownership inside its body. Media search and import lead the content, followed by creation and view controls. Import readiness/errors and upload recovery remain visible; routine instructions live in hints and empty states.

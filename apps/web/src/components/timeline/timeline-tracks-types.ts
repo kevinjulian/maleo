@@ -138,6 +138,7 @@ export interface TimelineTracksView {
 	 *  here reads it inside a handler. See `playhead-handle.ts`. */
 	playhead: PlayheadHandle;
 	playing: boolean;
+	playbackReady: boolean;
 	total: number;
 	pxPerSec: number;
 	freeClips: TimelineClip[];

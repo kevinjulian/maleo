@@ -42,8 +42,8 @@ function fakePlayer(): PlayerRef & { calls: string[]; frame: (frame: number) => 
 }
 
 let latest: Playhead;
-function Harness() {
-	latest = useRemotionPlayhead(30, 900);
+function Harness({ ready = true }: { ready?: boolean }) {
+	latest = useRemotionPlayhead(30, 900, undefined, ready);
 	return null;
 }
 let root: ReturnType<typeof createRoot>;
@@ -90,6 +90,74 @@ test("a seek before the player arrives cancels a pending play", async () => {
 	await act(async () => {
 		latest.playerRef.current = player;
 	});
+	expect(player.calls).not.toContain("play");
+	expect(latest.playing).toBe(false);
+});
+
+test("unready Play never queues autoplay, including before player attachment", async () => {
+	await act(async () => root.render(createElement(Harness, { ready: false })));
+	await act(async () => latest.togglePlay());
+	const player = fakePlayer();
+	await act(async () => {
+		latest.playerRef.current = player;
+	});
+	await act(async () => latest.playerRef.current?.play());
+	expect(player.calls).not.toContain("play");
+	expect(latest.playhead.get()).toBe(0);
+	await act(async () => root.render(createElement(Harness, { ready: true })));
+	expect(player.calls).not.toContain("play");
+	expect(latest.playing).toBe(false);
+	await act(async () => latest.togglePlay());
+	expect(player.calls.at(-1)).toBe("play");
+});
+
+test("the gated Player retains inherited event methods", async () => {
+	const player = fakePlayer();
+	Object.setPrototypeOf(player, {
+		addEventListener: player.addEventListener,
+		removeEventListener: player.removeEventListener,
+	});
+	Reflect.deleteProperty(player, "addEventListener");
+	Reflect.deleteProperty(player, "removeEventListener");
+	await act(async () => {
+		latest.playerRef.current = player;
+	});
+	await act(async () => latest.togglePlay());
+	expect(latest.playing).toBe(true);
+	await act(async () => latest.togglePlay());
+	expect(latest.playing).toBe(false);
+});
+
+test("media invalidation pauses, rejects programmatic starts and preserves paused seeking", async () => {
+	const player = fakePlayer();
+	await act(async () => {
+		latest.playerRef.current = player;
+	});
+	await act(async () => latest.togglePlay());
+	await act(async () => root.render(createElement(Harness, { ready: false })));
+	expect(player.isPlaying()).toBe(false);
+	const playCount = player.calls.filter((call) => call === "play").length;
+	await act(async () => {
+		latest.playerRef.current?.play();
+		latest.togglePlay();
+	});
+	expect(player.calls.filter((call) => call === "play")).toHaveLength(playCount);
+	await act(async () => latest.seek(4));
+	expect(latest.playhead.get()).toBe(4);
+	await act(async () => root.render(createElement(Harness, { ready: true })));
+	expect(player.isPlaying()).toBe(false);
+	await act(async () => latest.playerRef.current?.play());
+	expect(player.isPlaying()).toBe(true);
+});
+
+test("readiness loss cancels pending stall recovery without later autoplay", async () => {
+	const player = await playingPlayer();
+	await advance(1500);
+	expect(player.calls).toEqual(["pause"]);
+	await act(async () => root.render(createElement(Harness, { ready: false })));
+	await advance(5000);
+	await act(async () => root.render(createElement(Harness, { ready: true })));
+	await advance(100);
 	expect(player.calls).not.toContain("play");
 	expect(latest.playing).toBe(false);
 });

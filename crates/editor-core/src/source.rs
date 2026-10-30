@@ -8,60 +8,22 @@ use serde_json::Value;
 
 use crate::error::{EngineError, EngineResult};
 
-/// Seconds in original source, independent of playback direction.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct SourceInterval {
-    pub start: f64,
-    pub end: f64,
-}
+pub use maleo_media::timing::SourceInterval;
 
-/// `sourceInterval(start, duration, rate)`.
 pub fn source_interval(start: f64, duration: f64, rate: f64) -> EngineResult<SourceInterval> {
-    if ![start, duration, rate].iter().all(|value| value.is_finite()) || start < 0.0 || duration <= 0.0 || !(0.25..=4.0).contains(&rate) {
-        return Err(EngineError::InvalidSourceInterval(format!("start {start}, duration {duration}, rate {rate}")));
-    }
-    Ok(SourceInterval { start, end: start + duration * rate })
+    maleo_media::timing::source_interval(start, duration, rate).map_err(EngineError::InvalidSourceInterval)
 }
-
-/// `sliceSourceInterval(start, duration, rate, reverse, from, to)`: the
-/// retained timeline window `from..to`, as original-source seconds even when
-/// the clip plays reversed.
 pub fn slice_source_interval(start: f64, duration: f64, rate: f64, reverse: bool, from: f64, to: f64) -> EngineResult<SourceInterval> {
-    source_interval(start, duration, rate)?;
-    if !from.is_finite() || !to.is_finite() || to <= from {
-        return Err(EngineError::InvalidSourceInterval(format!("retained window {from}..{to}")));
-    }
-    let next_start = start + (if reverse { duration - to } else { from }) * rate;
-    if next_start < -0.000001 {
-        return Err(EngineError::InvalidSourceInterval(format!("window starts before the source ({next_start})")));
-    }
-    source_interval(next_start.max(0.0), to - from, rate)
+    maleo_media::timing::slice_source_interval(start, duration, rate, reverse, from, to).map_err(EngineError::InvalidSourceInterval)
 }
-
-/// `assertSourceInterval(start, duration, rate, sourceDuration)`: the selected
-/// range fits inside media of `source_duration` seconds.
 pub fn assert_source_interval(start: f64, duration: f64, rate: f64, source_duration: f64) -> EngineResult<()> {
-    let interval = source_interval(start, duration, rate)?;
-    if !source_duration.is_finite() || source_duration <= 0.0 || interval.end > source_duration + 0.000001 {
-        return Err(EngineError::InvalidSourceInterval("Replacement source is too short for selected clip range".to_owned()));
-    }
-    Ok(())
+    maleo_media::timing::assert_source_interval(start, duration, rate, source_duration).map_err(EngineError::InvalidSourceInterval)
 }
-
-/// `sourceTime(start, duration, rate, reverse, elapsed)`: the source second
-/// shown `elapsed` timeline seconds in; reverse reads from the far boundary.
 pub fn source_time(start: f64, duration: f64, rate: f64, reverse: bool, elapsed: f64) -> EngineResult<f64> {
-    let interval = source_interval(start, duration, rate)?;
-    let offset = crate::keyframes::js_min(duration, crate::keyframes::js_max(0.0, elapsed)) * rate;
-    Ok(if reverse { interval.end - offset } else { interval.start + offset })
+    maleo_media::timing::source_time(start, duration, rate, reverse, elapsed).map_err(EngineError::InvalidSourceInterval)
 }
-
-/// `retimeSourceDuration(start, duration, previousRate, nextRate)`: a rate edit
-/// keeps the source endpoints and changes the timeline duration.
 pub fn retime_source_duration(start: f64, duration: f64, previous_rate: f64, next_rate: f64) -> EngineResult<f64> {
-    let selected = source_interval(start, duration, previous_rate)?;
-    source_interval(start, duration, next_rate)?;
-    Ok((selected.end - selected.start) / next_rate)
+    maleo_media::timing::retime_source_duration(start, duration, previous_rate, next_rate).map_err(EngineError::InvalidSourceInterval)
 }
 
 /// `editableRate(rate)`: stored rates outside the editable range read as the

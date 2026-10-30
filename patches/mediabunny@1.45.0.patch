@@ -1,0 +1,190 @@
+diff --git a/src/media-sink.ts b/src/media-sink.ts
+--- a/src/media-sink.ts
++++ b/src/media-sink.ts
+@@ -1564,8 +1564,8 @@
+ 			);
+ 		}
+ 
+-		const width = color.codedWidth;
+-		const height = color.codedHeight;
++		const width = color.visibleRect.width;
++		const height = color.visibleRect.height;
+ 
+ 		if (format === 'RGBX' || format === 'RGBA' || format === 'BGRX' || format === 'BGRA') {
+ 			return await mergeInterleavedRgba(color, alpha, width, height, format);
+@@ -1606,6 +1606,7 @@
+ 			format: outputFormat,
+ 			codedWidth: width,
+ 			codedHeight: height,
++			colorSpace: color.colorSpace,
+ 			timestamp: color.timestamp,
+ 			duration: color.duration ?? undefined,
+ 			transfer: [output.buffer],
+@@ -1663,6 +1664,7 @@
+ 			format: outputFormat,
+ 			codedWidth: width,
+ 			codedHeight: height,
++			colorSpace: color.colorSpace,
+ 			timestamp: color.timestamp,
+ 			duration: color.duration ?? undefined,
+ 			transfer: [output.buffer],
+@@ -1709,6 +1711,7 @@
+ 			format: 'I420A',
+ 			codedWidth: width,
+ 			codedHeight: height,
++			colorSpace: color.colorSpace,
+ 			timestamp: color.timestamp,
+ 			duration: color.duration ?? undefined,
+ 			transfer: [output.buffer],
+diff --git a/dist/modules/src/media-sink.js b/dist/modules/src/media-sink.js
+--- a/dist/modules/src/media-sink.js
++++ b/dist/modules/src/media-sink.js
+@@ -1235,8 +1235,8 @@
+             throw new Error(`CPU color/alpha merging requires the alpha frame to have the same bit depth as the color frame`
+                 + ` (color: '${format}', alpha: '${alphaFormat}').`);
+         }
+-        const width = color.codedWidth;
+-        const height = color.codedHeight;
++        const width = color.visibleRect.width;
++        const height = color.visibleRect.height;
+         if (format === 'RGBX' || format === 'RGBA' || format === 'BGRX' || format === 'BGRA') {
+             return await mergeInterleavedRgba(color, alpha, width, height, format);
+         }
+@@ -1265,6 +1265,7 @@
+             format: outputFormat,
+             codedWidth: width,
+             codedHeight: height,
++            colorSpace: color.colorSpace,
+             timestamp: color.timestamp,
+             duration: color.duration ?? undefined,
+             transfer: [output.buffer],
+@@ -1306,6 +1307,7 @@
+             format: outputFormat,
+             codedWidth: width,
+             codedHeight: height,
++            colorSpace: color.colorSpace,
+             timestamp: color.timestamp,
+             duration: color.duration ?? undefined,
+             transfer: [output.buffer],
+@@ -1339,6 +1341,7 @@
+             format: 'I420A',
+             codedWidth: width,
+             codedHeight: height,
++            colorSpace: color.colorSpace,
+             timestamp: color.timestamp,
+             duration: color.duration ?? undefined,
+             transfer: [output.buffer],
+diff --git a/dist/bundles/mediabunny.cjs b/dist/bundles/mediabunny.cjs
+--- a/dist/bundles/mediabunny.cjs
++++ b/dist/bundles/mediabunny.cjs
+@@ -22515,8 +22515,8 @@
+           `CPU color/alpha merging requires the alpha frame to have the same bit depth as the color frame (color: '${format}', alpha: '${alphaFormat}').`
+         );
+       }
+-      const width = color.codedWidth;
+-      const height = color.codedHeight;
++      const width = color.visibleRect.width;
++      const height = color.visibleRect.height;
+       if (format === "RGBX" || format === "RGBA" || format === "BGRX" || format === "BGRA") {
+         return await mergeInterleavedRgba(color, alpha, width, height, format);
+       } else if (format === "I420" || format === "I420P10" || format === "I420P12" || format === "I422" || format === "I422P10" || format === "I422P12" || format === "I444" || format === "I444P10" || format === "I444P12") {
+@@ -22539,6 +22539,7 @@
+         format: outputFormat,
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+@@ -22577,6 +22578,7 @@
+         format: outputFormat,
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+@@ -22608,6 +22610,7 @@
+         format: "I420A",
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+diff --git a/dist/bundles/mediabunny.node.cjs b/dist/bundles/mediabunny.node.cjs
+--- a/dist/bundles/mediabunny.node.cjs
++++ b/dist/bundles/mediabunny.node.cjs
+@@ -22518,8 +22518,8 @@
+           `CPU color/alpha merging requires the alpha frame to have the same bit depth as the color frame (color: '${format}', alpha: '${alphaFormat}').`
+         );
+       }
+-      const width = color.codedWidth;
+-      const height = color.codedHeight;
++      const width = color.visibleRect.width;
++      const height = color.visibleRect.height;
+       if (format === "RGBX" || format === "RGBA" || format === "BGRX" || format === "BGRA") {
+         return await mergeInterleavedRgba(color, alpha, width, height, format);
+       } else if (format === "I420" || format === "I420P10" || format === "I420P12" || format === "I422" || format === "I422P10" || format === "I422P12" || format === "I444" || format === "I444P10" || format === "I444P12") {
+@@ -22542,6 +22542,7 @@
+         format: outputFormat,
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+@@ -22580,6 +22581,7 @@
+         format: outputFormat,
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+@@ -22611,6 +22613,7 @@
+         format: "I420A",
+         codedWidth: width,
+         codedHeight: height,
++        colorSpace: color.colorSpace,
+         timestamp: color.timestamp,
+         duration: color.duration ?? void 0,
+         transfer: [output.buffer]
+diff --git a/dist/bundles/mediabunny.mjs b/dist/bundles/mediabunny.mjs
+--- a/dist/bundles/mediabunny.mjs
++++ b/dist/bundles/mediabunny.mjs
+@@ -22361,8 +22361,8 @@
+         `CPU color/alpha merging requires the alpha frame to have the same bit depth as the color frame (color: '${format}', alpha: '${alphaFormat}').`
+       );
+     }
+-    const width = color.codedWidth;
+-    const height = color.codedHeight;
++    const width = color.visibleRect.width;
++    const height = color.visibleRect.height;
+     if (format === "RGBX" || format === "RGBA" || format === "BGRX" || format === "BGRA") {
+       return await mergeInterleavedRgba(color, alpha, width, height, format);
+     } else if (format === "I420" || format === "I420P10" || format === "I420P12" || format === "I422" || format === "I422P10" || format === "I422P12" || format === "I444" || format === "I444P10" || format === "I444P12") {
+@@ -22385,6 +22385,7 @@
+       format: outputFormat,
+       codedWidth: width,
+       codedHeight: height,
++      colorSpace: color.colorSpace,
+       timestamp: color.timestamp,
+       duration: color.duration ?? void 0,
+       transfer: [output.buffer]
+@@ -22423,6 +22424,7 @@
+       format: outputFormat,
+       codedWidth: width,
+       codedHeight: height,
++      colorSpace: color.colorSpace,
+       timestamp: color.timestamp,
+       duration: color.duration ?? void 0,
+       transfer: [output.buffer]
+@@ -22454,6 +22456,7 @@
+       format: "I420A",
+       codedWidth: width,
+       codedHeight: height,
++      colorSpace: color.colorSpace,
+       timestamp: color.timestamp,
+       duration: color.duration ?? void 0,
+       transfer: [output.buffer]

@@ -1,0 +1,51 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 1,
+			"transition": "cut",
+			"visualClips": [
+				{
+					"url": "media/numbered.mp4",
+					"kind": "video",
+					"startSec": 0,
+					"durationSec": 1,
+					"sourceDurationSec": 1,
+					"layout": {
+						"xPct": 10,
+						"yPct": 10,
+						"widthPct": 80,
+						"heightPct": 75,
+						"fit": "stretch"
+					}
+				}
+			]
+		},
+		{
+			"image": "",
+			"durationSec": 1,
+			"transition": "slide",
+			"transitionDurSec": 0.4,
+			"visualClips": [
+				{
+					"url": "media/numbered.mp4",
+					"kind": "video",
+					"startSec": 0,
+					"durationSec": 1,
+					"sourceDurationSec": 1,
+					"mediaStartSec": 0.5,
+					"layout": {
+						"xPct": 10,
+						"yPct": 10,
+						"widthPct": 80,
+						"heightPct": 75,
+						"fit": "stretch"
+					}
+				}
+			]
+		}
+	],
+	"hideBase": false,
+	"showLabels": false,
+	"bgColor": "#193456"
+}

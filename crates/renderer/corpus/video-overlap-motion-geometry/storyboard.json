@@ -1,0 +1,71 @@
+{
+	"scenes": [
+		{
+			"image": "",
+			"durationSec": 2,
+			"transition": "cut"
+		}
+	],
+	"hideBase": false,
+	"showLabels": false,
+	"bgColor": "#193456",
+	"videoOverlays": [
+		{
+			"url": "media/numbered.mp4",
+			"kind": "video",
+			"startSec": 0,
+			"durationSec": 1.4,
+			"layout": {
+				"xPct": 10,
+				"yPct": 10,
+				"widthPct": 65,
+				"heightPct": 75,
+				"fit": "stretch",
+				"opacity": 0.8,
+				"blendMode": "screen",
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 5
+							},
+							{
+								"t": 1.3,
+								"v": 25,
+								"easing": "in-out"
+							}
+						],
+						"rotationDeg": [
+							{
+								"t": 0,
+								"v": -10
+							},
+							{
+								"t": 1.3,
+								"v": 15
+							}
+						]
+					}
+				}
+			}
+		},
+		{
+			"url": "media/numbered.mp4",
+			"kind": "video",
+			"startSec": 0,
+			"durationSec": 1.4,
+			"mediaStartSec": 0.5,
+			"track": 1,
+			"layout": {
+				"xPct": 30,
+				"yPct": 25,
+				"widthPct": 60,
+				"heightPct": 50,
+				"fit": "stretch",
+				"opacity": 0.7,
+				"blendMode": "multiply"
+			}
+		}
+	]
+}

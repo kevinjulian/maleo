@@ -336,6 +336,10 @@ test.describe("lane heights follow lane groups", () => {
 	test("a clip dragged across lanes of different heights lands on the lane under the pointer", async ({
 		page,
 	}) => {
+		// The preview readiness notice sits above the lanes until media settles; measure after it.
+		await expect(
+			page.getByText(/^(Loading preview media|Preparing preview|Preview unavailable)/),
+		).toHaveCount(0);
 		const clip = page.locator(".tl2-lanes [data-clipid='text:1']");
 		const from = (await clip.boundingBox())!;
 		const target = (await page.locator(".tl2-lanes [data-vui-row='lane-3']").boundingBox())!;

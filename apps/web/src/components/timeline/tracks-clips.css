@@ -324,6 +324,7 @@
 		background: rgba(15, 15, 20, 0.72);
 		color: oklch(0.96 0.005 260);
 	}
+	.tl2-clip-upload[data-preview-state="failed"] .tl2-clip-upload-icon,
 	.tl2-clip-upload[data-upload-phase="failed"] .tl2-clip-upload-icon,
 	.tl2-clip-upload[data-upload-phase="interrupted"] .tl2-clip-upload-icon {
 		color: var(--err);
@@ -340,6 +341,7 @@
 		transform: scaleX(var(--upload-progress, 1));
 		transition: transform var(--d-med) ease-out;
 	}
+	.tl2-clip-upload[data-preview-indeterminate="true"] .tl2-clip-upload-line,
 	.tl2-clip-upload[data-upload-phase="processing"] .tl2-clip-upload-line {
 		animation: tl2-upload-sweep 1.2s ease-in-out infinite;
 		transform: scaleX(0.3);
@@ -353,6 +355,7 @@
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
+		.tl2-clip-upload[data-preview-indeterminate="true"] .tl2-clip-upload-line,
 		.tl2-clip-upload[data-upload-phase="processing"] .tl2-clip-upload-line {
 			animation: none;
 			transform: none;
@@ -360,6 +363,19 @@
 		}
 	}
 	.tl2-clip-compact .tl2-clip-upload-line {
+		display: none;
+	}
+	/* Preview loading is the line alone. A narrow clip, too short for a line to read, keeps the
+	 * loader icon instead; a failure always keeps its warning icon. */
+	.tl2-clip .tl2-clip-upload[data-preview-state] .tl2-clip-upload-line {
+		display: block;
+	}
+	.tl2-clip:not(.narrow)
+		.tl2-clip-upload[data-preview-state]:not([data-preview-state="failed"])
+		.tl2-clip-upload-icon {
+		display: none;
+	}
+	.tl2-clip.narrow .tl2-clip-upload[data-preview-state] .tl2-clip-upload-line {
 		display: none;
 	}
 

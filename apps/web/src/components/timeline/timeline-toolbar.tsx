@@ -8,7 +8,7 @@
  * Everything else it draws is already an op, a view value, or a chrome field it
  * subscribes to itself. */
 import { Select } from "@design-system/components/select.tsx";
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { JSX } from "react";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { PanelHeader } from "@design-system/patterns/panel-header.tsx";
@@ -33,6 +33,7 @@ import { Slider } from "@design-system/components/slider.tsx";
 import { ToolbarAction, ToolbarGroup } from "@design-system/patterns/toolbar.tsx";
 import { Menu, MenuItem } from "@design-system/components/menu.tsx";
 import { buttonClass } from "@design-system/components/button-recipe.ts";
+import { PreviewReadinessStatus } from "./media/preview-clip-state.tsx";
 
 export function TimelineToolbar({
 	store,
@@ -79,6 +80,7 @@ export function TimelineToolbar({
 	} = ops;
 	const {
 		playing,
+		playbackReady,
 		playhead,
 		total,
 		undoStack,
@@ -102,6 +104,7 @@ export function TimelineToolbar({
 	 * subscription there would re-render every lane and every clip to update a
 	 * timecode, which is the arrangement this change removed. */
 	const playheadSec = usePlayheadSec(playhead);
+	const readinessId = useId();
 
 	const scenes = useDocumentSelector(store, selectDerivedArrays).scenes;
 	const [timelineDensity, setTimelineDensity] = useChromeField(chromeStore, "timelineDensity");
@@ -413,10 +416,17 @@ export function TimelineToolbar({
 		return (
 			<>
 				<TimelineToolbarFrame
-					leading={undoRedo}
+					leading={
+						<>
+							{undoRedo}
+							<PreviewReadinessStatus id={readinessId} compact />
+						</>
+					}
 					centre={
 						<TransportControls
 							playing={playing}
+							disabled={!playbackReady && !playing}
+							aria-describedby={!playbackReady ? readinessId : undefined}
 							onTogglePlay={togglePlay}
 							currentSec={playheadSec}
 							durationSec={total}
@@ -459,29 +469,34 @@ export function TimelineToolbar({
 	}
 
 	return (
-		<TimelineToolbarFrame
-			leading={
-				<>
-					{undoRedo}
-					{splitAndTakes}
-				</>
-			}
-			centre={
-				<TransportControls
-					playing={playing}
-					onTogglePlay={togglePlay}
-					currentSec={playheadSec}
-					durationSec={total}
-					before={
-						<>
-							{rate}
-							{jumpStart}
-						</>
-					}
-					after={jumpEnd}
-				/>
-			}
-			trailing={viewGroups(true)}
-		/>
+		<>
+			<TimelineToolbarFrame
+				leading={
+					<>
+						{undoRedo}
+						{splitAndTakes}
+						<PreviewReadinessStatus id={readinessId} />
+					</>
+				}
+				centre={
+					<TransportControls
+						playing={playing}
+						disabled={!playbackReady && !playing}
+						aria-describedby={!playbackReady ? readinessId : undefined}
+						onTogglePlay={togglePlay}
+						currentSec={playheadSec}
+						durationSec={total}
+						before={
+							<>
+								{rate}
+								{jumpStart}
+							</>
+						}
+						after={jumpEnd}
+					/>
+				}
+				trailing={viewGroups(true)}
+			/>
+		</>
 	);
 }

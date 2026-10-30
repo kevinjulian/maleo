@@ -17,6 +17,7 @@ import { touchingBoundary } from "@maleo/shared";
 import type { EditorChromeStore } from "@stores/editor-chrome-store.ts";
 import { ClipRange, clipCapabilities } from "@components/timeline/clip-range.tsx";
 import { clipGeom as clipGeomOf } from "./timeline-lane.tsx";
+import { PreviewClipBadge } from "./media/preview-clip-state.tsx";
 import { Shimmer } from "@design-system/components/shimmer.tsx";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { MEDIA_DND_MIME } from "@models/timeline/editor-media.ts";
@@ -140,15 +141,18 @@ export function TimelineBaseLane({
 							}}
 							title={`${c.label} · drop an image to add a second visual · double-click to edit`}
 							body={
-								c.thumb ? (
-									<span className="tl2-clip-strip" style={{ backgroundImage: `url(${c.thumb})` }}>
-										{c.gen && <Shimmer />}
-									</span>
-								) : (
-									<span className="tl2-clip-strip empty">
-										{c.gen ? <Shimmer /> : Ic.image(ICON.sm)}
-									</span>
-								)
+								<>
+									<PreviewClipBadge id={c.id} />
+									{c.thumb ? (
+										<span className="tl2-clip-strip" style={{ backgroundImage: `url(${c.thumb})` }}>
+											{c.gen && <Shimmer />}
+										</span>
+									) : (
+										<span className="tl2-clip-strip empty">
+											{c.gen ? <Shimmer /> : Ic.image(ICON.sm)}
+										</span>
+									)}
+								</>
 							}
 						/>
 					);
@@ -187,6 +191,7 @@ export function TimelineBaseLane({
 							}}
 							title={`${c.label} · image in beat`}
 						>
+							<PreviewClipBadge id={c.id} />
 							{c.thumb ? (
 								<span className="tl2-clip-strip" style={{ backgroundImage: `url(${c.thumb})` }}>
 									{c.gen && <Shimmer />}

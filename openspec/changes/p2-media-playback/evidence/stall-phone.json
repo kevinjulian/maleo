@@ -1,0 +1,59 @@
+{
+	"readinessWaitMs": 1832,
+	"worstMs": 151,
+	"atPx": 108,
+	"transport": "Play",
+	"moved": true,
+	"decodedFrames": {
+		"900": 98,
+		"901": 100
+	},
+	"coldStarts": [],
+	"localUrls": {
+		"blob:http://127.0.0.1:3031/f8b20864-38e3-4d32-a0fd-075aef31d5bf": "http://127.0.0.1:3031/stall-probe.mp4",
+		"blob:http://127.0.0.1:3031/b22cf7e1-92e9-4615-99ca-0eaae63cb5c7": "http://127.0.0.1:3031/stall-probe.mp4?clip=901"
+	},
+	"audioEvents": [
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 0
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 0
+		},
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 3.050666666666667
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 3.050666666666667
+		},
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 6.656
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 6.656
+		},
+		{
+			"action": "suspend",
+			"state": "running",
+			"currentTime": 9.728
+		},
+		{
+			"action": "resume",
+			"state": "suspended",
+			"currentTime": 9.728
+		}
+	],
+	"nativeSamples": []
+}

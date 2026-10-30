@@ -142,6 +142,7 @@ export * from "./audio-gain.ts";
 export * from "./timeline-audio.ts";
 
 export * from "./caption-script.ts";
+export * from "./preview-media-dependencies.ts";
 
 export {
 	withGeneratedNarrationCaptions,

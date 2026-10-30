@@ -21,6 +21,8 @@ import { IconButton } from "@design-system/components/icon-button.tsx";
 export interface TemplateToolbarProps {
 	compact: boolean;
 	playing: boolean;
+	playbackReady: boolean;
+	"aria-describedby"?: string;
 	currentSec: number;
 	durationSec: number;
 	onTogglePlay: () => void;
@@ -32,6 +34,8 @@ export interface TemplateToolbarProps {
 export function TemplateToolbar({
 	compact,
 	playing,
+	playbackReady,
+	"aria-describedby": describedBy,
 	currentSec,
 	durationSec,
 	onTogglePlay,
@@ -52,6 +56,8 @@ export function TemplateToolbar({
 	const transport = (before?: JSX.Element): JSX.Element => (
 		<TransportControls
 			playing={playing}
+			disabled={!playbackReady && !playing}
+			aria-describedby={describedBy}
 			onTogglePlay={onTogglePlay}
 			currentSec={currentSec}
 			durationSec={durationSec}

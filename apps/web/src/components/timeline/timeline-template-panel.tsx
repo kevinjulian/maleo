@@ -1,7 +1,8 @@
-import { useCallback, useMemo, useRef, useState, type JSX, type ReactNode } from "react";
+import { useCallback, useId, useMemo, useRef, useState, type JSX, type ReactNode } from "react";
 import {
 	DEFAULT_TIMELINE_TEMPLATE,
 	DEFAULT_TIMELINE_TEMPLATE_ID,
+	toTimelineDoc,
 	type Emotion,
 	type TimelineTemplate,
 	type TimelineTemplateInput,
@@ -33,6 +34,7 @@ import {
 import { useTemplateTimeline } from "./template-timeline.tsx";
 import { rulerMarks } from "@models/timeline/ruler-ticks.ts";
 import { useRemotionPlayhead } from "@hooks/timeline/use-remotion-playhead.ts";
+import { usePreviewMedia } from "@hooks/timeline/use-preview-media.ts";
 import { useFollowPlayhead } from "@hooks/timeline/use-follow-playhead.ts";
 import { useGutterScrollSync } from "@hooks/timeline/use-gutter-scroll-sync.ts";
 import { usePhoneLayout } from "@hooks/editor/use-phone-layout.ts";
@@ -54,6 +56,16 @@ import {
 } from "./timeline-template-preview.ts";
 import { TemplateInspectorSections } from "./timeline-template-sections.tsx";
 import { TemplateEditorTimeline } from "./template-editor-timeline.tsx";
+import { previewReadinessMessage } from "./media/preview-loading.tsx";
+
+const TEMPLATE_PREVIEW_REFS = {
+	images: [],
+	speakers: [],
+	notes: [],
+	style: { tone: "", palette: "", music: "" },
+};
+const TEMPLATE_PREVIEW_FILES: ReadonlyMap<string, File> = new Map();
+const TEMPLATE_PREVIEW_ASSETS = [] as const;
 
 export {
 	buildTimelineTemplatePreview,
@@ -154,6 +166,49 @@ export function TimelineTemplateEditorModal({
 		[draft, width, height, sectionPreview.audio, scenePreview.audio, musicPreview.audio],
 	);
 	const durationFrames = rendererProps.durationInFrames;
+	const previewDoc = useMemo(
+		() =>
+			toTimelineDoc(
+				[],
+				[],
+				[],
+				(rendererProps.inputProps.audioOverlays ?? []).map((audio, id) => ({
+					...audio,
+					id,
+					kind: audio.kind ?? "sfx",
+					content: audio.content ?? "",
+					start: audio.startSec,
+					dur: audio.durationSec,
+					volume: audio.volume ?? 1,
+				})),
+			),
+		[rendererProps.inputProps],
+	);
+	const stopPreview = useRef<() => void>(() => {});
+	const readinessId = useId();
+	const media = usePreviewMedia({
+		projectId: null,
+		doc: previewDoc,
+		refs: TEMPLATE_PREVIEW_REFS,
+		mediaAssets: TEMPLATE_PREVIEW_ASSETS,
+		pendingFiles: TEMPLATE_PREVIEW_FILES,
+		stop: () => stopPreview.current(),
+	});
+	const lookupPending = [sectionPreview, scenePreview, musicPreview].some(
+		(preview) => preview.status === "loading",
+	);
+	const playbackReady = media.readiness.ready && !lookupPending;
+	const failedClips = media.snapshot?.clips.filter((clip) => clip.state.state === "failed") ?? [];
+	const previewInput = useMemo(
+		() => ({
+			...rendererProps.inputProps,
+			audioOverlays: rendererProps.inputProps.audioOverlays?.map((audio) => ({
+				...audio,
+				url: audio.url ? media.session?.resolve(audio.url) : undefined,
+			})),
+		}),
+		[rendererProps.inputProps, media.session, media.version],
+	);
 	const previewKey = `${draft.introTextPreset}:${draft.sectionTextPreset}:${draft.sceneEntrySfx}:${draft.staticSceneMovement}:${draft.overrideSceneTransition}:${draft.sceneTransition}:${draft.introLeadInSec}:${draft.introTitleDurationSec}:${sectionPreview.audio?.url ?? "no-section-audio"}:${scenePreview.audio?.url ?? "no-scene-audio"}:${musicPreview.audio?.url ?? "no-music"}:${draft.musicPolicy}:${draft.musicVolume}:${width}:${height}`;
 	/* The ref comes from the hook: it has to observe the player ARRIVING, which a
 	   ref created here cannot report. See use-remotion-playhead.ts. */
@@ -161,7 +216,9 @@ export function TimelineTemplateEditorModal({
 		30,
 		durationFrames,
 		previewKey,
+		playbackReady,
 	);
+	stopPreview.current = () => playerRef.current?.pause();
 	/* This surface DISPLAYS the time, so it subscribes — see playhead-handle.ts. */
 	const playheadSec = usePlayheadSec(playhead);
 	const timelineLanes = useMemo(
@@ -370,6 +427,8 @@ export function TimelineTemplateEditorModal({
 									playerRef={playerRef}
 									key={previewKey}
 									{...rendererProps}
+									inputProps={previewInput}
+									playbackReady={playbackReady}
 									loop
 									acknowledgeRemotionLicense
 									style={{ width: "100%", height: "100%" }}
@@ -431,16 +490,45 @@ export function TimelineTemplateEditorModal({
 					   flexible spacer — which is what stops it sitting at a different
 					   offset here than in Motion Studio. */
 				timelineToolbar={
-					<TemplateToolbar
-						compact={compact}
-						playing={playing}
-						currentSec={playheadSec}
-						durationSec={previewDurationSec}
-						onTogglePlay={togglePlay}
-						onStop={() => seek(0)}
-						onCloseInspector={() => setMobileInspectorOpen(false)}
-						inspectorOpen={mobileInspectorOpen}
-					/>
+					<>
+						<TemplateToolbar
+							playbackReady={playbackReady}
+							aria-describedby={!playbackReady ? readinessId : undefined}
+							compact={compact}
+							playing={playing}
+							currentSec={playheadSec}
+							durationSec={previewDurationSec}
+							onTogglePlay={togglePlay}
+							onStop={() => seek(0)}
+							onCloseInspector={() => setMobileInspectorOpen(false)}
+							inspectorOpen={mobileInspectorOpen}
+						/>
+						{!playbackReady && (
+							<div className="tw:flex tw:flex-wrap tw:items-center tw:gap-2 tw:px-2 tw:py-1">
+								<Note
+									id={readinessId}
+									role="status"
+									tone={failedClips.length ? "error" : "plain"}
+									className="tw:break-words"
+								>
+									{lookupPending
+										? "Finding preview audio."
+										: previewReadinessMessage(media.snapshot?.clips ?? [])}
+								</Note>
+								{failedClips.length > 0 && (
+									<Button
+										size="sm"
+										variant="secondary"
+										onClick={() => {
+											for (const clip of failedClips) media.retryClip(clip.id);
+										}}
+									>
+										Retry preview
+									</Button>
+								)}
+							</div>
+						)}
+					</>
 				}
 				timeline={
 					<>

@@ -11,6 +11,8 @@ crate-type = ["cdylib", "rlib"]
 
 # Everything is browser-only; a native build of the workspace compiles an empty crate.
 [target.'cfg(target_arch = "wasm32")'.dependencies]
+maleo-media = { path = "../media" }
+serde = { version = "1.0.229", features = ["derive"] }
 maleo-preview = { path = "../preview" }
 maleo-renderer = { path = "../renderer" }
 serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }
@@ -19,5 +21,5 @@ serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtr
 wasm-bindgen = "=0.2.129"
 wasm-bindgen-futures = "=0.4.79"
 js-sys = "=0.3.106"
-web-sys = { version = "=0.3.106", features = ["OffscreenCanvas"] }
+web-sys = { version = "=0.3.106", features = ["OffscreenCanvas", "VideoFrame"] }
 wgpu = { version = "=30.0.1", default-features = false, features = ["std", "wgsl", "webgpu"] }

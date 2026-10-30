@@ -22,25 +22,53 @@ export interface CoverageEntry {
 }
 
 /** The image URLs a render storyboard draws, each once, in document order. */
-export function storyboardImageUrls(storyboard: {
+interface MediaStoryboard {
 	scenes?: ReadonlyArray<{
 		image?: string;
+		endImage?: string | null;
 		visualClips?: ReadonlyArray<{ url: string; kind?: string }>;
+		sfxUrl?: string;
+		audioClips?: ReadonlyArray<{ url?: string }>;
 	}>;
 	visualTimeline?: ReadonlyArray<{ url: string; kind?: string }>;
 	videoOverlays?: ReadonlyArray<{ url: string; kind?: string }>;
-}): string[] {
+	audioOverlays?: ReadonlyArray<{ url?: string }>;
+	voiceover?: { audioUrl?: string; text?: string } | null;
+	musicUrl?: string;
+}
+
+function sourceUrls(storyboard: MediaStoryboard, imagesOnly: boolean): string[] {
 	const image = (clip: { url: string; kind?: string }): string[] =>
-		(clip.kind ?? "image") === "image" && clip.url ? [clip.url] : [];
+		(!imagesOnly || (clip.kind ?? "image") === "image") && clip.url ? [clip.url] : [];
 	const urls = [
 		...(storyboard.scenes ?? []).flatMap((scene) => [
 			...(scene.image ? [scene.image] : []),
+			...(scene.endImage ? [scene.endImage] : []),
 			...(scene.visualClips ?? []).flatMap(image),
 		]),
 		...(storyboard.visualTimeline ?? []).flatMap(image),
 		...(storyboard.videoOverlays ?? []).flatMap(image),
+		...(imagesOnly
+			? []
+			: [
+					...(storyboard.voiceover?.audioUrl ? [storyboard.voiceover.audioUrl] : []),
+					...(storyboard.musicUrl ? [storyboard.musicUrl] : []),
+					...(storyboard.audioOverlays ?? []).flatMap((clip) => (clip.url ? [clip.url] : [])),
+					...(storyboard.scenes ?? []).flatMap((scene) => [
+						...(scene.sfxUrl ? [scene.sfxUrl] : []),
+						...(scene.audioClips ?? []).flatMap((clip) => (clip.url ? [clip.url] : [])),
+					]),
+				]),
 	];
 	return [...new Set(urls)];
+}
+
+export function storyboardImageUrls(storyboard: MediaStoryboard): string[] {
+	return sourceUrls(storyboard, true);
+}
+
+export function storyboardMediaUrls(storyboard: MediaStoryboard): string[] {
+	return sourceUrls(storyboard, false);
 }
 
 /** Frame times in milliseconds: the last one, and the median and 95th

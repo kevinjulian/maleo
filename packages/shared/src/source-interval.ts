@@ -13,6 +13,17 @@ export function sceneVisualSourceDuration(
 		: scene;
 }
 
+/** Last selected source frame retained through narration and transition holds. */
+export function heldVideoFrame(
+	duration: number,
+	rate: number,
+	fps: number,
+	frame: number,
+): [number, boolean] {
+	const end = Math.max(0, Math.floor(duration * fps - Math.max(1, 1 / rate)));
+	return [Math.min(frame, end), frame > end];
+}
+
 /** Seconds in original source, independent of playback direction. */
 export function sourceInterval(start: number, duration: number, rate = 1) {
 	if (

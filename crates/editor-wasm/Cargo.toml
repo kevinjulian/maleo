@@ -12,4 +12,5 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 maleo-app-core = { path = "../app-core" }
 maleo-editor-core = { path = "../editor-core" }
+maleo-media = { path = "../media" }
 serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }

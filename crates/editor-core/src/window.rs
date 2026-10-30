@@ -72,7 +72,7 @@ fn scene_layout(clip: &Clip) -> Option<&Value> {
 /// `sceneVisualSourceDuration(selected, scene, layout)`.
 pub fn scene_visual_source_duration(selected: f64, scene: f64, layout: &Passthrough) -> f64 {
     let preserves = layout.contains_key("preservePitch") || layout.get("reverseMedia").is_some_and(|value| !value.is_null());
-    if preserves { js_min(selected, scene) } else { scene }
+    maleo_media::timing::scene_visual_source_duration(selected, scene, preserves)
 }
 
 /// `clipSourceRange(clip)`.

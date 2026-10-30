@@ -96,6 +96,10 @@ for (const width of [1440, 320])
 				await context.route("**/api/media/*", (route) =>
 					route.fulfill({ body: video, contentType: "video/mp4" }),
 				);
+				// Preview reloads the ready asset as complete local bytes through its signature.
+				await context.route("**/api/media/*/sign", (route) =>
+					route.fulfill({ json: { url: new URL(route.request().url()).pathname.slice(0, -5) } }),
+				);
 				/* The upload goes to a real socket, so the browser's network throttle applies to
 				 * it (a fulfilled route never reaches the network). */
 				const upstream: Server = createServer((request, response) => {
@@ -160,7 +164,8 @@ for (const width of [1440, 320])
 
 				// The clip exists at once and says it is uploading, with byte progress.
 				await expect(page.locator("[data-clipid]")).toHaveCount(before + 1);
-				const badge = page.locator(".tl2-clip-upload").first();
+				// Ready media clips carry a compact preview badge; the upload badge names its phase.
+				const badge = page.locator(".tl2-clip-upload[data-upload-phase]").first();
 				await expect(badge).toHaveAttribute("aria-label", /^Uploading \d+%$/);
 				await page.screenshot({ path: testInfo.outputPath("uploading.png") });
 				await cdp.send("Network.emulateNetworkConditions", {
@@ -173,10 +178,9 @@ for (const width of [1440, 320])
 
 				if (phone) {
 					// A drop selects its clip, so the phone clip bar and its actions sheet carry the state too.
-					await expect(page.locator(".tl2-clipbar .tl2-clip-upload")).toHaveAttribute(
-						"aria-label",
-						"Processing",
-					);
+					await expect(
+						page.locator(".tl2-clipbar .tl2-clip-upload[data-upload-phase]"),
+					).toHaveAttribute("aria-label", "Processing");
 					await page
 						.getByRole("button", { name: "Clip actions", exact: true })
 						.click({ timeout: 10_000 });
@@ -213,11 +217,20 @@ for (const width of [1440, 320])
 					await expect(menu).toHaveCount(0);
 				}
 
-				// Ready: the badge goes, the clip stays where it was, and nothing was added to undo.
+				// Ready: the upload badge goes, the clip stays where it was, and nothing was added to undo.
 				const clip = page.locator('[data-clipid^="video:"]').last();
 				const placed = await clip.boundingBox();
 				status = "ready";
-				await expect(page.locator(".tl2-clip-upload")).toHaveCount(0, { timeout: 15_000 });
+				await expect(page.locator(".tl2-clip-upload[data-upload-phase]")).toHaveCount(0, {
+					timeout: 15_000,
+				});
+				// The ready asset reloads as a new preview source; its transient notice must settle first.
+				await expect(clip.locator(".tl2-clip-upload[data-preview-state]")).toHaveCount(0, {
+					timeout: 15_000,
+				});
+				await expect(
+					page.getByText(/^(Loading preview media|Preparing preview|Preview unavailable)/),
+				).toHaveCount(0);
 				expect(await clip.boundingBox()).toEqual(placed);
 				await assets.click();
 				await expect(
