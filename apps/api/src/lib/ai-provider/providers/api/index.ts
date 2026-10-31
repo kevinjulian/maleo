@@ -229,7 +229,16 @@ export const apiProvider: AiProvider = {
 				);
 			}
 
-			const body = readChatCompletion(await res.json().catch(() => null));
+			/* The timeout also covers the body. A read it aborts must fail the call:
+			 * swallowed, it returned "" as if the model had answered with nothing. */
+			const raw = await res.json().catch(() => {
+				if (signal.aborted)
+					throw new Error(
+						`api request to ${cfg.baseUrl} timed out after ${input.timeoutMs ?? DEFAULT_TIMEOUT_MS} ms`,
+					);
+				return null;
+			});
+			const body = readChatCompletion(raw);
 			if (!res.ok) {
 				// Never echo the response body wholesale — a rejected request can
 				// contain the key that was rejected.

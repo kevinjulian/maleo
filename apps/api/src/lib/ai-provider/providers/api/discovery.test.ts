@@ -13,6 +13,7 @@ let status: number;
 let payload = "";
 let authorization: string | undefined;
 let hang: boolean;
+let stallBody: boolean;
 let generations: unknown[];
 
 beforeEach(async () => {
@@ -20,6 +21,7 @@ beforeEach(async () => {
 	status = 200;
 	payload = JSON.stringify({ data: [{ id: "deepseek-flash" }, { id: "deepseek-v4-pro" }] });
 	hang = false;
+	stallBody = false;
 	generations = [];
 	server = createServer((request, response) => {
 		if (request.method === "POST") {
@@ -30,6 +32,10 @@ beforeEach(async () => {
 			request.on("end", () => {
 				generations.push(JSON.parse(body));
 				response.writeHead(200, { "content-type": "application/json" });
+				if (stallBody) {
+					response.write('{"choices":[{"message":{"content":"{\\"lay');
+					return;
+				}
 				response.end(
 					JSON.stringify({
 						choices: [{ message: { content: "Done" } }],
@@ -194,4 +200,11 @@ describe("endpoint model discovery", () => {
 		]);
 		expect((await textModelOptions()).options).toEqual([{ id: "local-model", source: "declared" }]);
 	});
+});
+
+test("a timeout while the reply body streams is an error, not an empty answer", async () => {
+	stallBody = true;
+	await expect(
+		apiProvider.text!.generate({ prompt: "test", model: "deepseek-flash", timeoutMs: 200 }),
+	).rejects.toThrow(/timed out/);
 });
