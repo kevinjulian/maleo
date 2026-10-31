@@ -32,6 +32,7 @@ const MODEL_REQUESTS = [
 	"prompt:sequence:storySequenceDirectionPrompt",
 	"prompt:content:generateStyleBible",
 	"prompt:content:authorStoryBible",
+	"prompt:content:authorMotionIntent",
 ];
 
 test("every model-request template names its response contract and no fragment does", () => {

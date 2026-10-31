@@ -58,6 +58,13 @@ src/
   composition-schema.ts    versioned primitive layers and normalized composition animation
   clip-animation.ts        the animation value, per-kind schemas derived from the
                            registry, trim/retime, export blockers
+  motion-tokens.ts         motion roles, classes, springs and timing rules
+  motion-spring.ts         closed-form springs, curve sampling, key reduction
+  motion-intent.ts         model-written motion intent and its validation
+  motion-compile.ts        intent to composition keys (channels in
+                           motion-channels.ts, read-back in motion-geometry.ts)
+  motion-lint.ts           motion findings read from stored keys
+  motion-examples.ts       reference intents for the prompt and tests
   keyframe-evaluation.ts   value and colour track sampling, easing incl. hold
   legacy-text-animation.ts read-time upgrade of normalized text `anim`
   render-fps.ts            RENDER_FPS, shared by render, preview and conversion

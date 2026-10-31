@@ -65,6 +65,29 @@ export function stableInputHash(values: readonly (string | number | undefined)[]
 	return digest(fields(values));
 }
 
+/** What a generated motion composition was authored from (motion-design-generation).
+ *  Equal inputs may share one composition; any change asks for a new one. */
+export interface MotionInputHashInput {
+	sourceText: string;
+	presentation: string;
+	startSec: number;
+	durationSec: number;
+	aspect: string;
+	visualStyle?: string;
+}
+
+export function motionInputHash(input: MotionInputHashInput): string {
+	return stableInputHash([
+		"motion:v1",
+		input.sourceText,
+		input.presentation,
+		Math.round(input.startSec * 1000),
+		Math.round(input.durationSec * 1000),
+		input.aspect,
+		input.visualStyle,
+	]);
+}
+
 export interface StorySpeechHashInput {
 	narration: string;
 	voice?: string;

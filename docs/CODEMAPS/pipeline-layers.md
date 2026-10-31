@@ -176,6 +176,39 @@ none; retired stored choices disable titles while preserving other policy.
 Agent document persistence carries text styles and shape/composition params.
 The ordinary visual-write guard refuses retired IDs before a new head is saved.
 
+### Generated motion design
+
+Story generation places motion for directed on-screen text when the section's
+presentation is `headline`, `explainer` or `transition`. A `narrative` section
+keeps plain text. Motion is placed as one ordinary clip per layer — plain text
+or a retained shape — each on its own lane, with keys in clip-local seconds that
+the timeline's key lanes edit.
+
+| Step     | Where                                                         | Kind                         |
+| -------- | ------------------------------------------------------------- | ---------------------------- |
+| Author   | `authorMotionIntent` in `apps/api/src/lib/motion-author.ts`   | model, one retry             |
+| Validate | `parseMotionIntent` in `packages/shared/src/motion-intent.ts` | pure                         |
+| Compile  | `compileMotionClips` in `packages/shared/src/motion-clips.ts` | pure, motion tokens          |
+| Lint     | `lintMotion` in `packages/shared/src/motion-lint.ts`          | pure, reported, never a gate |
+| Place    | `services/section-motion.ts`                                  | reserved ids, then cache     |
+
+The model decides layers, roles, classes and states. It does not write timing.
+The compiler writes every key from `motion-tokens.ts`. Text layers must quote
+the source text, so authoring cannot add a claim. `compileMotion` (same file
+family) still produces the one-clip composition form, which the lint reads.
+
+A beat's clips carry ids from a range reserved for its text and start
+(`motionIdBase`). A save keeps them, and a regeneration keeps any clips already
+in a beat's range, user edits included, with no model call. Authoring runs once,
+after the final timeline assembly. A failure keeps plain text and adds a run
+note.
+
+The chat tool `add_motion_design` uses the same path and places the clips through
+one `batch` command, which is one undo step. In the editor, "Expand into clips"
+on a placed `motion-comp` clip (`apps/web/src/models/timeline/motion-expand.ts`)
+replaces it with one clip per layer through `expandComposition`, also one undo
+step. Motion Studio edits saved definitions only.
+
 ## The chat context envelope
 
 One typed envelope per chat command, built from live editor state and frozen on

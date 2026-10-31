@@ -125,7 +125,7 @@ function videoClipOf(v: VideoOverlay): Clip {
 		video: v,
 	};
 }
-function textClipOf(t: TextOverlay): Clip {
+export function textClipOf(t: TextOverlay): Clip {
 	return {
 		id: clipId("text", t.id),
 		type: "text",

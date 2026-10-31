@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vite-plus/test";
 import {
+	motionInputHash,
 	frameIsStale,
 	sceneFrameHash,
 	sceneSpeechHash,
@@ -318,5 +319,35 @@ describe("the direction fingerprint sees every direction input", () => {
 		expect(storyDirectionInputFingerprint({ ...base, plannedShots: [["ab", "c"]] })).not.toBe(
 			storyDirectionInputFingerprint({ ...base, plannedShots: [["a", "bc"]] }),
 		);
+	});
+});
+
+describe("motionInputHash", () => {
+	const base = {
+		sourceText: "Ship faster",
+		presentation: "headline",
+		startSec: 1.25,
+		durationSec: 2.4,
+		aspect: "16:9",
+		visualStyle: "flat editorial",
+	};
+
+	test("changes when any authored input changes", () => {
+		const hash = motionInputHash(base);
+		for (const patch of [
+			{ sourceText: "Ship slower" },
+			{ presentation: "explainer" },
+			{ startSec: 1.3 },
+			{ durationSec: 2.5 },
+			{ aspect: "9:16" },
+			{ visualStyle: "dark luxury" },
+			{ visualStyle: undefined },
+		])
+			expect(motionInputHash({ ...base, ...patch })).not.toBe(hash);
+	});
+
+	test("ignores sub-millisecond timing noise and is stable", () => {
+		expect(motionInputHash({ ...base, startSec: 1.2500001 })).toBe(motionInputHash(base));
+		expect(motionInputHash(base)).toBe(motionInputHash({ ...base }));
 	});
 });

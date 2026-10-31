@@ -1,6 +1,7 @@
 {
   "apps/api/src/lib/scene-extractor.ts": 1,
   "apps/api/src/lib/content-generator.ts": 6,
+  "apps/api/src/lib/motion-author.ts": 1,
   "apps/api/src/modules/agents/core/story-clarification-planner.ts": 1,
   "apps/api/src/modules/agents/core/post-research-clarification.ts": 1,
   "apps/api/src/lib/story/creative-director.ts": 1,

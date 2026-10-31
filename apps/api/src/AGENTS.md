@@ -119,6 +119,11 @@ Owns the content-studio HTTP surface, the server-side chat agent, generation
   `layout` is not projected into the document. Until
   `move-agent-tools-to-editor-commands` lands, the track rides the job and the
   usual agent merge rather than a `clip.setKeys` command.
+- Agent motion design is a composition of retained primitives, never free code:
+  the model writes a motion intent, and `compileMotionClips` (`@maleo/shared`)
+  writes every key as one timeline clip per layer. `add_motion_design` and story
+  generation share `lib/motion-author.ts`. Text layers quote the source text only.
+  Generated motion clips use the beat's reserved id range (`motionIdBase`).
 - Agent-generated text overlays use reserved ids; rebuild/regenerate flows may
   replace those auto overlays but must preserve user-authored clips. A number a
   video must show goes into native on-screen text; never invent comparison rows

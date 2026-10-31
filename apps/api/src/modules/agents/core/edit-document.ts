@@ -17,7 +17,7 @@ import {
 	type EntityFingerprint,
 	type TimelineDoc,
 } from "@maleo/shared";
-import { insertClip, type EditorCommand, type EditScope } from "@maleo/shared/editor";
+import { batch, insertClip, type EditorCommand, type EditScope } from "@maleo/shared/editor";
 import { editorEngine } from "../../../lib/editor-engine.ts";
 import { agentTimelineDoc } from "./document.ts";
 import { overlaysFromV2Clips } from "./persistence.ts";
@@ -142,6 +142,31 @@ export function placeOverlay<K extends keyof Placements>(
 	const clip = projected.clips.find((c) => !existing.has(c.id));
 	if (!clip) throw new Error(`placing a ${family} clip produced no new clip`);
 	runEdit(job, insertClip(clip));
+}
+
+/** Place several overlays of one family as ONE batch command, so the editor
+ *  records them as one undo step (motion design places a clip per layer). */
+export function placeOverlays<K extends keyof Placements>(
+	job: AgentJob,
+	family: K,
+	overlays: Placements[K],
+	label?: string,
+): void {
+	const existing = new Set(runDocument(job).clips.map((clip) => clip.id));
+	const projected = agentTimelineDoc(
+		{ ...job, [family]: [...job[family], ...overlays] },
+		job.clientClips ?? [],
+	);
+	const clips = projected.clips.filter((c) => !existing.has(c.id));
+	if (clips.length !== overlays.length)
+		throw new Error(`placing ${overlays.length} ${family} clips produced ${clips.length}`);
+	runEdit(
+		job,
+		batch(
+			clips.map((clip) => insertClip(clip)),
+			label,
+		),
+	);
 }
 
 /** What a run carries to the editor for its edits: every command its editing tools

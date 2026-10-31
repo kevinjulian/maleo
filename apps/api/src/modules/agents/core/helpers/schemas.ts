@@ -102,6 +102,15 @@ export const addTextArgs = z
 		preset: z.literal("plain").optional(),
 	})
 	.strict();
+export const addMotionDesignArgs = z
+	.object({
+		description: text.min(1).max(500),
+		startSec: number.nonnegative(),
+		durationSec: number.min(0.5).max(20),
+		text: text.max(300).optional(),
+		presentation: z.enum(["headline", "explainer", "transition"]).optional(),
+	})
+	.strict();
 export const setLayoutArgs = z
 	.object({
 		target: z.enum(["scene", "video", "text"]),

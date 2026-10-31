@@ -96,6 +96,12 @@ prompt
 
 Same `StageId`s; the profile's `stages[]` selects the subset.
 
+Motion design for directed on-screen text runs after the final timeline
+assembly. One model call per `headline`, `explainer` or `transition` section
+decides the layers and states. Shared code compiles them into one timeline clip
+per layer, each with its own editable keys. A failure keeps plain text. The chat tool `add_motion_design` uses the
+same path. See `docs/CODEMAPS/pipeline-layers.md` (Generated motion design).
+
 ## Stage contract
 
 ```ts

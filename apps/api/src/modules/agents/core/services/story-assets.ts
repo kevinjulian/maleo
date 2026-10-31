@@ -24,8 +24,6 @@ import type {
 } from "@maleo/shared";
 import {
 	bindingIdentity,
-	PLAIN_TEXT_AUTHOR_STYLE,
-	defaultClipLayout,
 	buildStoryBeatIntent,
 	materializedEntityId,
 	onlyStoredInfographicDirectionErrors,
@@ -110,6 +108,7 @@ import {
 import { materializePlannedSections, researchForPlan } from "../evidence.ts";
 import { getStoryPlan, setStoryPlan, emitPlanTable } from "../plan-state.ts";
 import { persist } from "../persistence.ts";
+import { authorSectionMotion, directedTextOverlays, directedTextSlots } from "./section-motion.ts";
 import { emitToolCall, pushNote } from "../trace.ts";
 import { ensureVisualStyle } from "../style-engine.ts";
 import { canonicalReferencePrompt, upsertGeneratedReference } from "../generated-reference.ts";
@@ -300,23 +299,8 @@ function templateTitleOverlays(job: AgentJob, sections: StorySection[]): AgentTe
 		policy: policy.titlePolicy,
 		durationSec: policy.titleDurationSec,
 	}) as AgentTextOverlay[];
-	const directedText = placeSections(sections, policy.pauseSec, policy.leadInSec).flatMap(
-		(section) => {
-			const content = section.editorial?.onScreenText;
-			if (!content || section.startSec == null || !section.audioDurationSec) return [];
-			return [
-				{
-					content,
-					startSec: section.startSec,
-					durationSec: Math.min(policy.titleDurationSec, section.audioDurationSec),
-					preset: "plain",
-					style: { ...PLAIN_TEXT_AUTHOR_STYLE },
-					layout: defaultClipLayout("text"),
-				},
-			] satisfies AgentTextOverlay[];
-		},
-	);
-	return [...titles, ...directedText];
+	// Directed on-screen text: a motion composition where one is resolved, else plain.
+	return [...titles, ...directedTextOverlays(job, directedTextSlots(sections, policy), titles)];
 }
 
 // Whoosh/stinger cue for section entries. A selected template resolves one asset,
@@ -2157,7 +2141,14 @@ export async function generateStoryAssetsFlow(
 
 	// Final assembly from all ready sections (same builder used progressively above),
 	// then emit the plan table with the canonical statuses + resynced starts.
-	const totalSec = assembleTimeline(true);
+	let totalSec = assembleTimeline(true);
+	// Motion for directed on-screen text, authored once the timing is final; any
+	// section that gained a composition is placed by assembling again.
+	const motionSlots = directedTextSlots(
+		sections.filter((s) => s.status === "ready"),
+		timelinePolicy(job),
+	);
+	if (await authorSectionMotion(job, motionSlots)) totalSec = assembleTimeline(true);
 	const scenes = job.scenes;
 	/* What this pass produced, against the approval it consumed — an extension
 	 * approved mid-pass is the approval the plan now holds. Recorded whether or not

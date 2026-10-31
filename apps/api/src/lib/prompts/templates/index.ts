@@ -7,6 +7,7 @@ import { CONTEXT_TEMPLATES } from "./context.ts";
 import { DIRECTION_TEMPLATES } from "./direction.ts";
 import { EVIDENCE_TEMPLATES } from "./evidence.ts";
 import { MATERIAL_TEMPLATES } from "./materials.ts";
+import { MOTION_TEMPLATES } from "./motion.ts";
 import { SEQUENCE_TEMPLATES } from "./sequence.ts";
 import { STORY_TEMPLATES } from "./story.ts";
 import { WRITER_TEMPLATES } from "./writer.ts";
@@ -37,6 +38,7 @@ export const PROMPT_TEMPLATE_MODULES: readonly PromptTemplateModule[] = [
 	{ source: at("story.ts"), purpose: "Research and planning", templates: STORY_TEMPLATES },
 	{ source: at("sequence.ts"), purpose: "Story direction", templates: SEQUENCE_TEMPLATES },
 	{ source: at("bible.ts"), purpose: "Visual authoring", templates: BIBLE_TEMPLATES },
+	{ source: at("motion.ts"), purpose: "Motion design", templates: MOTION_TEMPLATES },
 	{ source: at("context.ts"), purpose: "Agent context", templates: CONTEXT_TEMPLATES },
 ];
 

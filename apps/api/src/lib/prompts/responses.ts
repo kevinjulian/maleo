@@ -52,6 +52,10 @@ export const RESPONSE_SCHEMAS: Readonly<Record<string, ResponseRef>> = {
 		owner: "apps/api/src/lib/content-generator.ts#storyBibleDraftSchema",
 		description: "Subjects, locations, look and negatives.",
 	},
+	motionIntent: {
+		owner: "packages/shared/src/motion-intent.ts#parseMotionIntent",
+		description: "Primitive layers with role, class and box, and the states that move them.",
+	},
 };
 
 export const RESPONSE_POLICIES: Readonly<Record<string, ResponseRef>> = {
@@ -89,6 +93,11 @@ export const RESPONSE_POLICIES: Readonly<Record<string, ResponseRef>> = {
 	"bible.bestEffort": {
 		owner: "apps/api/src/modules/agents/core/services/planning.ts#authorPreparedBible",
 		description: "A failure leaves the plan without a Story Bible.",
+	},
+	"motion.retryThenPlainText": {
+		owner: "apps/api/src/lib/motion-author.ts#authorMotionIntent",
+		description:
+			"Retry once with the refusal as correction; a second failure leaves the beat as plain text.",
 	},
 };
 

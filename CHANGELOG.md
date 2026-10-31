@@ -17,6 +17,7 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- **Motion design generation.** Story generation now makes motion for each `headline`, `explainer` and `transition` section that has on-screen text. A `narrative` section keeps plain text. Motion is placed as one ordinary clip per layer — plain text or a retained shape — each on its own lane with its own keyframes, so every part can be edited on the timeline like any other clip. The model chooses the layers, their roles and the states. Shared code writes every keyframe from one set of motion tokens: springs, a cascade of 150 ms between movers, quiet ambient drift, and exits shorter than entrances. Text layers must quote the section's on-screen text, so the model cannot add a claim. If authoring fails twice, the section keeps plain text and the run shows a note. A motion lint reports problems, such as text that moves before it can be read, without blocking placement. A regeneration keeps a beat's existing motion clips, including your edits, and makes no new model call for it. The chat agent gains `add_motion_design`, which places the clips at a requested time as one undo step, and MCP serves it as a direct edit. The clip menu gains **Expand into clips** for any placed motion clip, as one undo step. Each eligible section costs one text-model call.
 - Project chat offers endpoint models in its composer. The shared project choice
   persists after reload. Each run and queued instruction retains its model
   through replies and recovery. Model discovery reports failures with Retry;

@@ -8,6 +8,7 @@
 import type { JSX } from "react";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { ExpandKeyframesItem, KeyframeClipboardItems } from "./clip-keyframe-lanes.tsx";
+import { ExpandMotionItem } from "./expand-motion-item.tsx";
 import { EFFECT_DEFS } from "@models/timeline/editor-media.ts";
 import { fmtTC } from "@models/timeline/timeline-editor-model.ts";
 import type { Scene } from "@maleo/shared";
@@ -111,6 +112,12 @@ export function TimelineStageMenus({
 								>
 									{Ic.plus(ICON.sm)} Paste here <kbd>⌘V</kbd>
 								</button>
+								<ExpandMotionItem
+									ids={selectionIds()}
+									store={store}
+									writers={writers}
+									onDone={() => setCtxMenu(null)}
+								/>
 								<ExpandKeyframesItem
 									store={store}
 									selection={view.selection}

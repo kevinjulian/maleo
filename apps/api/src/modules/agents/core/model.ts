@@ -171,6 +171,14 @@ export interface AgentJob {
 	pendingActionId?: string;
 	scenes: AgentScene[];
 	textOverlays: AgentTextOverlay[];
+	/** Motion compositions authored this run for directed on-screen text, keyed by
+	 *  `motionInputHash`. A failure is kept too, so the run does not ask again; the
+	 *  section then keeps plain text. Run-scoped: a later run keeps the clips already
+	 *  placed in the beat's reserved id range (`services/section-motion.ts`). */
+	sceneMotion?: Record<
+		string,
+		{ clips: import("@maleo/shared").MotionClip[] } | { failure: string }
+	>;
 	videoOverlays: AgentVideoOverlay[];
 	audioOverlays: AgentAudioOverlay[];
 	characters: AgentCharacter[];
