@@ -3,6 +3,7 @@ import { previewMediaDependencies, type RefsState, type TimelineDoc } from "@mal
 import { hasEditorEngine } from "@maleo/shared/editor";
 import type { MediaAsset } from "@maleo/shared/editor";
 import { mediaFetchTarget } from "@api/media.ts";
+import { stockAudioHosts } from "@api/stock-audio.ts";
 import { decodableAudioUrl } from "@models/timeline/audio-decode-url.ts";
 import {
 	isPendingMedia,
@@ -45,7 +46,9 @@ export function usePreviewMedia(args: {
 				resolve: async (source) => {
 					const url = resolveMediaUrl(source.url);
 					if (!url) throw new Error("Choose this pending file again before playback");
-					return mediaFetchTarget(source.kinds.includes("audio") ? decodableAudioUrl(url) : url);
+					return mediaFetchTarget(
+						source.kinds.includes("audio") ? decodableAudioUrl(url, await stockAudioHosts()) : url,
+					);
 				},
 			});
 			setSession(next);

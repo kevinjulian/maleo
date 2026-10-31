@@ -8,6 +8,7 @@ import type { JSX } from "react";
 import { useEffect, useRef, useState } from "react";
 import { getAudioData, getWaveformPortion } from "@remotion/media-utils";
 import { mediaCredentials } from "@models/core/cc-helpers.ts";
+import { stockAudioHosts } from "@api/stock-audio.ts";
 import { decodableAudioUrl } from "@models/timeline/audio-decode-url.ts";
 import { displayPeaks } from "@models/timeline/waveform-bars.ts";
 
@@ -22,7 +23,7 @@ async function decode(rawUrl: string): Promise<{ peaks: number[]; duration: numb
 	 * the stock music bucket sends no CORS header, so every music clip fell back
 	 * to its label while `/uploads` audio drew a waveform. Cached under the
 	 * decodable url so one track decodes once however it was addressed. */
-	const url = decodableAudioUrl(rawUrl);
+	const url = decodableAudioUrl(rawUrl, await stockAudioHosts());
 	const cached = cache.get(url);
 	if (cached) return cached;
 	const inflight = pending.get(url);

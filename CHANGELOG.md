@@ -443,6 +443,7 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Fixed
 
+- Projects with a curated music bed no longer show "Preview unavailable". The same-origin audio passthrough only knew a placeholder music host, so a deployment's real library (`STOCK_MUSIC_HOST` or `STOCK_MUSIC_BASE_URL`) was fetched cross-origin and blocked by CORS. The api now serves its host table at `GET /api/stock/audio-hosts`, and the passthrough and the timeline both use it.
 - A text model call through the API provider that timed out while the reply was still arriving returned an empty answer, so callers saw invalid output instead of a timeout. It now fails with a timeout error.
 - Agent provider failures preserve the API error instead of reporting a successful pause and delivery warnings. Empty scenes no longer trigger a brief-coverage warning, and responses with no completed model step report an error.
 

@@ -15,11 +15,13 @@
  * The host list, and the guarantee that nothing outside it is rewritten, live in
  * `@maleo/shared` — the api enforces the same list on the other end, and two
  * copies of that list is how a passthrough ends up forwarding somewhere its
- * server never agreed to.
+ * server never agreed to. The music library's host is deployment configuration,
+ * so callers pass the table the api serves (`@api/stock-audio.ts`); without it
+ * only the shared hosts are rewritten.
  */
-import { sameOriginStockAudioUrl } from "@maleo/shared";
+import { sameOriginStockAudioUrl, type StockAudioHosts } from "@maleo/shared";
 
 /** A stock-audio url rewritten onto this origin; anything else untouched. */
-export function decodableAudioUrl(url: string): string {
-	return sameOriginStockAudioUrl(url);
+export function decodableAudioUrl(url: string, hosts?: StockAudioHosts): string {
+	return sameOriginStockAudioUrl(url, hosts);
 }

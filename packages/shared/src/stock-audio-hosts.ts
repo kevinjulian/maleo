@@ -1,4 +1,3 @@
-import { entriesOf } from "@maleo/shared";
 /* The third-party hosts stock audio is served from, and the same-origin path
  * the api forwards to each of them.
  *
@@ -14,22 +13,33 @@ import { entriesOf } from "@maleo/shared";
  * — the property worth keeping as the list grows.
  */
 
+export const STOCK_AUDIO_HOST_KEYS = ["music", "freesound"] as const;
+export type StockAudioHostKey = (typeof STOCK_AUDIO_HOST_KEYS)[number];
+
+/** Each known host by key. A missing key is a host this deployment does not
+ *  configure, and its urls are left untouched. */
+export type StockAudioHosts = Readonly<Partial<Record<StockAudioHostKey, string>>>;
+
+/** The hosts every deployment shares. The music library has no entry here: its
+ *  bucket is deployment configuration (`STOCK_MUSIC_HOST`, `STOCK_MUSIC_BASE_URL`)
+ *  that only the api can read, so the api serves the full table and the web
+ *  rewrites with that. */
 export const STOCK_AUDIO_HOSTS = {
-	/** The project's own music library bucket. */
-	music: "https://media.example.com",
 	/** Freesound preview mp3s, which is what the sfx picker stores. */
 	freesound: "https://cdn.freesound.org",
-} as const;
-
-export type StockAudioHostKey = keyof typeof STOCK_AUDIO_HOSTS;
+} as const satisfies StockAudioHosts;
 
 /** The path prefix the api mounts the passthrough on. */
 export const STOCK_AUDIO_PATH = "/api/stock/audio";
 
 /** Which known host a url belongs to, and what follows it. */
-export function stockAudioHostOf(url: string): { key: StockAudioHostKey; rest: string } | null {
-	for (const [key, host] of entriesOf(STOCK_AUDIO_HOSTS)) {
-		if (!url.startsWith(`${host}/`)) continue;
+export function stockAudioHostOf(
+	url: string,
+	hosts: StockAudioHosts = STOCK_AUDIO_HOSTS,
+): { key: StockAudioHostKey; rest: string } | null {
+	for (const key of STOCK_AUDIO_HOST_KEYS) {
+		const host = hosts[key]?.replace(/\/+$/, "");
+		if (!host || !url.startsWith(`${host}/`)) continue;
 		return { key, rest: url.slice(host.length + 1) };
 	}
 	return null;
@@ -40,8 +50,11 @@ export function stockAudioHostOf(url: string): { key: StockAudioHostKey; rest: s
  *  Refuses anything that could escape the host it names — a traversal segment or
  *  an empty path is left alone rather than normalised, because a rewrite that
  *  "fixes" a suspicious path is how a passthrough turns into a forwarder. */
-export function sameOriginStockAudioUrl(url: string): string {
-	const match = stockAudioHostOf(url);
+export function sameOriginStockAudioUrl(
+	url: string,
+	hosts: StockAudioHosts = STOCK_AUDIO_HOSTS,
+): string {
+	const match = stockAudioHostOf(url, hosts);
 	if (!match) return url;
 	const { key, rest } = match;
 	if (!rest || rest.includes("..") || rest.includes("//")) return url;

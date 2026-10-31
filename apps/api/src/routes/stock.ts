@@ -10,13 +10,26 @@ import {
 	isPexelsConfigured,
 	isFreesoundConfigured,
 	isMusicLibraryPublished,
+	musicBaseUrl,
 	searchFreesoundSfx,
 	searchMusicLibrary,
 	searchPexelsImages,
 	searchPexelsVideos,
 	type StockAsset,
 } from "@maleo/stock";
-import { keysOf, oneOf, STOCK_AUDIO_HOSTS } from "@maleo/shared";
+import {
+	oneOf,
+	STOCK_AUDIO_HOST_KEYS,
+	STOCK_AUDIO_HOSTS,
+	type StockAudioHosts,
+} from "@maleo/shared";
+
+/** The stock audio hosts of this deployment: the shared table plus the music
+ *  library base from configuration (`STOCK_MUSIC_HOST`, `STOCK_MUSIC_BASE_URL`).
+ *  Served to the web at `/audio-hosts` so both ends rewrite with one table. */
+export function stockAudioHosts(): StockAudioHosts {
+	return { ...STOCK_AUDIO_HOSTS, music: musicBaseUrl() };
+}
 
 /** Forward only a Range header, so seeking still works through the passthrough. */
 function rangeHeaders(range: string | undefined): HeadersInit {
@@ -169,15 +182,18 @@ export function stockRoutes(): Hono {
 	 * for somewhere else. A path that tries to escape is refused rather than
 	 * normalised, because normalising a suspicious path is how that guarantee
 	 * gets lost later. */
+	// Public bucket bases only: nothing here is a credential.
+	app.get("/audio-hosts", (c) => c.json(stockAudioHosts()));
+
 	app.get("/audio/:host/*", async (c) => {
 		const key = c.req.param("host");
 		/* `oneOf` against the host table's own keys rather than `Object.hasOwn` plus
 		   a cast. It returns the matched key, so the lookup below needs no
 		   assertion — and it is immune to the inherited-key problem the `hasOwn`
 		   was guarding against, because a prototype name is not in the list. */
-		const hostKey = oneOf(key, keysOf(STOCK_AUDIO_HOSTS));
-		if (!hostKey) return c.text("unknown host", 404);
-		const host = STOCK_AUDIO_HOSTS[hostKey];
+		const hostKey = oneOf(key, STOCK_AUDIO_HOST_KEYS);
+		const host = hostKey && stockAudioHosts()[hostKey]?.replace(/\/+$/, "");
+		if (!host) return c.text("unknown host", 404);
 		const marker = `/audio/${key}/`;
 		const at = c.req.path.indexOf(marker);
 		const path = at < 0 ? "" : c.req.path.slice(at + marker.length);
