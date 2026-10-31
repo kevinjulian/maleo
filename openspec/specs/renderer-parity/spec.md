@@ -172,3 +172,22 @@ Normal preview and production export SHALL continue through Remotion. Without th
 - **WHEN** an operator opens the editor without the compare parameter after expanded support is installed
 - **THEN** normal preview and export retain their existing renderer
 - **AND** neither Rust renderer module nor preview worker is requested
+
+### Requirement: Plain-text shadows and glyphs match production on dark backgrounds
+
+The Rust renderer SHALL draw the plain-text shadow and the glyph positions as the production
+Remotion image draws them, also when the shadow is the lowest ink of a frame. The renderer SHALL
+put each text baseline on a whole pixel. For text that production draws from its glyph cache, the
+renderer SHALL blur the shadow of each glyph separately and blend each blurred shadow in byte
+arithmetic, so that the shadow tails on a dark background have the same darkness as production.
+The corpus SHALL hold a case whose lowest ink is a text shadow on a dark background.
+
+#### Scenario: A text shadow is the lowest ink
+
+- **WHEN** the parity gate draws a frame whose lowest ink is a plain-text shadow on `#10182b`
+- **THEN** the bottom edge of the ink box is at most 2 px from the reference
+
+#### Scenario: A baseline falls between pixels
+
+- **WHEN** the layout puts a text baseline at a fractional pixel position
+- **THEN** the renderer draws the glyphs on the nearest whole-pixel baseline, as the reference does
