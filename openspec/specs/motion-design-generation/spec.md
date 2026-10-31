@@ -1,4 +1,4 @@
-# Spec Delta
+# motion-design-generation Specification
 
 ## Purpose
 
@@ -6,7 +6,7 @@ Generate editable motion design from the retained text and shape primitives:
 the model decides content and intent, deterministic code decides timing and
 motion feel, and the result is an ordinary composition clip.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Motion intent is authored from retained primitives
 
