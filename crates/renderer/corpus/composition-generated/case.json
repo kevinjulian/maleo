@@ -1,0 +1,12 @@
+{
+	"width": 1920,
+	"height": 1080,
+	"frames": [0, 5, 10, 15, 25, 50, 56, 60, 64, 72, 75, 80, 90, 120, 138, 142, 146, 152, 179],
+	"regions": [
+		{
+			"name": "content",
+			"rect": [0, 0, 1920, 1080]
+		}
+	],
+	"options": ["motion-comp.generated"]
+}

@@ -104,6 +104,13 @@ impl Canvas<'_> {
         if opacity >= 1.0 {
             return draw(self);
         }
+        self.skia_layer(opacity, draw)
+    }
+
+    /// Composes `draw` with Skia's byte arithmetic even at full opacity:
+    /// `SkPMSrcOver` truncates, so a faint layer darkens a dark backdrop by a
+    /// whole level where floating-point source-over rounds back to it.
+    pub fn skia_layer<T>(&mut self, opacity: f64, draw: impl FnOnce(&mut Self) -> T) -> T {
         let before = self.scene.encoding().draw_data.len();
         let rect = Rect::new(-1e6, -1e6, 1e6, 1e6);
         self.scene.push_layer(Fill::NonZero, Mix::Normal, opacity.clamp(0.0, 1.0) as f32, Affine::IDENTITY, &rect);

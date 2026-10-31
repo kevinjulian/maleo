@@ -157,23 +157,64 @@ fn block(fg_color: &str, overlay: &TextOverlay) -> Block {
     }
 }
 
-/// Draws every glyph of `layout` from `origin` in `color`.
-pub(super) fn draw_glyphs(scene: &mut Scene, layout: &Layout<WordBrush>, origin: (f64, f64), content_width: f32, align: Alignment, color: Rgba) {
+/// Calls `draw` with every glyph run of `layout` from `origin`: its x offset
+/// and glyphs. Skia positions horizontal text at subpixel x but rounds each
+/// baseline to a whole pixel.
+// ponytail: rounds in this scene's coordinates, which are device pixels only
+// under integer translations; track the device transform on Canvas if scaled
+// or fractionally placed text must match too.
+fn glyph_runs(
+    layout: &Layout<WordBrush>,
+    origin: (f64, f64),
+    content_width: f32,
+    align: Alignment,
+    mut draw: impl FnMut(&parley::GlyphRun<'_, WordBrush>, f64, Vec<vello::Glyph>),
+) {
     for line in layout.lines() {
         let shift = f64::from(line_shift(align, content_width, line.metrics()));
         for item in line.items() {
             let PositionedLayoutItem::GlyphRun(run) = item else { continue };
-            let glyphs = run.positioned_glyphs().map(|g| vello::Glyph { id: g.id, x: g.x, y: g.y });
-            scene
-                .draw_glyphs(run.run().font())
-                .font_size(run.run().font_size())
-                .normalized_coords(run.run().normalized_coords())
-                .transform(Affine::translate((origin.0 + shift, origin.1)))
-                .brush(color.color())
-                .hint(false)
-                .draw(Fill::NonZero, glyphs);
+            let glyphs = run.positioned_glyphs().map(|g| vello::Glyph { id: g.id, x: g.x, y: (origin.1 + f64::from(g.y)).round() as f32 }).collect();
+            draw(&run, origin.0 + shift, glyphs);
         }
     }
+}
+
+fn draw_run(scene: &mut Scene, run: &parley::GlyphRun<'_, WordBrush>, x: f64, glyphs: impl Iterator<Item = vello::Glyph>, color: Rgba) {
+    scene
+        .draw_glyphs(run.run().font())
+        .font_size(run.run().font_size())
+        .normalized_coords(run.run().normalized_coords())
+        .transform(Affine::translate((x, 0.0)))
+        .brush(color.color())
+        .hint(false)
+        .draw(Fill::NonZero, glyphs);
+}
+
+/// Draws every glyph of `layout` from `origin` in `color`.
+pub(super) fn draw_glyphs(scene: &mut Scene, layout: &Layout<WordBrush>, origin: (f64, f64), content_width: f32, align: Alignment, color: Rgba) {
+    glyph_runs(layout, origin, content_width, align, |run, x, glyphs| draw_run(scene, run, x, glyphs.into_iter(), color));
+}
+
+/// Skia draws text up to this size from its glyph cache, each glyph's mask
+/// blurred alone (`SkScalerContext` applies the mask filter per glyph);
+/// larger text is drawn as one blurred path.
+const MAX_MASK_TEXT_SIZE: f32 = 256.0;
+
+/// One shadow silhouette per glyph, with the pixel box its blurred mask fills.
+fn glyph_silhouettes(layout: &Layout<WordBrush>, origin: (f64, f64), content_width: f32, align: Alignment, size: f32, reach: f64) -> Vec<(Scene, Rect)> {
+    let size = f64::from(size);
+    let mut silhouettes = Vec::new();
+    glyph_runs(layout, origin, content_width, align, |run, x, glyphs| {
+        for (glyph, advance) in glyphs.into_iter().zip(run.glyphs().map(|g| f64::from(g.advance))) {
+            let (gx, gy) = (x + f64::from(glyph.x), f64::from(glyph.y));
+            let bounds = Rect::new(gx - 0.5 * size, gy - 1.5 * size, gx + advance + 0.5 * size, gy + 0.75 * size).inflate(reach, reach);
+            let mut scene = Scene::new();
+            draw_run(&mut scene, run, x, std::iter::once(glyph), SILHOUETTE);
+            silhouettes.push((scene, Rect::new(bounds.x0.floor(), bounds.y0.floor(), bounds.x1.ceil(), bounds.y1.ceil())));
+        }
+    });
+    silhouettes
 }
 
 /// Draws the plain text overlay `index`.
@@ -230,24 +271,47 @@ pub fn draw_overlay(
     let y = container.y0 + (container.height() - size.1) * block.justify;
     let div = Rect::new(x, y, x + size.0, y + size.1);
     let origin = (x + padding.0, y + padding.1);
+    // Chromium folds an opacity layer around one draw op into that op's paint
+    // (SkMulDiv255Round): a single unboxed, unfiltered line of text and its
+    // shadow is one text blob, so it skips the layer's byte composite.
+    let fold = block.background.is_none() && sampled.blur <= 0.0 && text.len() == 1;
+    let folded = fold.then(|| (sampled.content_opacity().clamp(0.0, 1.0) * 255.0).round() as f32);
+    let content_opacity = if fold { 1.0 } else { sampled.content_opacity() };
+    let paint = |c: Rgba| match folded {
+        Some(opacity) => Rgba { a: ((c.a * 255.0).round() * opacity / 255.0).round() / 255.0, ..c },
+        None => c,
+    };
 
-    let shadow = block.shadow.then(|| {
+    let shadow_origin = (origin.0, origin.1 + SHADOW_OFFSET_Y);
+    let silhouettes = if !block.shadow {
+        Vec::new()
+    } else if block.font.size <= MAX_MASK_TEXT_SIZE {
+        glyph_silhouettes(&text, shadow_origin, content_width, block.align, block.font.size, f64::from(SHADOW_BLUR) * 1.5)
+    } else {
         let mut silhouette = Scene::new();
-        draw_glyphs(&mut silhouette, &text, (origin.0, origin.1 + SHADOW_OFFSET_Y), content_width, block.align, SILHOUETTE);
+        draw_glyphs(&mut silhouette, &text, shadow_origin, content_width, block.align, SILHOUETTE);
         let reach = f64::from(SHADOW_BLUR) * 1.5 + f64::from(block.font.size) * 0.5;
-        let bounds = pixel_bounds(div.inflate(reach, reach + SHADOW_OFFSET_Y), canvas.width, canvas.height);
-        shadows.shadow(&silhouette, bounds, SHADOW_BLUR, SHADOW_COLOR).map(|image| (image, bounds))
-    });
+        vec![(silhouette, div.inflate(reach, reach + SHADOW_OFFSET_Y))]
+    };
+    let blurred: Vec<_> = silhouettes
+        .iter()
+        .filter_map(|(silhouette, bounds)| {
+            let bounds = pixel_bounds(*bounds, canvas.width, canvas.height);
+            shadows.shadow(silhouette, bounds, SHADOW_BLUR, paint(SHADOW_COLOR)).map(|image| (image, bounds))
+        })
+        .collect();
     let mut body = Scene::new();
     {
         let canvas = &mut Canvas { scene: &mut body, media: canvas.media, width: canvas.width, height: canvas.height, pixelated: canvas.pixelated };
         if let Some(background) = block.background {
             canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, background.color(), None, &RoundedRect::from_rect(div, RADIUS));
         }
-        if let Some(Some((image, bounds))) = &shadow {
-            canvas.scene.draw_image(&ImageBrush::new(image.clone()), Affine::translate(bounds.origin().to_vec2()));
+        // Skia blits each blurred mask in bytes, so every blit truncates:
+        // on #10182b a tail is a level darker, and overlapping tails more.
+        for (image, bounds) in &blurred {
+            canvas.skia_layer(1.0, |canvas| canvas.scene.draw_image(&ImageBrush::new(image.clone()), Affine::translate(bounds.origin().to_vec2())));
         }
-        draw_glyphs(canvas.scene, &text, origin, content_width, block.align, block.fill);
+        draw_glyphs(canvas.scene, &text, origin, content_width, block.align, paint(block.fill));
     }
     let before = sampled.before_blur(container);
     let mut content = Scene::new();
@@ -266,7 +330,7 @@ pub fn draw_overlay(
             if let Some(fill) = box_fill {
                 canvas.scene.fill(Fill::NonZero, Affine::IDENTITY, fill.color(), None, &container);
             }
-            canvas.group(sampled.content_opacity(), |canvas| canvas.scene.append(&content, Some(sampled.after_blur(container))));
+            canvas.group(content_opacity, |canvas| canvas.scene.append(&content, Some(sampled.after_blur(container))));
         });
     });
     Ok(())

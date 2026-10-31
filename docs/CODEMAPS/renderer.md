@@ -249,3 +249,11 @@ Composition goldens retain original SSIM limits. The normalized text cases use
 geometry gate: faint shadow tails differ by one or two bytes at the ink cutoff,
 while glyph bounds differ by one pixel. The companion adds an opaque padded text
 background; shape geometry, motion and outer timing stay identical.
+
+Plain text follows Skia's glyph path. Each baseline rounds to a whole pixel in
+the overlay's scene coordinates. Text up to 256 px blurs one shadow silhouette
+per glyph; larger text blurs one silhouette for the block. Each blurred shadow
+is blended in `Canvas::skia_layer`, so on a dark backdrop every blit truncates
+and overlapping glyph tails darken as they do in production. The opacity of a
+single unboxed, unfiltered line is folded into its paint colors instead of a
+group. `composition-generated` covers a shadow that is the lowest ink.
