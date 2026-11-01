@@ -188,6 +188,10 @@ entry here. See `CONTRIBUTING.md`.
 
 - Add ordinary clip transform and gain keyframes with timeline lanes, inspector controls, keyframe copy/paste, easing, undo and phone access; preserve animation through source cuts, rate changes and production rendering.
 
+### Fixed
+
+- Web search and page reads no longer fail when SearXNG or Crawl4AI sends `null` for an optional field. A result with a null title or snippet is kept with an empty value, so one bad result does not fail the whole search.
+
 ### Removed
 
 - **Breaking:** infographics are removed. The `infographic` clip type, the `data` lane group, the Data element family in the Elements rail and Library > Elements, the infographic inspector, the data-callout style controls, the `add_infographic` agent tool, the `infographic` presentation and the `motionGraphic` decision on scenes, sections and beats are gone, and the Remotion renderer no longer draws infographic overlays. Use a text overlay or a generated image to show a number. The editor engine refuses a clip of type `infographic`.

@@ -173,6 +173,25 @@ describe("search maps SearXNG's shape to the seam's", () => {
 		expect(normalizeAndDedupe(hits, 10).some((hit) => hit.url.includes("127.0.0.1"))).toBe(false);
 	});
 
+	/* Observed in production: one result in a page of 30 carried `title: null`,
+	 * and rejecting the whole response for it failed the search outright. */
+	test("a null field on one result does not fail the search", async () => {
+		stubFetch(() =>
+			json({
+				results: [
+					{ url: "https://example.org/a", title: null, content: null },
+					{ url: null, title: "no url", content: "dropped" },
+					{ url: "https://example.org/b", title: "B", content: "kept" },
+				],
+			}),
+		);
+		const hits = await makeSearxngProvider(CONFIG).search("q", 10);
+		expect(hits).toEqual([
+			{ url: "https://example.org/a", title: "", snippet: "" },
+			{ url: "https://example.org/b", title: "B", snippet: "kept" },
+		]);
+	});
+
 	test("the Access service token is sent on search", async () => {
 		let headers: HeadersInit | undefined;
 		globalThis.fetch = (async (_input: unknown, init?: RequestInit) => {
@@ -197,6 +216,22 @@ describe("a read reports the page it actually retrieved", () => {
 			"https://en.wikipedia.org/wiki/Heat_pump",
 		);
 		expect(page.finalUrl).toBeUndefined();
+	});
+
+	test("null metadata, title and redirect read as absent", async () => {
+		stubFetch(() =>
+			json({
+				results: [
+					{
+						redirected_url: null,
+						metadata: { title: null },
+						markdown: { fit_markdown: null, raw_markdown: "Body text." },
+					},
+				],
+			}),
+		);
+		const page = await makeSearxngProvider(CONFIG).readPage("https://example.org/a");
+		expect(page).toEqual({ text: "Body text.", title: undefined, finalUrl: undefined });
 	});
 
 	test("filtered markdown is used, and the nav chrome in raw_markdown is not", async () => {

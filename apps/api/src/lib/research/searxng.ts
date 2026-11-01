@@ -131,16 +131,17 @@ export class ResearchAuthError extends Error {
  * from services this process does not control, and the repo rule is the right
  * one here: validate at the boundary, so a shape change upstream surfaces as a
  * parse failure instead of `undefined` reaching the citation pipeline. Every
- * field is optional because neither service promises them and a partial result
- * is still usable. */
+ * field is nullish because neither service promises them and a partial result
+ * is still usable — production SearXNG sent `title: null` on one result of 30,
+ * and `.optional()` alone failed the whole search for it. */
 const searxngSearchResponse = z.object({
 	results: z
 		.array(
 			z.object({
-				url: z.string().optional(),
-				title: z.string().optional(),
+				url: z.string().nullish(),
+				title: z.string().nullish(),
 				/* SearXNG calls the snippet `content`. */
-				content: z.string().optional(),
+				content: z.string().nullish(),
 			}),
 		)
 		.default([]),
@@ -150,8 +151,8 @@ const searxngSearchResponse = z.object({
 const crawlMarkdown = z.union([
 	z.string(),
 	z.object({
-		fit_markdown: z.string().optional(),
-		raw_markdown: z.string().optional(),
+		fit_markdown: z.string().nullish(),
+		raw_markdown: z.string().nullish(),
 	}),
 ]);
 
@@ -159,9 +160,9 @@ const crawl4aiCrawlResponse = z.object({
 	results: z
 		.array(
 			z.object({
-				markdown: crawlMarkdown.optional(),
-				metadata: z.object({ title: z.string().optional() }).optional(),
-				redirected_url: z.string().optional(),
+				markdown: crawlMarkdown.nullish(),
+				metadata: z.object({ title: z.string().nullish() }).nullish(),
+				redirected_url: z.string().nullish(),
 			}),
 		)
 		.default([]),
@@ -169,7 +170,7 @@ const crawl4aiCrawlResponse = z.object({
 
 /** The filtered rendering, falling back to raw only because a short page can
  *  prune to nothing and some evidence beats none. */
-function pickMarkdown(markdown: z.infer<typeof crawlMarkdown> | undefined): string {
+function pickMarkdown(markdown: z.infer<typeof crawlMarkdown> | null | undefined): string {
 	if (typeof markdown === "string") return markdown;
 	if (!markdown) return "";
 	return markdown.fit_markdown || markdown.raw_markdown || "";
