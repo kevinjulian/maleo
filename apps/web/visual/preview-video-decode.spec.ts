@@ -49,7 +49,7 @@ test("local video decodes presentation intervals through sequential playback, ev
 				readFileSync(
 					resolve(
 						import.meta.dirname,
-						"../../../openspec/changes/p2-media-playback/evidence/production-video-selection.json",
+						"../../../crates/media/tests/fixtures/production-video-selection.json",
 					),
 					"utf8",
 				),

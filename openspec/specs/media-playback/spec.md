@@ -1,10 +1,10 @@
-# Spec Delta
+# media-playback Specification
 
 ## Purpose
 
 Provide portable video source timing and audio mixing with bounded resources, so platform adapters preserve authored playback behavior.
 
-## ADDED Requirements
+## Requirements
 
 ### Requirement: Video requests preserve authored source time
 
