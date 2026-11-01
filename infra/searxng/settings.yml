@@ -75,6 +75,14 @@ engines:
   - name: torch
     disabled: true
 
+  # OpenAIRE timed out on almost every production query (2026-10-30/31 logs) at
+  # its 5s engine timeout. A permanently failing engine still costs a request
+  # and a timeout on every search, so it is off. Re-test on a pin bump.
+  - name: openairedatasets
+    disabled: true
+  - name: openairepublications
+    disabled: true
+
   # Kept: general-purpose engines that answer from a server IP. `google cse` is
   # left at its upstream default (enabled) because, unlike plain `google`, it
   # answered every measured query — but it is Google infrastructure, so treat a
@@ -110,6 +118,11 @@ outgoing:
   # than web search and research is a background pre-production step, not an
   # interactive one, so latency buys grounding here.
   request_timeout: 10.0
-  max_request_timeout: 20.0
+  # The cap on one whole search: SearXNG waits for its slowest selected engine,
+  # and upstream gives crossref 30s. At 20s, slow engines plus the Cloudflare hop
+  # left the API's 30s client abort ("The operation timed out") as the first
+  # deadline to fire, so the agent got no results at all instead of partial
+  # ones. 12s keeps request_timeout's 10s per engine and returns what answered.
+  max_request_timeout: 12.0
   pool_connections: 20
   pool_maxsize: 10

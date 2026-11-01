@@ -153,6 +153,9 @@ on every search. Re-test both on a pin bump.
 `ahmia` and `torch` are onion engines that cannot register without a Tor proxy
 and logged an error on every boot; also disabled.
 
+`openairedatasets` and `openairepublications` timed out on almost every
+production query at their 5s engine timeout, so they are disabled too.
+
 `google cse` is left at its upstream default. Unlike plain `google` it answered
 every measured query — but it is still Google infrastructure, so treat a sudden
 drop in result counts as this engine first.
@@ -160,6 +163,13 @@ drop in result counts as this engine first.
 `outgoing.request_timeout` is 10s, not upstream's 3s: `semantic scholar` timed
 out at 6s on a real query. Research is a background pre-production step, so
 latency buys grounding here.
+
+`outgoing.max_request_timeout` is 12s and caps one whole search. SearXNG waits
+for its slowest selected engine, and upstream gives `crossref` 30s. At 20s the
+API's 30s client abort fired first on slow searches, so the agent got
+"The operation timed out" instead of the results that had answered. The cap
+must stay well under the API's `searchTimeoutMs` (30s, in
+`apps/api/src/lib/research/searxng.ts`).
 
 Engine reliability from this IP is the thing to re-check whenever grounding
 quality drops. The query to run is any real brief against

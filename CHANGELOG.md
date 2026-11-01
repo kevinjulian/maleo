@@ -191,6 +191,7 @@ entry here. See `CONTRIBUTING.md`.
 ### Fixed
 
 - Web search and page reads no longer fail when SearXNG or Crawl4AI sends `null` for an optional field. A result with a null title or snippet is kept with an empty value, so one bad result does not fail the whole search.
+- Slow web searches return the results that answered instead of failing with "The operation timed out". SearXNG now caps one search at 12s (was 20s), well under the API's 30s abort, and the OpenAIRE engines, which timed out on almost every query, are disabled.
 
 ### Removed
 
