@@ -479,6 +479,43 @@
 			0 0 0 1px rgba(255, 77, 77, 0.18),
 			0 0 12px rgba(255, 77, 77, 0.22);
 	}
+	/* The phone's centred playhead (use-centred-playhead.ts): the scroller's
+   parent draws the line at the scroller's centre, outside the scrolled
+   content, so a drag never moves it. The playhead in the content stays as the
+   keyboard slider but neither shows nor takes a press, so a drag across the
+   centre pans like any other. */
+	[data-centred-playhead] [data-vui-slot="playhead"] {
+		opacity: 0;
+		pointer-events: none;
+	}
+	[data-centred-playhead-host] {
+		position: relative;
+	}
+	[data-centred-playhead-host]::before,
+	[data-centred-playhead-host]::after {
+		content: "";
+		position: absolute;
+		left: var(--centred-playhead-x, 50%);
+		pointer-events: none;
+		z-index: 9;
+		background: var(--tl2-playhead);
+	}
+	[data-centred-playhead-host]::after {
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		box-shadow:
+			0 0 0 1px rgba(255, 77, 77, 0.18),
+			0 0 12px rgba(255, 77, 77, 0.22);
+	}
+	[data-centred-playhead-host]::before {
+		top: 0;
+		width: 10px;
+		height: 14px;
+		margin-left: -4px;
+		border-radius: var(--r-1) var(--r-1) 10px 10px;
+		box-shadow: 0 1px 4px rgba(255, 77, 77, 0.5);
+	}
 	/* Focusable as a slider: ←/→ step one frame. */
 	.tl2-playhead:focus-visible {
 		outline: 2px solid var(--ai);

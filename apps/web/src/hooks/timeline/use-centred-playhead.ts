@@ -15,6 +15,12 @@
  * the scroller's containing block, which includes the label gutter when it is
  * shown, so it would centre on the wrong line.
  *
+ * The line itself is drawn by the scroller's parent, at the scroller's centre,
+ * and the playhead inside the scrolled content is hidden. Inside the content it
+ * moved with every scroll and only came back when the seek it caused arrived —
+ * late, and snapped to a frame — so under a finger it wobbled about the centre.
+ * Outside, nothing moves it.
+ *
  * Replaces `useFollowPlayhead` on this surface. Following keeps the playhead
  * somewhere in view; this keeps it in one place, which is the stronger claim. */
 import { useEffect, useRef } from "react";
@@ -24,6 +30,9 @@ import { usePlayheadEffect } from "./use-playhead.ts";
 /** Marks a scroller whose playhead is pinned to its centre. The zoom hook reads
  *  it to anchor zoom on the playhead rather than on the fingers. */
 export const CENTRED_PLAYHEAD_ATTR = "data-centred-playhead";
+/** Marks the scroller's parent, which draws the fixed line at
+ *  `--centred-playhead-x`. */
+const CENTRED_HOST_ATTR = "data-centred-playhead-host";
 
 /** How long after a scroll-driven seek the playhead's updates are treated as
  *  its echoes rather than as moves of their own. */
@@ -39,6 +48,8 @@ export interface CentredPlayheadInput {
 	pxPerSec: number;
 	total: number;
 	enabled: boolean;
+	/** The frame rate seeks snap to. */
+	fps: number;
 	seek: (sec: number) => void;
 	togglePlay: () => void;
 }
@@ -63,7 +74,7 @@ export function useCentredPlayhead(input: CentredPlayheadInput): void {
 
 	const pin = (sec: number): void => {
 		if (!el) return;
-		const { pxPerSec, playing } = latest.current;
+		const { pxPerSec, playing, fps } = latest.current;
 		/* The view is the operator's while they scroll. The playhead updates that
 		 * arrive then are echoes of the seeks the scroll made, landing late and
 		 * snapped to a frame; pinning to them drags the view back and stalls a
@@ -72,8 +83,12 @@ export function useCentredPlayhead(input: CentredPlayheadInput): void {
 		if (!playing && performance.now() - scrollSeekAt.current < ECHO_MS) return;
 		const next = sec * pxPerSec;
 		/* Within a pixel is already there. Writing anyway would fire a scroll
-		 * event whose rounded offset seeks a hair away from where playback is. */
-		if (Math.abs(el.scrollLeft - next) >= 1) el.scrollLeft = next;
+		 * event whose rounded offset seeks a hair away from where playback is.
+		 * Paused, within half a frame is there too: that is a scroll's own seek
+		 * coming back snapped to a frame, and pinning to it nudges the view
+		 * after the finger has let go. A deliberate step is a whole frame. */
+		const slack = playing ? 1 : Math.max(1, pxPerSec / fps / 2);
+		if (Math.abs(el.scrollLeft - next) >= slack) el.scrollLeft = next;
 	};
 	const pinRef = useRef(pin);
 	pinRef.current = pin;
@@ -83,15 +98,26 @@ export function useCentredPlayhead(input: CentredPlayheadInput): void {
 	useEffect(() => {
 		if (!el) return;
 		el.setAttribute(CENTRED_PLAYHEAD_ATTR, "");
+		const host = el.parentElement;
+		host?.setAttribute(CENTRED_HOST_ATTR, "");
 		const pad = (): void => {
-			el.style.paddingInline = `${Math.round(el.clientWidth / 2)}px`;
+			const half = Math.round(el.clientWidth / 2);
+			el.style.paddingInline = `${half}px`;
+			host?.style.setProperty(
+				"--centred-playhead-x",
+				`${el.getBoundingClientRect().left + el.clientLeft - host.getBoundingClientRect().left - host.clientLeft + half}px`,
+			);
 			pinRef.current(latest.current.playhead.get());
 		};
 		pad();
 		const observer = new ResizeObserver(pad);
 		observer.observe(el);
+		/* The gutter toggling moves the scroller without resizing the parent. */
+		if (host) observer.observe(host);
 		return () => {
 			observer.disconnect();
+			host?.removeAttribute(CENTRED_HOST_ATTR);
+			host?.style.removeProperty("--centred-playhead-x");
 			el.removeAttribute(CENTRED_PLAYHEAD_ATTR);
 			el.style.paddingInline = "";
 		};

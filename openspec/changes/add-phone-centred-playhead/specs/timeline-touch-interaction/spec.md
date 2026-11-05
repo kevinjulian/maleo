@@ -2,13 +2,15 @@
 
 ### Requirement: The phone editor timeline holds the playhead at the centre
 
-At phone width the editor timeline SHALL keep the playhead at the horizontal centre of its scroller and SHALL move the lanes under it. The scroller SHALL have leading and trailing padding equal to half its own width, measured from the scroller and not from its containing block, so that time zero and the project end can reach the centre.
+At phone width the editor timeline and the Motion Studio timeline SHALL keep the playhead at the horizontal centre of its scroller and SHALL move the lanes under it. The scroller SHALL have leading and trailing padding equal to half its own width, measured from the scroller and not from its containing block, so that time zero and the project end can reach the centre.
 
 During playback the lanes SHALL scroll so that the playhead stays at the centre. A scroll of the lanes by the operator SHALL seek to the time at the centre. Operator input is a pointer held on the scroller, a touch, a wheel, and the momentum and edge autoscroll that follow them. A scroll that no operator input caused, such as a clamp by the browser or a kernel viewport sync, SHALL NOT seek. A press on the timeline during playback SHALL pause playback.
 
 While a pointer is held on the scroller the lanes SHALL NOT move to follow the playhead. On release, if the press moved the playhead without a scroll, the lanes SHALL move to put the playhead at the centre. A press that did not move the playhead SHALL NOT move the lanes, so that the click of a tap lands on the element that the finger aimed at.
 
 Zoom SHALL keep the playhead time at the centre.
+
+The visible playhead line SHALL be drawn outside the scrolled content, at the scroller centre, so that a scroll never moves it. The playhead in the scrolled content SHALL stay as the keyboard slider, hidden and without pointer input. While paused, the lanes SHALL NOT move for a playhead change of less than half a frame, because that change is the seek of a scroll that comes back snapped to a frame.
 
 #### Scenario: Playback on a phone
 
@@ -29,6 +31,16 @@ Zoom SHALL keep the playhead time at the centre.
 
 - **WHEN** the operator taps the ruler at a time away from the centre and lifts the finger
 - **THEN** the playhead moves to that time, and after the release the lanes move to put it at the centre
+
+#### Scenario: The operator drags the lanes
+
+- **WHEN** the operator drags the paused phone timeline and lifts the finger
+- **THEN** the playhead line does not move during the drag, and the lanes do not move after the release except for momentum
+
+#### Scenario: Motion Studio on a phone
+
+- **WHEN** the operator opens Motion Studio at phone width and scrolls its lanes
+- **THEN** the playhead line is at the scroller centre and the time at the centre becomes the playhead time
 
 #### Scenario: The operator taps a clip
 

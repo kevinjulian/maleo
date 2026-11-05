@@ -63,6 +63,7 @@ import { useRemotionPlayhead } from "@hooks/timeline/use-remotion-playhead.ts";
 import { useFollowPlayhead } from "@hooks/timeline/use-follow-playhead.ts";
 import { useGutterScrollSync } from "@hooks/timeline/use-gutter-scroll-sync.ts";
 import { usePhoneLayout } from "@hooks/editor/use-phone-layout.ts";
+import { useCentredPlayhead } from "@hooks/timeline/use-centred-playhead.ts";
 import { usePlayheadSec } from "@hooks/timeline/use-playhead.ts";
 import { useStudioModalActive } from "@models/timeline/studio-modal-active.ts";
 import { DEFAULT_BRAND, type BrandPalette } from "@models/timeline/panel-brand.ts";
@@ -389,12 +390,24 @@ export function MotionStudioModal({
 	   once the motion is longer than its width, so following moves that scroller
 	   directly — see use-follow-playhead.ts for why the content editor cannot. */
 	useFollowPlayhead({
-		scroller: motionTimeline.scroller,
+		scroller: compact ? null : motionTimeline.scroller,
 		playhead,
 		playing,
 		pxPerSec: motionPxPerSec,
 		gutterSelector: ".vui-timeline-gutter",
 		suspended: motionTimeline.gesture !== undefined,
+	});
+	/* On a phone the playhead holds the centre instead — see use-centred-playhead.ts. */
+	useCentredPlayhead({
+		scroller: motionTimeline.scroller,
+		playhead,
+		playing,
+		pxPerSec: motionPxPerSec,
+		total: durationSec,
+		enabled: compact,
+		fps: rendererProps.fps,
+		seek,
+		togglePlay,
 	});
 
 	/** Retime one keyframe to a position on the studio's timeline. */

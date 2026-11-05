@@ -16,6 +16,7 @@ import { useBaseTrack } from "@hooks/timeline/use-base-track.ts";
 import { useClipPosition } from "@hooks/timeline/use-clip-position.ts";
 import { useFollowPlayhead } from "@hooks/timeline/use-follow-playhead.ts";
 import { useCentredPlayhead } from "@hooks/timeline/use-centred-playhead.ts";
+import { CONTENT_FPS } from "@models/timeline/content-document-adapter.ts";
 import { asOneStep } from "@stores/as-one-step.ts";
 import { useTransitionTarget } from "@hooks/timeline/use-transition-target.ts";
 
@@ -199,6 +200,7 @@ export function useTimelineEditorActions(
 		pxPerSec,
 		total,
 		enabled: phone,
+		fps: CONTENT_FPS,
 		seek: seekPreview,
 		togglePlay,
 	});

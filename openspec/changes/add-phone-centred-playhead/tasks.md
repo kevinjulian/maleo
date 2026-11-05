@@ -22,3 +22,10 @@
   - Proof: `media-import.spec.ts` clicks the ruler at the viewport-relative x that kernel geometry reports. Six phone baselines updated; the 320 px editor screenshot shows the playhead at the centre with time 0 on it.
 - [x] 3.2 Run the full gate.
   - Proof: `bun run typecheck` 0 errors; `bunx vp check` no findings; `bun run visual` 821 passed, 1 skipped.
+
+## 4. Fixed line and Motion Studio
+
+- [x] 4.1 Draw the line on the scroller's parent at the scroller centre and hide the in-content playhead; skip paused pins under half a frame.
+  - Proof: `mobile-editor.spec.ts` "the playhead holds the centre while playing and scrolling seeks" asserts the in-content playhead has opacity 0 and the drawn line is within 2 px of the scroller centre.
+- [x] 4.2 Hold the Motion Studio playhead at the centre at phone width.
+  - Proof: `mobile-editor.spec.ts` "Motion Studio keeps preview, layer timeline, inspector and close reachable on phone" asserts the centred line and that a scroll of 72 px seeks to 1 s; `vui-motion-phone.png` baseline updated.

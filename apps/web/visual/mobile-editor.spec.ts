@@ -978,6 +978,18 @@ test("Motion Studio keeps preview, layer timeline, inspector and close reachable
 	expect(await motionOverlay.evaluate((element) => getComputedStyle(element).padding)).toBe(
 		"24px 12px 20px 8px",
 	);
+	/* The playhead holds the centre here too, and dragging the lanes seeks. */
+	const motionScroller = page.locator(".tl2-motion-timeline [data-vui-slot='timeline-scroller']");
+	await expect(motionScroller).toHaveAttribute("data-centred-playhead", "");
+	expect(await centredLineOffset(motionScroller), "Motion line off centre").toBeLessThan(2);
+	const motionTime = page.locator(".tl2-motion-timeline [data-vui-slot='ruler']");
+	await motionScroller.evaluate((n) => {
+		n.dispatchEvent(new WheelEvent("wheel", { deltaX: 1 }));
+		n.scrollLeft = 72;
+	});
+	await expect
+		.poll(async () => Number(await motionTime.getAttribute("aria-valuenow")))
+		.toBeCloseTo(1, 1);
 	const layerRange = page.locator(".tl2-motion-timeline [data-vui-slot='item']").first();
 	await layerRange.click();
 	const ruler = page.locator(".tl2-motion-timeline [data-vui-slot='ruler']");
@@ -1385,6 +1397,17 @@ test("the timeline toolbar fits the viewport", async ({ page }) => {
  * the view seeks. Zoomed to the maximum so the project is longer than 393px —
  * at a width where it fits, "the view moved" proves nothing.
  */
+/** How far the centred playhead's drawn line sits from its scroller's centre. */
+async function centredLineOffset(scroller: Locator): Promise<number> {
+	return scroller.evaluate((el) => {
+		const host = el.parentElement!;
+		const line = getComputedStyle(host, "::after");
+		const x = host.getBoundingClientRect().left + host.clientLeft + parseFloat(line.left) + 1;
+		const box = el.getBoundingClientRect();
+		return Math.abs(x - (box.left + box.width / 2));
+	});
+}
+
 test("the playhead holds the centre while playing and scrolling seeks", async ({ page }) => {
 	const scroller = page.locator(".tl2-timeline [data-vui-slot='timeline-scroller']").first();
 	const head = page.locator(".tl2-timeline [data-vui-slot='playhead']").first();
@@ -1394,6 +1417,10 @@ test("the playhead holds the centre while playing and scrolling seeks", async ({
 	for (let i = 0; i < 40 && (await zoomIn.isEnabled()); i++) await zoomIn.click();
 	await page.locator(".tl2-more-sheet").getByRole("button", { name: "Close" }).click();
 
+	/* The line a person sees is the parent's, fixed at the scroller's centre;
+	   the playhead in the scrolled content is hidden and must sit under it. */
+	await expect(head).toHaveCSS("opacity", "0");
+	expect(await centredLineOffset(scroller), "the line is not at the centre").toBeLessThan(2);
 	const centreOffset = async (): Promise<number> => {
 		const box = (await scroller.boundingBox())!;
 		const h = (await head.boundingBox())!;
