@@ -29,3 +29,5 @@
   - Proof: `mobile-editor.spec.ts` "the playhead holds the centre while playing and scrolling seeks" asserts the in-content playhead has opacity 0 and the drawn line is within 2 px of the scroller centre.
 - [x] 4.2 Hold the Motion Studio playhead at the centre at phone width.
   - Proof: `mobile-editor.spec.ts` "Motion Studio keeps preview, layer timeline, inspector and close reachable on phone" asserts the centred line and that a scroll of 72 px seeks to 1 s; `vui-motion-phone.png` baseline updated.
+- [x] 4.3 Measure the centring padding with the padding off, and measure again when the gutter mounts. A flex item cannot shrink below its own padding, so with the gutter shown the scroller kept its full width and the line and time zero were off centre.
+  - Proof: `mobile-editor.spec.ts` "the centred playhead stays centred with track headers shown" passes (it failed with the line 119 px off centre before the fix); `--project=mobile` 138 passed.

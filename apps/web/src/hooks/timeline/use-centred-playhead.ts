@@ -101,6 +101,10 @@ export function useCentredPlayhead(input: CentredPlayheadInput): void {
 		const host = el.parentElement;
 		host?.setAttribute(CENTRED_HOST_ATTR, "");
 		const pad = (): void => {
+			/* Measured with the padding off. A flex item cannot shrink below its
+			 * own padding, so with it on, the scroller keeps its old width when
+			 * the gutter appears beside it, and so would the padding. */
+			el.style.paddingInline = "0px";
 			const half = Math.round(el.clientWidth / 2);
 			el.style.paddingInline = `${half}px`;
 			host?.style.setProperty(
@@ -112,10 +116,14 @@ export function useCentredPlayhead(input: CentredPlayheadInput): void {
 		pad();
 		const observer = new ResizeObserver(pad);
 		observer.observe(el);
-		/* The gutter toggling moves the scroller without resizing the parent. */
 		if (host) observer.observe(host);
+		/* The gutter mounting beside the scroller resizes neither: the padding
+		 * holds the scroller's width (see `pad`). */
+		const mounts = new MutationObserver(pad);
+		if (host) mounts.observe(host, { childList: true });
 		return () => {
 			observer.disconnect();
+			mounts.disconnect();
 			host?.removeAttribute(CENTRED_HOST_ATTR);
 			host?.style.removeProperty("--centred-playhead-x");
 			el.removeAttribute(CENTRED_PLAYHEAD_ATTR);

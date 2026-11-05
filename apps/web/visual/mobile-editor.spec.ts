@@ -1453,6 +1453,38 @@ test("the playhead holds the centre while playing and scrolling seeks", async ({
 	expect(await centreOffset(), "the playhead left the centre after a scroll").toBeLessThan(4);
 });
 
+test("the centred playhead stays centred with track headers shown", async ({ page }) => {
+	const scroller = page.locator(".tl2-timeline [data-vui-slot='timeline-scroller']").first();
+	await page.locator('.tl2-tlbar [aria-label="More tools"]').click();
+	await page
+		.locator(".tl2-more-sheet")
+		.getByRole("button", { name: /Track headers/ })
+		.click();
+	await page.locator(".tl2-more-sheet").getByRole("button", { name: "Close" }).click();
+	await expect(page.locator(".tl2-timeline .tl2-gutter").first()).toBeVisible();
+	const geometry = await scroller.evaluate((el) => ({
+		pad: parseFloat(getComputedStyle(el).paddingLeft),
+		width: el.clientWidth,
+		right: el.getBoundingClientRect().right,
+		hostRight: el.parentElement!.getBoundingClientRect().right,
+	}));
+	expect(geometry.right, "the scroller overflows past the gutter").toBeLessThanOrEqual(
+		geometry.hostRight + 1,
+	);
+	expect(
+		Math.abs(geometry.pad - geometry.width / 2),
+		"padding is not half the scroller",
+	).toBeLessThan(2);
+	expect(await centredLineOffset(scroller), "the line is not at the centre").toBeLessThan(2);
+	/* Time zero is under the line at the start. */
+	const origin = page.locator(".tl2-timeline .tl2-tick.origin").first();
+	const o = (await origin.boundingBox())!;
+	const box = (await scroller.boundingBox())!;
+	expect(Math.abs(o.x - (box.x + box.width / 2)), "time zero is not under the line").toBeLessThan(
+		3,
+	);
+});
+
 test("the toolbar keeps only undo, redo and play; the rest is behind More", async ({ page }) => {
 	/* 19 controls do not fit 393px. The wrap that preceded this kept them all
 	 * across three rows and spent ~110px — 17% of the viewport — against a
