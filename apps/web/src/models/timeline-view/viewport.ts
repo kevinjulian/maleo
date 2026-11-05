@@ -32,14 +32,21 @@ export function resolveViewport(input: ViewportInput): Viewport {
  * comparison that omitted one of the three would let a change through.
  */
 export function viewportEquals(a: Viewport, b: Viewport): boolean {
-	return a.start.ticks === b.start.ticks && a.scale === b.scale && a.widthPx === b.widthPx;
+	return (
+		a.start.ticks === b.start.ticks &&
+		a.scale === b.scale &&
+		a.widthPx === b.widthPx &&
+		(a.leadPx ?? 0) === (b.leadPx ?? 0)
+	);
 }
 
-/** Keep the viewport inside the timeline, allowing a screen of run-off at the end. */
+/** Keep the viewport inside the timeline, allowing half a screen of run-off at
+ *  the end and the lead's run-off before the start. */
 export function clampViewport(input: ViewportInput, duration: ProjectTime): ViewportInput {
 	const spanTicks = Math.round(input.widthPx / input.scale);
+	const minStart = -Math.round((input.leadPx ?? 0) / input.scale);
 	const maxStart = Math.max(0, duration.ticks - Math.round(spanTicks / 2));
-	const ticks = Math.min(Math.max(0, input.start.ticks), maxStart);
+	const ticks = Math.min(Math.max(minStart, input.start.ticks), maxStart);
 	return { ...input, start: projectTime(ticks) };
 }
 
@@ -50,12 +57,15 @@ export function panBy(input: ViewportInput, deltaPx: number): ViewportInput {
 
 /** Move the view to an absolute scroll offset in pixels. */
 export function scrollTo(input: ViewportInput, leftPx: number): ViewportInput {
-	return { ...input, start: projectTime(Math.round(leftPx / input.scale)) };
+	return {
+		...input,
+		start: projectTime(Math.round((leftPx - (input.leadPx ?? 0)) / input.scale)),
+	};
 }
 
 /** The scroll offset in pixels that corresponds to the current start. */
 export function scrollOffsetPx(input: ViewportInput): number {
-	return input.start.ticks * input.scale;
+	return input.start.ticks * input.scale + (input.leadPx ?? 0);
 }
 
 /**
@@ -91,8 +101,12 @@ export function clampScale(scale: number, limits: ScaleLimits): number {
 }
 
 /** Resize the viewport. Magnification is kept; the visible span changes with the width. */
-export function resizeTo(input: ViewportInput, widthPx: number): ViewportInput {
-	return { ...input, widthPx: Math.max(0, widthPx) };
+export function resizeTo(input: ViewportInput, widthPx: number, leadPx?: number): ViewportInput {
+	return {
+		...input,
+		widthPx: Math.max(0, widthPx),
+		...(leadPx === undefined ? {} : { leadPx: Math.max(0, leadPx) }),
+	};
 }
 
 /** The time under a pixel offset within the viewport. */

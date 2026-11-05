@@ -24,6 +24,7 @@ import {
 	panBy,
 	pixelAtTime,
 	resizeTo,
+	scrollOffsetPx,
 	resolveViewport,
 	scrollTo,
 	viewportEquals,
@@ -122,7 +123,7 @@ function publishViewport(state: TimelineState, next: ViewportInput): Reduction<T
 		/* The scroller is told where to be, once, by the one path that decided
 		 * it. The surface applies this and does not read the resulting scroll
 		 * event back as new input. */
-		effects: [{ type: "scrollTo", leftPx: resolved.start.ticks * resolved.scale }],
+		effects: [{ type: "scrollTo", leftPx: scrollOffsetPx(resolved) }],
 	};
 }
 
@@ -251,7 +252,7 @@ export function reduce(
 		case "scroll":
 			return publishViewport(state, scrollTo(state.viewport, event.leftPx));
 		case "resize":
-			return publishViewport(state, resizeTo(state.viewport, event.widthPx));
+			return publishViewport(state, resizeTo(state.viewport, event.widthPx, event.leadPx));
 		case "pan":
 			return publishViewport(state, panBy(state.viewport, event.deltaPx));
 		case "zoom":

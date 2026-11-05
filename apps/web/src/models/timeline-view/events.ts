@@ -19,6 +19,8 @@ export interface ScrollEvent {
 export interface ResizeEvent {
 	readonly type: "resize";
 	readonly widthPx: number;
+	/** The scroller's leading padding, when it has one. See `ViewportInput.leadPx`. */
+	readonly leadPx?: number;
 }
 
 /** Magnify about a point in the viewport. */

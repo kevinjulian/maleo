@@ -142,6 +142,11 @@ export interface ViewportInput {
 	readonly scale: number;
 	/** How wide the viewport is, in device pixels. */
 	readonly widthPx: number;
+	/** Run-off before time zero, in device pixels: leading padding inside the
+	 *  scroller, so that time zero can sit away from its left edge. The view
+	 *  may start up to this far before zero, and a scroll offset is this much
+	 *  larger than the start it shows. Absent means none. */
+	readonly leadPx?: number;
 }
 
 /** A viewport as published, with `end` resolved. */

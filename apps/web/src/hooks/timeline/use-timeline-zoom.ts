@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import { contentZoomCommand } from "@models/timeline/content-vui-adapter.ts";
+import { CENTRED_PLAYHEAD_ATTR } from "./use-centred-playhead.ts";
 
 // Zoom bounds in pixels-per-second; clip widths and the ruler derive from it.
 const MIN_PX_PER_SEC = 4;
@@ -36,6 +37,16 @@ export function useTimelineZoom(trackRef: RefObject<HTMLDivElement | null>): Tim
 	// time zero is the scroller's own left edge and there is no origin offset.
 	const LANE_ORIGIN_PX = 0;
 
+	/* Where a zoom is anchored. Normally the cursor or the pinch midpoint; on a
+	 * centred-playhead scroller (the phone, see use-centred-playhead.ts) the
+	 * playhead at the centre, behind padding that moves time zero by the same
+	 * half width. Anchoring on the fingers there would scroll the time under the
+	 * centre line, and on that surface scrolling is seeking. */
+	const zoomAnchor = (el: HTMLElement, focalClientPx: number) =>
+		el.hasAttribute(CENTRED_PLAYHEAD_ATTR)
+			? { gutterWidth: el.clientWidth / 2, focalClientPx: el.clientWidth / 2 }
+			: { gutterWidth: LANE_ORIGIN_PX, focalClientPx };
+
 	// Ctrl/⌘ + wheel (and trackpad pinch, which reports ctrlKey) zooms the timeline
 	// centered on the cursor — the time under the pointer stays put. Native listener
 	// so preventDefault works (React's onWheel is passive).
@@ -51,10 +62,9 @@ export function useTimelineZoom(trackRef: RefObject<HTMLDivElement | null>): Tim
 				const command = contentZoomCommand({
 					scrollLeft: el.scrollLeft,
 					clientWidth: el.clientWidth,
-					gutterWidth: LANE_ORIGIN_PX,
 					pxPerSec: px,
 					factor: e.deltaY < 0 ? WHEEL_FACTOR : 1 / WHEEL_FACTOR,
-					focalClientPx: cursorX,
+					...zoomAnchor(el, cursorX),
 					minPxPerSec: MIN_PX_PER_SEC,
 					maxPxPerSec: MAX_PX_PER_SEC,
 				});
@@ -129,10 +139,9 @@ export function useTimelineZoom(trackRef: RefObject<HTMLDivElement | null>): Tim
 				const command = contentZoomCommand({
 					scrollLeft: el.scrollLeft,
 					clientWidth: el.clientWidth,
-					gutterWidth: LANE_ORIGIN_PX,
 					pxPerSec: px,
 					factor: next / px,
-					focalClientPx: centreX,
+					...zoomAnchor(el, centreX),
 					minPxPerSec: MIN_PX_PER_SEC,
 					maxPxPerSec: MAX_PX_PER_SEC,
 				});
@@ -174,6 +183,9 @@ export function useTimelineZoom(trackRef: RefObject<HTMLDivElement | null>): Tim
 			const el = trackRef.current;
 			if (!el || totalSec <= 0) return;
 			setPxPerSec(clampPx((el.clientWidth - LANE_ORIGIN_PX - FIT_PADDING_PX) / totalSec));
+			// A centred scroller re-pins to the playhead itself; scrolling it to 0
+			// would seek there.
+			if (el.hasAttribute(CENTRED_PLAYHEAD_ATTR)) return;
 			requestAnimationFrame(() => {
 				const e2 = trackRef.current;
 				if (e2) e2.scrollLeft = 0;

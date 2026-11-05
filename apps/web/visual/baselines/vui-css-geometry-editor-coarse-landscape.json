@@ -39,35 +39,35 @@
 		"h": 57
 	},
 	"ruler": {
-		"x": 81,
+		"x": 467,
 		"y": 213,
-		"w": 771,
+		"w": 320,
 		"h": 24
 	},
 	"markers": null,
 	"timeline-scroller": {
 		"x": 81,
 		"y": 213,
-		"w": 771,
+		"w": 772,
 		"h": 123
 	},
 	"timeline-grid": null,
 	"rows": {
-		"x": 81,
+		"x": 467,
 		"y": 213,
-		"w": 771,
+		"w": 320,
 		"h": 186
 	},
 	"row": {
-		"x": 81,
+		"x": 467,
 		"y": 237,
-		"w": 771,
+		"w": 320,
 		"h": 42
 	},
 	"gutter": null,
 	"gutter-row": null,
 	"item": {
-		"x": 117,
+		"x": 503,
 		"y": 281,
 		"w": 72,
 		"h": 19
@@ -75,7 +75,7 @@
 	"trim-start": null,
 	"trim-end": null,
 	"playhead": {
-		"x": 81,
+		"x": 467,
 		"y": 213,
 		"w": 2,
 		"h": 186

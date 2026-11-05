@@ -15,6 +15,7 @@ import { useSelectionActions } from "@hooks/timeline/use-selection-actions.ts";
 import { useBaseTrack } from "@hooks/timeline/use-base-track.ts";
 import { useClipPosition } from "@hooks/timeline/use-clip-position.ts";
 import { useFollowPlayhead } from "@hooks/timeline/use-follow-playhead.ts";
+import { useCentredPlayhead } from "@hooks/timeline/use-centred-playhead.ts";
 import { asOneStep } from "@stores/as-one-step.ts";
 import { useTransitionTarget } from "@hooks/timeline/use-transition-target.ts";
 
@@ -49,6 +50,7 @@ export function useTimelineEditorActions(
 		lockedMediaAssetIds,
 		deleteRef,
 		trackRef,
+		phone,
 		pxPerSec,
 		zoomPercent,
 		setZoomPercent,
@@ -182,11 +184,23 @@ export function useTimelineEditorActions(
 	 * "cannot scroll anywhere", and a surface whose content happens to fit proves
 	 * nothing either way. */
 	useFollowPlayhead({
-		scroller: trackRef.current,
+		scroller: phone ? null : trackRef.current,
 		playhead,
 		playing,
 		pxPerSec,
 		gutterSelector: null,
+	});
+	/* On a phone the playhead holds the centre and the timeline moves under it
+	 * instead (see use-centred-playhead.ts). */
+	useCentredPlayhead({
+		scroller: trackRef.current,
+		playhead,
+		playing,
+		pxPerSec,
+		total,
+		enabled: phone,
+		seek: seekPreview,
+		togglePlay,
 	});
 
 	/* Memoized, and this one is load-bearing rather than tidy: `freeClips` is the

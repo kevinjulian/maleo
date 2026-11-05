@@ -1,5 +1,5 @@
 import { chooseOption } from "./options.ts";
-import { expect, test, type BrowserContext } from "@playwright/test";
+import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -62,6 +62,16 @@ test.beforeAll(() => {
 		"pipe:1",
 	]);
 });
+
+/** Press the editor ruler at a viewport-relative x, the space kernel geometry
+ *  reports in. */
+async function rulerClickAt(page: Page, viewportX: number): Promise<void> {
+	const scroller = (await page.locator(EDITOR_TIMELINE).first().boundingBox())!;
+	const ruler = (await page.locator('[data-vui-slot="ruler"]').first().boundingBox())!;
+	/* Rounded: a mouse event's coordinates are whole pixels, and the kernel's
+	 * float geometry otherwise lands a hair short of the intended time. */
+	await page.mouse.click(Math.round(scroller.x + viewportX), ruler.y + 10);
+}
 
 async function fixture(
 	context: BrowserContext,
@@ -1404,13 +1414,13 @@ for (const width of [1440, 320])
 			let clip = page.locator('[data-clipid="video:98"]');
 			await clip.click();
 			const geometry = await itemGeometry(page, EDITOR_TIMELINE, "video:98");
-			let ruler = page.locator('[data-vui-slot="ruler"]').first();
-			await ruler.click({
-				position: {
-					x: geometry.timeBox.leftPx + (geometry.timeBox.rightPx - geometry.timeBox.leftPx) / 4,
-					y: 10,
-				},
-			});
+			/* Kernel geometry is viewport-relative, so the click is placed on the
+			 * scroller's visible box, not the ruler's: the two differ once the
+			 * phone timeline has scrolled to centre its playhead. */
+			await rulerClickAt(
+				page,
+				geometry.timeBox.leftPx + (geometry.timeBox.rightPx - geometry.timeBox.leftPx) / 4,
+			);
 			await expect(page.locator('[data-transport="timecode"]').first()).toContainText("00:03:00");
 			if (width === 1440) {
 				await page.getByRole("button", { name: "Trim clip", exact: true }).click();
@@ -1472,7 +1482,6 @@ for (const width of [1440, 320])
 			await page.goto(`/content/${EDITOR_CHAT_PROJECT_ID}`);
 			await page.getByRole("tab", { name: "Timeline", exact: true }).click();
 			clip = page.locator('[data-clipid="video:98"]');
-			ruler = page.locator('[data-vui-slot="ruler"]').first();
 			await expect(clip).not.toHaveAttribute("aria-disabled", "true");
 			await expect(clip).toHaveAccessibleName(/locked/);
 			const lockedBox = (await clip.boundingBox())!;
@@ -1487,14 +1496,14 @@ for (const width of [1440, 320])
 					lockedBox.y + lockedBox.height / 2,
 				);
 			const lockedGeometry = await itemGeometry(page, EDITOR_TIMELINE, "video:98");
-			await ruler.click({
-				position: {
-					x:
-						lockedGeometry.timeBox.leftPx +
-						(lockedGeometry.timeBox.rightPx - lockedGeometry.timeBox.leftPx) / 4,
-					y: 10,
-				},
-			});
+			/* Kernel geometry is viewport-relative, so the click is placed on the
+			 * scroller's visible box, not the ruler's: the two differ once the
+			 * phone timeline has scrolled to centre its playhead. */
+			await rulerClickAt(
+				page,
+				lockedGeometry.timeBox.leftPx +
+					(lockedGeometry.timeBox.rightPx - lockedGeometry.timeBox.leftPx) / 4,
+			);
 			await expect(page.locator('[data-transport="timecode"]').first()).toContainText("00:03:00");
 			/* With nothing selected, Q and W trim the scene under the playhead; only the
 			 * locked clip itself must not change. */

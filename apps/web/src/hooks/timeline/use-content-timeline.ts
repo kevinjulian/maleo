@@ -271,6 +271,12 @@ export function quantizeSeconds(seconds: number, bypass: boolean): number {
 	return bypass ? seconds : Math.round(seconds / DRAG_QUANTUM_SEC) * DRAG_QUANTUM_SEC;
 }
 
+/** The scroller's leading padding: run-off before time zero, which the kernel
+ *  must know to map a scroll offset to the time it shows. */
+function leadPxOf(root: HTMLElement): number {
+	return Number.parseFloat(getComputedStyle(root).paddingLeft) || 0;
+}
+
 /** Which mode a resolved gesture target means. An edge is a trim; a body is a move. */
 function modeOf(edge: "start" | "end" | undefined): ContentDragMode {
 	return edge === undefined ? "move" : edge === "start" ? "resize-l" : "resize";
@@ -489,8 +495,18 @@ export function useContentTimeline(options: ContentTimelineOptions): ContentTime
 		if (Math.abs(viewport.scale - targetScale) > Number.EPSILON) {
 			store.dispatch({ type: "zoom", focalPx: 0, factor: targetScale / viewport.scale });
 		}
-		store.dispatch({ type: "resize", widthPx: root.clientWidth });
-		store.dispatch({ type: "scroll", leftPx: root.scrollLeft });
+		const sync = (): void => {
+			store.dispatch({ type: "resize", widthPx: root.clientWidth, leadPx: leadPxOf(root) });
+			store.dispatch({ type: "scroll", leftPx: root.scrollLeft });
+		};
+		sync();
+		/* The phone pads the scroller to centre its playhead (see
+		 * use-centred-playhead.ts), from a parent's effect that runs after this
+		 * one and without a render of its own. Padding changes the content box,
+		 * so an observer hears it where a dependency list cannot. */
+		const observer = new ResizeObserver(sync);
+		observer.observe(root);
+		return () => observer.disconnect();
 	}, [store, options]);
 
 	useEffect(() => {

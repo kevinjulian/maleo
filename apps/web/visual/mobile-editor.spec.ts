@@ -1380,50 +1380,50 @@ test("the timeline toolbar fits the viewport", async ({ page }) => {
 	expect(play.x + play.width).toBeLessThanOrEqual(viewport.width + 1);
 });
 
-/* The view tracks the renderer on this surface too.
- *
- * This lives at phone width, and that is the whole point of it. The claim was
- * first made — wrongly — that the content editor could not follow at all,
- * because at 1440x900 its scroller reports `scrollWidth === clientWidth` and a
- * write to `scrollLeft` reads back 0. That is not a windowed timeline refusing
- * to scroll; it is a three-second project fitting comfortably in a 954px lane
- * area even at maximum zoom, and an element with nothing to scroll behaving
- * exactly as it should.
- *
- * 393px cannot hold it, so here the assertion can fail — which is the only
- * width at which asserting it means anything.
+/* The phone timeline keeps the playhead in the middle and moves the lanes
+ * under it (use-centred-playhead.ts): playback scrolls the view, and scrolling
+ * the view seeks. Zoomed to the maximum so the project is longer than 393px —
+ * at a width where it fits, "the view moved" proves nothing.
  */
-test("the timeline follows the playhead once it is too long to fit", async ({ page }) => {
+test("the playhead holds the centre while playing and scrolling seeks", async ({ page }) => {
 	const scroller = page.locator(".tl2-timeline [data-vui-slot='timeline-scroller']").first();
+	const head = page.locator(".tl2-timeline [data-vui-slot='playhead']").first();
 
-	/* Zoom to the maximum, from the sheet the phone keeps it behind. Zooming is
-	   what makes the timeline exceed the view; without it there is nothing to
-	   follow and this would pass while doing nothing. */
 	await page.locator('.tl2-tlbar [aria-label="More tools"]').click();
 	const zoomIn = page.locator(".tl2-more-sheet [title='Zoom in (+)']").first();
 	for (let i = 0; i < 40 && (await zoomIn.isEnabled()); i++) await zoomIn.click();
 	await page.locator(".tl2-more-sheet").getByRole("button", { name: "Close" }).click();
 
-	const overflow = await scroller.evaluate((n) => n.scrollWidth - n.clientWidth);
-	expect(overflow, "the timeline still fits, so following cannot be observed").toBeGreaterThan(0);
+	const centreOffset = async (): Promise<number> => {
+		const box = (await scroller.boundingBox())!;
+		const h = (await head.boundingBox())!;
+		return Math.abs(h.x + h.width / 2 - (box.x + box.width / 2));
+	};
+	expect(await centreOffset(), "the playhead does not start at the centre").toBeLessThan(4);
 
 	const before = await scroller.evaluate((n) => n.scrollLeft);
-	await page.locator(".tl2-tlbar [data-transport='play']").click();
+	const play = page.locator(".tl2-tlbar [data-transport='play']");
+	await play.click();
 	await expect
 		.poll(async () => scroller.evaluate((n) => n.scrollLeft), {
-			message: `the view did not follow the playhead (stayed at ${before})`,
+			message: `the view did not move with the playhead (stayed at ${before})`,
 			timeout: 10_000,
 		})
-		.toBeGreaterThan(before);
+		.toBeGreaterThan(before + 20);
+	await play.click();
+	expect(await centreOffset(), "the playhead left the centre during playback").toBeLessThan(4);
 
-	/* And the playhead is kept inside the padded region rather than pinned to the
-	   edge — the difference between following and merely clamping. */
-	const box = (await scroller.boundingBox())!;
-	const head = (await page
-		.locator(".tl2-timeline [data-vui-slot='playhead']")
-		.first()
-		.boundingBox())!;
-	expect(head.x, "the playhead ran past the right edge").toBeLessThanOrEqual(box.x + box.width);
+	/* Scrolling the lanes back to the start is a seek to zero. */
+	await scroller.evaluate((n) => {
+		/* A wheel first: a bare offset write is what the browser's own clamping
+		   looks like, and that must NOT seek. */
+		n.dispatchEvent(new WheelEvent("wheel", { deltaX: -1 }));
+		n.scrollLeft = 0;
+	});
+	await expect(page.locator(".tl2-tlbar [data-transport='timecode']").first()).toContainText(
+		/^0?0:00/,
+	);
+	expect(await centreOffset(), "the playhead left the centre after a scroll").toBeLessThan(4);
 });
 
 test("the toolbar keeps only undo, redo and play; the rest is behind More", async ({ page }) => {
@@ -2151,10 +2151,9 @@ test.describe("movement and trim", () => {
 
 		const clip = (await page.locator(firstClip).first().boundingBox())!;
 		const rect = (await scroller.boundingBox())!;
-		await page.mouse.move(
-			Math.round(clip.x + clip.width / 2),
-			Math.round(clip.y + clip.height / 2),
-		);
+		/* Near the clip's start, not its middle: selecting it puts its start on
+		 * the centred playhead, so its middle can sit past the right edge. */
+		await page.mouse.move(Math.round(clip.x + 24), Math.round(clip.y + clip.height / 2));
 		await page.mouse.down();
 		await page.waitForTimeout(140);
 		await page.mouse.move(

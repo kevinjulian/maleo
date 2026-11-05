@@ -122,6 +122,24 @@ describe("the viewport has exactly one writer", () => {
 		expect(alsoSame.effects).toEqual([]);
 	});
 
+	test("a scroller's lead maps offsets to times and lets the view start before zero", () => {
+		const state = magneticSingleRow();
+		const { widthPx, scale } = state.viewport;
+		const lead = Math.round(widthPx / 2);
+		const led = reduce(state, { type: "resize", widthPx, leadPx: lead }, options).state;
+		/* Scrolled to zero, the view starts a lead before time zero rather than
+		 * being clamped back to zero, which would write the scroller to `lead`. */
+		const atZero = reduce(led, { type: "scroll", leftPx: 0 }, options);
+		expect(atZero.state.viewport.start.ticks).toBe(-Math.round(lead / scale));
+		expect(atZero.effects.filter((e) => e.type === "scrollTo")).toEqual([
+			{ type: "scrollTo", leftPx: 0 },
+		]);
+		/* A published start is written back as an offset that includes the lead. */
+		const panned = reduce(atZero.state, { type: "pan", deltaPx: 40 }, options);
+		const write = panned.effects.find((e) => e.type === "scrollTo");
+		expect(write).toEqual({ type: "scrollTo", leftPx: expect.closeTo(40, 0) });
+	});
+
 	test("a scroll queued before a zoom and delivered after it does not overwrite the zoom", () => {
 		const state = magneticSingleRow();
 		const zoomed = reduce(state, { type: "zoom", focalPx: 400, factor: 2 }, options).state;
