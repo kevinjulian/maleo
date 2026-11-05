@@ -139,6 +139,8 @@ Scroll, resize, zoom, and pan SHALL be dispatched as events to the kernel. The s
 
 While a timeline surface's renderer is playing, the surface SHALL keep the playhead within its visible width, on every timeline surface rather than on whichever one implemented it first. A follow the surface issues SHALL NOT be re-observed as operator input.
 
+A surface that holds its playhead at the centre (the phone editor timeline, see `timeline-touch-interaction`) SHALL NOT use this follow: centring keeps the playhead visible by a stronger rule, and two writers of one scroller would fight.
+
 Every editor timeline scrolls its own scroller, and one hook serves all three. A surface follows only when its content exceeds its visible width; where the content fits there is nothing to follow, and that state SHALL NOT be mistaken for an inability to follow.
 
 Following SHALL yield to the operator: while a scroll, pan or drag gesture is in progress the surface SHALL NOT move the viewport underneath it. A view that fights the finger is worse than one that does not follow at all.
@@ -195,3 +197,24 @@ change.
 
 - **WHEN** a timeline's content is narrower than its visible width
 - **THEN** the viewport does not move during playback, and this is not evidence that the surface cannot follow
+
+### Requirement: The viewport accounts for a scroller's lead
+
+A surface whose scroller has leading padding SHALL report that padding to the kernel as the viewport's `leadPx`. The kernel SHALL map a scroll offset to a view start by subtracting `leadPx`, SHALL write a view start back as an offset that includes `leadPx`, and SHALL let the view start up to `leadPx` before time zero. A viewport with no `leadPx` SHALL behave as a lead of zero, so that a surface with no padding does not change.
+
+The kernel's published item geometry SHALL agree with the item's drawn box when the scroller has a lead.
+
+#### Scenario: A led scroller is at offset zero
+
+- **WHEN** a scroller with a lead of half its width is scrolled to offset 0
+- **THEN** the kernel view starts that lead before time zero, and the kernel does not write the scroller to a different offset
+
+#### Scenario: A drag reaches the right edge of a led scroller
+
+- **WHEN** a clip drag rests at the right edge of the phone timeline
+- **THEN** the edge autoscroll moves the view, up to the point where the project end is at the centre
+
+#### Scenario: Geometry on a led scroller
+
+- **WHEN** a test reads kernel geometry for a clip on the scrolled phone timeline
+- **THEN** the reported left edge is within 1 px of the clip's drawn left edge, measured from the scroller's visible left edge
