@@ -75,8 +75,8 @@ test("invalid settings and unavailable memory fail before processing", () => {
 	tempo.dispose();
 });
 
-/** Mean offset, in wall milliseconds, of 0.5 s clicks fed from `lead` seconds before their marks. */
-function clickOffsetMs(rate: number, seconds: number) {
+/** Offsets, in wall milliseconds, of 0.5 s clicks fed from `lead` seconds before their marks. */
+function clickOffsetsMs(rate: number, seconds: number) {
 	const sampleRate = 48000,
 		tempo = new AudioTempo(sampleRate, rate, budget()),
 		lead = tempo.leadSeconds;
@@ -108,12 +108,23 @@ function clickOffsetMs(rate: number, seconds: number) {
 		if (mark > 0) offsets.push(((timeline - mark) / rate) * 1000);
 	});
 	tempo.dispose();
-	return offsets.reduce((sum, value) => sum + value, 0) / offsets.length;
+	return offsets;
 }
+const mean = (values: number[]) => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 test("lead compensation centres stretched transients on the consumed-sample clock", () => {
 	expect(tempoLeadSeconds(1)).toBe(0);
-	expect(tempoLeadSeconds(0.6)).toBeCloseTo(0.061 + 0.4 * (0.036 - 0.061), 6);
+	expect(tempoLeadSeconds(0.6)).toBeCloseTo(0.031 + 0.4 * (0.025 - 0.031), 6);
 	for (const rate of [0.5, 0.75, 1.5, 2])
-		expect(Math.abs(clickOffsetMs(rate, 20)), `${rate}x`).toBeLessThan(15);
+		expect(Math.abs(mean(clickOffsetsMs(rate, 20))), `${rate}x`).toBeLessThan(15);
+});
+
+test("short WSOLA sequences below 1x keep every stretched click near its mark", () => {
+	// Upstream automatic parameters spread single clicks over about one 120 ms sequence at 0.5x
+	// (`archive/2026-11-06-p2-half-speed-sync/evidence/tempo-sweep.md`). One onset per 0.5 s click, none repeated.
+	for (const rate of [0.25, 0.5, 0.75]) {
+		const offsets = clickOffsetsMs(rate, 20);
+		expect(offsets.length, `${rate}x`).toBe(39);
+		expect(Math.max(...offsets.map(Math.abs)), `${rate}x`).toBeLessThan(25);
+	}
 });

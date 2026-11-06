@@ -127,7 +127,7 @@ test("local video decodes presentation intervals through sequential playback, ev
  Object.assign(globalThis,{runVideoDecodeProbe:async()=>{
   provideEditorEngine(await instantiateEngine(new Uint8Array(await(await fetch("/editor-engine.wasm")).arrayBuffer())));
   const moduleUrl="/renderer/maleo_renderer_wasm.js",native=await import(moduleUrl);await native.default();
-  const sources=[...names,"cfr-longgop.mp4"].map(name=>({id:name,revision:"r1",url:location.origin+"/frame-sources/"+name,kinds:["video"]}));
+  const sources=[...names,"cfr-longgop.mp4","cfr-gop30.mp4"].map(name=>({id:name,revision:"r1",url:location.origin+"/frame-sources/"+name,kinds:["video"]}));
   const loader=createPreviewSourceClient({resolve:async source=>({url:source.url,credentials:"omit"}),progress:()=>{},validating:()=>{}});
   const clients=[],pools=[];let maximumBytes=0;
   try {
@@ -188,7 +188,12 @@ test("local video decodes presentation intervals through sequential playback, ev
    const left=harness(0,"left"),right=harness(0,"right");
    const overlap=await Promise.all([left.read(.1),right.read(1.5)]);
    await left.video.dispose();await right.video.dispose();left.clear();right.clear();
-   return {observations,production,seeks,rapid:rapidResult,cut:{outcomes:cutOutcomes,time:afterCut.time,start:afterCut.start,end:afterCut.end},overlap,maximumBytes,empty:pools.map(pool=>JSON.parse(pool.dispatch('{"type":"stats"}')))};
+   // A forward seek in the same generation must start at the target's keyframe, not decode every
+   // frame from the previous position (p2-half-speed-sync D1). Its worker is the last one created.
+   const far=harness(names.length+1,"far");await far.read(.5);const decodedBefore=globalThis.videoResourceReports.at(-1).video.outputs;
+   const farFrame=await far.read(15);const forward={time:farFrame.time,start:farFrame.start,end:farFrame.end,decoded:globalThis.videoResourceReports.at(-1).video.outputs-decodedBefore};
+   await far.video.dispose();far.clear();
+   return {forward,observations,production,seeks,rapid:rapidResult,cut:{outcomes:cutOutcomes,time:afterCut.time,start:afterCut.start,end:afterCut.end},overlap,maximumBytes,empty:pools.map(pool=>JSON.parse(pool.dispatch('{"type":"stats"}')))};
   }finally{await Promise.all(clients.map(client=>client.dispose()));await loader.dispose();for(const pool of pools)pool.free();}
  }});
  `,
@@ -227,6 +232,33 @@ test("local video decodes presentation intervals through sequential playback, ev
 		],
 		{ stdio: "pipe" },
 	);
+	// A keyframe every 30 frames, like the sync fixture: a far seek needs at most 29 frames first.
+	execFileSync(
+		"ffmpeg",
+		[
+			"-v",
+			"error",
+			"-y",
+			"-f",
+			"lavfi",
+			"-i",
+			"testsrc2=size=320x180:rate=30:duration=20",
+			"-c:v",
+			"libx264",
+			"-g",
+			"30",
+			"-keyint_min",
+			"30",
+			"-sc_threshold",
+			"0",
+			"-bf",
+			"0",
+			"-pix_fmt",
+			"yuv420p",
+			join(fixtures, "cfr-gop30.mp4"),
+		],
+		{ stdio: "pipe" },
+	);
 	await context.route("**/frame-sources/*", (route) => {
 		downloads++;
 		if (blocked) return route.abort();
@@ -242,7 +274,7 @@ test("local video decodes presentation intervals through sequential playback, ev
 	await context.route(/\/preview-(media|video)-worker\.js$/, async (route) => {
 		const response = await route.fetch();
 		const observe = `
-   const __counts={video:{active:0,max:0,created:0,closed:0,frames:0},audio:{active:0,max:0,created:0,closed:0,frames:0}};
+   const __counts={video:{active:0,max:0,created:0,closed:0,frames:0,outputs:0},audio:{active:0,max:0,created:0,closed:0,frames:0,outputs:0}};
    for(const [name,kind,dataName] of [["VideoDecoder","video","VideoFrame"],["AudioDecoder","audio","AudioData"]]){
     const Native=globalThis[name],Data=globalThis[dataName],live=new Set();
     if(!Native || !Data)continue;
@@ -251,7 +283,7 @@ test("local video decodes presentation intervals through sequential playback, ev
     Data.prototype.close=function(){if(live.delete(this))__counts[kind].frames--;return close.call(this);};
     Data.prototype.clone=function(){const value=clone.call(this);track(value);return value;};
     globalThis[name]=class extends Native {
-     constructor(init){super({...init,output:sample=>{track(sample);init.output(sample);}});this.__closed=false;const count=__counts[kind];count.active++;count.created++;count.max=Math.max(count.max,count.active);}
+     constructor(init){super({...init,output:sample=>{track(sample);__counts[kind].outputs++;init.output(sample);}});this.__closed=false;const count=__counts[kind];count.active++;count.created++;count.max=Math.max(count.max,count.active);}
      close(){if(!this.__closed){this.__closed=true;__counts[kind].active--;__counts[kind].closed++;}return super.close();}
     };
    }
@@ -267,8 +299,22 @@ test("local video decodes presentation intervals through sequential playback, ev
 
 	await page.evaluate(() => {
 		const reports: Array<{
-			video: { active: number; max: number; created: number; closed: number; frames: number };
-			audio: { active: number; max: number; created: number; closed: number; frames: number };
+			video: {
+				active: number;
+				max: number;
+				created: number;
+				closed: number;
+				frames: number;
+				outputs: number;
+			};
+			audio: {
+				active: number;
+				max: number;
+				created: number;
+				closed: number;
+				frames: number;
+				outputs: number;
+			};
 		}> = [];
 		Object.assign(globalThis, { videoResourceReports: reports });
 		const Native = Worker;
@@ -277,8 +323,8 @@ test("local video decodes presentation intervals through sequential playback, ev
 				super(url, options);
 				const id = reports.length;
 				reports.push({
-					video: { active: 0, max: 0, created: 0, closed: 0, frames: 0 },
-					audio: { active: 0, max: 0, created: 0, closed: 0, frames: 0 },
+					video: { active: 0, max: 0, created: 0, closed: 0, frames: 0, outputs: 0 },
+					audio: { active: 0, max: 0, created: 0, closed: 0, frames: 0, outputs: 0 },
 				});
 				this.addEventListener(
 					"message",
@@ -294,6 +340,7 @@ test("local video decodes presentation intervals through sequential playback, ev
 		// SAFETY: the generated probe above owns this global and its returned measurement shape.
 		const probe = globalThis as typeof globalThis & {
 			runVideoDecodeProbe: () => Promise<{
+				forward: { time: number; start: number; end: number; decoded: number };
 				observations: Array<{
 					source: string;
 					frames: Array<{
@@ -337,15 +384,33 @@ test("local video decodes presentation intervals through sequential playback, ev
 		// SAFETY: the worker observer immediately above owns this measurement global.
 		const observer = globalThis as typeof globalThis & {
 			videoResourceReports: Array<{
-				video: { active: number; max: number; created: number; closed: number; frames: number };
-				audio: { active: number; max: number; created: number; closed: number; frames: number };
+				video: {
+					active: number;
+					max: number;
+					created: number;
+					closed: number;
+					frames: number;
+					outputs: number;
+				};
+				audio: {
+					active: number;
+					max: number;
+					created: number;
+					closed: number;
+					frames: number;
+					outputs: number;
+				};
 			}>;
 		};
 		return { ...result, resources: observer.videoResourceReports };
 	});
 	writeFileSync(info.outputPath("video-decode.json"), JSON.stringify(result, null, 2));
 	expect(errors).toEqual([]);
-	expect(downloads).toBe(6);
+	expect(downloads).toBe(7);
+	expect(result.forward.start).toBeLessThanOrEqual(15);
+	expect(result.forward.end).toBeGreaterThan(15);
+	// From the keyframe at 15 s the target is the first frame; from 0.5 s it would be about 435.
+	expect(result.forward.decoded).toBeLessThanOrEqual(30);
 	for (const source of result.observations)
 		for (const frame of source.frames) {
 			const expected = expectedId(source.source, frame.time);

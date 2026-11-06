@@ -197,6 +197,7 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Fixed
 
+- Rust compare preview at half speed keeps sound and picture in step. Below 1x, the tempo processor uses a 40 ms sequence, so a single sound lands within about 30 ms of its frame (was up to 113 ms). A forward seek far into a video now starts at the nearest keyframe instead of decoding every frame from the previous position, so the picture is ready in about 15 ms (was 400–950 ms) and playback no longer stops to buffer after the seek.
 - Web search and page reads no longer fail when SearXNG or Crawl4AI sends `null` for an optional field. A result with a null title or snippet is kept with an empty value, so one bad result does not fail the whole search.
 - Slow web searches return the results that answered instead of failing with "The operation timed out". SearXNG now caps one search at 12s (was 20s), well under the API's 30s abort, and the OpenAIRE engines, which timed out on almost every query, are disabled.
 

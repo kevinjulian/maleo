@@ -125,8 +125,29 @@ tick=async function(now){const drawn=await syncTick(now);if(drawn){const report=
 				response,
 				body:
 					`
+const syncNow=()=>performance.timeOrigin+performance.now();
+globalThis.syncVideo=[];
+const SyncWorker=globalThis.Worker;let syncWorkers=0;
+globalThis.Worker=class extends SyncWorker{constructor(url,options){super(url,options);const id=++syncWorkers;this.syncId=id;globalThis.syncVideo.push({at:syncNow(),type:"worker",id});this.addEventListener("message",(event)=>{const data=event.data;if(Array.isArray(data?.syncV))for(const item of data.syncV)globalThis.syncVideo.push({...item,id});globalThis.syncVideo.push({at:syncNow(),type:"in:"+data?.type,id});});}postMessage(message,...rest){const request=message?.lease?.request;globalThis.syncVideo.push({at:syncNow(),type:"out:"+message?.type,id:this.syncId,time:request?.time,consumer:request?.consumer});return super.postMessage(message,...rest);}};
+globalThis.addEventListener("message",(event)=>{const type=event.data?.type;if(typeof type==="string"&&type.startsWith("decoder-"))globalThis.syncVideo.push({at:syncNow(),type:"main:"+type,id:0});});
 const syncPost=globalThis.postMessage.bind(globalThis);
-globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(draws?.length&&value&&typeof value==="object"){globalThis.syncDraws=[];return syncPost({...value,syncDraws:draws},...rest);}return syncPost(value,...rest);};
+globalThis.postMessage=(value,...rest)=>{if(typeof value?.type==="string"&&value.type.startsWith("decoder-"))globalThis.syncVideo.push({at:syncNow(),type:"worker:"+value.type,id:0});const draws=globalThis.syncDraws,video=globalThis.syncVideo;if((draws?.length||video.length)&&value&&typeof value==="object"){globalThis.syncDraws=[];globalThis.syncVideo=[];return syncPost({...value,syncDraws:draws??[],syncVideo:video},...rest);}return syncPost(value,...rest);};
+` + (await response.text()),
+			});
+		});
+		// Video decode timing: requests in, replies out, decoder creation and every decoded sample.
+		await context.route("**/preview-video-worker.js", async (route) => {
+			const response = await route.fetch();
+			await route.fulfill({
+				response,
+				body:
+					`
+const syncNow=()=>performance.timeOrigin+performance.now();let syncV=[];
+const syncVPost=globalThis.postMessage.bind(globalThis);
+globalThis.postMessage=(value,...rest)=>{syncV.push({at:syncNow(),type:"video:"+value?.type});const events=syncV;syncV=[];return syncVPost({...value,syncV:events},...rest);};
+globalThis.addEventListener("message",(event)=>syncV.push({at:syncNow(),type:"video-in:"+event.data?.type,time:event.data?.lease?.request?.time}));
+const SyncDecoder=globalThis.VideoDecoder;
+globalThis.VideoDecoder=class extends SyncDecoder{constructor(init){super({...init,output:(frame)=>{syncV.push({at:syncNow(),type:"decoded",time:frame.timestamp/1e6});init.output(frame);}});syncV.push({at:syncNow(),type:"decoder"});}configure(config){syncV.push({at:syncNow(),type:"configure"});return super.configure(config);}};
 ` + (await response.text()),
 			});
 		});
@@ -175,6 +196,20 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 		// input round trip (about 350 ms measured, outside the application).
 		if (captured.playClickedAt !== undefined) segments[0]!.command = captured.playClickedAt;
 		await page.evaluate(() => window.mediaSync.close());
+		// A start can be heard, then buffer and restart: the first onset alone misses that wait.
+		const bufferingMs = segments.map((segment) => {
+			let total = 0,
+				since: number | undefined;
+			for (const { at, status } of captured.transitions) {
+				if (at < segment.command || at >= segment.end) continue;
+				if (status === "buffering") since ??= at;
+				else if (since !== undefined) {
+					total += at - since;
+					since = undefined;
+				}
+			}
+			return since === undefined ? total : total + segment.end - since;
+		});
 		const results = analyzeSync({
 			draws: captured.draws,
 			clicks: captured.clicks,
@@ -259,10 +294,11 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 					).length,
 				};
 			}),
-			segments: results.map((result) => ({
+			segments: results.map((result, index) => ({
 				label: result.label,
 				rate: result.rate,
 				settleMs: result.settleMs,
+				bufferingMs: bufferingMs[index],
 				drawMs: result.drawMs,
 				audioMs: result.audioMs,
 				audioBy: result.audioBy,
@@ -278,9 +314,10 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 		console.log("MEDIA_SYNC", JSON.stringify(summary));
 		expect(pageErrors).toEqual([]);
 		expect(captured.errors).toEqual([]);
-		for (const result of results) {
+		for (const [index, result] of results.entries()) {
 			expect(result.settleMs, result.label).not.toBeNull();
 			expect(result.settleMs!, result.label).toBeLessThanOrEqual(250);
+			expect(bufferingMs[index]!, result.label).toBeLessThanOrEqual(250);
 			expect(result.offsetsMs.length, result.label).toBeGreaterThan(0);
 		}
 		expect(summary.overall.p95AbsMs).toBeLessThanOrEqual(50);

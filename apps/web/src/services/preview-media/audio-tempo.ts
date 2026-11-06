@@ -18,15 +18,24 @@ class BoundedFifo extends FifoSampleBuffer {
 }
 
 /**
+ * WSOLA parameters below 1x. Upstream's automatic 120 ms sequence at 0.5x places single
+ * transients up to about 90 ms from their mark; 40 ms holds them within about 18 ms
+ * (`archive/2026-11-06-p2-half-speed-sync/evidence/tempo-sweep.md`). Rates above 1x keep automatic parameters.
+ */
+const SLOW_PARAMETERS = { sequenceMs: 40, seekWindowMs: 15, overlapMs: 8, quickSeek: true };
+const AUTO_PARAMETERS = { sequenceMs: 0, seekWindowMs: 0, overlapMs: 8, quickSeek: true };
+
+/**
  * Timeline seconds by which upstream WSOLA output leads its input, by transport rate.
- * Measured 2026-10-29 with @soundtouchjs/core: mean of 0.5 s clicks over 30 s at 48 kHz
- * (`evidence/synchronization.md`). `audio-tempo.test.ts` re-measures it, so an upstream
+ * Mean of 0.5 s clicks over 30 s at 48 kHz with @soundtouchjs/core: rates below 1x measured
+ * 2026-11-06 with `SLOW_PARAMETERS` (`archive/2026-11-06-p2-half-speed-sync/evidence/tempo-sweep.md`), the others
+ * 2026-10-29 with automatic parameters. `audio-tempo.test.ts` re-measures it, so an upstream
  * change cannot shift the clock silently.
  */
 const LEAD_SECONDS: ReadonlyArray<readonly [rate: number, lead: number]> = [
-	[0.25, 0.072],
-	[0.5, 0.061],
-	[0.75, 0.036],
+	[0.25, 0.04],
+	[0.5, 0.031],
+	[0.75, 0.025],
 	[1, 0],
 	[1.25, 0.005],
 	[1.5, -0.007],
@@ -86,7 +95,7 @@ export class AudioTempo {
 			this.stretch = new Stretch({ sampleRate });
 			this.stretch.inputBuffer = input;
 			this.stretch.outputBuffer = output;
-			this.stretch.tempo = rate;
+			this.configure(rate);
 		} catch (error) {
 			input?.dispose();
 			output?.dispose();
@@ -96,6 +105,11 @@ export class AudioTempo {
 	}
 	get rate() {
 		return this.speed;
+	}
+	private configure(rate: number) {
+		if (!this.stretch) return;
+		this.stretch.setStretchParameters(rate < 1 ? SLOW_PARAMETERS : AUTO_PARAMETERS);
+		this.stretch.tempo = rate;
 	}
 	/** Start input this much timeline earlier so output content matches the consumed-sample clock. */
 	get leadSeconds() {
@@ -186,7 +200,7 @@ export class AudioTempo {
 		if (!Number.isFinite(rate) || rate < 0.25 || rate > 4)
 			throw new Error("Invalid transport speed");
 		this.stretch?.clear();
-		if (this.stretch) this.stretch.tempo = rate;
+		this.configure(rate);
 		this.speed = rate;
 		this.inputFrames = this.readFrames = this.trimFrames = 0;
 		this.ended = false;

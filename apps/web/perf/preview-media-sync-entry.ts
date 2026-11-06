@@ -11,6 +11,14 @@ export interface SyncDraw {
 	frame: number;
 	at: number;
 }
+export interface SyncVideoEvent {
+	at: number;
+	type: string;
+	id: number;
+	/** Requested timeline seconds on `out:frame`, sample seconds on `decoded`. */
+	time?: number;
+	consumer?: string;
+}
 export interface SyncReport {
 	preview?: PreviewState;
 	draws: SyncDraw[];
@@ -19,6 +27,8 @@ export interface SyncReport {
 	/** Audible epoch time of output resuming after silence. */
 	onsets: number[];
 	audioEvents: Array<{ at: number; type: string }>;
+	/** Video decode path from the probe's instrumentation: worker id, message or decoder event. */
+	videoEvents: SyncVideoEvent[];
 	/** The first Play's click event in the page; Playwright's click round trip comes before it. */
 	playClickedAt?: number;
 	/** Each preview status change, in epoch milliseconds. */
@@ -89,6 +99,7 @@ window.prepareMediaSync = async () => {
 	const [video, audioUrl] = names.map((name) => owner.resolve(`/sync-sources/${name}`)!);
 	const worker = new Worker("/renderer/preview-worker.js", { type: "module" });
 	const draws: SyncDraw[] = [];
+	const videoEvents: SyncVideoEvent[] = [];
 	// The audio start path, for the D3 breakdown: requests out and replies in, in epoch ms.
 	const audioEvents: SyncReport["audioEvents"] = [];
 	const send = worker.postMessage.bind(worker);
@@ -104,6 +115,11 @@ window.prepareMediaSync = async () => {
 			// SAFETY: the probe's worker instrumentation supplies this array of scalar draws.
 			draws.push(...(event.data.syncDraws as SyncDraw[]));
 			delete event.data.syncDraws;
+		}
+		if (event.data.syncVideo) {
+			// SAFETY: the probe's worker instrumentation supplies this array of scalar events.
+			videoEvents.push(...(event.data.syncVideo as SyncVideoEvent[]));
+			delete event.data.syncVideo;
 		}
 	});
 	const transitions: SyncReport["transitions"] = [];
@@ -227,6 +243,7 @@ window.prepareMediaSync = async () => {
 				clicks,
 				onsets,
 				audioEvents,
+				videoEvents,
 				playClickedAt,
 				transitions,
 				errors,

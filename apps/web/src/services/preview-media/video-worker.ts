@@ -2,6 +2,7 @@ import {
 	ALL_FORMATS,
 	HLS,
 	BlobSource,
+	EncodedPacketSink,
 	Input,
 	VideoSampleSink,
 	type InputVideoTrack,
@@ -23,7 +24,8 @@ const codecs = installCodecLifetime();
 let source: LocalVideoSource | undefined,
 	input: Input | undefined,
 	track: InputVideoTrack | undefined;
-let iterator: AsyncGenerator<VideoSample> | undefined,
+let packets: EncodedPacketSink | undefined,
+	iterator: AsyncGenerator<VideoSample> | undefined,
 	current: VideoSample | undefined,
 	next: VideoSample | undefined;
 let firstTimestamp = 0,
@@ -64,6 +66,7 @@ function discard() {
 	input?.dispose();
 	input = undefined;
 	track = undefined;
+	packets = undefined;
 	generation = -1;
 	lastTime = -Infinity;
 }
@@ -110,6 +113,19 @@ async function open() {
 		firstTimestamp,
 	};
 }
+/**
+ * A forward jump decodes every frame from the held sample unless a keyframe lies between: a new
+ * iterator then starts at the target's keyframe. Near jumps keep the iterator, so playback at any
+ * rate never restarts the decoder at each keyframe.
+ */
+const FORWARD_DECODE_LIMIT_SECONDS = 2;
+async function keyframeAhead(time: number) {
+	const held = next ?? current;
+	if (!track || !held || time - held.timestamp <= FORWARD_DECODE_LIMIT_SECONDS) return false;
+	packets ??= new EncodedPacketSink(track);
+	const key = await untilCancelled(packets.getKeyPacket(time, { metadataOnly: true }));
+	return key !== null && key.timestamp > held.timestamp;
+}
 function active(at: number) {
 	if (closed || at !== epoch) throw new DOMException("Video request cancelled", "AbortError");
 }
@@ -118,7 +134,13 @@ async function frame(requestId: number, lease: VideoLease, at: number) {
 	if (!source || request.sourceId !== source.id || request.revision !== source.revision)
 		throw new Error("Local video source revision changed");
 	if (!slots) throw new Error("Native video decoder lease is missing");
-	if (iterator && (request.generation !== generation || request.time < lastTime)) await reset();
+	if (
+		iterator &&
+		(request.generation !== generation ||
+			request.time < lastTime ||
+			(await keyframeAhead(request.time)))
+	)
+		await reset();
 	active(at);
 	// A cancel or reset closed the lease; reopening probes the track with a decoder, so the
 	// lease comes back first. A cancel meanwhile must not leave the open unsettled either.
