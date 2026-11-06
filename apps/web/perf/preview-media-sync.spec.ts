@@ -222,6 +222,34 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 				maxAbsMs: Math.max(...offsets),
 			},
 			byRate,
+			// D3 breakdown of each start, from the audio messages on the main thread:
+			// activation = command to audio-configure; first decode = configure to the first block;
+			// tempo fill = first block to audio-play (queue filled to 0.25 s); worklet fill = audio-play
+			// to the audible onset. Decode and tempo work inside the first block are not separable here.
+			breakdown: results.map((result, index) => {
+				const segment = segments[index]!,
+					events = captured.audioEvents.filter(
+						({ at }) => at >= segment.command && at < segment.end,
+					);
+				const first = (type: string, after = segment.command) =>
+					events.find((event) => event.type === type && event.at >= after)?.at;
+				const configure = first("out:audio-configure"),
+					block = configure === undefined ? undefined : first("in:audio-block", configure),
+					play = block === undefined ? undefined : first("out:audio-play", block),
+					heard = result.audioMs === null ? undefined : segment.command + result.audioMs;
+				const span = (from?: number, to?: number) =>
+					from === undefined || to === undefined ? null : to - from;
+				return {
+					label: result.label,
+					activationMs: span(segment.command, configure),
+					firstDecodeMs: span(configure, block),
+					tempoFillMs: span(block, play),
+					workletFillMs: span(play, heard),
+					pulls: events.filter(
+						({ type, at }) => type === "out:audio-pull" && play !== undefined && at < play,
+					).length,
+				};
+			}),
 			segments: results.map((result) => ({
 				label: result.label,
 				rate: result.rate,

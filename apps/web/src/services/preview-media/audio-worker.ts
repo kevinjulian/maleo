@@ -1,4 +1,11 @@
-import { ALL_FORMATS, HLS, AudioSampleSink, BlobSource, Input } from "mediabunny";
+import {
+	ALL_FORMATS,
+	HLS,
+	AudioSampleSink,
+	BlobSource,
+	Input,
+	type InputAudioTrack,
+} from "mediabunny";
 import {
 	audioDecodeRequest,
 	audioWindowMetadata,
@@ -14,9 +21,20 @@ interface Scope {
 const scope = globalThis as Scope;
 const codecs = installCodecLifetime();
 const PREROLL_SEC = 0.1;
-let started = false;
+interface Opened {
+	input: Input;
+	track: InputAudioTrack;
+	sampleRate: number;
+	channels: number;
+	firstTimestamp: number;
+	frames: number;
+}
+// One worker serves one source revision. The container is parsed once and every later window
+// reuses it; the host terminates the worker to stop, which ends the Input with the thread.
+let bound: { sourceId: string; revision: string; opened: Promise<Opened> } | undefined;
+let busy = false;
 let accept: ((accepted: boolean) => void) | undefined;
-async function decode(request: AudioDecodeRequest) {
+async function open(request: AudioDecodeRequest): Promise<Opened> {
 	const input = new Input({
 		formats: ALL_FORMATS.filter((format) => format !== HLS),
 		source: new BlobSource(request.file),
@@ -31,29 +49,39 @@ async function decode(request: AudioDecodeRequest) {
 			firstTimestamp = await track.getFirstTimestamp();
 		const frames =
 			request.frames ?? Math.round(((await track.computeDuration()) - firstTimestamp) * sampleRate);
-		const start = Math.max(0, Math.floor((request.start - firstTimestamp) * sampleRate));
-		const end = Math.min(frames, Math.ceil((request.end - firstTimestamp) * sampleRate) + 1);
-		const metadata = audioWindowMetadata.parse({
-			sourceId: request.sourceId,
-			revision: request.revision,
-			sampleRate,
-			channels,
-			firstTimestamp,
-			frames,
-			start,
-			count: end - start,
-		});
-		const accepted = await new Promise<boolean>((resolve) => {
-			accept = resolve;
-			scope.postMessage({ type: "reserve", metadata });
-		});
-		accept = undefined;
-		if (!accepted) throw new Error("PCM working set cannot fit the audio budget");
+		return { input, track, sampleRate, channels, firstTimestamp, frames };
+	} catch (error) {
+		input.dispose();
+		throw error;
+	}
+}
+async function decode(request: AudioDecodeRequest, source: Opened) {
+	const { track, sampleRate, channels, firstTimestamp, frames } = source;
+	const start = Math.max(0, Math.floor((request.start - firstTimestamp) * sampleRate));
+	const end = Math.min(frames, Math.ceil((request.end - firstTimestamp) * sampleRate) + 1);
+	const metadata = audioWindowMetadata.parse({
+		sourceId: request.sourceId,
+		revision: request.revision,
+		sampleRate,
+		channels,
+		firstTimestamp,
+		frames,
+		start,
+		count: end - start,
+	});
+	const accepted = await new Promise<boolean>((resolve) => {
+		accept = resolve;
+		scope.postMessage({ type: "reserve", metadata });
+	});
+	accept = undefined;
+	if (!accepted) throw new Error("PCM working set cannot fit the audio budget");
+	try {
 		const pcm = new Float32Array(metadata.count * metadata.channels);
 		let written = start;
 		codecs.audio.allow(1);
 		// Lossy decoders need pre-roll: a cold decoder's first frame is wrong (MDCT overlap, MP3
-		// reservoir). Decode from earlier and keep only the requested interval below.
+		// reservoir). Every window decodes from earlier and keeps only the requested interval, so
+		// a held source returns the same samples as a fresh one, in any window order.
 		const preroll = Math.max(0, start - Math.ceil(PREROLL_SEC * sampleRate));
 		for await (const sample of new AudioSampleSink(track).samples(
 			firstTimestamp + preroll / sampleRate,
@@ -82,14 +110,15 @@ async function decode(request: AudioDecodeRequest) {
 		if (written !== end) throw new Error("Audio decode ended before the requested interval");
 		if (pcm.some((value) => !Number.isFinite(value)))
 			throw new Error("Decoded audio contains non-finite samples");
-		// No codec or native AudioData survives the reply that returns the lease to the host.
+		// No codec or native AudioData survives between windows; only the parsed Input is held.
 		codecs.audio.close();
-		input.dispose();
 		scope.postMessage({ type: "decoded", metadata, pcm }, [pcm.buffer]);
 	} finally {
 		codecs.audio.close();
-		input.dispose();
 	}
+}
+function refuse(message: string) {
+	scope.postMessage({ type: "failed", message });
 }
 scope.onmessage = ({ data }) => {
 	if (accept) {
@@ -97,16 +126,21 @@ scope.onmessage = ({ data }) => {
 		accept(result.success && result.data.accepted);
 		return;
 	}
-	const request = audioDecodeRequest.safeParse(data);
-	if (started || !request.success) {
-		scope.postMessage({ type: "failed", message: "Invalid or duplicate audio decode request" });
-		return;
-	}
-	started = true;
-	void decode(request.data).catch((error: unknown) =>
-		scope.postMessage({
-			type: "failed",
-			message: error instanceof Error ? error.message : "Audio decode failed",
-		}),
-	);
+	const parsed = audioDecodeRequest.safeParse(data);
+	if (!parsed.success) return refuse("Invalid audio decode request");
+	// One window at a time: the host sends the next window only after this one replies.
+	if (busy) return refuse("Audio window requested out of order");
+	const request = parsed.data;
+	if (bound && (bound.sourceId !== request.sourceId || bound.revision !== request.revision))
+		return refuse("Audio source revision mismatch");
+	bound ??= { sourceId: request.sourceId, revision: request.revision, opened: open(request) };
+	busy = true;
+	void bound.opened
+		.then((source) => decode(request, source))
+		.catch((error: unknown) =>
+			refuse(error instanceof Error ? error.message : "Audio decode failed"),
+		)
+		.finally(() => {
+			busy = false;
+		});
 };

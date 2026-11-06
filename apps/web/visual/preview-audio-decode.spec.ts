@@ -23,7 +23,8 @@ test("complete local audio feeds bounded Rust PCM mixing with two actual audio d
 		`
 import {instantiateEngine} from ${JSON.stringify(shared + "/engine.ts")};
 import {provideEditorEngine} from ${JSON.stringify(shared + "/engine-registry.ts")};
-import {decodeLocalAudio} from ${JSON.stringify(media + "/audio-client.ts")};
+import {createAudioSourceClient} from ${JSON.stringify(media + "/audio-client.ts")};
+const oneShot=(request,budget)=>{const client=createAudioSourceClient({id:request.sourceId,revision:request.revision,file:request.file},budget);return client.decode(request.start,request.end).finally(()=>client.dispose());};
 Object.assign(globalThis,{runAudioProbe:async()=>{
  provideEditorEngine(await instantiateEngine(new Uint8Array(await(await fetch("/editor-engine.wasm")).arrayBuffer())));
  const moduleUrl="/renderer/maleo_renderer_wasm.js",native=await import(moduleUrl);await native.default();
@@ -35,7 +36,7 @@ Object.assign(globalThis,{runAudioProbe:async()=>{
  const source=(path)=>({path,url:path,startFrame:0,frames:60,mediaStartSec:0,playbackRate:1,loopSource:false,embedded:false,kind:"voiceover",gainMode:"native",volume:1,volumeKeys:[],fadeInSec:0,fadeOutSec:0,duckUnderVoice:null});
  const observations=[];
  for(const name of names.slice(0,2)){
-  const window=await decodeLocalAudio({sourceId:name,revision:"r1",file:files[name],start:0,end:1.1},counted);
+  const window=await oneShot({sourceId:name,revision:"r1",file:files[name],start:0,end:1.1},counted);
   const m=window.metadata,inputs=[{path:name,sampleRate:m.sampleRate,channels:m.channels,firstTimestamp:m.firstTimestamp,frames:m.frames,windows:[{start:m.start,offset:0,count:window.pcm.length}]}];
   const mix={fps:30,frames:60,sources:[source(name)],voiceoverRanges:[],legacyVoiceover:null};
   const outputLease=counted.reserve(52800*2*4*2);
@@ -52,8 +53,25 @@ Object.assign(globalThis,{runAudioProbe:async()=>{
    observations.push({name,sampleRate:m.sampleRate,channels:m.channels,maximumError,nonzero,first:output[0],second:output[96000]});
   }finally{counted.release(outputLease);window.release();}
  }
- const concurrent=await Promise.all(Array.from({length:4},(_,i)=>decodeLocalAudio({sourceId:"aac-"+i,revision:"r1",file:files["cfr-av.mp4"],start:.1,end:.6},counted)));
+ const concurrent=await Promise.all(Array.from({length:4},(_,i)=>oneShot({sourceId:"aac-"+i,revision:"r1",file:files["cfr-av.mp4"],start:.1,end:.6},counted)));
  const aac=concurrent.map(window=>({rate:window.metadata.sampleRate,count:window.metadata.count,bytes:window.pcm.byteLength}));for(const window of concurrent)window.release();
+ // Held source: three consecutive lossy windows share one worker and one parse, sample for sample.
+ const workersBefore=globalThis.audioCodecCounts.workers,held=createAudioSourceClient({id:"held",revision:"r1",file:files["cfr-av.mp4"]},counted);
+ const spans=[[.1,.35],[.35,.6],[.6,.85]],heldWindows=[];
+ for(const [start,end] of spans)heldWindows.push(await held.decode(start,end));
+ const heldWorkers=globalThis.audioCodecCounts.workers-workersBefore;
+ const fresh=[];for(const [start,end] of spans)fresh.push(await oneShot({sourceId:"held",revision:"r1",file:files["cfr-av.mp4"],start,end},counted));
+ const heldMatches=spans.map((_,i)=>heldWindows[i].pcm.length>0&&heldWindows[i].pcm.length===fresh[i].pcm.length&&heldWindows[i].pcm.every((v,j)=>Object.is(v,fresh[i].pcm[j])));
+ for(const window of [...heldWindows,...fresh])window.release();held.dispose();
+ // The worker refuses a window sent while one is in flight, and a window from another revision.
+ const raw=new Worker("/preview-audio-worker.js"),replies=[];
+ const replied=count=>new Promise(resolve=>{const check=()=>replies.length>=count?resolve():setTimeout(check,10);check();});
+ raw.onmessage=event=>{replies.push(event.data);if(event.data.type==="reserve")raw.postMessage({accepted:false});};
+ const base={sourceId:"raw",revision:"r1",file:files["cfr-av.mp4"],start:.1,end:.35};
+ raw.postMessage(base);raw.postMessage({...base,start:.35,end:.6});
+ await replied(3);
+ raw.postMessage({...base,revision:"r2"});await replied(4);raw.terminate();
+ const refusals=replies.filter(reply=>reply.type==="failed").map(reply=>reply.message);
  let rejected=false;try{budget.reserve(16*1024*1024+1);}catch{rejected=true;}
  const offline=new OfflineAudioContext(1,128,48000);
  for(let i=0;i<2;i++){const tone=offline.createConstantSource();tone.offset.value=.75;tone.connect(offline.destination);tone.start();}
@@ -61,7 +79,7 @@ Object.assign(globalThis,{runAudioProbe:async()=>{
  const headroomSource=source("headroom"),headroomMix={fps:30,frames:60,sources:[headroomSource,{...headroomSource,path:"headroom2"}],voiceoverRanges:[],legacyVoiceover:null};
  const headroomInputs=["headroom","headroom2"].map(path=>({path,sampleRate:48000,channels:1,firstTimestamp:0,frames:2,windows:[{start:0,offset:0,count:2}]}));
  const headroomLease=counted.reserve(32),rustHeadroom=native.mix_audio(JSON.stringify(headroomMix),JSON.stringify(headroomInputs),new Float32Array([.75,.75]),48000,1,0,1)[0];counted.release(headroomLease);
- const remainingBytes=budget.used();budget.free();return {observations,aac,rejected,remainingBytes,maximumBytes,referenceHeadroom,rustHeadroom};
+ const remainingBytes=budget.used();budget.free();return {observations,aac,heldWorkers,heldMatches,refusals,rejected,remainingBytes,maximumBytes,referenceHeadroom,rustHeadroom};
 }});
 `,
 	);
@@ -94,12 +112,13 @@ globalThis.AudioDecoder=class extends Original{
 	});
 	await page.goto("/audio-decode-probe");
 	await page.evaluate(() => {
-		const counts = { active: 0, max: 0, created: 0 };
+		const counts = { active: 0, max: 0, created: 0, workers: 0 };
 		Object.assign(globalThis, { audioCodecCounts: counts });
 		const Original = Worker;
 		globalThis.Worker = class extends Original {
 			constructor(url: string | URL, options?: WorkerOptions) {
 				super(url, options);
+				if (String(url).includes("preview-audio-worker")) counts.workers++;
 				this.addEventListener("message", (event: MessageEvent<{ type: string; delta: number }>) => {
 					if (event.data.type !== "audio-codec-observation") return;
 					event.stopImmediatePropagation();
@@ -127,11 +146,14 @@ globalThis.AudioDecoder=class extends Original{
 					second: number;
 				}>;
 				aac: Array<{ rate: number; count: number; bytes: number }>;
+				heldWorkers: number;
+				heldMatches: boolean[];
+				refusals: string[];
 				rejected: boolean;
 				remainingBytes: number;
 				maximumBytes: number;
 			}>;
-			audioCodecCounts: { active: number; max: number; created: number };
+			audioCodecCounts: { active: number; max: number; created: number; workers: number };
 		};
 		return { ...(await probe.runAudioProbe()), codecs: probe.audioCodecCounts };
 	});
@@ -146,6 +168,14 @@ globalThis.AudioDecoder=class extends Original{
 	for (const row of result.aac) expect(row.bytes).toBeGreaterThan(0);
 	expect(result.codecs).toMatchObject({ active: 0, max: 2 });
 	expect(result.codecs.created).toBeGreaterThanOrEqual(4);
+	expect(result.heldWorkers).toBe(1);
+	expect(result.heldMatches).toEqual([true, true, true]);
+	expect(result.refusals).toEqual(
+		expect.arrayContaining([
+			"Audio window requested out of order",
+			"Audio source revision mismatch",
+		]),
+	);
 	expect(result.rejected).toBe(true);
 	expect(result.referenceHeadroom).toBe(1.5);
 	expect(result.rustHeadroom).toBe(result.referenceHeadroom);

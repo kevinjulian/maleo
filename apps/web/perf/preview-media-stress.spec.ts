@@ -194,7 +194,8 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 			.sort((a, b) => a - b);
 		const percentile = (fraction: number) =>
 			frameTimes[Math.min(frameTimes.length - 1, Math.floor(frameTimes.length * fraction))] ?? null;
-		let seeks: StressReport | undefined;
+		let seeks: StressReport | undefined,
+			paced: Array<{ sec: number; ms: number | null }> | undefined;
 		if (!completionFailure) {
 			await page.getByRole("button", { name: "Play", exact: true }).click();
 			await page.evaluate(() => window.mediaStress.seekBurst());
@@ -203,7 +204,39 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 				.toBeGreaterThanOrEqual(55);
 			await page.getByRole("button", { name: "Pause", exact: true }).click();
 			seeks = await report();
+			phase = "paced seeks";
+			console.log("STRESS_PHASE", phase);
+			paced = await page.evaluate(() => window.mediaStress.pacedSeeks());
 		}
+		// Burst (playing): a seek counts as presented when a fully covered draw at or past the
+		// target arrives before the next seek replaces it. Only the latest one should.
+		const burst = seeks && {
+			presented: seeks.seekRequests.map(({ at, sec }, index) => {
+				const target = Math.floor(sec * 30),
+					until = seeks!.seekRequests[index + 1]?.at ?? Infinity;
+				const draw = seeks!.draws.find(
+					(draw) => draw.supported && draw.at >= at && draw.at < until && draw.frame >= target,
+				);
+				return draw ? draw.at - at : null;
+			}),
+		};
+		// Paced: request to presented frame for each of the 100 seeks, one at a time while paused.
+		const seekLatency = paced && {
+			requests: paced.length,
+			timedOut: paced.filter(({ ms }) => ms === null).length,
+			...(() => {
+				const sorted = paced
+					.map(({ ms }) => ms)
+					.filter((ms): ms is number => ms !== null)
+					.sort((a, b) => a - b);
+				const at = (fraction: number) =>
+					sorted[Math.min(sorted.length - 1, Math.floor(sorted.length * fraction))] ?? null;
+				return { p50: at(0.5), p95: at(0.95), max: sorted.at(-1) ?? null };
+			})(),
+			burstPresented: burst?.presented.filter((ms) => ms !== null).length,
+			burstLastMs: burst?.presented.at(-1) ?? null,
+			paced,
+		};
 		await page.evaluate(() => window.mediaStress.close());
 		const disposed = await report();
 		const result = {
@@ -223,6 +256,7 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 			presented: presented.size,
 			droppedPercent: (100 * (1800 - presented.size)) / 1800,
 			frameTimeMs: { p50: percentile(0.5), p95: percentile(0.95) },
+			seekLatency,
 			peakBrowserTreeRssMiB: peakRssMiB,
 			completionFailure,
 			playback,
@@ -241,6 +275,7 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 				frameTimeMs: result.frameTimeMs,
 				metrics: playback.metrics,
 				peakRssMiB,
+				seekLatency: seekLatency && { ...seekLatency, paced: undefined },
 				completionFailure,
 				transitions: playback.transitions.slice(0, 12),
 			}),
@@ -257,6 +292,7 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 		expect(disposed.contexts.every((state) => state === "closed")).toBe(true);
 		expect(pageErrors).toEqual([]);
 		expect(downloads).toBe(4);
+		expect(seekLatency?.requests).toBe(100);
 	} catch (error) {
 		writeFileSync(
 			info.outputPath("stress-failure.json"),

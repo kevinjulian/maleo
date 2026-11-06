@@ -18,6 +18,7 @@ export interface SyncReport {
 	clicks: number[];
 	/** Audible epoch time of output resuming after silence. */
 	onsets: number[];
+	audioEvents: Array<{ at: number; type: string }>;
 	/** Each preview status change, in epoch milliseconds. */
 	transitions: Array<{ at: number; status: string; position: number; message: string | null }>;
 	errors: string[];
@@ -86,7 +87,17 @@ window.prepareMediaSync = async () => {
 	const [video, audioUrl] = names.map((name) => owner.resolve(`/sync-sources/${name}`)!);
 	const worker = new Worker("/renderer/preview-worker.js", { type: "module" });
 	const draws: SyncDraw[] = [];
+	// The audio start path, for the D3 breakdown: requests out and replies in, in epoch ms.
+	const audioEvents: SyncReport["audioEvents"] = [];
+	const send = worker.postMessage.bind(worker);
+	worker.postMessage = ((message: { type?: unknown }, transfer?: Transferable[]) => {
+		if (typeof message?.type === "string" && message.type.startsWith("audio"))
+			audioEvents.push({ at: epoch(), type: `out:${message.type}` });
+		send(message, transfer ?? []);
+	}) as Worker["postMessage"];
 	worker.addEventListener("message", (event: MessageEvent<Record<string, unknown>>) => {
+		if (typeof event.data.type === "string" && event.data.type.startsWith("audio"))
+			audioEvents.push({ at: epoch(), type: `in:${event.data.type}` });
 		if (event.data.syncDraws) {
 			// SAFETY: the probe's worker instrumentation supplies this array of scalar draws.
 			draws.push(...(event.data.syncDraws as SyncDraw[]));
@@ -195,6 +206,7 @@ window.prepareMediaSync = async () => {
 				draws,
 				clicks,
 				onsets,
+				audioEvents,
 				transitions,
 				errors,
 				sampleRate: context?.sampleRate,

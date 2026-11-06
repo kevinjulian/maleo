@@ -303,10 +303,21 @@ for (const compare of [false, true]) {
 			const ruler = page.locator('[data-vui-slot="ruler"]').first();
 			const rulerBox = await ruler.boundingBox();
 			const clipBox = await page.locator('[data-clipid="video:901"]').boundingBox();
-			if (!rulerBox || !clipBox) throw new Error("Timeline seek geometry is unavailable");
-			await ruler.click({
-				position: { x: clipBox.x + clipBox.width / 2 - rulerBox.x, y: rulerBox.height / 2 },
-			});
+			// The grip is the widest part of the playhead hit area (10 px).
+			const playheadBox = await page
+				.locator('[data-vui-slot="playhead"] .tl2-playhead-grip')
+				.first()
+				.boundingBox();
+			if (!rulerBox || !clipBox || !playheadBox)
+				throw new Error("Timeline seek geometry is unavailable");
+			// 4.5 s, not the clip middle: the first Play pauses near 4.0 s, and a click on the playhead
+			// handle there never reaches the ruler (p2-media-acceptance evidence/seek-play-reset.md).
+			const seekX = clipBox.x + (clipBox.width * 3) / 4;
+			expect(
+				seekX < playheadBox.x || seekX > playheadBox.x + playheadBox.width,
+				`seek target ${seekX} is under the paused playhead ${JSON.stringify(playheadBox)}`,
+			).toBe(true);
+			await ruler.click({ position: { x: seekX - rulerBox.x, y: rulerBox.height / 2 } });
 			await expect(timecode).toContainText("00:04:");
 			const afterSeek = await timecode.textContent();
 			await play.click();

@@ -222,6 +222,32 @@ async function start(canvas: OffscreenCanvas): Promise<void> {
 	}
 }
 
+/** Paused and ready: decode the first audio block at the playhead so Play starts from PCM (D2). */
+function warmAudio(live: SessionModule): void {
+	if (!audioMedia) return;
+	// SAFETY: the WASM session emits the complete PreviewState shape.
+	const report = JSON.parse(live.state(previewNow())) as PreviewState;
+	const paused = report.status === "paused" || report.status === "ready";
+	if (!storyboard || !report.mediaReady || !paused) {
+		audioMedia.discardWarm();
+		return;
+	}
+	try {
+		// A failed warm costs nothing but the head start: Play decodes the block and reports errors.
+		void audioMedia
+			.warm(
+				storyboard.json,
+				storyboard.fps,
+				storyboard.durationFrames,
+				storyboard.media ?? [],
+				report.position,
+			)
+			.catch(() => {});
+	} catch {
+		audioMedia.discardWarm();
+	}
+}
+
 async function handle(request: PreviewRequest, live: SessionModule): Promise<void> {
 	const now = previewNow();
 	switch (request.type) {
@@ -246,6 +272,7 @@ async function handle(request: PreviewRequest, live: SessionModule): Promise<voi
 			);
 			fps = request.fps;
 			media?.setSources(request.media ?? []);
+			warmAudio(live);
 			return;
 		case "seek":
 			media?.invalidate();
@@ -253,6 +280,7 @@ async function handle(request: PreviewRequest, live: SessionModule): Promise<voi
 			visualAt = now;
 			live.seek(request.frame / fps, now);
 			await audioMedia?.reset();
+			warmAudio(live);
 			return;
 		case "play":
 			media?.invalidate();
@@ -263,6 +291,7 @@ async function handle(request: PreviewRequest, live: SessionModule): Promise<voi
 			visualWaiting = false;
 			live.pause(request.position);
 			await audioMedia?.reset();
+			warmAudio(live);
 			return;
 		case "remotion":
 			return live.report_remotion(request.position, request.at);
@@ -274,6 +303,7 @@ async function handle(request: PreviewRequest, live: SessionModule): Promise<voi
 				now,
 			);
 			if (!request.readiness.ready) await audioMedia?.reset();
+			warmAudio(live);
 			return;
 		case "media-playback":
 			live.media_dispatch(
@@ -361,6 +391,7 @@ async function handle(request: PreviewRequest, live: SessionModule): Promise<voi
 			live.pause((JSON.parse(live.state(now)) as PreviewState).position);
 			post();
 			await audioMedia?.reset();
+			warmAudio(live);
 			await media?.releaseSource(request.url);
 			scope.postMessage({ type: "source-released", requestId: request.requestId });
 			return;

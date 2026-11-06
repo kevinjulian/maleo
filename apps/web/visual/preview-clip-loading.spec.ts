@@ -184,6 +184,15 @@ for (const width of [1440, 320]) {
 				// Ready clips show no preview badge.
 				await expect(clip(id).locator(".tl2-clip-upload[data-preview-state]")).toHaveCount(0);
 			const geometry = await clip("video:901").getAttribute("style");
+			// The readiness status lives in the toolbar row: the lanes must not move when it clears.
+			const boxes = () =>
+				Promise.all(
+					[
+						page.locator('[data-vui-slot="ruler"]').first(),
+						page.locator(".tl2-lanes [data-vui-row^='lane-']").first(),
+						clip("video:904"),
+					].map((locator) => locator.boundingBox()),
+				);
 			const play = page.getByRole("button", { name: "Play", exact: true });
 			const timecode = page.locator('[data-transport="timecode"]').first();
 			const blockedTime = await timecode.textContent();
@@ -216,6 +225,8 @@ for (const width of [1440, 320]) {
 			await expect(page.getByText("Preview failed:").last()).toBeVisible();
 			await page.screenshot({ path: info.outputPath(`clip-failure-${width}.png`) });
 			await expect(page).toHaveScreenshot(`preview-clip-actions-${width}.png`);
+			// Measured after the clip tap: at 320 px the tap scrolls the centred timeline.
+			const blockedBoxes = await boxes();
 			repaired = true;
 			const retry = page.getByRole(width === 320 ? "button" : "menuitem", {
 				name: "Retry preview",
@@ -227,6 +238,13 @@ for (const width of [1440, 320]) {
 				// Ready clips show no preview badge.
 				await expect(clip(id).locator(".tl2-clip-upload[data-preview-state]")).toHaveCount(0);
 			expect(await clip("video:901").getAttribute("style")).toBe(geometry);
+			const readyBoxes = await boxes();
+			writeFileSync(
+				info.outputPath(`readiness-geometry-${width}.json`),
+				JSON.stringify({ ruler_lane_clip: { blocked: blockedBoxes, ready: readyBoxes } }, null, 2),
+			);
+			expect(blockedBoxes.every(Boolean)).toBe(true);
+			expect(readyBoxes).toEqual(blockedBoxes);
 			expect(downloads.filter((name) => name.endsWith("ready.png")).length).toBe(readyDownloads);
 			expect(writes.length, JSON.stringify(writes)).toBe(baselineWrites);
 			const readinessWrites = writes.length - baselineWrites;

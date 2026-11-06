@@ -18,7 +18,10 @@ export interface StressMetrics {
 export interface StressReport {
 	preview?: PreviewState;
 	metrics?: StressMetrics;
-	draws: NonNullable<StressMetrics["draw"]>[];
+	/** Each drawn frame, stamped with the page time its report arrived. */
+	draws: Array<NonNullable<StressMetrics["draw"]> & { at: number }>;
+	/** Each seek of the burst, in page milliseconds. */
+	seekRequests: Array<{ at: number; sec: number }>;
 	/** Each preview status change, in page milliseconds, to locate stalls. */
 	transitions: Array<{ at: number; status: string; position: number }>;
 	errors: string[];
@@ -35,6 +38,8 @@ declare global {
 		mediaStress: {
 			report(): StressReport;
 			seekBurst(): Promise<void>;
+			/** Paused seeks, one at a time: request to the first fully covered frame at the target. */
+			pacedSeeks(): Promise<Array<{ sec: number; ms: number | null }>>;
 			close(): Promise<void>;
 		};
 	}
@@ -87,15 +92,21 @@ window.prepareMediaStress = async () => {
 	const worker = new Worker("/renderer/preview-worker.js", { type: "module" });
 	let metrics: StressMetrics | undefined;
 	const draws: StressReport["draws"] = [];
+	const drawWaiters = new Set<(draw: StressReport["draws"][number]) => void>();
 	worker.addEventListener("message", (event: MessageEvent<Record<string, unknown>>) => {
 		if (event.data.stressMetrics) {
 			// SAFETY: the probe's worker/glue instrumentation supplies this scalar report.
 			metrics = event.data.stressMetrics as StressMetrics;
-			if (metrics.draw && draws.at(-1)?.serial !== metrics.draw.serial) draws.push(metrics.draw);
+			if (metrics.draw && draws.at(-1)?.serial !== metrics.draw.serial) {
+				const draw = { ...metrics.draw, at: performance.now() };
+				draws.push(draw);
+				for (const waiter of drawWaiters) waiter(draw);
+			}
 			delete event.data.stressMetrics;
 		}
 	});
 	const transitions: StressReport["transitions"] = [];
+	const seekRequests: StressReport["seekRequests"] = [];
 	const states: PreviewState[] = [],
 		errors: string[] = [],
 		contexts: AudioContext[] = [];
@@ -190,6 +201,7 @@ window.prepareMediaStress = async () => {
 			preview: states.at(-1),
 			metrics,
 			draws,
+			seekRequests,
 			transitions,
 			errors,
 			audioState,
@@ -202,9 +214,35 @@ window.prepareMediaStress = async () => {
 		async seekBurst() {
 			worker.postMessage({ type: "stress-delay", enabled: true });
 			for (let index = 0; index < 100; index++) {
-				audio?.seek(index === 99 ? 55 : ((index * 17) % 55) + 0.1, 1);
+				const sec = index === 99 ? 55 : ((index * 17) % 55) + 0.1;
+				seekRequests.push({ at: performance.now(), sec });
+				audio?.seek(sec, 1);
 				await new Promise((resolve) => setTimeout(resolve, 10));
 			}
+		},
+		async pacedSeeks() {
+			const latencies: Array<{ sec: number; ms: number | null }> = [];
+			for (let index = 0; index < 100; index++) {
+				const sec = index === 99 ? 55 : ((index * 17) % 55) + 0.1,
+					target = Math.floor(sec * 30),
+					at = performance.now();
+				const ms = await new Promise<number | null>((resolve) => {
+					const check = (draw: StressReport["draws"][number]) => {
+						if (!draw.supported || draw.frame < target || draw.frame > target + 6) return;
+						clearTimeout(timer);
+						drawWaiters.delete(check);
+						resolve(draw.at - at);
+					};
+					const timer = setTimeout(() => {
+						drawWaiters.delete(check);
+						resolve(null);
+					}, 2000);
+					drawWaiters.add(check);
+					audio?.seek(sec, 1);
+				});
+				latencies.push({ sec, ms });
+			}
+			return latencies;
 		},
 		async close() {
 			await audio?.dispose();

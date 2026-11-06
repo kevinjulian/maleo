@@ -398,13 +398,27 @@ buffering instead of inserting silence. The renderer WASM exposes `PcmBudget`
 and `mix_audio` without GPU initialization.
 
 `audio-client.ts` decodes complete local Files through `/preview-audio-worker.js`.
-It acquires the shared native audio grant before constructing a worker. Each job
-reserves PCM before copying, terminates its worker before returning the grant,
-and retains the PCM reservation until consumer release detaches the buffer.
+`createAudioSourceClient` holds one worker for each audio source revision. The
+worker parses the container once and keeps it for later windows. Each window
+still decodes from 100 ms before its start and returns only its interval, so a
+held source returns the same samples as a new one. The client acquires the
+shared native audio grant before it constructs the worker, and it keeps the
+grant while windows continue. It stops the worker and returns the grant when the
+broker asks it to yield (after the window in flight), after 2 s without a
+request, when a window fails, and on disposal. `audio-media.ts` replaces the
+client when the source revision changes. Each window reserves PCM before
+copying and retains the reservation until consumer release detaches the buffer.
+A cancelled window returns its reservation at once and keeps the worker.
 Retained, flattened and WASM input copies share the 16 MiB budget. Callers must
 reserve output copies separately. Requested PCM windows stay within two seconds.
 Codec-internal surfaces are separate process-memory measurements. The real
 browser probe is `preview-audio-decode.spec.ts`.
+
+While the preview is paused and ready, and after a paused seek, the preview
+worker decodes the first lookahead block at the playhead (the warm block). The
+first mix after Play reads from the warm block in place of a new decode. A seek,
+a source change and the first mix discard it. The warm block holds its PCM
+reservation in the same budget until then.
 
 `audio-tempo.ts` wraps pinned `@soundtouchjs/core` 2.1.1 `Stretch` for global
 transport speed only. Authored rates, pitch settings and reverse stay on their
