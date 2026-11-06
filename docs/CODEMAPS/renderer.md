@@ -141,7 +141,7 @@ WASM exports `PcmBudget` and `mix_audio` independently of GPU initialization.
 The browser audio adapter decodes bounded intervals from complete local Files
 under the existing two-audio-decoder broker. `AudioTempo` applies global transport
 speed through pinned upstream Stretch with a 1x bypass. `createAudioOutput`
-activates the device from a user gesture and transfers bounded PCM blocks to
+activates the device from a user gesture (or prepares it suspended ahead of Play) and transfers bounded PCM blocks to
 the AudioWorklet. Its consumed sample counter and absolute render-frame endpoint
 provide output-position input. `compare-audio.ts` routes those observations to
 the native session. Reference audio is the default. The compare selector mutes

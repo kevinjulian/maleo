@@ -171,6 +171,9 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 			await page.waitForTimeout(step.holdMs);
 		}
 		const captured: SyncReport = await report();
+		// The first Play is a real click: time it from the click event, not from before Playwright's
+		// input round trip (about 350 ms measured, outside the application).
+		if (captured.playClickedAt !== undefined) segments[0]!.command = captured.playClickedAt;
 		await page.evaluate(() => window.mediaSync.close());
 		const results = analyzeSync({
 			draws: captured.draws,
@@ -239,9 +242,15 @@ globalThis.postMessage=(value,...rest)=>{const draws=globalThis.syncDraws;if(dra
 					heard = result.audioMs === null ? undefined : segment.command + result.audioMs;
 				const span = (from?: number, to?: number) =>
 					from === undefined || to === undefined ? null : to - from;
+				const resume = first("context:resume"),
+					resumed = resume === undefined ? undefined : first("context:resume-done", resume),
+					load = first("context:addModule"),
+					loaded = load === undefined ? undefined : first("context:addModule-done", load);
 				return {
 					label: result.label,
 					activationMs: span(segment.command, configure),
+					resumeMs: span(resume, resumed),
+					addModuleMs: span(load, loaded),
 					firstDecodeMs: span(configure, block),
 					tempoFillMs: span(block, play),
 					workletFillMs: span(play, heard),

@@ -161,7 +161,10 @@ const StressWorker=Worker;globalThis.Worker=class extends StressWorker{construct
 		await expect
 			.poll(async () => (await report()).preview?.mediaReady, { timeout: 20_000 })
 			.toBe(true);
-		expect((await report()).contexts).toEqual([]);
+		// The output is prepared at media readiness: one context, silent until Play. (Its state depends
+		// on the browser's autoplay policy, so it is not asserted.)
+		await expect.poll(async () => (await report()).contexts).toHaveLength(1);
+		expect((await report()).outputPeak).toBe(0);
 		expect(downloads).toBe(4);
 		await context.setOffline(true);
 		const playStarted = Date.now();

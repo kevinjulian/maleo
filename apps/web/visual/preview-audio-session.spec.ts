@@ -229,41 +229,44 @@ PcmBudget.prototype.release=function(id){release.call(this,id);globalThis.audioB
 		await page.getByRole("button", { name: "Play", exact: true }).click();
 		await expect.poll(async () => (await report()).audio?.status).toBe("playing");
 		await worker.evaluate(() => {
-			const OriginalWorker = Worker;
+			// Patch the prototype, not the constructor: a held audio worker (one per source revision)
+			// is reused across windows, so a new-worker-only failure may never be reached.
+			const send = Worker.prototype.postMessage;
 			Object.assign(globalThis, { audioDecodeFailures: 0 });
-			globalThis.Worker = class extends OriginalWorker {
-				override postMessage(
-					message: unknown,
-					options?: Transferable[] | StructuredSerializeOptions,
-				) {
-					if (message && typeof message === "object" && "file" in message && "start" in message) {
-						// SAFETY: this test initialized the failure counter above.
-						(globalThis as typeof globalThis & { audioDecodeFailures: number })
-							.audioDecodeFailures++;
-						queueMicrotask(() =>
-							this.dispatchEvent(
-								new ErrorEvent("error", { message: "Injected audio decoder failure" }),
-							),
-						);
-						return;
-					}
-					if (Array.isArray(options)) super.postMessage(message, options);
-					else super.postMessage(message, options);
+			Worker.prototype.postMessage = function (
+				this: Worker,
+				message: unknown,
+				options?: Transferable[] | StructuredSerializeOptions,
+			) {
+				if (message && typeof message === "object" && "file" in message && "start" in message) {
+					// SAFETY: this test initialized the failure counter above.
+					(globalThis as typeof globalThis & { audioDecodeFailures: number }).audioDecodeFailures++;
+					queueMicrotask(() =>
+						this.dispatchEvent(
+							new ErrorEvent("error", { message: "Injected audio decoder failure" }),
+						),
+					);
+					return;
 				}
-			};
+				send.call(this, message, Array.isArray(options) ? { transfer: options } : options);
+			} as Worker["postMessage"];
 		});
+		// Decode is ahead of playback (held worker and warm block): the rest of this 3 s fixture may be
+		// decoded already, so seek back to make the next start decode through the failing worker.
+		await page.getByRole("button", { name: "Rewind paused", exact: true }).click();
 		await expect
 			.poll(async () => (await report()).audio?.status, { timeout: 10_000 })
 			.toBe("failed");
 		await expect.poll(async () => (await report()).preview?.status).toBe("paused");
 		expect((await report()).audio?.message).toContain("Audio decoder worker failed");
+		// The first start and two recovery attempts, each a paused warm-block decode plus its start decode.
 		expect(
 			await worker.evaluate(() => {
 				// SAFETY: this test initialized and incremented the injected failure counter.
 				return (globalThis as typeof globalThis & { audioDecodeFailures: number })
 					.audioDecodeFailures;
 			}),
-		).toBe(3);
+		).toBe(6);
 		const result = await page.evaluate(async () => {
 			// SAFETY: generated entry owns disposal and the returned ledgers.
 			return (

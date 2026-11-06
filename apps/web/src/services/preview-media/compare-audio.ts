@@ -32,6 +32,8 @@ export async function createCompareAudio(
 		epoch = 0,
 		nextRequest = 0;
 	let output: Output | undefined, activation: Promise<Output> | undefined;
+	/** A prepared output, resolved and not yet playing: Play resumes it inside the gesture. */
+	let primed: Output | undefined;
 	let snapshot: AudioOutputSnapshot | undefined, preview: PreviewState | undefined;
 	let phase: CompareAudioState["status"] = "paused",
 		rate = 1,
@@ -109,6 +111,7 @@ export async function createCompareAudio(
 		const stopped = output ? Promise.resolve(output) : activation;
 		output = undefined;
 		activation = undefined;
+		primed = undefined;
 		void stopped?.then((device) => device.dispose()).catch(() => {});
 		client.audioStop();
 	}
@@ -187,6 +190,24 @@ export async function createCompareAudio(
 		cancel();
 		void silence();
 	}
+	function activate(resume: boolean): Promise<Output> {
+		activation ??= createAudioOutput({
+			budget,
+			workletUrl,
+			activate: resume,
+			change: (next) => {
+				if (closed) return;
+				snapshot = next;
+				if (next.state === "failed") fail(next.error ?? "Audio output failed");
+				// A prepared output is suspended until Play; only a wanted output can be suspended.
+				else if (next.state === "suspended" && wanted)
+					fail("Audio output suspended. Press Play to resume.", "suspended");
+				else if (next.state === "buffering" && phase === "playing" && !end)
+					recover("Audio output is buffering");
+			},
+		});
+		return activation;
+	}
 	async function begin(position: number, speed: number, recovery: boolean) {
 		if (closed || dead || disposing) return;
 		wanted = true;
@@ -195,21 +216,10 @@ export async function createCompareAudio(
 		cancel();
 		const generation = epoch;
 		state("priming");
+		// Resume a prepared output inside the gesture; failure surfaces at the awaited resume below.
+		if (primed) void primed.resume().catch(() => {});
 		// Start activation synchronously before awaiting cancellation or worker replies.
-		activation ??= createAudioOutput({
-			budget,
-			workletUrl,
-			change: (next) => {
-				if (closed) return;
-				snapshot = next;
-				if (next.state === "failed") fail(next.error ?? "Audio output failed");
-				else if (next.state === "suspended")
-					fail("Audio output suspended. Press Play to resume.", "suspended");
-				else if (next.state === "buffering" && phase === "playing" && !end)
-					recover("Audio output is buffering");
-			},
-		});
-		const activated = activation;
+		const activated = activate(true);
 		try {
 			const device = await activated;
 			await deactivating;
@@ -218,6 +228,7 @@ export async function createCompareAudio(
 				return;
 			}
 			output = device;
+			primed = undefined;
 			await device.resume();
 			if (generation !== epoch || closed) return;
 			await silence();
@@ -280,6 +291,19 @@ export async function createCompareAudio(
 			if (wanted) void begin(position, speed, true);
 			else client.pause(position);
 		},
+		/** Open the device and load the worklet before Play, suspended. Never resumes or plays. */
+		prepare() {
+			if (closed || dead || disposing || deactivating || activation) return;
+			const pending = activate(false);
+			pending.then(
+				(device) => {
+					if (activation === pending) primed = device;
+				},
+				() => {
+					if (activation === pending) activation = undefined;
+				},
+			);
+		},
 		start(position: number, speed: number) {
 			attempts = 0;
 			void begin(position, speed, false);
@@ -303,6 +327,7 @@ export async function createCompareAudio(
 			const stopped = output ?? activation;
 			output = undefined;
 			activation = undefined;
+			primed = undefined;
 			deactivating = Promise.resolve(stopped)
 				.then((device) => device?.dispose())
 				.finally(() => {

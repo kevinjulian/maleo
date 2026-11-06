@@ -432,7 +432,9 @@ global rate. Disposal detaches owned FIFOs and returns the reservation.
 0.5x/1x/2x, checks pitch, exact output length and cleanup. Its AudioBuffer capture
 does not establish production AudioWorklet scheduling or physical-device sound.
 `createAudioOutput` creates/resumes AudioContext from the main-thread Play
-gesture, then loads `/preview-audio-worklet.js`. Rust-mixed, tempo-processed
+gesture, then loads `/preview-audio-worklet.js`. With `activate: false` it opens the
+device and loads the worklet without `resume()`; opening the device takes about
+200 ms, so a prepared output takes that cost off the first Play. Rust-mixed, tempo-processed
 stereo blocks transfer to its bounded queue. Accepted transfers detach producer
 buffers. Consumed or flushed block acknowledgements return PCM reservations.
 Underruns hold the consumed position. Flush and platform suspension invalidate
@@ -483,7 +485,10 @@ recreation has two attempts with 1.5-second timeouts, and late devices cannot
 replace an accepted one or report another loss. Pause cancels playback intent.
 
 `compare-audio.ts` joins the existing output adapter to the preview worker. It
-prepares scripts without creating an AudioContext. Play primes bounded local
+prepares scripts without creating an AudioContext. `prepare()` creates one output
+ahead of Play without `resume()` or output; the editor calls it when Rust audio
+owns the output and preview media is ready. Play resumes that output inside the
+gesture. Play primes bounded local
 blocks, then attaches their consumed-sample clock. Frame observations continue
 while another decode is pending. Seek flushes and replaces the output generation.
 Media invalidation pauses without queuing autoplay. GPU or local buffering can
@@ -631,7 +636,7 @@ Without the parameter the editor never requests the module.
 Reference audio is selected by default. Use **Compare audio output** to select
 **Rust audio**. Rust mutes the reference Player before starting its worklet.
 Its clock follows consumed audio and output timestamps. Selecting Rust while
-paused waits for Play. Selecting reference or leaving compare mode closes Rust
+paused prepares the output and waits for Play. Selecting reference or leaving compare mode closes Rust
 output before restoring the reference Player's previous mute state. Audio
 suspension requires a fresh Play or **Retry audio**. This diagnostic choice does
 not change the document or export inputs.

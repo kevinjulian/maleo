@@ -146,6 +146,8 @@ window.prepareMediaStress = async () => {
 				transitions.push({ at: performance.now(), status: state.status, position: state.position });
 			states.push(state);
 			audio?.observe(state);
+			// Like the editor with Rust audio selected: open the device before Play.
+			if (state.mediaReady) audio?.prepare();
 		},
 		(error) => errors.push(error),
 		undefined,

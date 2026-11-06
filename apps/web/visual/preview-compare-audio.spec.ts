@@ -237,7 +237,9 @@ for (const width of [1440, 320]) {
 			await page.getByRole("button", { name: "Pause", exact: true }).click();
 			await selection.click();
 			await page.getByRole("option", { name: "Rust audio", exact: true }).click();
-			expect((await report(page)).contexts).toEqual(["closed"]);
+			// Paused selection prepares one output (the selection is a gesture, so the browser may start
+			// it running); nothing plays until Play, which uses that same context.
+			await expect.poll(async () => (await report(page)).contexts).toHaveLength(2);
 			await page.getByRole("button", { name: "Play", exact: true }).click();
 			await expect.poll(async () => (await report(page)).contexts).toEqual(["closed", "running"]);
 			const toggleMenu = page.getByRole("button", { name: "toggle menu", exact: true });

@@ -19,6 +19,8 @@ export interface SyncReport {
 	/** Audible epoch time of output resuming after silence. */
 	onsets: number[];
 	audioEvents: Array<{ at: number; type: string }>;
+	/** The first Play's click event in the page; Playwright's click round trip comes before it. */
+	playClickedAt?: number;
 	/** Each preview status change, in epoch milliseconds. */
 	transitions: Array<{ at: number; status: string; position: number; message: string | null }>;
 	errors: string[];
@@ -115,6 +117,18 @@ window.prepareMediaSync = async () => {
 		constructor(options?: AudioContextOptions) {
 			super(options);
 			contexts.push(this);
+			audioEvents.push({ at: epoch(), type: "context:create" });
+			const addModule = this.audioWorklet.addModule.bind(this.audioWorklet);
+			this.audioWorklet.addModule = async (...args: Parameters<typeof addModule>) => {
+				audioEvents.push({ at: epoch(), type: "context:addModule" });
+				await addModule(...args);
+				audioEvents.push({ at: epoch(), type: "context:addModule-done" });
+			};
+		}
+		override async resume() {
+			audioEvents.push({ at: epoch(), type: "context:resume" });
+			await super.resume();
+			audioEvents.push({ at: epoch(), type: "context:resume-done" });
 		}
 	};
 	const NativeNode = AudioWorkletNode;
@@ -153,6 +167,8 @@ window.prepareMediaSync = async () => {
 				});
 			states.push(state);
 			audio?.observe(state);
+			// Like the editor with Rust audio selected: open the device before Play.
+			if (state.mediaReady) audio?.prepare();
 		},
 		(error) => errors.push(error),
 		undefined,
@@ -197,7 +213,11 @@ window.prepareMediaSync = async () => {
 	const play = document.querySelector<HTMLButtonElement>("#play");
 	if (!play) throw new Error("Sync controls missing");
 	// The first start needs a real user gesture for AudioContext; the spec clicks this button.
-	play.onclick = () => audio?.start(0, 1);
+	let playClickedAt: number | undefined;
+	play.onclick = () => {
+		playClickedAt = epoch();
+		audio?.start(0, 1);
+	};
 	window.mediaSync = {
 		report: () => {
 			const context = contexts[0];
@@ -207,6 +227,7 @@ window.prepareMediaSync = async () => {
 				clicks,
 				onsets,
 				audioEvents,
+				playClickedAt,
 				transitions,
 				errors,
 				sampleRate: context?.sampleRate,

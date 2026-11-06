@@ -136,3 +136,19 @@ test("timestamp reports the platform pair or explicit missing values without gue
 	expect(output.timestamp()).toMatchObject({ output: null, outputLatency: null });
 	await output.dispose();
 });
+test("a prepared output opens the device and loads the worklet without resuming; Play resumes it", async () => {
+	class Suspended extends FakeContext {
+		override state = "suspended";
+	}
+	vi.stubGlobal("AudioContext", Suspended);
+	const output = await createAudioOutput({ budget: budget(), change: () => {}, activate: false });
+	const context = contexts[0]!;
+	expect(context.resume).not.toHaveBeenCalled();
+	expect(context.audioWorklet.addModule).toHaveBeenCalledOnce();
+	expect(nodes).toHaveLength(1);
+	expect(() => output.play()).toThrow("suspended");
+	await output.resume();
+	expect(context.resume).toHaveBeenCalledOnce();
+	expect(() => output.play()).not.toThrow();
+	await output.dispose();
+});

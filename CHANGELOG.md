@@ -47,6 +47,8 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Changed
 
+- Rust compare preview audio starts faster. Each local audio source keeps one decoder worker and parses its file once, instead of starting a worker for every window. While the preview is paused and ready, the first audio block at the playhead is decoded in advance. The Rust audio output opens its device before Play, without sound, so the first Play starts in about 40–100 ms instead of 300–600 ms.
+
 - The inspector rules moved into the shared Rust core (`crates/app-core`): keying (key target, refusal messages, the 0.1 s key snap, row keying, moment moves and easing, paste, edge presets), the inspector group list, layout and text defaults, and the gain fader and focal-point mapping. The web editor and the server agent call them through one `inspector_apply` engine export, so every client makes the same commands. Editor behavior and saved documents do not change.
 
 - Preview Play waits for complete local bytes and validation for every placed

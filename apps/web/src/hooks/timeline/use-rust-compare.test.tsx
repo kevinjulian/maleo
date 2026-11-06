@@ -104,6 +104,7 @@ describe("compare mode", () => {
 		let close!: () => void;
 		const sound = {
 			start: vi.fn(),
+			prepare: vi.fn(),
 			seek: vi.fn(),
 			rate: vi.fn(),
 			pause: vi.fn(async () => {}),
@@ -146,6 +147,7 @@ describe("compare mode", () => {
 			let close!: () => void;
 			const sound = {
 				start: vi.fn(),
+				prepare: vi.fn(),
 				seek: vi.fn(),
 				rate: vi.fn(),
 				pause: vi.fn(async () => {}),
@@ -165,6 +167,8 @@ describe("compare mode", () => {
 			await mount(true, env);
 			await act(async () => state?.audio?.select("rust"));
 			expect(sound.start).not.toHaveBeenCalled();
+			// Paused: the output opens its device ahead of Play, suspended.
+			expect(sound.prepare).toHaveBeenCalled();
 			await act(async () => {
 				root?.unmount();
 				root = undefined;

@@ -210,6 +210,8 @@ export function useRustCompare(args: {
 					(preview) => {
 						previewRef.current = preview;
 						prepared?.observe(preview);
+						// Open the device before Play, so Play only resumes it (about 200 ms saved).
+						if (ownerRef.current === "rust" && preview.mediaReady) prepared?.prepare();
 						if (live) setState(stateOf(preview));
 						if (preview.status === "failed" && ownerRef.current === "rust") {
 							ownerRef.current = "reference";
@@ -343,6 +345,7 @@ export function useRustCompare(args: {
 			setOwner("rust");
 			player.setMuted(true);
 			if (player.playing()) audio.start(player.frame() / fps, rateRef.current);
+			else audio.prepare();
 			switching.current = false;
 			setAudioBusy(false);
 		} else {

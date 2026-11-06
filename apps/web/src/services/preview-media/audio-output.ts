@@ -20,19 +20,26 @@ export interface AudioOutputTimestamp {
 	outputLatency: number | null;
 }
 
-/** Call from the existing main-thread Play gesture. No AudioContext exists before this call. */
+/**
+ * Call from the main-thread Play gesture, or with `activate: false` ahead of Play to prepare a
+ * suspended output: the context opens its device (about 200 ms) and loads the worklet before the
+ * gesture, and Play then only calls `resume()`.
+ */
 export async function createAudioOutput(options: {
 	budget: Budget;
 	change(snapshot: AudioOutputSnapshot): void;
 	workletUrl?: string;
+	activate?: boolean;
 }) {
 	const context = new AudioContext({ latencyHint: "interactive" });
 	let node: AudioWorkletNode;
 	try {
-		// Resume before any module/network await so the caller's user activation is retained.
-		await context.resume();
-		if (context.state !== "running")
-			throw new DOMException("Audio output activation was rejected", "NotAllowedError");
+		if (options.activate !== false) {
+			// Resume before any module/network await so the caller's user activation is retained.
+			await context.resume();
+			if (context.state !== "running")
+				throw new DOMException("Audio output activation was rejected", "NotAllowedError");
+		}
 		await context.audioWorklet.addModule(options.workletUrl ?? PREVIEW_AUDIO_WORKLET_URL);
 		node = new AudioWorkletNode(context, "maleo-preview-audio", {
 			numberOfInputs: 0,
