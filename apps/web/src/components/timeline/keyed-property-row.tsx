@@ -5,18 +5,9 @@
  * easing and removal live on the timeline. One scrub or field edit is one
  * undo step. A row (Position: X and Y) shares one toggle and keys together. */
 import { Fragment, useRef, useState, type JSX, type ReactNode } from "react";
-import {
-	sampleClipProperty,
-	NUMERIC_ANIMATION_PROPERTIES,
-	type NumericAnimationProperty,
-} from "@maleo/shared";
-import { batch, nearKeyIndex, type EditorCommand, type EditScope } from "@maleo/shared/editor";
-import {
-	clipAnimationInfo,
-	editClipKey,
-	removeClipKey,
-	type ClipAnimationTarget,
-} from "@models/timeline/clip-animation-edit.ts";
+import type { NumericAnimationProperty } from "@maleo/shared";
+import type { EditorCommand, EditScope } from "@maleo/shared/editor";
+import { rowKeyingAt, type ClipAnimationTarget } from "@models/timeline/clip-animation-edit.ts";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
 import { usePlayheadSec } from "@hooks/timeline/use-playhead.ts";
 import {
@@ -28,7 +19,7 @@ import { IconButton } from "@design-system/components/icon-button.tsx";
 import { ICON, Ic } from "@design-system/icons/index.tsx";
 import { Note } from "@design-system/components/note.tsx";
 import { AmountField, FieldRow } from "@design-system/patterns/inspector.tsx";
-import { dbFromGain, gainFromFader, FADER_RANGE_DB } from "@models/timeline/audio-fader.ts";
+import { dbFromGain, faderRangeDb, gainFromDb } from "@models/timeline/audio-fader.ts";
 
 export interface KeyControls {
 	/** The property has at least one key. */
@@ -69,9 +60,6 @@ export type RowKeying = (
 	properties: readonly NumericAnimationProperty[],
 ) => RowKeyControls | undefined;
 
-const together = (commands: EditorCommand[], label: string): EditorCommand =>
-	commands.length === 1 ? commands[0]! : batch(commands, label);
-
 export function useClipKeying({
 	target,
 	store,
@@ -88,7 +76,6 @@ export function useClipKeying({
 	const doc = useDocumentSelector(store, (value) => value.getDoc()),
 		absolute = usePlayheadSec(playhead);
 	const [error, setError] = useState<string | null>(null);
-	const info = target && clipAnimationInfo(doc, target);
 	const run = (build: (scope: EditScope) => EditorCommand) => {
 		try {
 			writers.apply((scope) => build(scope));
@@ -97,93 +84,34 @@ export function useClipKeying({
 			setError(failure instanceof Error ? failure.message : "Keyframe edit failed");
 		}
 	};
-	const probe = (property: NumericAnimationProperty) => {
-		if (!target || !info || !info.properties.includes(property)) return undefined;
-		const time = Math.round((absolute - info.start) * fps) / fps,
-			outside = time < 0 || time > info.duration;
-		const keys = info.animation?.tracks[property] ?? [],
-			at = nearKeyIndex(keys, time);
-		const base = info.values[property] ?? NUMERIC_ANIMATION_PROPERTIES[property].neutral;
-		const value = keys.length
-			? sampleClipProperty(
-					info.animation,
-					property,
-					Math.max(0, Math.min(info.duration, time)),
-					base,
-				)
-			: base;
-		return { property, time, outside, keys, at, value, locked: info.locked };
-	};
 	const rowKeying: RowKeying = (properties) => {
-		if (!target) return undefined;
-		const probes = properties.map(probe).filter((p) => p !== undefined);
-		if (!probes.length || probes.length !== properties.length) return undefined;
-		const { time, outside, locked } = probes[0]!;
-		const animated = probes.some((p) => p.keys.length > 0),
-			keyed = probes.some((p) => p.at >= 0);
+		const row = target && rowKeyingAt(doc, target, properties, absolute, fps);
+		if (!row) return undefined;
 		return {
-			animated,
-			keyed,
-			toggleDisabled: locked || outside,
-			valueDisabled: locked || (outside && animated),
-			values: Object.fromEntries(probes.map((p) => [p.property, p.value])),
-			toggle: () =>
-				run((scope) =>
-					keyed
-						? together(
-								probes
-									.filter((p) => p.at >= 0)
-									.map((p) => removeClipKey(scope, target, p.property, p.at)),
-								"remove keyframes",
-							)
-						: together(
-								probes.map((p) => editClipKey(scope, target, p.property, time)),
-								"add keyframes",
-							),
-				),
+			animated: row.animated,
+			keyed: row.keyed,
+			toggleDisabled: row.toggleDisabled,
+			valueDisabled: row.valueDisabled,
+			values: row.values,
+			toggle: () => run(row.toggle),
 			setValues: (values, writeStatic) =>
-				animated
-					? run((scope) =>
-							together(
-								probes.map((p) =>
-									editClipKey(scope, target, p.property, time, values[p.property] ?? p.value),
-								),
-								"keyframe",
-							),
-						)
-					: writeStatic(),
+				row.animated ? run((scope) => row.set(scope, values)) : writeStatic(),
 		};
 	};
+	// One property is a row of one: the same toggle, the same keyed edit.
 	const keying: Keying = (property) => {
-		if (!target || !info || !info.properties.includes(property)) return undefined;
-		const time = Math.round((absolute - info.start) * fps) / fps,
-			outside = time < 0 || time > info.duration;
-		const keys = info.animation?.tracks[property] ?? [],
-			at = nearKeyIndex(keys, time);
-		const base = info.values[property] ?? NUMERIC_ANIMATION_PROPERTIES[property].neutral;
-		const value = keys.length
-			? sampleClipProperty(
-					info.animation,
-					property,
-					Math.max(0, Math.min(info.duration, time)),
-					base,
-				)
-			: base;
+		const row = target && rowKeyingAt(doc, target, [property], absolute, fps);
+		if (!row) return undefined;
 		return {
-			animated: keys.length > 0,
-			keyed: at >= 0,
-			value,
-			toggleDisabled: info.locked || outside,
-			valueDisabled: info.locked || (outside && keys.length > 0),
-			toggle: () =>
-				run((scope) =>
-					at >= 0
-						? removeClipKey(scope, target, property, at)
-						: editClipKey(scope, target, property, time),
-				),
+			animated: row.animated,
+			keyed: row.keyed,
+			value: row.values[property]!,
+			toggleDisabled: row.toggleDisabled,
+			valueDisabled: row.valueDisabled,
+			toggle: () => run(row.toggle),
 			// An animated property keys at the playhead; an unanimated one edits its static value.
 			setValue: (v, setStatic) =>
-				keys.length ? run((scope) => editClipKey(scope, target, property, time, v)) : setStatic(v),
+				row.animated ? run((scope) => row.set(scope, { [property]: v })) : setStatic(v),
 		};
 	};
 	return { keying, rowKeying, error };
@@ -338,7 +266,8 @@ export function KeyedFieldRow({
 export function GainKeyRow({ keying }: { keying: Keying }): JSX.Element | null {
 	const controls = keying("volume");
 	if (!controls) return null;
-	const db = Number(Math.max(-FADER_RANGE_DB, dbFromGain(controls.value)).toFixed(2));
+	const range = faderRangeDb();
+	const db = Number(Math.max(-range, dbFromGain(controls.value)).toFixed(2));
 	return (
 		<FieldRow label="Gain" beforeLabel={<KeyToggle label="Gain" controls={controls} />}>
 			{controls.animated ? (
@@ -346,14 +275,12 @@ export function GainKeyRow({ keying }: { keying: Keying }): JSX.Element | null {
 					label="Gain"
 					short="dB"
 					suffix="dB"
-					min={-FADER_RANGE_DB}
+					min={-range}
 					max={0}
 					step={1}
 					value={db}
 					disabled={controls.valueDisabled}
-					onChange={(v) =>
-						controls.setValue(gainFromFader(100 + (v * 100) / FADER_RANGE_DB), () => undefined)
-					}
+					onChange={(v) => controls.setValue(gainFromDb(v), () => undefined)}
 				/>
 			) : (
 				<span>{Math.round(db)} dB</span>

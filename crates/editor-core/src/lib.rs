@@ -13,6 +13,7 @@ mod caption_sources;
 pub mod captions;
 pub mod command;
 pub mod delta;
+pub mod envelope;
 pub mod error;
 pub mod execute;
 pub mod json;

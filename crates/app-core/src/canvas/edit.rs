@@ -41,7 +41,7 @@ impl Resolved {
     }
 }
 
-fn id_text(id: f64) -> String {
+pub(crate) fn id_text(id: f64) -> String {
     js_number_string(id).unwrap_or_default()
 }
 
@@ -66,18 +66,18 @@ pub fn track_flag(scope: &EditScope, track: f64, flag: &str) -> bool {
 }
 
 /// `Number(x) || fallback`.
-fn number_or(value: Option<&Value>, fallback: f64) -> f64 {
+pub(crate) fn number_or(value: Option<&Value>, fallback: f64) -> f64 {
     let read = read_num(value);
     if read == 0.0 || read.is_nan() { fallback } else { read }
 }
 
-fn text_of(value: Option<&Value>) -> Option<&str> {
+pub(crate) fn text_of(value: Option<&Value>) -> Option<&str> {
     value.and_then(Value::as_str)
 }
 
 /// The scene's visual clips as `docScenes` merges them: the scene's own, then
 /// each `vis` clip re-based to the scene, sorted by start, the primary re-elected.
-fn merged_visuals(scope: &EditScope, scene_clip: &Clip, scene: &Layout) -> Option<Vec<Value>> {
+pub(crate) fn merged_visuals(scope: &EditScope, scene_clip: &Clip, scene: &Layout) -> Option<Vec<Value>> {
     let scene_id = scene.get("id")?;
     let extras: Vec<&Clip> =
         scope.doc.clips.iter().map(AsRef::as_ref).filter(|clip| clip.payload("vis").and_then(|vis| vis.get("sceneId")) == Some(scene_id)).collect();
@@ -127,7 +127,7 @@ fn read_start(v: &Value) -> f64 {
 }
 
 /// JavaScript's `${value}` for an id.
-fn template(value: Option<&Value>) -> String {
+pub(crate) fn template(value: Option<&Value>) -> String {
     match value {
         Some(Value::String(text)) => text.clone(),
         Some(Value::Number(n)) => n.as_f64().map(id_text).unwrap_or_default(),
@@ -137,7 +137,7 @@ fn template(value: Option<&Value>) -> String {
 }
 
 /// `normalizeSceneClips(scene).visualClips` (scene offset 0).
-fn normalized_visuals(scene: &Layout, visuals: Option<&[Value]>) -> Vec<Layout> {
+pub(crate) fn normalized_visuals(scene: &Layout, visuals: Option<&[Value]>) -> Vec<Layout> {
     let dur = js_max(1.0 / 30.0, number_or(scene.get("dur"), 1.0));
     let scene_id = template(scene.get("id"));
     let seeded;
@@ -189,7 +189,7 @@ fn normalized_visuals(scene: &Layout, visuals: Option<&[Value]>) -> Vec<Layout> 
 }
 
 /// `{ ...a, ...b }` over two optional layouts.
-fn spread(a: Option<&Value>, b: Option<&Value>) -> Layout {
+pub(crate) fn spread(a: Option<&Value>, b: Option<&Value>) -> Layout {
     let mut out = a.and_then(Value::as_object).cloned().unwrap_or_default();
     if let Some(b) = b.and_then(Value::as_object) {
         out.extend(b.iter().map(|(k, v)| (k.clone(), v.clone())));
@@ -205,7 +205,7 @@ fn has_compositing(layout: &Layout) -> bool {
 }
 
 /// A scene's view and its visual lists, as `fromTimelineDoc` and `normalizeSceneClips` give them.
-fn scene_parts(scope: &EditScope, clip: &Clip) -> (Layout, Vec<Layout>) {
+pub(crate) fn scene_parts(scope: &EditScope, clip: &Clip) -> (Layout, Vec<Layout>) {
     let mut scene = clip.payload("scene").cloned().unwrap_or_default();
     scene.insert("start".to_owned(), num(clip.start_sec));
     scene.insert("track".to_owned(), num(clip.track));
@@ -607,30 +607,7 @@ pub fn patch_clips(scope: &EditScope, target: &Target, patch: &LayoutPatch) -> O
 
 /// `upsertKey(keys, time, value)` with the default snap.
 fn upsert_key(keys: &[Value], time: f64, value: f64) -> Vec<Value> {
-    let mut best: Option<usize> = None;
-    for (i, key) in keys.iter().enumerate() {
-        let distance = (read_num(key.get("t")) - time).abs();
-        if distance <= 0.1 + 1e-9 && best.is_none_or(|b| distance < (read_num(keys[b].get("t")) - time).abs()) {
-            best = Some(i);
-        }
-    }
-    if let Some(near) = best {
-        return keys
-            .iter()
-            .enumerate()
-            .map(|(i, key)| {
-                let mut key = key.clone();
-                if let (true, Some(object)) = (i == near, key.as_object_mut()) {
-                    object.insert("v".to_owned(), num(value));
-                }
-                key
-            })
-            .collect();
-    }
-    let mut next = keys.to_vec();
-    next.push(object(vec![("t", num(time)), ("v", num(value)), ("easing", Value::from("linear"))]));
-    let times: Vec<f64> = next.iter().map(|k| read_num(k.get("t"))).collect();
-    order(&times).into_iter().map(|i| next[i].clone()).collect()
+    crate::keys::upsert_key(keys, time, num(value), None, crate::keys::KEY_SNAP_SEC)
 }
 
 const PATCH_KEYABLE: [&str; 6] = ["xPct", "yPct", "rotationDeg", "opacity", "widthPct", "heightPct"];

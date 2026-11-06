@@ -18,10 +18,12 @@ import type { CaptionSet, CaptionSourceBinding } from "../caption-cues.ts";
 import type { CaptionResultSnapshot } from "../caption-results.ts";
 import type { ProjectMaterials } from "../project-materials.ts";
 import type { ProjectSelection } from "../project-selection.ts";
-import type { TrackFlags } from "../timeline-model.ts";
+import type { ColorKeyframe, TrackFlags, ValueKeyframe } from "../timeline-model.ts";
 import type { EditScope, MediaAsset, Post, Slide } from "./scope.ts";
 import type { AnimationProperty } from "../animation-properties.ts";
-import type { AnimationKey } from "./clip-keys.ts";
+
+/** One key of a `clip.setKeys` track. */
+export type AnimationKey = ValueKeyframe | ColorKeyframe;
 
 export type CaptionEdit =
 	| {

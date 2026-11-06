@@ -1,5 +1,8 @@
 import { describe, expect, test } from "vite-plus/test";
-import { FOCAL_STEP_PCT, focalPointAt, nudgeFocalPoint } from "./focal-point.ts";
+import { focalPointAt, nudgeFocalPoint } from "./focal-point.ts";
+
+/* One arrow press moves the point 5% of the frame (`controls.rs` FOCAL_STEP_PCT). */
+const FOCAL_STEP_PCT = 5;
 
 describe("the focal point picker", () => {
 	test("a click picks the point under it, clamped to the frame", () => {

@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "invalid-field",
+		"path": "project.type"
+	}
+}

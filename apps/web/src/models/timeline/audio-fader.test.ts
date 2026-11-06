@@ -1,8 +1,8 @@
 import { describe, expect, test } from "vite-plus/test";
 import {
 	dbFromGain,
-	FADER_RANGE_DB,
 	faderFromGain,
+	faderRangeDb,
 	formatGainDb,
 	gainFromFader,
 } from "./audio-fader.ts";
@@ -17,7 +17,7 @@ describe("audio fader", () => {
 		const step = (a: number, b: number): number =>
 			dbFromGain(gainFromFader(b)) - dbFromGain(gainFromFader(a));
 		expect(step(90, 100)).toBeCloseTo(step(40, 50), 5);
-		expect(step(90, 100)).toBeCloseTo(FADER_RANGE_DB / 10, 5);
+		expect(step(90, 100)).toBeCloseTo(faderRangeDb() / 10, 5);
 	});
 
 	test("a stored amplitude round-trips through the control", () => {
@@ -33,7 +33,7 @@ describe("audio fader", () => {
 
 	test("half amplitude is about six decibels down, wherever it sits", () => {
 		expect(dbFromGain(0.5)).toBeCloseTo(-6.02, 2);
-		expect(faderFromGain(0.5)).toBeCloseTo(100 - 6.02 * (100 / FADER_RANGE_DB), 2);
+		expect(faderFromGain(0.5)).toBeCloseTo(100 - 6.02 * (100 / faderRangeDb()), 2);
 	});
 
 	test("positions outside the fader are clamped rather than extrapolated", () => {

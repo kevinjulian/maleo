@@ -48,12 +48,21 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   lanes multi-selects, dragging/arrows/Delete act on the selection, and the
   toolbar Easing menu sets interpolation. Expand / Collapse keyframes and
   Copy / Paste keyframes live in the clip context menu. Every key edit is a
-  `clip.setKeys` command (`@maleo/shared/editor` `clip-keys.ts`); an edit
-  within 0.1 s of a key updates it.
-- **Inspector groups** come from `clip-property-groups.tsx`, one ordered list
-  per clip kind shared by the desktop rail and the phone bar: the clip's own
-  content first (Text / Source / Data / Audio), then Transform, Blending,
-  Audio, Timing, and treatments (Masks, Adjust, Reveal/Motion, Background).
+  `clip.setKeys` command; an edit within 0.1 s of a key updates it. The
+  keying rules live in the shared core: the key target and refusal message in
+  `maleo_editor_core::keys` (the executor uses the same check), the snap and
+  upsert in `crates/app-core/src/keys.rs`, and the key edits, moments, easing,
+  paste, edge presets and a row's keying at the playhead in
+  `crates/app-core/src/animation_edit.rs`. `clip-keys.ts`,
+  `clip-animation-edit.ts` (`rowKeyingAt`) and `@maleo/shared`
+  `edge-animation.ts` are typed calls through `inspector_apply`.
+- **Inspector groups** are one ordered list per clip kind shared by the
+  desktop rail and the phone bar: the clip's own content first (Text / Source
+  / Data / Audio), then Transform, Blending, Audio, Timing, and treatments
+  (Masks, Adjust, Reveal/Motion, Background). The group keys, the conditional
+  groups, the fallback group and the subject precedence come from
+  `crates/app-core/src/inspector.rs`; `clip-property-groups.tsx` adds only
+  labels, icons and titles.
 - **Inspector fields** have no sliders. Values are scrubbable number fields
   (`AmountField`) grouped by context in `FieldRow`s
   (`design-system/patterns/inspector.tsx`): Position [X][Y], Size
@@ -61,7 +70,10 @@ storyboard via `buildRenderStoryboard` (WYSIWYG: preview == render).
   [Opacity][Blend mode]; Adjust [B][C][S]. Number cells wrap at
   `--ui-field-min`. The size lock is the stored `layout.aspectLocked`; while
   locked, width drives and height follows. The mask size lock works the same
-  way and is editor state only.
+  way and is editor state only. The layout a field reads when absent or out
+  of range (`normalizeLayout`, `defaultClipLayout`), text preset styles, the
+  gain fader's dB mapping and the focal-point nudge are shared-core rules
+  (`crates/app-core/src/layout.rs`, `controls.rs`).
 - **Caption words** on voiceover overlays are ABSOLUTE timeline seconds
   (`caption-timing.ts`). Real aligned words win; otherwise timing is
   estimated from text + measured duration. SRT interop: `srt.ts`.
@@ -137,9 +149,14 @@ and retired stored selections resolve to none without changing other policy.
   `models/timeline/command-edit.ts`). Whole-document writers go through
   `diffScopeToCommand`, which picks the narrowest command and falls back to
   `scope.replace` when its result would not reproduce the document.
-- The undo history, the selection rules and the queue of pending local
-  commands live in the shared Rust core `crates/app-core`, reached through the
-  editor engine's WASM calls (`ledger_*`, `selection_apply`, `pending_*`).
+- The undo history, the selection rules, the queue of pending local commands
+  and the inspector rules live in the shared Rust core `crates/app-core`,
+  reached through the editor engine's WASM calls (`ledger_*`,
+  `selection_apply`, `pending_*`, `inspector_apply`). Rules that read the
+  document name the shared follower handle (`document-handle.ts`), which the
+  canvas rules use too. `inspector-rules.ts` types the stateless calls. Each
+  moved rule is held to a reference recorded from the TypeScript before it
+  moved (`packages/shared/src/editor/inspector-reference/`).
   Entries are `{ id, command, inverse }`; a gesture collapses into one
   `scope.replace` step back to where it began.
 - `use-command-stack.ts` keeps the React side: effects, the slides/posts

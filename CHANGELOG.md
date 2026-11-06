@@ -17,6 +17,8 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- A portable project envelope: one versioned JSON form of a project (its editable scope, the other stored document fields, the media library and the asset manifest). The shared engine admits it or refuses it with a reason and a field path before any write. `GET /projects/:id/envelope` returns it to workspace members. See `docs/project-envelope.md`.
+
 - On a phone, the timeline playhead stays in the centre and the timeline moves under it. Playback scrolls the lanes, and a scroll of the lanes moves the playhead. A touch on the timeline pauses playback. Zoom keeps the playhead time in place. Both ends of the project can reach the centre line. The line does not move during a drag. Motion Studio on a phone does the same.
 - **Motion design generation.** Story generation now makes motion for each `headline`, `explainer` and `transition` section that has on-screen text. A `narrative` section keeps plain text. Motion is placed as one ordinary clip per layer — plain text or a retained shape — each on its own lane with its own keyframes, so every part can be edited on the timeline like any other clip. The model chooses the layers, their roles and the states. Shared code writes every keyframe from one set of motion tokens: springs, a cascade of 150 ms between movers, quiet ambient drift, and exits shorter than entrances. Text layers must quote the section's on-screen text, so the model cannot add a claim. If authoring fails twice, the section keeps plain text and the run shows a note. A motion lint reports problems, such as text that moves before it can be read, without blocking placement. A regeneration keeps a beat's existing motion clips, including your edits, and makes no new model call for it. The chat agent gains `add_motion_design`, which places the clips at a requested time as one undo step, and MCP serves it as a direct edit. The clip menu gains **Expand into clips** for any placed motion clip, as one undo step. Each eligible section costs one text-model call.
 - Project chat offers endpoint models in its composer. The shared project choice
@@ -44,6 +46,8 @@ entry here. See `CONTRIBUTING.md`.
 - `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
 
 ### Changed
+
+- The inspector rules moved into the shared Rust core (`crates/app-core`): keying (key target, refusal messages, the 0.1 s key snap, row keying, moment moves and easing, paste, edge presets), the inspector group list, layout and text defaults, and the gain fader and focal-point mapping. The web editor and the server agent call them through one `inspector_apply` engine export, so every client makes the same commands. Editor behavior and saved documents do not change.
 
 - Preview Play waits for complete local bytes and validation for every placed
   source, including muted audio, hidden video and later clips. Clip badges show

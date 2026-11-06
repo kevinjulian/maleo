@@ -1,3 +1,4 @@
+import { inspectorOp } from "./editor/inspector-rules.ts";
 import { VISUAL_PRIMITIVE_IDS } from "./visual-primitives.ts";
 /* Canonical timeline domain model (shared source of truth).
  *
@@ -67,19 +68,9 @@ export interface ClipLayout extends SourceAudioSettings, ClipCompositing {
  *  fills a partial layout from, and the agent too, so both write the same box. */
 export type ClipKind = "scene" | "image" | "video" | "text";
 export function defaultClipLayout(kind: ClipKind): ClipLayout {
-	// heightPct kept so a selected text/motion clip draws a grabbable box (not a
-	// zero-height line). Motion templates override this with a full-frame layout.
-	if (kind === "text")
-		return { xPct: 8, yPct: 64, widthPct: 84, heightPct: 22, fit: "contain", opacity: 1 };
-	// Base scene + media overlays default to full-frame.
-	return {
-		xPct: 0,
-		yPct: 0,
-		widthPct: 100,
-		heightPct: 100,
-		fit: kind === "scene" ? "cover" : "contain",
-		opacity: 1,
-	};
+	// A shared-core rule (`crates/app-core/src/layout.rs`): the normalized layout of
+	// an unplaced clip. Text keeps a grabbable box; scenes and media fill the frame.
+	return inspectorOp("layout.normalize", { kind });
 }
 
 export interface ClipTextStyle {

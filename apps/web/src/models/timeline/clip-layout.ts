@@ -1,82 +1,14 @@
 // ClipLayout / ClipTextStyle are part of the shared timeline domain model (one
 // source of truth, shared with the render worker). Re-exported so existing
 // `./clip-layout.ts` imports keep resolving.
-import {
-	defaultClipLayout,
-	type ClipKind,
-	clipMaskSchema,
-	clipColorSchema,
-	clipBlendModeSchema,
-	clipAnimationSchema,
-	textAnimationSchema,
-	type ClipLayout,
-	type ClipTextStyle,
-} from "@maleo/shared";
 export type { ClipLayout, ClipTextStyle } from "@maleo/shared";
 
 export type { ClipKind } from "@maleo/shared";
-export function defaultTextStyle(preset?: string): ClipTextStyle {
-	return {
-		fontFamily: "Inter",
-		fontSize: 64,
-		weight: preset === "plain" ? 400 : 800,
-		fill: "#ffffff",
-		background: "transparent",
-		accent: "#7C66FF",
-		bodyFill: "#ffffff",
-		bgOpacity: 0,
-		scale: 1,
-		align: "center",
-		casing: preset === "plain" ? "none" : "upper",
-	};
-}
-
-function valid<T>(result: { success: true; data: T } | { success: false }): T | undefined {
-	return result.success ? result.data : undefined;
-}
-
-const clampPct = (n: number, lo = -50, hi = 150): number => Math.max(lo, Math.min(hi, n));
-
-export function normalizeLayout(l: Partial<ClipLayout> | undefined, kind: ClipKind): ClipLayout {
-	const base = defaultClipLayout(kind);
-	if (!l) return base;
-	// Reads tolerate a malformed field by dropping it; save and agent boundaries are where invalid input is refused.
-	const mask =
-		l.mask === null
-			? null
-			: l.mask === undefined
-				? undefined
-				: valid(clipMaskSchema.safeParse(l.mask));
-	const color = l.color ? valid(clipColorSchema.safeParse(l.color)) : undefined;
-	const blendMode = l.blendMode ? valid(clipBlendModeSchema.safeParse(l.blendMode)) : undefined;
-	// Text keys style and colour tracks a visual clip cannot, so it validates against its own registry entries.
-	const animation = l.animation
-		? valid((kind === "text" ? textAnimationSchema : clipAnimationSchema).safeParse(l.animation))
-		: undefined;
-	return {
-		...(mask === undefined ? {} : { mask }),
-		...(color ? { color } : {}),
-		...(blendMode ? { blendMode } : {}),
-		...(animation ? { animation } : {}),
-		xPct: clampPct(l.xPct ?? base.xPct),
-		yPct: clampPct(l.yPct ?? base.yPct),
-		widthPct: Math.max(2, Math.min(200, l.widthPct ?? base.widthPct)),
-		heightPct: l.heightPct == null ? base.heightPct : Math.max(2, Math.min(200, l.heightPct)),
-		fit: l.fit ?? base.fit,
-		rotationDeg: l.rotationDeg ?? 0,
-		aspectLocked: Boolean(l.aspectLocked),
-		opacity: l.opacity == null ? 1 : Math.max(0, Math.min(1, l.opacity)),
-		crop: l.crop,
-		flipX: Boolean(l.flipX),
-		flipY: Boolean(l.flipY),
-		playbackRate: l.playbackRate == null ? 1 : Math.max(0.25, Math.min(4, l.playbackRate)),
-		reverse: Boolean(l.reverse),
-		reverseMedia: l.reverseMedia,
-		preservePitch: l.preservePitch,
-		audioMedia: l.audioMedia,
-		sourceAudioExtraction: l.sourceAudioExtraction,
-	};
-}
+/* The layout a clip has when a field is absent or out of range, and a text
+ * preset's default style, are shared-core rules (`crates/app-core/src/layout.rs`,
+ * `p1-envelope-inspector`). Reads tolerate a malformed field by dropping it; save
+ * and agent boundaries are where invalid input is refused. */
+export { defaultTextStyle, normalizeLayout } from "@maleo/shared/editor/inspector-rules";
 
 /* ── The three widths a clip's geometry turns on ── */
 

@@ -24,24 +24,26 @@ pub struct NumericProperty {
     pub name: &'static str,
     pub min: f64,
     pub max: f64,
+    /// The value an unanimated property has when its clip holds none.
+    pub neutral: f64,
     pub kinds: &'static [&'static str],
 }
 
 /// `NUMERIC_ANIMATION_PROPERTIES`, in registry order.
 pub const NUMERIC: [NumericProperty; 13] = [
-    NumericProperty { name: "xPct", min: -50.0, max: 150.0, kinds: BOX },
-    NumericProperty { name: "yPct", min: -50.0, max: 150.0, kinds: BOX },
-    NumericProperty { name: "scale", min: 0.01, max: 10.0, kinds: BOX },
-    NumericProperty { name: "rotationDeg", min: -360.0, max: 360.0, kinds: BOX },
-    NumericProperty { name: "opacity", min: 0.0, max: 1.0, kinds: BOX },
-    NumericProperty { name: "volume", min: 0.0, max: 1.0, kinds: &["video", "audio"] },
-    NumericProperty { name: "widthPct", min: 0.0, max: 400.0, kinds: TEXT },
-    NumericProperty { name: "heightPct", min: 0.0, max: 400.0, kinds: TEXT },
-    NumericProperty { name: "blur", min: 0.0, max: 200.0, kinds: TEXT },
-    NumericProperty { name: "bgOpacity", min: 0.0, max: 1.0, kinds: TEXT },
-    NumericProperty { name: "fontSize", min: 1.0, max: 1000.0, kinds: TEXT },
-    NumericProperty { name: "letterSpacing", min: -100.0, max: 100.0, kinds: TEXT },
-    NumericProperty { name: "lineHeight", min: 0.1, max: 10.0, kinds: TEXT },
+    NumericProperty { name: "xPct", min: -50.0, max: 150.0, neutral: 0.0, kinds: BOX },
+    NumericProperty { name: "yPct", min: -50.0, max: 150.0, neutral: 0.0, kinds: BOX },
+    NumericProperty { name: "scale", min: 0.01, max: 10.0, neutral: 1.0, kinds: BOX },
+    NumericProperty { name: "rotationDeg", min: -360.0, max: 360.0, neutral: 0.0, kinds: BOX },
+    NumericProperty { name: "opacity", min: 0.0, max: 1.0, neutral: 1.0, kinds: BOX },
+    NumericProperty { name: "volume", min: 0.0, max: 1.0, neutral: 1.0, kinds: &["video", "audio"] },
+    NumericProperty { name: "widthPct", min: 0.0, max: 400.0, neutral: 100.0, kinds: TEXT },
+    NumericProperty { name: "heightPct", min: 0.0, max: 400.0, neutral: 100.0, kinds: TEXT },
+    NumericProperty { name: "blur", min: 0.0, max: 200.0, neutral: 0.0, kinds: TEXT },
+    NumericProperty { name: "bgOpacity", min: 0.0, max: 1.0, neutral: 0.0, kinds: TEXT },
+    NumericProperty { name: "fontSize", min: 1.0, max: 1000.0, neutral: 64.0, kinds: TEXT },
+    NumericProperty { name: "letterSpacing", min: -100.0, max: 100.0, neutral: 0.0, kinds: TEXT },
+    NumericProperty { name: "lineHeight", min: 0.1, max: 10.0, neutral: 1.1, kinds: TEXT },
 ];
 
 /// `COLOR_ANIMATION_PROPERTIES`, in registry order; every one is text-only.
@@ -312,11 +314,13 @@ impl KeyTarget {
     }
 }
 
-fn is_color(property: &str) -> bool {
+/// A colour property (text only).
+pub fn is_color(property: &str) -> bool {
     COLOR.contains(&property)
 }
 
-fn numeric(property: &str) -> Option<&'static NumericProperty> {
+/// The registry entry of a numeric property.
+pub fn numeric(property: &str) -> Option<&'static NumericProperty> {
     NUMERIC.iter().find(|spec| spec.name == property)
 }
 
@@ -365,16 +369,119 @@ pub fn track_is_valid(kind: Option<&str>, property: &str, keys: &[Value]) -> boo
     keys.iter().all(|key| key_is_valid(key, value_ok.as_ref())) && increasing
 }
 
-/// `clipKeyError(doc, id, property, keys) === null`.
-fn edit_allowed(target: &KeyTarget, property: &str, keys: &[Value]) -> bool {
-    if target.locked || (numeric(property).is_none() && !is_color(property)) {
-        return false;
+/// zod's name for a JSON value's type, as its `invalid_type` issue reads it.
+fn type_name(value: Option<&Value>) -> &'static str {
+    match value {
+        None => "undefined",
+        Some(Value::Null) => "null",
+        Some(Value::Bool(_)) => "boolean",
+        Some(Value::Number(n)) if n.as_f64().is_some_and(f64::is_nan) => "nan",
+        Some(Value::Number(_)) => "number",
+        Some(Value::String(_)) => "string",
+        Some(Value::Array(_)) => "array",
+        Some(Value::Object(_)) => "object",
     }
-    let late = keys.iter().any(|key| match key.get("t").and_then(Value::as_f64) {
+}
+
+/// The first issue `animationSchemaFor(kind)` reports for one track, in zod's
+/// order: each key's value in turn, then key order, then whether the kind may
+/// animate the property. Only the message: `track_is_valid` decides refusal.
+fn track_issue(kind: Option<&str>, property: &str, keys: &[Value]) -> Option<String> {
+    let value_issue = |v: Option<&Value>| -> Option<String> {
+        if is_color(property) {
+            let Some(Value::String(text)) = v else { return Some(format!("Expected string, received {}", type_name(v))) };
+            let length = js_trim(text).encode_utf16().count();
+            return if length < 1 {
+                Some("String must contain at least 1 character(s)".to_owned())
+            } else if length > 200 {
+                Some("String must contain at most 200 character(s)".to_owned())
+            } else {
+                None
+            };
+        }
+        let spec = numeric(property)?;
+        let Some(n) = v.and_then(Value::as_f64).filter(|n| !n.is_nan()) else { return Some(format!("Expected number, received {}", type_name(v))) };
+        let text = |bound: f64| js_number_string(bound).unwrap_or_default();
+        if n < spec.min {
+            Some(format!("Number must be greater than or equal to {}", text(spec.min)))
+        } else if n > spec.max {
+            Some(format!("Number must be less than or equal to {}", text(spec.max)))
+        } else {
+            None
+        }
+    };
+    if let Some(issue) = keys.iter().find_map(|key| value_issue(key.get("v"))) {
+        return Some(issue);
+    }
+    if !keys.windows(2).all(|pair| num(pair[1].get("t")) > num(pair[0].get("t"))) {
+        return Some("Keyframe times must increase without duplicates".to_owned());
+    }
+    let kinds = if is_color(property) { TEXT } else { numeric(property).map_or(&[][..], |spec| spec.kinds) };
+    let kind_name = kind.unwrap_or("undefined");
+    (!kind.is_some_and(|kind| kinds.contains(&kind))).then(|| format!("{property} is not animatable on a {kind_name} clip"))
+}
+
+/// Why a track edit on `target` is refused, or `None` when it is valid
+/// (`clipKeyError` once the target is found).
+fn refusal(target: &KeyTarget, property: &str, keys: &[Value]) -> Option<String> {
+    if target.locked {
+        return Some("Selected clip is on a locked track".to_owned());
+    }
+    if numeric(property).is_none() && !is_color(property) {
+        return Some(format!("Unknown animatable property \"{property}\""));
+    }
+    let late = keys.iter().find(|key| match key.get("t").and_then(Value::as_f64) {
         Some(t) if t.is_finite() => t < 0.0 || t > target.duration + 1e-6,
         _ => true,
     });
-    !late && track_is_valid(target.kind.as_deref(), property, keys)
+    if let Some(late) = late {
+        let at = late.get("t").and_then(Value::as_f64).and_then(js_number_string).unwrap_or_else(|| "NaN".to_owned());
+        // `Number(duration.toFixed(3))`.
+        let end = format!("{:.3}", target.duration).parse::<f64>().ok().and_then(js_number_string).unwrap_or_default();
+        return Some(format!("Keyframe at {at}s is outside the clip (0–{end}s)"));
+    }
+    let kind = target.kind.as_deref().unwrap_or("undefined");
+    (!track_is_valid(target.kind.as_deref(), property, keys)).then(|| {
+        let issue = track_issue(target.kind.as_deref(), property, keys).unwrap_or_else(|| "Invalid input".to_owned());
+        format!("{property} keys are not valid for this {kind} clip: {issue}")
+    })
+}
+
+/// `clipKeyError(doc, id, property, keys) === null`.
+fn edit_allowed(target: &KeyTarget, property: &str, keys: &[Value]) -> bool {
+    refusal(target, property, keys).is_none()
+}
+
+/// What an inspector reads of a clip's key target: the animated element kind,
+/// its animation, the key timeline's length and whether its track is locked.
+#[derive(Clone, Debug, PartialEq)]
+pub struct KeyTargetView {
+    pub kind: Option<String>,
+    pub animation: Option<Value>,
+    pub duration: f64,
+    pub locked: bool,
+}
+
+/// `keyTarget(doc, id)` without its writer. `None` when the clip is missing or
+/// holds nothing to key.
+pub fn key_target_view(scope: &EditScope, id: &str) -> EngineResult<Option<KeyTargetView>> {
+    let Some(clip) = scope.doc.clips.iter().find(|clip| clip.id == id) else { return Ok(None) };
+    Ok(key_target(scope, clip)?.map(|target| KeyTargetView {
+        kind: target.kind,
+        animation: target.animation,
+        duration: target.duration,
+        locked: target.locked,
+    }))
+}
+
+/// `clipKeyError(doc, id, property, keys)`: why a track edit is refused, or
+/// `None` when the executor would apply it. Every controller shows this message.
+pub fn key_error(scope: &EditScope, id: &str, property: &str, keys: &[Value]) -> EngineResult<Option<String>> {
+    let target = scope.doc.clips.iter().find(|clip| clip.id == id).map(|clip| key_target(scope, clip)).transpose()?.flatten();
+    Ok(match target {
+        None => Some(format!("Clip {id} is unavailable or cannot be animated")),
+        Some(target) => refusal(&target, property, keys),
+    })
 }
 
 /// `clipTrack(doc, id, property)`: the current keys of one track. A numeric

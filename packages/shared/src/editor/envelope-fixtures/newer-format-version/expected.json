@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "unsupported-format-version",
+		"path": "formatVersion"
+	}
+}

@@ -1,31 +1,39 @@
-import {
-	fromTimelineDoc,
-	normalizeSceneClips,
-	sampleClipProperty,
-	NUMERIC_ANIMATION_PROPERTIES,
-	NUMERIC_ANIMATION_PROPERTY_NAMES,
-	COLOR_ANIMATION_PROPERTY_NAMES,
-	numericPropertiesFor,
-	type Animation,
-	type AnimationProperty,
-	type NumericAnimationProperty,
-	type KeyframeEasing,
-	type ValueKeyframe,
+/* The inspector's animation edits: what a clip or overlay can key, the key edits,
+ * moments and their easing, pasted keys, edge presets and a row's keying at the
+ * playhead. The rules live in the shared core (`crates/app-core/src/animation_edit.rs`,
+ * `p1-envelope-inspector` task 3.4); each function here crosses once and throws
+ * the engine's refusal as an `Error` with its message, as these edits always have. */
+import type {
+	Animation,
+	AnimationProperty,
+	KeyframeEasing,
+	NumericAnimationProperty,
 } from "@maleo/shared";
+import { documentHandle, type EditorCommand, type EditScope } from "@maleo/shared/editor";
 import {
-	batch,
-	clipKeyError,
-	keyTarget,
-	setKeys,
-	upsertKey,
-	type AnimationKey,
-	type EditorCommand,
-	type EditScope,
-} from "@maleo/shared/editor";
+	inspectorOp,
+	type ClipAnimationInfo,
+	type EditAnswer,
+	type KeyMoment,
+} from "@maleo/shared/editor/inspector-rules";
 import type { Selection } from "./selection-model.ts";
 import type { EditorDoc } from "@models/storyboard/editor-doc.ts";
 import type { SourceEditTarget } from "./source-audio-edit.ts";
-import { edgeAnimationTracks, type AnimationEdge, type EdgePreset } from "@maleo/shared";
+import type { AnimationEdge, EdgePreset } from "@maleo/shared";
+
+/** Any clip or overlay the inspector can key. */
+export type ClipAnimationTarget = SourceEditTarget | { source: "text"; id: number };
+
+export type { ClipAnimationInfo };
+
+/** The handle holding `doc`, which every animation rule reads. */
+const on = (doc: EditorDoc): number => documentHandle(doc);
+
+/** An edit's command, or its refusal thrown with the engine's message. */
+function commandOf(answer: EditAnswer | null): EditorCommand {
+	if (!answer?.command) throw new Error(answer?.error ?? "Selected clip is unavailable");
+	return answer.command;
+}
 
 export function applyEdgePreset(
 	scope: EditScope,
@@ -34,43 +42,13 @@ export function applyEdgePreset(
 	preset: EdgePreset,
 	duration: number,
 ): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info) throw new Error("Selected clip is unavailable");
-	if (info.locked) throw new Error("Selected clip is on a locked track");
-	const tracks = edgeAnimationTracks(
-		info.animation,
-		edge,
-		preset,
-		duration,
-		info.duration,
-		info.values,
-		info.audio,
-	);
-	return batch(
-		Object.entries(tracks).map(([property, keys]) => {
-			const known = NUMERIC_ANIMATION_PROPERTY_NAMES.find((p) => p === property);
-			if (!known) throw new Error("Unknown animation property");
-			return trackCommand(scope, target, known, keys!);
-		}),
-		`${edge === "in" ? "entrance" : "exit"} animation`,
+	return commandOf(
+		inspectorOp("anim.edge", { target, edge, preset, seconds: duration }, on(scope.doc)),
 	);
 }
 
-/** Any clip or overlay the inspector can key. */
-export type ClipAnimationTarget = SourceEditTarget | { source: "text"; id: number };
-
 export function animationTargetForId(doc: EditorDoc, id: string): ClipAnimationTarget | undefined {
-	const clip = doc.clips.find((c) => c.id === id);
-	if (clip?.scene) {
-		const visuals = normalizeSceneClips(clip.scene).visualClips ?? [],
-			visual = visuals.find((v) => v.primary) ?? visuals[0];
-		return visual ? { source: "scene", id: clip.scene.id, visualId: visual.id } : undefined;
-	}
-	if (clip?.vis) return { source: "scene", id: clip.vis.sceneId, visualId: clip.vis.vclip.id };
-	if (clip?.video) return { source: "video", id: clip.video.id };
-	if (clip?.audio) return { source: "audio", id: clip.audio.id };
-	if (clip?.text) return { source: "text", id: clip.text.id };
-	return undefined;
+	return inspectorOp("anim.target.forId", { id }, on(doc)) ?? undefined;
 }
 
 /** The timeline clip id that holds a target's animation (scene primary visual rides in `scene:`). */
@@ -78,105 +56,17 @@ export function clipIdForTarget(
 	doc: EditorDoc,
 	target: { source: ClipAnimationTarget["source"]; id: number; visualId?: string },
 ): string {
-	if (target.source !== "scene") return `${target.source}:${target.id}`;
-	const vis = target.visualId && `vis:${target.id}:${target.visualId}`;
-	return vis && doc.clips.some((c) => c.id === vis) ? vis : `scene:${target.id}`;
+	return inspectorOp("anim.clipId", { target }, on(doc));
 }
 
-/** Static (unanimated) value of a property for a target, used as the sampling fallback. */
-function staticValue(
+export function clipAnimationInfo(
 	doc: EditorDoc,
 	target: ClipAnimationTarget,
-	property: NumericAnimationProperty,
-): number {
-	const views = fromTimelineDoc(doc);
-	if (target.source === "audio")
-		return property === "volume"
-			? (views.audioOverlays.find((a) => a.id === target.id)?.volume ?? 1)
-			: NUMERIC_ANIMATION_PROPERTIES[property].neutral;
-	const scene =
-		target.source === "scene" ? views.scenes.find((s) => s.id === target.id) : undefined;
-	const visualId = target.source === "scene" ? target.visualId : undefined;
-	const visual =
-		scene &&
-		(normalizeSceneClips(scene).visualClips?.find((v) => v.id === visualId) ??
-			normalizeSceneClips(scene).visualClips?.[0]);
-	const overlay =
-		target.source === "video"
-			? views.videoOverlays.find((v) => v.id === target.id)
-			: target.source === "text"
-				? views.textOverlays.find((t) => t.id === target.id)
-				: undefined;
-	const layout = scene ? { ...scene.layout, ...visual?.layout } : overlay?.layout;
-	const style =
-		target.source === "text"
-			? views.textOverlays.find((t) => t.id === target.id)?.style
-			: undefined;
-	const volume =
-		target.source === "video"
-			? views.videoOverlays.find((v) => v.id === target.id)?.volume
-			: (visual?.volume ?? (scene?.visualClips?.length === 1 ? 1 : 0));
-	const fromLayout: Partial<Record<NumericAnimationProperty, number | undefined>> = {
-		xPct: layout?.xPct,
-		yPct: layout?.yPct,
-		rotationDeg: layout?.rotationDeg,
-		opacity: layout?.opacity,
-		widthPct: layout?.widthPct,
-		heightPct: layout?.heightPct ?? undefined,
-		volume,
-		bgOpacity: style?.bgOpacity,
-		fontSize: style?.fontSize,
-		letterSpacing: style?.letterSpacing,
-		lineHeight: style?.lineHeight,
-	};
-	return fromLayout[property] ?? NUMERIC_ANIMATION_PROPERTIES[property].neutral;
+): ClipAnimationInfo | undefined {
+	return inspectorOp("anim.info", { target }, on(doc)) ?? undefined;
 }
 
-export function clipAnimationInfo(doc: EditorDoc, target: ClipAnimationTarget) {
-	const id = clipIdForTarget(doc, target),
-		keyed = keyTarget(doc, id),
-		clip = doc.clips.find((c) => c.id === id);
-	if (!keyed || !clip) return undefined;
-	const start = clip.scene
-		? clip.startSec + (normalizeSceneClips(clip.scene).visualClips?.[0]?.startSec ?? 0)
-		: clip.startSec;
-	const properties = numericPropertiesFor(keyed.kind);
-	const values: Partial<Record<NumericAnimationProperty, number>> = {};
-	for (const property of properties) values[property] = staticValue(doc, target, property);
-	return {
-		id,
-		kind: keyed.kind,
-		start,
-		duration: keyed.duration,
-		animation: keyed.animation,
-		values,
-		properties,
-		locked: keyed.locked,
-		audio: keyed.kind === "audio",
-		hasVolume: properties.includes("volume"),
-	};
-}
-
-/** The command setting `keys` on one track, or a thrown, legible refusal. */
-function trackCommand(
-	scope: EditScope,
-	target: ClipAnimationTarget,
-	property: NumericAnimationProperty,
-	keys: ValueKeyframe[],
-): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info) throw new Error("Selected clip is locked or unavailable");
-	if (info.locked) throw new Error("Selected clip is on a locked track");
-	if (property === "volume" && !info.hasVolume)
-		throw new Error(
-			info.kind === "image" ? "Images have no source volume" : "This clip has no source volume",
-		);
-	const error = clipKeyError(scope.doc, info.id, property, keys);
-	if (error) throw new Error(error);
-	return setKeys(info.id, property, keys);
-}
-
-/** Write a value at `time`; a key within KEY_SNAP_SEC is updated in place (keyframe-animation). */
+/** Write a value at `time`; a key within the engine's 0.1 s snap is updated in place (keyframe-animation). */
 export function editClipKey(
 	scope: EditScope,
 	target: ClipAnimationTarget,
@@ -184,20 +74,10 @@ export function editClipKey(
 	time: number,
 	value?: number,
 	easing?: KeyframeEasing,
-) {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info || !Number.isFinite(time) || time < 0 || time > info.duration)
-		throw new Error("Keyframe is outside selected clip");
-	const keys = info.animation?.tracks[property] ?? [];
-	const v =
-		value ??
-		sampleClipProperty(
-			info.animation,
-			property,
-			time,
-			info.values[property] ?? NUMERIC_ANIMATION_PROPERTIES[property].neutral,
-		);
-	return trackCommand(scope, target, property, upsertKey(keys, time, v, easing));
+): EditorCommand {
+	return commandOf(
+		inspectorOp("anim.key.edit", { target, property, time, value, easing }, on(scope.doc)),
+	);
 }
 
 export function removeClipKey(
@@ -205,15 +85,8 @@ export function removeClipKey(
 	target: ClipAnimationTarget,
 	property: NumericAnimationProperty,
 	index: number,
-) {
-	const keys = clipAnimationInfo(scope.doc, target)?.animation?.tracks[property];
-	if (!keys?.[index]) throw new Error("Selected keyframe is unavailable");
-	return trackCommand(
-		scope,
-		target,
-		property,
-		keys.filter((_, i) => i !== index),
-	);
+): EditorCommand {
+	return commandOf(inspectorOp("anim.key.remove", { target, property, index }, on(scope.doc)));
 }
 
 export function moveClipKey(
@@ -222,17 +95,8 @@ export function moveClipKey(
 	property: NumericAnimationProperty,
 	index: number,
 	time: number,
-) {
-	const info = clipAnimationInfo(scope.doc, target),
-		keys = info?.animation?.tracks[property];
-	if (!keys?.[index] || !Number.isFinite(time) || time < 0 || time > (info?.duration ?? 0))
-		throw new Error("Selected keyframe or new time is unavailable");
-	return trackCommand(
-		scope,
-		target,
-		property,
-		keys.map((k, i) => (i === index ? { ...k, t: time } : k)).sort((a, b) => a.t - b.t),
-	);
+): EditorCommand {
+	return commandOf(inspectorOp("anim.key.move", { target, property, index, time }, on(scope.doc)));
 }
 
 /** Resolve ordinary clip selection without changing the canonical document. */
@@ -241,43 +105,17 @@ export function selectedClipAnimationTarget(
 	selection: Selection,
 	visualChoice: { sceneId: number; visualId: string } | null,
 ): ClipAnimationTarget | undefined {
-	if (selection.videoOverlayId !== null) return { source: "video", id: selection.videoOverlayId };
-	if (selection.audioId !== null) return { source: "audio", id: selection.audioId };
-	if (selection.overlayId !== null) return { source: "text", id: selection.overlayId };
-	const scene = fromTimelineDoc(doc).scenes.find((s) => s.id === selection.sceneId);
-	if (!scene) return undefined;
-	const visuals = normalizeSceneClips(scene).visualClips;
-	const visual =
-		visuals?.find((v) => visualChoice?.sceneId === scene.id && visualChoice.visualId === v.id) ??
-		visuals?.[0];
-	return visual ? { source: "scene", id: scene.id, visualId: visual.id } : undefined;
+	return (
+		inspectorOp("anim.target.selected", { selection, choice: visualChoice }, on(doc)) ?? undefined
+	);
 }
 
 /** One moment on a clip: key times within a frame of each other, across every track. */
-export interface KeyMoment {
-	time: number;
-	properties: AnimationProperty[];
-}
-const MOMENT_SEC = 1 / 30;
+export type { KeyMoment };
 
 /** The clip's moments in time order (keyframe-animation: keys shown on the selected clip). */
 export function keyMoments(animation: Animation | undefined): KeyMoment[] {
-	const entries: [number, AnimationProperty][] = [
-		...NUMERIC_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			(animation?.tracks[p] ?? []).map((k): [number, AnimationProperty] => [k.t, p]),
-		),
-		...COLOR_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			(animation?.colorTracks?.[p] ?? []).map((k): [number, AnimationProperty] => [k.t, p]),
-		),
-	].sort((a, b) => a[0] - b[0]);
-	const moments: KeyMoment[] = [];
-	for (const [t, property] of entries) {
-		const last = moments.at(-1);
-		if (last && t - last.time <= MOMENT_SEC / 2 + 1e-9) {
-			if (!last.properties.includes(property)) last.properties.push(property);
-		} else moments.push({ time: t, properties: [property] });
-	}
-	return moments;
+	return inspectorOp("anim.moments", { animation: animation ?? null });
 }
 
 /** Every key at the given moments shifted by `delta` seconds, or removed when `delta` is
@@ -289,42 +127,7 @@ export function moveMoments(
 	times: readonly number[],
 	delta?: number,
 ): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info) throw new Error("Selected clip is unavailable");
-	if (info.locked) throw new Error("Selected clip is on a locked track");
-	if (!times.length) throw new Error("No keys selected");
-	const momentOf = (t: number) => times.find((m) => Math.abs(t - m) <= MOMENT_SEC / 2 + 1e-9);
-	const at = (t: number) => momentOf(t) !== undefined;
-	const shift =
-		delta === undefined
-			? 0
-			: Math.max(-Math.min(...times), Math.min(info.duration - Math.max(...times), delta));
-	// Keys within a moment land together on the moment's new time.
-	const move = <K extends { t: number }>(keys: readonly K[]): K[] =>
-		delta === undefined
-			? keys.filter((k) => !at(k.t))
-			: keys
-					.map((k) => {
-						const m = momentOf(k.t);
-						return m === undefined ? k : { ...k, t: Math.round((m + shift) * 1e6) / 1e6 };
-					})
-					.sort((a, b) => a.t - b.t);
-	const commands: EditorCommand[] = [
-		...NUMERIC_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			info.animation?.tracks[p]?.some((k) => at(k.t))
-				? [checked(scope, info.id, p, move(info.animation!.tracks[p]!))]
-				: [],
-		),
-		...COLOR_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			info.animation?.colorTracks?.[p]?.some((k) => at(k.t))
-				? [checked(scope, info.id, p, move(info.animation!.colorTracks![p]!))]
-				: [],
-		),
-	];
-	if (!commands.length) throw new Error("No keys at that moment");
-	return commands.length === 1
-		? commands[0]!
-		: batch(commands, delta === undefined ? "remove keyframes" : "move keyframes");
+	return commandOf(inspectorOp("anim.moments.move", { target, times, delta }, on(scope.doc)));
 }
 
 /** Every key at a moment moved to `to` (or removed when `to` is undefined), as one batch. */
@@ -334,10 +137,7 @@ export function moveMoment(
 	from: number,
 	to?: number,
 ): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (to !== undefined && info && (!Number.isFinite(to) || to < 0 || to > info.duration))
-		throw new Error("Keyframe is outside selected clip");
-	return moveMoments(scope, target, [from], to === undefined ? undefined : to - from);
+	return commandOf(inspectorOp("anim.moment.move", { target, from, to }, on(scope.doc)));
 }
 
 /** The easing of every key at the given moments, as one batch. */
@@ -348,25 +148,9 @@ export function setMomentsEasing(
 	easing: KeyframeEasing,
 	property?: AnimationProperty,
 ): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info) throw new Error("Selected clip is unavailable");
-	const at = (t: number) => times.some((m) => Math.abs(t - m) <= MOMENT_SEC / 2 + 1e-9);
-	const ease = <K extends { t: number; easing?: KeyframeEasing }>(keys: readonly K[]): K[] =>
-		keys.map((k) => (at(k.t) ? { ...k, easing } : k));
-	const commands: EditorCommand[] = [
-		...NUMERIC_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			(!property || property === p) && info.animation?.tracks[p]?.some((k) => at(k.t))
-				? [checked(scope, info.id, p, ease(info.animation!.tracks[p]!))]
-				: [],
-		),
-		...COLOR_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			(!property || property === p) && info.animation?.colorTracks?.[p]?.some((k) => at(k.t))
-				? [checked(scope, info.id, p, ease(info.animation!.colorTracks![p]!))]
-				: [],
-		),
-	];
-	if (!commands.length) throw new Error("No keys at that moment");
-	return commands.length === 1 ? commands[0]! : batch(commands, "keyframe easing");
+	return commandOf(
+		inspectorOp("anim.moments.easing", { target, times, easing, property }, on(scope.doc)),
+	);
 }
 
 /** The easing of every key at one moment. */
@@ -379,24 +163,9 @@ export function setMomentEasing(
 	return setMomentsEasing(scope, target, [time], easing);
 }
 
-function checked(
-	scope: EditScope,
-	id: string,
-	property: AnimationProperty,
-	keys: AnimationKey[],
-): EditorCommand {
-	const error = clipKeyError(scope.doc, id, property, keys);
-	if (error) throw new Error(error);
-	return setKeys(id, property, keys);
-}
-
 /** Easings of every key at a moment (linear when unset). */
 export function momentKeyEasings(animation: Animation | undefined, time: number): KeyframeEasing[] {
-	const at = (t: number) => Math.abs(t - time) <= MOMENT_SEC / 2 + 1e-9;
-	return [
-		...Object.values(animation?.tracks ?? {}),
-		...Object.values(animation?.colorTracks ?? {}),
-	].flatMap((keys) => (keys ?? []).filter((k) => at(k.t)).map((k) => k.easing ?? "linear"));
+	return inspectorOp("anim.moment.easings", { animation: animation ?? null, time });
 }
 
 /** A clip's keyframes, copied whole (after OpenCut's keyframe clipboard). */
@@ -417,36 +186,44 @@ export function pasteClipKeys(
 	target: ClipAnimationTarget,
 	clipboard: KeyframeClipboard,
 ): EditorCommand {
-	const info = clipAnimationInfo(scope.doc, target);
-	if (!info) throw new Error("Selected clip is unavailable");
-	if (info.locked) throw new Error("Selected clip is on a locked track");
-	const allowed = new Set<string>(info.properties);
-	const commands: EditorCommand[] = [
-		...NUMERIC_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			clipboard.tracks[p]?.length && allowed.has(p)
-				? [
-						checked(
-							scope,
-							info.id,
-							p,
-							clipboard.tracks[p]!.map((k) => ({ ...k })),
-						),
-					]
-				: [],
-		),
-		...COLOR_ANIMATION_PROPERTY_NAMES.flatMap((p) =>
-			clipboard.colorTracks?.[p]?.length && info.kind === "text"
-				? [
-						checked(
-							scope,
-							info.id,
-							p,
-							clipboard.colorTracks[p]!.map((k) => ({ ...k })),
-						),
-					]
-				: [],
-		),
-	];
-	if (!commands.length) throw new Error("Nothing copied applies to this clip");
-	return commands.length === 1 ? commands[0]! : batch(commands, "paste keyframes");
+	return commandOf(inspectorOp("anim.paste", { target, clipboard }, on(scope.doc)));
+}
+
+/** A row of keyable properties at the playhead (Position is X and Y): its key state,
+ *  its values, and the commands its toggle and value edit make. */
+export interface RowKeying {
+	time: number;
+	animated: boolean;
+	keyed: boolean;
+	toggleDisabled: boolean;
+	valueDisabled: boolean;
+	/** Each property sampled at the playhead (or static). Registry units. */
+	values: Partial<Record<NumericAnimationProperty, number>>;
+	/** Removes the keys at the playhead when keyed, else adds one per property. */
+	toggle: (scope: EditScope) => EditorCommand;
+	/** Keys every row property at the playhead, given values first. */
+	set: (
+		scope: EditScope,
+		values: Partial<Record<NumericAnimationProperty, number>>,
+	) => EditorCommand;
+}
+
+/** The row's keying at an absolute playhead time, or undefined when the target cannot key
+ *  every property of the row. */
+export function rowKeyingAt(
+	doc: EditorDoc,
+	target: ClipAnimationTarget,
+	properties: readonly NumericAnimationProperty[],
+	absolute: number,
+	fps: number,
+): RowKeying | undefined {
+	const input = { target, properties, absolute, fps };
+	const state = inspectorOp("anim.row", input, on(doc));
+	if (!state) return undefined;
+	return {
+		...state,
+		toggle: (scope) => commandOf(inspectorOp("anim.row.toggle", input, on(scope.doc))),
+		set: (scope, values) =>
+			commandOf(inspectorOp("anim.row.set", { ...input, values }, on(scope.doc))),
+	};
 }

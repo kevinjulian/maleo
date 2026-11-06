@@ -12,3 +12,5 @@ export * from "./command-targets.ts";
 export * from "./agent-edit-marker.ts";
 export * from "./media-identity.ts";
 export * from "./storyboard-scope.ts";
+export * from "./envelope.ts";
+export * from "./document-handle.ts";

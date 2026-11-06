@@ -36,8 +36,13 @@ import { buildEditorWasm, loadParityInputs } from "./editor-engine.mts";
  * raised budget over a second module that would ship serde_json again. */
 /* `p2-media-playback` (2026-10-27): shared readiness measured 709,094 B raw /
  * 267,126 B gzip. User accepted increased limits to retain one editor module. */
-const MAX_GZIP_BYTES = 270 * 1024;
-const MAX_RAW_BYTES = 700 * 1024;
+/* `p1-envelope-inspector` (2026-11-05): envelope admission measured 716,677 B ->
+ * 730,257 B raw and 270,305 B -> 275,673 B gzip (default level; +1.9% / +2.0%).
+ * The inspector rules (keying, animation edits, groups, layout, controls) then
+ * brought it to 809,574 B raw / 304,430 B gzip. The user kept one module and
+ * raised raw to 820 KB; gzip stays at 300 KB. */
+const MAX_GZIP_BYTES = 300 * 1024;
+const MAX_RAW_BYTES = 820 * 1024;
 const MAX_EDIT_TRANSFER_BYTES = 4 * 1024;
 const MAX_EDIT_MEDIAN_MS_AT_2000_CLIPS = 0.5;
 /* Task 4.2: a pointer sample shares a ~16 ms frame with paint, so one policy

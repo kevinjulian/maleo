@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "missing-manifest-entry",
+		"path": "scope.doc.clips[0].video.url"
+	}
+}

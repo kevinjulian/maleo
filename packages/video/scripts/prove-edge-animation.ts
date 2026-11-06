@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -12,7 +13,21 @@ import {
 	toTimelineDoc,
 	DEFAULT_CAPTIONS,
 } from "@maleo/shared";
+import { instantiateEngineSync, provideEditorEngine } from "@maleo/shared/editor";
 import { storyboardSchema } from "../src/schema.ts";
+
+/* Edge presets are engine rules (`p1-envelope-inspector`): load the release build
+ * the way the API does (`bun scripts/editor-engine.mts build`). */
+provideEditorEngine(
+	instantiateEngineSync(
+		readFileSync(
+			new URL(
+				"../../../target/wasm32-unknown-unknown/release/maleo_editor_wasm.optimized.wasm",
+				import.meta.url,
+			),
+		),
+	),
+);
 
 const directory = await mkdtemp(join(tmpdir(), "maleo-edge-animation-"));
 try {

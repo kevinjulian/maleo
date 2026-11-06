@@ -1,6 +1,14 @@
 import { describe, expect, test } from "vite-plus/test";
 import { readStoryboardDocument } from "../storyboard-document.ts";
-import { storedMediaLibrary, storyboardScope, storyboardWithScope } from "./storyboard-scope.ts";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+	SCOPE_OWNED_KEYS,
+	storedMediaLibrary,
+	storyboardHead,
+	storyboardScope,
+	storyboardWithScope,
+} from "./storyboard-scope.ts";
 
 const head = {
 	schemaVersion: 2,
@@ -181,4 +189,35 @@ describe("a project's stored media list", () => {
 	test("is empty when nothing was stored", () => {
 		expect(storedMediaLibrary(null, {})).toEqual([]);
 	});
+});
+
+describe("an envelope head", () => {
+	// SAFETY: the committed persisted-form corpus (`fixtures/README.md`).
+	const persisted = JSON.parse(
+		readFileSync(
+			join(import.meta.dirname, "../../../../fixtures/persisted-storyboards.json"),
+			"utf8",
+		),
+	) as Record<string, unknown>;
+	const stored = { ...persisted, head };
+
+	test("holds every stored field outside the scope and none inside it", () => {
+		expect(storyboardHead(head)).toEqual({
+			sceneTextClipMigrationVersion: null,
+			pacingDevices: { chapterPills: true },
+			presentation: { aspect: "9:16" },
+			artifacts: [{ kind: "story_plan" }],
+			unit_lifecycle: { planned: true },
+		});
+	});
+
+	test.each(Object.entries(stored))(
+		"%s rebuilds from head and scope as from the stored document",
+		(_, raw) => {
+			const scope = storyboardScope(raw);
+			const fromHead = storyboardHead(raw);
+			for (const key of SCOPE_OWNED_KEYS) expect(fromHead).not.toHaveProperty(key);
+			expect(storyboardWithScope(fromHead, scope)).toEqual(storyboardWithScope(raw, scope));
+		},
+	);
 });

@@ -1,40 +1,23 @@
 /* The document the canvas engine reads (`p2-preview-editing`).
  *
- * Canvas and inspector calls name a document handle. One follower handle per
- * page holds the store's current document and is reopened only when the
- * document changes, so a pointer move does not admit the document again. The
- * other parts of the scope are fixed empty lists: the canvas rules read only
- * the document. */
+ * Canvas and inspector calls name a document handle: the shared follower
+ * (`documentHandle`), reopened only when the document changes, so a pointer
+ * move does not admit the document again. */
 import type { ClipLayout } from "@maleo/shared";
 import {
 	applyCommand,
 	canvasEdit,
 	canvasLayout,
 	canvasSizePatch,
+	documentHandle,
+	documentScope,
 	editorEngine,
-	engineExecutor,
 	type CanvasLayout,
 	type CanvasTarget,
 	type EditorCommand,
-	type EditScope,
 	type Engine,
-	type EngineExecutor,
 } from "@maleo/shared/editor";
 import type { EditorDoc } from "@models/storyboard/editor-doc.ts";
-
-const NONE: never[] = [];
-const scopes = new WeakMap<EditorDoc, EditScope>();
-let follower: { engine: Engine; executor: EngineExecutor } | undefined;
-
-/** `doc` as the scope the follower compares by identity. */
-function scopeOf(doc: EditorDoc): EditScope {
-	let scope = scopes.get(doc);
-	if (!scope) {
-		scope = { doc, slides: NONE, posts: NONE, mediaAssets: NONE };
-		scopes.set(doc, scope);
-	}
-	return scope;
-}
 
 /** The engine and a document handle holding `doc`. */
 export interface CanvasDocument {
@@ -44,8 +27,7 @@ export interface CanvasDocument {
 
 export function canvasDocument(doc: EditorDoc): CanvasDocument {
 	const engine = editorEngine();
-	if (follower?.engine !== engine) follower = { engine, executor: engineExecutor(engine) };
-	return { engine, handle: follower.executor.handleFor(scopeOf(doc)) };
+	return { engine, handle: documentHandle(doc, engine) };
 }
 
 /** The layout a target edits (`canvasClipLayout`). */
@@ -72,7 +54,7 @@ export function canvasPatchedDoc(
 	target: CanvasTarget,
 	patch: Partial<ClipLayout>,
 ): EditorDoc {
-	return applyCommand(scopeOf(doc), canvasEditOf(doc, target, patch)).doc;
+	return applyCommand(documentScope(doc), canvasEditOf(doc, target, patch)).doc;
 }
 
 /** `resizeLayoutValue`: an aspect-locked size field scales both sides. */

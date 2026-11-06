@@ -1,0 +1,3629 @@
+{
+	"normalizeLayout": [
+		{
+			"kind": "scene",
+			"layout": null,
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"opacity": 1
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"opacity": 1.4
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"opacity": -0.2,
+				"widthPct": 0,
+				"heightPct": 500
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 2,
+				"heightPct": 200,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 0,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"xPct": -100,
+				"yPct": 999,
+				"widthPct": 500,
+				"heightPct": null
+			},
+			"out": {
+				"xPct": -50,
+				"yPct": 150,
+				"widthPct": 200,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"playbackRate": 0.1,
+				"rotationDeg": null,
+				"fit": "fill"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "fill",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 0.25,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"playbackRate": 10,
+				"reverse": 1,
+				"flipX": "yes"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": true,
+				"flipY": false,
+				"playbackRate": 4,
+				"reverse": true
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 10,
+					"widthPct": 50,
+					"heightPct": 40,
+					"featherPct": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"mask": null
+			},
+			"out": {
+				"mask": null,
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"mask": {
+					"shape": "hexagon"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"color": {
+					"brightness": 10,
+					"contrast": -20,
+					"saturation": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"color": {
+					"brightness": "loud"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"blendMode": "multiply"
+			},
+			"out": {
+				"blendMode": "multiply",
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"blendMode": "sparkle"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				},
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"fontSize": [
+							{
+								"t": 0,
+								"v": 40
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": -1,
+								"v": 0
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"aspectLocked": true
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": true,
+				"opacity": 1,
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false,
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			}
+		},
+		{
+			"kind": "scene",
+			"layout": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004
+			},
+			"out": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004,
+				"heightPct": 100,
+				"fit": "cover",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": null,
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"opacity": 1
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"opacity": 1.4
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"opacity": -0.2,
+				"widthPct": 0,
+				"heightPct": 500
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 2,
+				"heightPct": 200,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 0,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"xPct": -100,
+				"yPct": 999,
+				"widthPct": 500,
+				"heightPct": null
+			},
+			"out": {
+				"xPct": -50,
+				"yPct": 150,
+				"widthPct": 200,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"playbackRate": 0.1,
+				"rotationDeg": null,
+				"fit": "fill"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "fill",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 0.25,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"playbackRate": 10,
+				"reverse": 1,
+				"flipX": "yes"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": true,
+				"flipY": false,
+				"playbackRate": 4,
+				"reverse": true
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 10,
+					"widthPct": 50,
+					"heightPct": 40,
+					"featherPct": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"mask": null
+			},
+			"out": {
+				"mask": null,
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"mask": {
+					"shape": "hexagon"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"color": {
+					"brightness": 10,
+					"contrast": -20,
+					"saturation": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"color": {
+					"brightness": "loud"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"blendMode": "multiply"
+			},
+			"out": {
+				"blendMode": "multiply",
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"blendMode": "sparkle"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				},
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"fontSize": [
+							{
+								"t": 0,
+								"v": 40
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": -1,
+								"v": 0
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"aspectLocked": true
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": true,
+				"opacity": 1,
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false,
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			}
+		},
+		{
+			"kind": "image",
+			"layout": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004
+			},
+			"out": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": null,
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"opacity": 1
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"opacity": 1.4
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"opacity": -0.2,
+				"widthPct": 0,
+				"heightPct": 500
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 2,
+				"heightPct": 200,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 0,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"xPct": -100,
+				"yPct": 999,
+				"widthPct": 500,
+				"heightPct": null
+			},
+			"out": {
+				"xPct": -50,
+				"yPct": 150,
+				"widthPct": 200,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"playbackRate": 0.1,
+				"rotationDeg": null,
+				"fit": "fill"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "fill",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 0.25,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"playbackRate": 10,
+				"reverse": 1,
+				"flipX": "yes"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": true,
+				"flipY": false,
+				"playbackRate": 4,
+				"reverse": true
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 10,
+					"widthPct": 50,
+					"heightPct": 40,
+					"featherPct": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"mask": null
+			},
+			"out": {
+				"mask": null,
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"mask": {
+					"shape": "hexagon"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"color": {
+					"brightness": 10,
+					"contrast": -20,
+					"saturation": 5
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"color": {
+					"brightness": "loud"
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"blendMode": "multiply"
+			},
+			"out": {
+				"blendMode": "multiply",
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"blendMode": "sparkle"
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				},
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"fontSize": [
+							{
+								"t": 0,
+								"v": 40
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": -1,
+								"v": 0
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"aspectLocked": true
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": true,
+				"opacity": 1,
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0,
+				"widthPct": 100,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false,
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			}
+		},
+		{
+			"kind": "video",
+			"layout": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004
+			},
+			"out": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004,
+				"heightPct": 100,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": null,
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"opacity": 1
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"opacity": 1.4
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"opacity": -0.2,
+				"widthPct": 0,
+				"heightPct": 500
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 2,
+				"heightPct": 200,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 0,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"xPct": -100,
+				"yPct": 999,
+				"widthPct": 500,
+				"heightPct": null
+			},
+			"out": {
+				"xPct": -50,
+				"yPct": 150,
+				"widthPct": 200,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"playbackRate": 0.1,
+				"rotationDeg": null,
+				"fit": "fill"
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "fill",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 0.25,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"playbackRate": 10,
+				"reverse": 1,
+				"flipX": "yes"
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": true,
+				"flipY": false,
+				"playbackRate": 4,
+				"reverse": true
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"mask": {
+					"shape": "ellipse",
+					"xPct": 10,
+					"yPct": 10,
+					"widthPct": 50,
+					"heightPct": 40,
+					"featherPct": 5
+				}
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"mask": null
+			},
+			"out": {
+				"mask": null,
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"mask": {
+					"shape": "hexagon"
+				}
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"color": {
+					"brightness": 10,
+					"contrast": -20,
+					"saturation": 5
+				}
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"color": {
+					"brightness": "loud"
+				}
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"blendMode": "multiply"
+			},
+			"out": {
+				"blendMode": "multiply",
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"blendMode": "sparkle"
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": 0,
+								"v": 0
+							},
+							{
+								"t": 1,
+								"v": 20,
+								"easing": "out"
+							}
+						]
+					}
+				},
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"fontSize": [
+							{
+								"t": 0,
+								"v": 40
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"animation": {
+					"tracks": {
+						"fontSize": [
+							{
+								"t": 0,
+								"v": 40
+							}
+						]
+					}
+				},
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"animation": {
+					"tracks": {
+						"xPct": [
+							{
+								"t": -1,
+								"v": 0
+							}
+						]
+					}
+				}
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"aspectLocked": true
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": true,
+				"opacity": 1,
+				"crop": {
+					"top": 5,
+					"right": 0,
+					"bottom": 0,
+					"left": 0
+				},
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			},
+			"out": {
+				"xPct": 8,
+				"yPct": 64,
+				"widthPct": 84,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false,
+				"reverseMedia": {
+					"url": "/api/media/x"
+				},
+				"preservePitch": false
+			}
+		},
+		{
+			"kind": "text",
+			"layout": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004
+			},
+			"out": {
+				"xPct": 12.345678901234567,
+				"yPct": 0.3333333333333333,
+				"widthPct": 2.0000000000000004,
+				"heightPct": 22,
+				"fit": "contain",
+				"rotationDeg": 0,
+				"aspectLocked": false,
+				"opacity": 1,
+				"flipX": false,
+				"flipY": false,
+				"playbackRate": 1,
+				"reverse": false
+			}
+		}
+	],
+	"defaultTextStyle": [
+		{
+			"preset": null,
+			"out": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 800,
+				"fill": "#ffffff",
+				"background": "transparent",
+				"accent": "#7C66FF",
+				"bodyFill": "#ffffff",
+				"bgOpacity": 0,
+				"scale": 1,
+				"align": "center",
+				"casing": "upper"
+			}
+		},
+		{
+			"preset": "plain",
+			"out": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 400,
+				"fill": "#ffffff",
+				"background": "transparent",
+				"accent": "#7C66FF",
+				"bodyFill": "#ffffff",
+				"bgOpacity": 0,
+				"scale": 1,
+				"align": "center",
+				"casing": "none"
+			}
+		},
+		{
+			"preset": "title",
+			"out": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 800,
+				"fill": "#ffffff",
+				"background": "transparent",
+				"accent": "#7C66FF",
+				"bodyFill": "#ffffff",
+				"bgOpacity": 0,
+				"scale": 1,
+				"align": "center",
+				"casing": "upper"
+			}
+		},
+		{
+			"preset": "caption",
+			"out": {
+				"fontFamily": "Inter",
+				"fontSize": 64,
+				"weight": 800,
+				"fill": "#ffffff",
+				"background": "transparent",
+				"accent": "#7C66FF",
+				"bodyFill": "#ffffff",
+				"bgOpacity": 0,
+				"scale": 1,
+				"align": "center",
+				"casing": "upper"
+			}
+		}
+	],
+	"gainFromFader": [
+		{
+			"pct": -10,
+			"out": 0
+		},
+		{
+			"pct": 0,
+			"out": 0
+		},
+		{
+			"pct": 0.5,
+			"out": 0.00409260659730011
+		},
+		{
+			"pct": 1,
+			"out": 0.004207266283844442
+		},
+		{
+			"pct": 12.5,
+			"out": 0.007943282347242814
+		},
+		{
+			"pct": 25,
+			"out": 0.015848931924611134
+		},
+		{
+			"pct": 50,
+			"out": 0.06309573444801933
+		},
+		{
+			"pct": 66.6,
+			"out": 0.15790649727284273
+		},
+		{
+			"pct": 75,
+			"out": 0.251188643150958
+		},
+		{
+			"pct": 99,
+			"out": 0.9462371613657931
+		},
+		{
+			"pct": 99.9,
+			"out": 0.9944890371547924
+		},
+		{
+			"pct": 100,
+			"out": 1
+		},
+		{
+			"pct": 120,
+			"out": 1
+		}
+	],
+	"faderFromGain": [
+		{
+			"gain": 0,
+			"out": 0
+		},
+		{
+			"gain": -1,
+			"out": 0
+		},
+		{
+			"gain": 0.000001,
+			"out": 0
+		},
+		{
+			"gain": 0.003981,
+			"out": 0
+		},
+		{
+			"gain": 0.01,
+			"out": 16.666666666666657
+		},
+		{
+			"gain": 0.1,
+			"out": 58.33333333333333
+		},
+		{
+			"gain": 0.25,
+			"out": 74.91416702800157
+		},
+		{
+			"gain": 0.5,
+			"out": 87.45708351400079
+		},
+		{
+			"gain": 0.501187,
+			"out": 87.49999156477426
+		},
+		{
+			"gain": 0.75,
+			"out": 94.7942193079875
+		},
+		{
+			"gain": 0.99,
+			"out": 99.81813310823125
+		},
+		{
+			"gain": 1,
+			"out": 100
+		},
+		{
+			"gain": 1.5,
+			"out": 100
+		},
+		{
+			"gain": 4,
+			"out": 100
+		}
+	],
+	"dbFromGain": [
+		{
+			"gain": 0,
+			"out": "-Infinity"
+		},
+		{
+			"gain": -1,
+			"out": "-Infinity"
+		},
+		{
+			"gain": 0.000001,
+			"out": -120
+		},
+		{
+			"gain": 0.003981,
+			"out": -48.00015644831804
+		},
+		{
+			"gain": 0.01,
+			"out": -40
+		},
+		{
+			"gain": 0.1,
+			"out": -20
+		},
+		{
+			"gain": 0.25,
+			"out": -12.041199826559248
+		},
+		{
+			"gain": 0.5,
+			"out": -6.020599913279624
+		},
+		{
+			"gain": 0.501187,
+			"out": -6.000004048908352
+		},
+		{
+			"gain": 0.75,
+			"out": -2.4987747321659985
+		},
+		{
+			"gain": 0.99,
+			"out": -0.08729610804900176
+		},
+		{
+			"gain": 1,
+			"out": 0
+		},
+		{
+			"gain": 1.5,
+			"out": 3.5218251811136247
+		},
+		{
+			"gain": 4,
+			"out": 12.041199826559248
+		}
+	],
+	"formatGainDb": [
+		{
+			"gain": 0,
+			"out": "muted"
+		},
+		{
+			"gain": -1,
+			"out": "muted"
+		},
+		{
+			"gain": 0.000001,
+			"out": "-120.0 dB"
+		},
+		{
+			"gain": 0.003981,
+			"out": "-48.0 dB"
+		},
+		{
+			"gain": 0.01,
+			"out": "-40.0 dB"
+		},
+		{
+			"gain": 0.1,
+			"out": "-20.0 dB"
+		},
+		{
+			"gain": 0.25,
+			"out": "-12.0 dB"
+		},
+		{
+			"gain": 0.5,
+			"out": "-6.0 dB"
+		},
+		{
+			"gain": 0.501187,
+			"out": "-6.0 dB"
+		},
+		{
+			"gain": 0.75,
+			"out": "-2.5 dB"
+		},
+		{
+			"gain": 0.99,
+			"out": "-0.1 dB"
+		},
+		{
+			"gain": 1,
+			"out": "0.0 dB"
+		},
+		{
+			"gain": 1.5,
+			"out": "0.0 dB"
+		},
+		{
+			"gain": 4,
+			"out": "0.0 dB"
+		}
+	],
+	"focalPointAt": [
+		{
+			"clientX": 50,
+			"clientY": 50,
+			"rect": {
+				"left": 10,
+				"top": 20,
+				"width": 240,
+				"height": 135
+			},
+			"out": {
+				"xPct": 17,
+				"yPct": 22
+			}
+		},
+		{
+			"clientX": 0,
+			"clientY": 0,
+			"rect": {
+				"left": 10,
+				"top": 20,
+				"width": 240,
+				"height": 135
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 0
+			}
+		},
+		{
+			"clientX": -20,
+			"clientY": 300,
+			"rect": {
+				"left": 10,
+				"top": 20,
+				"width": 240,
+				"height": 135
+			},
+			"out": {
+				"xPct": 0,
+				"yPct": 100
+			}
+		},
+		{
+			"clientX": 133.3,
+			"clientY": 77.7,
+			"rect": {
+				"left": 10,
+				"top": 20,
+				"width": 240,
+				"height": 135
+			},
+			"out": {
+				"xPct": 51,
+				"yPct": 43
+			}
+		},
+		{
+			"clientX": 260,
+			"clientY": 160,
+			"rect": {
+				"left": 10,
+				"top": 20,
+				"width": 240,
+				"height": 135
+			},
+			"out": {
+				"xPct": 100,
+				"yPct": 100
+			}
+		}
+	],
+	"nudgeFocalPoint": [
+		{
+			"point": null,
+			"key": "ArrowLeft",
+			"out": {
+				"xPct": 45,
+				"yPct": 50
+			}
+		},
+		{
+			"point": null,
+			"key": "ArrowRight",
+			"out": {
+				"xPct": 55,
+				"yPct": 50
+			}
+		},
+		{
+			"point": null,
+			"key": "ArrowUp",
+			"out": {
+				"xPct": 50,
+				"yPct": 45
+			}
+		},
+		{
+			"point": null,
+			"key": "ArrowDown",
+			"out": {
+				"xPct": 50,
+				"yPct": 55
+			}
+		},
+		{
+			"point": null,
+			"key": "Enter",
+			"out": null
+		},
+		{
+			"point": {
+				"xPct": 2,
+				"yPct": 98
+			},
+			"key": "ArrowLeft",
+			"out": {
+				"xPct": 0,
+				"yPct": 98
+			}
+		},
+		{
+			"point": {
+				"xPct": 2,
+				"yPct": 98
+			},
+			"key": "ArrowRight",
+			"out": {
+				"xPct": 7,
+				"yPct": 98
+			}
+		},
+		{
+			"point": {
+				"xPct": 2,
+				"yPct": 98
+			},
+			"key": "ArrowUp",
+			"out": {
+				"xPct": 2,
+				"yPct": 93
+			}
+		},
+		{
+			"point": {
+				"xPct": 2,
+				"yPct": 98
+			},
+			"key": "ArrowDown",
+			"out": {
+				"xPct": 2,
+				"yPct": 100
+			}
+		},
+		{
+			"point": {
+				"xPct": 2,
+				"yPct": 98
+			},
+			"key": "Enter",
+			"out": null
+		},
+		{
+			"point": {
+				"xPct": 50.4,
+				"yPct": 0
+			},
+			"key": "ArrowLeft",
+			"out": {
+				"xPct": 45,
+				"yPct": 0
+			}
+		},
+		{
+			"point": {
+				"xPct": 50.4,
+				"yPct": 0
+			},
+			"key": "ArrowRight",
+			"out": {
+				"xPct": 55,
+				"yPct": 0
+			}
+		},
+		{
+			"point": {
+				"xPct": 50.4,
+				"yPct": 0
+			},
+			"key": "ArrowUp",
+			"out": {
+				"xPct": 50.4,
+				"yPct": 0
+			}
+		},
+		{
+			"point": {
+				"xPct": 50.4,
+				"yPct": 0
+			},
+			"key": "ArrowDown",
+			"out": {
+				"xPct": 50.4,
+				"yPct": 5
+			}
+		},
+		{
+			"point": {
+				"xPct": 50.4,
+				"yPct": 0
+			},
+			"key": "Enter",
+			"out": null
+		}
+	],
+	"clipPropertyGroups": [
+		{
+			"kind": null,
+			"opts": null,
+			"out": []
+		},
+		{
+			"kind": null,
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": []
+		},
+		{
+			"kind": null,
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": []
+		},
+		{
+			"kind": null,
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": []
+		},
+		{
+			"kind": "scene",
+			"opts": null,
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "shot",
+					"label": "Shot"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "background",
+					"label": "Background"
+				}
+			]
+		},
+		{
+			"kind": "scene",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "shot",
+					"label": "Shot"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "background",
+					"label": "Background"
+				}
+			]
+		},
+		{
+			"kind": "scene",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "shot",
+					"label": "Shot"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "background",
+					"label": "Background"
+				}
+			]
+		},
+		{
+			"kind": "scene",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "shot",
+					"label": "Shot"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "background",
+					"label": "Background"
+				}
+			]
+		},
+		{
+			"kind": "shape",
+			"opts": null,
+			"out": [
+				{
+					"k": "content",
+					"label": "Shape"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "shape",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Shape"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "shape",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Shape"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "shape",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Shape"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"opts": null,
+			"out": [
+				{
+					"k": "content",
+					"label": "Text"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Text"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Text"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "text",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Text"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				}
+			]
+		},
+		{
+			"kind": "broll",
+			"opts": null,
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "motion",
+					"label": "Reveal"
+				}
+			]
+		},
+		{
+			"kind": "broll",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "audio",
+					"label": "Audio"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "motion",
+					"label": "Reveal"
+				}
+			]
+		},
+		{
+			"kind": "broll",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "motion",
+					"label": "Reveal"
+				}
+			]
+		},
+		{
+			"kind": "broll",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "content",
+					"label": "Source"
+				},
+				{
+					"k": "transform",
+					"label": "Transform"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "blending",
+					"label": "Blending"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "masks",
+					"label": "Masks"
+				},
+				{
+					"k": "adjust",
+					"label": "Adjust"
+				},
+				{
+					"k": "motion",
+					"label": "Reveal"
+				}
+			]
+		},
+		{
+			"kind": "audio",
+			"opts": null,
+			"out": [
+				{
+					"k": "levels",
+					"label": "Audio"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "content",
+					"label": "Source"
+				}
+			]
+		},
+		{
+			"kind": "audio",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "levels",
+					"label": "Audio"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "content",
+					"label": "Source"
+				}
+			]
+		},
+		{
+			"kind": "audio",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "levels",
+					"label": "Audio"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "content",
+					"label": "Source"
+				}
+			]
+		},
+		{
+			"kind": "audio",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "levels",
+					"label": "Audio"
+				},
+				{
+					"k": "animation",
+					"label": "Animation"
+				},
+				{
+					"k": "timing",
+					"label": "Timing"
+				},
+				{
+					"k": "content",
+					"label": "Source"
+				}
+			]
+		},
+		{
+			"kind": "effect",
+			"opts": null,
+			"out": [
+				{
+					"k": "effect",
+					"label": "Effect"
+				}
+			]
+		},
+		{
+			"kind": "effect",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "effect",
+					"label": "Effect"
+				}
+			]
+		},
+		{
+			"kind": "effect",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "effect",
+					"label": "Effect"
+				}
+			]
+		},
+		{
+			"kind": "effect",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "effect",
+					"label": "Effect"
+				}
+			]
+		},
+		{
+			"kind": "transition",
+			"opts": null,
+			"out": [
+				{
+					"k": "transition",
+					"label": "Transition"
+				}
+			]
+		},
+		{
+			"kind": "transition",
+			"opts": {
+				"videoHasAudio": true,
+				"brollKind": "video"
+			},
+			"out": [
+				{
+					"k": "transition",
+					"label": "Transition"
+				}
+			]
+		},
+		{
+			"kind": "transition",
+			"opts": {
+				"brollKind": "image"
+			},
+			"out": [
+				{
+					"k": "transition",
+					"label": "Transition"
+				}
+			]
+		},
+		{
+			"kind": "transition",
+			"opts": {
+				"sceneHasVideo": true
+			},
+			"out": [
+				{
+					"k": "transition",
+					"label": "Transition"
+				}
+			]
+		}
+	],
+	"activeClipPropertyGroup": [
+		{
+			"kind": null,
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": null,
+			"remembered": "masks",
+			"out": "content"
+		},
+		{
+			"kind": null,
+			"remembered": "levels",
+			"out": "content"
+		},
+		{
+			"kind": null,
+			"remembered": "nope",
+			"out": "content"
+		},
+		{
+			"kind": null,
+			"remembered": "",
+			"out": "content"
+		},
+		{
+			"kind": "scene",
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": "scene",
+			"remembered": "masks",
+			"out": "masks"
+		},
+		{
+			"kind": "scene",
+			"remembered": "levels",
+			"out": "content"
+		},
+		{
+			"kind": "scene",
+			"remembered": "nope",
+			"out": "content"
+		},
+		{
+			"kind": "scene",
+			"remembered": "",
+			"out": "content"
+		},
+		{
+			"kind": "shape",
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": "shape",
+			"remembered": "masks",
+			"out": "content"
+		},
+		{
+			"kind": "shape",
+			"remembered": "levels",
+			"out": "content"
+		},
+		{
+			"kind": "shape",
+			"remembered": "nope",
+			"out": "content"
+		},
+		{
+			"kind": "shape",
+			"remembered": "",
+			"out": "content"
+		},
+		{
+			"kind": "text",
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": "text",
+			"remembered": "masks",
+			"out": "content"
+		},
+		{
+			"kind": "text",
+			"remembered": "levels",
+			"out": "content"
+		},
+		{
+			"kind": "text",
+			"remembered": "nope",
+			"out": "content"
+		},
+		{
+			"kind": "text",
+			"remembered": "",
+			"out": "content"
+		},
+		{
+			"kind": "broll",
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": "broll",
+			"remembered": "masks",
+			"out": "masks"
+		},
+		{
+			"kind": "broll",
+			"remembered": "levels",
+			"out": "content"
+		},
+		{
+			"kind": "broll",
+			"remembered": "nope",
+			"out": "content"
+		},
+		{
+			"kind": "broll",
+			"remembered": "",
+			"out": "content"
+		},
+		{
+			"kind": "audio",
+			"remembered": "content",
+			"out": "content"
+		},
+		{
+			"kind": "audio",
+			"remembered": "masks",
+			"out": "levels"
+		},
+		{
+			"kind": "audio",
+			"remembered": "levels",
+			"out": "levels"
+		},
+		{
+			"kind": "audio",
+			"remembered": "nope",
+			"out": "levels"
+		},
+		{
+			"kind": "audio",
+			"remembered": "",
+			"out": "levels"
+		},
+		{
+			"kind": "effect",
+			"remembered": "content",
+			"out": "effect"
+		},
+		{
+			"kind": "effect",
+			"remembered": "masks",
+			"out": "effect"
+		},
+		{
+			"kind": "effect",
+			"remembered": "levels",
+			"out": "effect"
+		},
+		{
+			"kind": "effect",
+			"remembered": "nope",
+			"out": "effect"
+		},
+		{
+			"kind": "effect",
+			"remembered": "",
+			"out": "effect"
+		},
+		{
+			"kind": "transition",
+			"remembered": "content",
+			"out": "transition"
+		},
+		{
+			"kind": "transition",
+			"remembered": "masks",
+			"out": "transition"
+		},
+		{
+			"kind": "transition",
+			"remembered": "levels",
+			"out": "transition"
+		},
+		{
+			"kind": "transition",
+			"remembered": "nope",
+			"out": "transition"
+		},
+		{
+			"kind": "transition",
+			"remembered": "",
+			"out": "transition"
+		}
+	],
+	"clipGroupOptions": [
+		{
+			"sel": {},
+			"out": {
+				"videoHasAudio": false,
+				"sceneHasVideo": false
+			}
+		},
+		{
+			"sel": {
+				"videoOverlay": {
+					"kind": "video"
+				},
+				"scene": {
+					"visualClips": [
+						{
+							"kind": "video"
+						}
+					]
+				}
+			},
+			"out": {
+				"videoHasAudio": true,
+				"brollKind": "video",
+				"sceneHasVideo": true
+			}
+		},
+		{
+			"sel": {
+				"videoOverlay": {
+					"kind": "image"
+				}
+			},
+			"out": {
+				"videoHasAudio": false,
+				"brollKind": "image",
+				"sceneHasVideo": false
+			}
+		},
+		{
+			"sel": {
+				"scene": {
+					"visualClips": [
+						{
+							"kind": "image"
+						},
+						{
+							"kind": "video"
+						}
+					]
+				}
+			},
+			"out": {
+				"videoHasAudio": false,
+				"sceneHasVideo": true
+			}
+		},
+		{
+			"sel": {
+				"scene": {
+					"visualClips": []
+				}
+			},
+			"out": {
+				"videoHasAudio": false,
+				"sceneHasVideo": false
+			}
+		}
+	],
+	"resolveClipSubject": [
+		{
+			"sel": {},
+			"out": null
+		},
+		{
+			"sel": {
+				"videoOverlay": {
+					"id": 3,
+					"kind": "video",
+					"url": "/api/media/a"
+				},
+				"scene": {
+					"id": 1,
+					"name": "One"
+				}
+			},
+			"out": {
+				"kind": "broll",
+				"clipId": "video:3",
+				"title": "Overlay · video",
+				"mediaUrl": "/api/media/a"
+			}
+		},
+		{
+			"sel": {
+				"videoOverlay": {
+					"kind": "image"
+				}
+			},
+			"out": {
+				"kind": "broll",
+				"title": "Overlay · image"
+			}
+		},
+		{
+			"sel": {
+				"audio": {
+					"id": 2,
+					"kind": "music",
+					"url": "/api/media/b"
+				},
+				"text": {
+					"id": 1
+				}
+			},
+			"out": {
+				"kind": "audio",
+				"clipId": "audio:2",
+				"title": "Background Music",
+				"mediaUrl": "/api/media/b"
+			}
+		},
+		{
+			"sel": {
+				"audio": {
+					"kind": "voiceover",
+					"origin": "generated"
+				}
+			},
+			"out": {
+				"kind": "audio",
+				"title": "TTS Voiceover"
+			}
+		},
+		{
+			"sel": {
+				"text": {
+					"id": 4,
+					"preset": "plain"
+				}
+			},
+			"out": {
+				"kind": "text",
+				"title": "Text"
+			}
+		},
+		{
+			"sel": {
+				"text": {
+					"id": 5,
+					"preset": "shape-circle"
+				}
+			},
+			"out": {
+				"kind": "shape",
+				"title": "Circle"
+			}
+		},
+		{
+			"sel": {
+				"effectId": 0,
+				"transitionId": 1
+			},
+			"out": {
+				"kind": "effect",
+				"title": "Effect"
+			}
+		},
+		{
+			"sel": {
+				"transitionId": 2
+			},
+			"out": {
+				"kind": "transition",
+				"title": "Transition"
+			}
+		},
+		{
+			"sel": {
+				"scene": {
+					"id": 7,
+					"name": "Opening"
+				}
+			},
+			"out": {
+				"kind": "scene",
+				"title": "Scene · Opening",
+				"clipId": "scene:7"
+			}
+		},
+		{
+			"sel": {
+				"scene": {
+					"name": "Unsaved"
+				}
+			},
+			"out": {
+				"kind": "scene",
+				"title": "Scene · Unsaved"
+			}
+		}
+	]
+}

@@ -11,9 +11,19 @@
  * Icons are stored as the registry's `(size) => JSX.Element` factories rather
  * than as rendered elements, because the two readers want different sizes: 17px
  * in a 54px rail, larger under a thumb.
+ *
+ * Which groups a kind offers, their order, the fallback group and the subject
+ * precedence are shared-core rules (`crates/app-core/src/inspector.rs`,
+ * `p1-envelope-inspector`). This module adds only labels, icons and titles.
  */
 import { shapeElement } from "@models/timeline/shape-elements.ts";
 import type { JSX } from "react";
+import {
+	activeGroupKey,
+	groupOptions,
+	inspectorSubject,
+	propertyGroupKeys,
+} from "@maleo/shared/editor/inspector-rules";
 import { Ic } from "@design-system/icons/index.tsx";
 import {
 	audioKindLabel,
@@ -47,33 +57,37 @@ export function resolveClipSubject(sel: {
 	transitionId?: number | null;
 	scene?: { id?: number; name: string } | null;
 }): ClipSubject | null {
-	if (sel.videoOverlay)
-		return {
-			kind: "broll",
-			clipId: sel.videoOverlay.id == null ? undefined : `video:${sel.videoOverlay.id}`,
-			title: `Overlay · ${sel.videoOverlay.kind}`,
-			mediaUrl: sel.videoOverlay.url,
-		};
-	if (sel.audio)
-		return {
-			kind: "audio",
-			clipId: sel.audio.id == null ? undefined : `audio:${sel.audio.id}`,
-			title: audioKindLabel(sel.audio.kind, sel.audio.origin),
-			mediaUrl: sel.audio.url,
-		};
-	if (sel.text) {
-		const shape = shapeElement(sel.text.preset);
-		return shape ? { kind: "shape", title: shape.label } : { kind: "text", title: "Text" };
+	const subject = inspectorSubject(sel);
+	if (!subject) return null;
+	// SAFETY: the engine answers one of the inspector kinds this union lists.
+	const kind = subject.kind as ClipInspectorKind;
+	const clipId = subject.clipId === undefined ? {} : { clipId: subject.clipId };
+	switch (kind) {
+		case "broll":
+			return {
+				kind,
+				...clipId,
+				title: `Overlay · ${sel.videoOverlay!.kind}`,
+				mediaUrl: sel.videoOverlay!.url,
+			};
+		case "audio":
+			return {
+				kind,
+				...clipId,
+				title: audioKindLabel(sel.audio!.kind, sel.audio!.origin),
+				mediaUrl: sel.audio!.url,
+			};
+		case "shape":
+			return { kind, title: shapeElement(sel.text?.preset)?.label ?? "Shape" };
+		case "text":
+			return { kind, title: "Text" };
+		case "scene":
+			return { kind, title: `Scene · ${sel.scene!.name}`, ...clipId };
+		case "effect":
+			return { kind, title: "Effect" };
+		case "transition":
+			return { kind, title: "Transition" };
 	}
-	if (sel.effectId != null) return { kind: "effect", title: "Effect" };
-	if (sel.transitionId != null) return { kind: "transition", title: "Transition" };
-	if (sel.scene)
-		return {
-			kind: "scene",
-			title: `Scene · ${sel.scene.name}`,
-			clipId: sel.scene.id == null ? undefined : `scene:${sel.scene.id}`,
-		};
-	return null;
 }
 
 export type ClipPropertyGroupKey =
@@ -120,78 +134,73 @@ export function clipGroupOptions(sel: {
 	scene?: { visualClips?: readonly { kind: string }[] } | null;
 }): ClipGroupOptions {
 	return {
-		videoHasAudio: sel.videoOverlay?.kind === "video",
+		...groupOptions(
+			sel.videoOverlay?.kind,
+			(sel.scene?.visualClips ?? []).map((visual) => visual.kind),
+		),
+		// Only the content icon follows it.
 		brollKind: sel.videoOverlay?.kind,
-		sceneHasVideo: Boolean(sel.scene?.visualClips?.some((v) => v.kind === "video")),
 	};
 }
 
-/** What a clip of this kind can be edited for, in the order an editor reaches for it
- *  (after opencut-classic's properties registry): the clip's own content first and as
- *  the default, then where it sits, how it composites, its sound and time, then
- *  optional treatments.
- *
- *  `videoHasAudio` gives a b-roll clip an Audio group only when its media carries a
- *  track; `sceneHasVideo` gives a scene a Timing group only when a visual is a video,
- *  because that is the only playback a scene has to edit. */
+/* The label and icon of each group key, where a kind does not give its own. */
+const SHARED: Partial<Record<ClipPropertyGroupKey, ClipPropertyGroup>> = {
+	transform: TRANSFORM,
+	blending: BLENDING,
+	timing: TIMING,
+	masks: MASKS,
+	adjust: ADJUST,
+	background: BACKGROUND,
+	animation: ANIMATION,
+	shot: { k: "shot", icon: Ic.scene, label: "Shot" },
+	audio: { k: "audio", icon: Ic.music, label: "Audio" },
+	motion: { k: "motion", icon: Ic.spark, label: "Reveal" },
+	effect: { k: "effect", icon: Ic.spark, label: "Effect" },
+	transition: { k: "transition", icon: Ic.swap, label: "Transition" },
+};
+
+/** The content group of a kind: the clip's own content, named for what it is. */
+function contentGroup(kind: ClipInspectorKind, opts?: ClipGroupOptions): ClipPropertyGroup {
+	switch (kind) {
+		case "scene":
+			return { k: "content", icon: Ic.image, label: "Source" };
+		case "shape":
+			return { k: "content", icon: Ic.rect, label: "Shape" };
+		case "text":
+			return { k: "content", icon: Ic.type, label: "Text" };
+		case "broll":
+			return {
+				k: "content",
+				icon: opts?.brollKind === "image" ? Ic.image : Ic.video,
+				label: "Source",
+			};
+		// Effects and transitions have no content group; audio names its source.
+		case "audio":
+		case "effect":
+		case "transition":
+			return { k: "content", icon: Ic.mic, label: "Source" };
+	}
+}
+
+/** What a clip of this kind can be edited for, in the shared core's order (after
+ *  opencut-classic's properties registry), with this editor's labels and icons. */
 export function clipPropertyGroups(
 	kind: ClipInspectorKind | null | undefined,
 	opts?: ClipGroupOptions,
 ): ClipPropertyGroup[] {
 	if (!kind) return [];
-	switch (kind) {
-		case "scene":
-			return [
-				{ k: "content", icon: Ic.image, label: "Source" },
-				{ k: "shot", icon: Ic.scene, label: "Shot" },
-				TRANSFORM,
-				ANIMATION,
-				BLENDING,
-				...(opts?.sceneHasVideo ? [TIMING] : []),
-				MASKS,
-				ADJUST,
-				BACKGROUND,
-			];
-		case "shape":
-			return [
-				{ k: "content", icon: Ic.rect, label: "Shape" },
-				TRANSFORM,
-				ANIMATION,
-				BLENDING,
-				TIMING,
-			];
-		case "text":
-			return [
-				{ k: "content", icon: Ic.type, label: "Text" },
-				TRANSFORM,
-				ANIMATION,
-				BLENDING,
-				TIMING,
-			];
-		case "broll":
-			return [
-				{ k: "content", icon: opts?.brollKind === "image" ? Ic.image : Ic.video, label: "Source" },
-				TRANSFORM,
-				ANIMATION,
-				BLENDING,
-				...(opts?.videoHasAudio ? [{ k: "audio" as const, icon: Ic.music, label: "Audio" }] : []),
-				TIMING,
-				MASKS,
-				ADJUST,
-				{ k: "motion", icon: Ic.spark, label: "Reveal" },
-			];
-		case "audio":
-			return [
-				{ k: "levels", icon: Ic.music, label: "Audio" },
-				ANIMATION,
-				TIMING,
-				{ k: "content", icon: Ic.mic, label: "Source" },
-			];
-		case "effect":
-			return [{ k: "effect", icon: Ic.spark, label: "Effect" }];
-		case "transition":
-			return [{ k: "transition", icon: Ic.swap, label: "Transition" }];
-	}
+	const keys = propertyGroupKeys(kind, {
+		videoHasAudio: Boolean(opts?.videoHasAudio),
+		sceneHasVideo: Boolean(opts?.sceneHasVideo),
+	});
+	return keys.flatMap((key): ClipPropertyGroup[] => {
+		// SAFETY: the engine answers only the group keys this union lists.
+		const k = key as ClipPropertyGroupKey;
+		if (k === "content") return [contentGroup(kind, opts)];
+		if (k === "levels") return [{ k, icon: Ic.music, label: "Audio" }];
+		const group = SHARED[k];
+		return group ? [group] : [];
+	});
 }
 
 /** The group to show for a clip, given whatever tab the operator last chose.
@@ -200,5 +209,9 @@ export function activeClipPropertyGroup(
 	groups: ClipPropertyGroup[],
 	remembered: string,
 ): ClipPropertyGroupKey {
-	return groups.find((g) => g.k === remembered)?.k ?? groups[0]?.k ?? "content";
+	// SAFETY: the answer is one of `groups`' keys, or `content`.
+	return activeGroupKey(
+		groups.map((group) => group.k),
+		remembered,
+	) as ClipPropertyGroupKey;
 }

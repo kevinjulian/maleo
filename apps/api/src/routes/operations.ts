@@ -6,6 +6,7 @@ import { effectiveVoiceCatalogue } from "../lib/voice-catalogue-source.ts";
 import { listDrafts } from "@maleo/db/drafts";
 import { registerAssetRoutes } from "./operations/assets.ts";
 import { registerAssetManifestRoutes } from "./operations/asset-manifest.ts";
+import { registerEnvelopeRoutes } from "./operations/envelope.ts";
 import { registerCampaignRoutes } from "./operations/campaigns.ts";
 import { registerEventRoutes } from "./operations/events.ts";
 import { registerGenerationRoutes } from "./operations/generation.ts";
@@ -48,6 +49,7 @@ export function operationsRoutes(): Hono {
 	registerCampaignRoutes(app);
 	registerProjectRoutes(app);
 	registerAssetManifestRoutes(app);
+	registerEnvelopeRoutes(app);
 	registerStoryboardRoutes(app);
 	registerCommandRoutes(app);
 	registerBlockerRoutes(app);

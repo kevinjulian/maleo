@@ -84,6 +84,12 @@ export interface Engine {
 	pendingState(queue: number): EngineResult<string>;
 	/** `{selection, action}` → the next selection. */
 	selectionApply(json: string): EngineResult<string>;
+	/** Admit a project envelope (`p1-envelope-inspector`): its serialized form, or an
+	 *  error of kind `EnvelopeRefused` whose message is `{kind, reason, path, message}` JSON. */
+	envelopeAdmit(json: string): EngineResult<string>;
+	/** An inspector rule (`p1-envelope-inspector`): `{op, …}` → the op's result as JSON.
+	 *  `doc` names the document an op reads; 0 for the stateless ops. */
+	inspectorApply(doc: number, json: string): EngineResult<string>;
 	/* Canvas editing (`p2-preview-editing` D2): a canvas handle over a document
 	 * handle, one call per input event. Typed in `canvas-engine.ts`. */
 	/** Open a canvas over document handle `doc`; returns its handle. */
@@ -162,6 +168,8 @@ interface Exports {
 	pending_resolve(queue: number, ledger: number, doc: number, ptr: number, len: number): number;
 	pending_state(queue: number): number;
 	selection_apply(ptr: number, len: number): number;
+	envelope_admit(ptr: number, len: number): number;
+	inspector_apply(doc: number, ptr: number, len: number): number;
 	canvas_open(doc: number): number;
 	canvas_close(canvas: number): number;
 	canvas_open_count(): number;
@@ -230,6 +238,8 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 		pending_resolve: call("pending_resolve"),
 		pending_state: call("pending_state"),
 		selection_apply: call("selection_apply"),
+		envelope_admit: call("envelope_admit"),
+		inspector_apply: call("inspector_apply"),
 		canvas_open: call("canvas_open"),
 		canvas_close: call("canvas_close"),
 		canvas_open_count: call("canvas_open_count"),
@@ -251,7 +261,9 @@ function exportsOf(instance: WebAssembly.Instance): Exports {
 	};
 }
 
-export async function instantiateEngine(bytes: BufferSource): Promise<Engine> {
+export async function instantiateEngine(
+	bytes: ConstructorParameters<typeof WebAssembly.Module>[0],
+): Promise<Engine> {
 	/* The module imports nothing, so it is given nothing. */
 	const module = await WebAssembly.compile(bytes);
 	return engineOf(exportsOf(await WebAssembly.instantiate(module, {})));
@@ -260,7 +272,9 @@ export async function instantiateEngine(bytes: BufferSource): Promise<Engine> {
 /** For a server runtime, where compiling a module synchronously is allowed (a
  *  browser main thread refuses modules over 4 KB): the API loads the engine on
  *  first use inside a synchronous command path. */
-export function instantiateEngineSync(bytes: BufferSource): Engine {
+export function instantiateEngineSync(
+	bytes: ConstructorParameters<typeof WebAssembly.Module>[0],
+): Engine {
 	return engineOf(exportsOf(new WebAssembly.Instance(new WebAssembly.Module(bytes), {})));
 }
 
@@ -367,6 +381,14 @@ function engineOf(wasm: Exports): Engine {
 			result(wasm.pending_resolve(queue, ledger, doc, ...write(json))),
 		pendingState: (queue) => result(wasm.pending_state(queue)),
 		selectionApply: (json) => result(wasm.selection_apply(...write(json))),
+		inspectorApply: (doc, json) => result(wasm.inspector_apply(doc, ...write(json))),
+		envelopeAdmit(json) {
+			const status = wasm.envelope_admit(...write(json));
+			// The refusal carries reason and path beyond `{kind, message}`, so its whole text is the message.
+			return status === 0
+				? { ok: true, value: output() }
+				: { ok: false, error: { kind: parseError(output()).kind, message: output() } };
+		},
 		canvasOpen(doc) {
 			const handle = wasm.canvas_open(doc);
 			return handle === 0

@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "wrong-format",
+		"path": "format"
+	}
+}

@@ -543,6 +543,24 @@ mod abi {
         status(with_app(|app, _| app.pending_state(queue)))
     }
 
+    /// An inspector rule (`p1-envelope-inspector` I2). `doc` names the document an
+    /// op reads; 0 for the stateless ops.
+    #[unsafe(no_mangle)]
+    pub extern "C" fn inspector_apply(doc: u32, ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| {
+            DOCUMENTS.with(|documents| {
+                let documents = documents.borrow();
+                let scope = if doc == 0 { None } else { Some(documents.scope(doc)?) };
+                maleo_app_core::ops::apply_json(scope, &json).map_err(super::invalid)
+            })
+        }))
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn envelope_admit(ptr: *mut u8, len: usize) -> u32 {
+        status(take_input(ptr, len).and_then(|json| maleo_editor_core::envelope::admit_json(&json)))
+    }
+
     #[unsafe(no_mangle)]
     pub extern "C" fn selection_apply(ptr: *mut u8, len: usize) -> u32 {
         status(take_input(ptr, len).and_then(|json| super::app::selection_apply(&json)))

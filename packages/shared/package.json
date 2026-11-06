@@ -16,7 +16,8 @@
 		"./provider-config": "./src/provider-config.ts",
 		"./editor": "./src/editor/index.ts",
 		"./editor/commands": "./src/editor/commands.ts",
-		"./editor/storyboard-scope": "./src/editor/storyboard-scope.ts"
+		"./editor/storyboard-scope": "./src/editor/storyboard-scope.ts",
+		"./editor/inspector-rules": "./src/editor/inspector-rules.ts"
 	},
 	"scripts": {
 		"typecheck": "tsc --noEmit",

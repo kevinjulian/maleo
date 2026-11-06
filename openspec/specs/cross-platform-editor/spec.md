@@ -12,6 +12,15 @@ The system SHALL execute admitted editor commands through one authoritative engi
 
 Undo and redo bookkeeping, selection rules, the queue of pending local commands, and the canvas editing rules (canvas geometry and its screen mapping, hit testing, gestures, snapping and the commands a gesture makes) SHALL also live in the shared core. A controller SHALL hold only presentation, input handling and IO for them. Identical sequences of commands and selection actions SHALL produce identical undo stacks, selections and pending queues on every controller.
 
+The inspector rules SHALL also live in the shared core:
+
+- keying: which clip and animation track a key edit targets, when an edit updates an existing key instead of adding one, which properties of a row a row edit keys, the refusal of a key edit and its message, and the moves and easing changes of selected key moments.
+- the inspector view-model: the ordered property groups each clip kind offers, the groups that depend on the clip's media, and the group shown when the remembered group does not apply.
+- layout and text defaults: the layout a clip of each kind has when a field is absent or out of range, and the default text style of each text preset.
+- control value mapping: the fader position for an audio gain and its dB value, and the focal point after a nudge.
+
+A controller SHALL hold only the labels, icons, layout and input handling of these controls. A key edit, layout read or group list SHALL produce the same command or value on every controller for the same document, selection and playhead.
+
 #### Scenario: An edit crosses clients
 
 - **WHEN** each controller applies the same move or trim command to the same admitted fixture
@@ -36,6 +45,31 @@ Undo and redo bookkeeping, selection rules, the queue of pending local commands,
 
 - **WHEN** two controllers send the same input events for a drag of the same element in the same document, canvas size and playhead
 - **THEN** both show the same box and guides during the drag and commit the same command on release
+
+#### Scenario: An inspector key edit crosses clients
+
+- **WHEN** two controllers change the X value of a keyed Position row at a playhead 0.05 s from an existing key
+- **THEN** both make the same `clip.setKeys` commands, and each updates that key for X and Y instead of adding a new key
+
+#### Scenario: A key edit is refused
+
+- **WHEN** a controller asks the shared core to key a property of a locked clip
+- **THEN** the core makes no command and returns one refusal message, and every controller shows that message
+
+#### Scenario: Inspector groups cross clients
+
+- **WHEN** two controllers ask for the groups of a b-roll clip whose video carries an audio track
+- **THEN** both receive the same ordered group keys, including the audio group
+
+#### Scenario: A remembered group does not apply
+
+- **WHEN** the operator last chose the Masks group and then selects a text clip
+- **THEN** the shared core returns the text clip's first group
+
+#### Scenario: A layout field is out of range
+
+- **WHEN** a controller reads the layout of a clip whose stored opacity is 1.4 and whose width is absent
+- **THEN** the shared core returns opacity 1 and the default width for that clip kind, and the stored document is unchanged
 
 ### Requirement: Migration phases have evidence gates
 

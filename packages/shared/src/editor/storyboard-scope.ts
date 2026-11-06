@@ -107,6 +107,50 @@ export function storedMediaLibrary(editorState: unknown, document: unknown): Med
 	return assets;
 }
 
+/** Stored-document keys the scope owns: `storyboardWithScope` writes each one from
+ *  the scope. `SCOPE_KEYS` in `crates/editor-core/src/envelope.rs` is this list;
+ *  `envelope.test.ts` holds the two equal. */
+export const SCOPE_OWNED_KEYS = [
+	"schemaVersion",
+	"clips",
+	"markers",
+	"chapters",
+	"bookmarks",
+	"projectReferences",
+	"materials",
+	"captions",
+	"captionSet",
+	"trackFlags",
+	"slides",
+	"posts",
+] as const;
+
+/** The stored-document fields outside the scope: an envelope's `head`. */
+export type StoryboardHead = Omit<
+	ReturnType<typeof writeStoryboardDocument>,
+	(typeof SCOPE_OWNED_KEYS)[number]
+>;
+
+/** The stored-document fields outside the scope, as a writer emits them: an
+ *  envelope's `head` (`p1-envelope-inspector` E1). `storyboardWithScope(head, scope)`
+ *  rebuilds the stored document. Throws what `writeStoryboardDocument` throws. */
+export function storyboardHead(raw: unknown): StoryboardHead {
+	const {
+		schemaVersion: _schemaVersion,
+		clips: _clips,
+		markers: _markers,
+		chapters: _chapters,
+		bookmarks: _bookmarks,
+		projectReferences: _projectReferences,
+		materials: _materials,
+		captions: _captions,
+		captionSet: _captionSet,
+		trackFlags: _trackFlags,
+		...head
+	} = writeStoryboardDocument(readStoryboardDocument(raw).doc);
+	return head;
+}
+
 /** `head` with the scope's fields replaced by `scope`'s: the stored document a
  *  command submission writes. Throws what `writeStoryboardDocument` throws. */
 export function storyboardWithScope(head: unknown, scope: EditScope): StoredStoryboardDocument {

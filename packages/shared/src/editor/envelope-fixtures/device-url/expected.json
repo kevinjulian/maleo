@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "device-url",
+		"path": "scope.doc.clips[0].video.url"
+	}
+}

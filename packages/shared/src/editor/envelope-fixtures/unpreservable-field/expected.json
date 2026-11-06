@@ -1,0 +1,6 @@
+{
+	"refusal": {
+		"reason": "unpreservable-field",
+		"path": "head.clips"
+	}
+}

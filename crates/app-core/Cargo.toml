@@ -8,4 +8,7 @@ description = "Host-free editor state rules shared by every Maleo controller: un
 
 [dependencies]
 maleo-editor-core = { path = "../editor-core" }
+# Already in the lockfile. `f64::log10`/`powf` use the platform libm natively but
+# this port in WASM; the fader calls it directly so every build gives one answer.
+libm = "0.2.16"
 serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }

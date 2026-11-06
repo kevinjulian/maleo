@@ -49,6 +49,8 @@ export default defineConfig({
 		include: ["**/*.test.{ts,tsx,mts}"],
 		exclude: [...configDefaults.exclude, "**/*.bun.test.*"],
 		setupFiles: [join(import.meta.dirname, "scripts/test-db-guard.ts")],
+		/* One engine build per run; workers inherit its path (see the file). */
+		globalSetup: [join(import.meta.dirname, "scripts/test-editor-wasm.setup.ts")],
 		/* Coverage measures the Vitest suites only, over two risky groups: the
 		 * TypeScript side of editor commands and the credit policy. A file in a
 		 * group that no test imports still counts, as uncovered. Bun suites and

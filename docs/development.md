@@ -701,6 +701,10 @@ See [Self-hosting](self-hosting.md) for the deployment stack, including the
 object store, migration, backup, and rollback. Generated media from older releases stays on
 its original disk until migration verification completes.
 
+To read one project as one portable unit, request
+`GET /projects/:id/envelope`. The [project envelope](project-envelope.md)
+document describes the format, its refusal reasons and its fixtures.
+
 Never commit secrets, local database snapshots, or generated media.
 
 ## The master key

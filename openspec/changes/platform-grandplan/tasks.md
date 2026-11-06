@@ -42,10 +42,10 @@ proposal before implementation. Payment-provider selection stays outside this ro
   - Evidence: [media-library tasks](../archive/2026-10-23-p1-media-library/tasks.md), including browser proof 3.3; commit `54e3f11`.
 - [ ] 2.6 Complete the command-log browser acceptance: edit while an agent writes the storyboard, then reload. Verify both changes survive and the persisted document matches the editor.
   - Carryover: [command-log task 3.4](../archive/2026-10-23-p1-command-log/tasks.md) remains unchecked despite archive.
-- [ ] 2.7 Define the portable project envelope over the existing document and asset manifest. Verify cross-client round trips preserve authored fields and incompatible input is refused before overwrite.
-  - Existing versioned documents and the `cross-platform-editor` spec are inputs. Include compatibility fixtures and document the exchange format in the owning phase change.
-- [ ] 2.8 Complete shared inspector rules and editor view-model ownership under D2. Verify web controls delegate rules to `app-core`, with tests and an updated editor codemap.
-  - Already delivered: selection, undo, pending commands and canvas layout edits. Audit remaining inspector and view-model rules without moving React presentation into Rust.
+- [x] 2.7 Define the portable project envelope over the existing document and asset manifest. Verify cross-client round trips preserve authored fields and incompatible input is refused before overwrite.
+  - Evidence: [p1-envelope-inspector tasks 1.1–1.7 and 2.1–2.3](../archive/2026-11-06-p1-envelope-inspector/tasks.md); `crates/editor-core/src/envelope.rs`, shared fixtures in `packages/shared/src/editor/envelope-fixtures/` run by Rust and the web wrapper, `GET /projects/:id/envelope`, `docs/project-envelope.md`. The envelope carries the scope plus a `head` of the other stored-document fields, so the stored document rebuilds exactly. No envelope import path writes yet; P3 uses admission before its first write.
+- [x] 2.8 Complete shared inspector rules and editor view-model ownership under D2. Verify web controls delegate rules to `app-core`, with tests and an updated editor codemap.
+  - Evidence: [p1-envelope-inspector tasks 3.1–3.7, 4.1–4.2 and 5.1–5.2](../archive/2026-11-06-p1-envelope-inspector/tasks.md); keying, animation edits, inspector groups, layout and text defaults, fader and focal-point rules in `crates/app-core`, reached through `inspector_apply` and held to references recorded from the TypeScript; a browser session saved byte-identical documents on main and on the change. React keeps labels, icons and layout.
 
 ## 3. P2 — Renderer foundation, preview runtime and canvas rules
 

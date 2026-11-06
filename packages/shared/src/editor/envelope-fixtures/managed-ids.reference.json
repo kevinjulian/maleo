@@ -1,0 +1,196 @@
+{
+	"fixtures/batch/labelled.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/batch/labelled.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/batch/several-entities.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/batch/several-entities.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.remove/existing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.remove/existing.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.set/clear.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.set/clear.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.set/empty-list.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.set/empty-list.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.upsert/invalid-time-is-noop.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/bookmark.upsert/invalid-time-is-noop.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/bookmark.upsert/new.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/bookmark.upsert/new.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/caption.edit/apply-result.json#scope": [],
+	"fixtures/caption.edit/apply-result.json#expectedScope": [],
+	"fixtures/caption.edit/correct-text.json#scope": [],
+	"fixtures/caption.edit/correct-text.json#expectedScope": [],
+	"fixtures/caption.edit/create.json#scope": [],
+	"fixtures/caption.edit/create.json#expectedScope": [],
+	"fixtures/caption.edit/delete.json#scope": [],
+	"fixtures/caption.edit/delete.json#expectedScope": [],
+	"fixtures/caption.edit/merge.json#scope": [],
+	"fixtures/caption.edit/merge.json#expectedScope": [],
+	"fixtures/caption.edit/reset-style.json#scope": [],
+	"fixtures/caption.edit/reset-style.json#expectedScope": [],
+	"fixtures/caption.edit/split.json#scope": [],
+	"fixtures/caption.edit/split.json#expectedScope": [],
+	"fixtures/caption.edit/style.json#scope": [],
+	"fixtures/caption.edit/style.json#expectedScope": [],
+	"fixtures/caption.edit/timing.json#scope": [],
+	"fixtures/caption.edit/timing.json#expectedScope": [],
+	"fixtures/caption.edit/unlink.json#scope": [],
+	"fixtures/caption.edit/unlink.json#expectedScope": [],
+	"fixtures/clip.insert/append.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.insert/append.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.insert/at-index.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.insert/at-index.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.move/binary-inexact.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.move/binary-inexact.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.move/time-and-track.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.move/time-and-track.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.remove/first.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.remove/first.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.replace/text-clip.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.replace/text-clip.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.resize/bounded-by-media-extent.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.resize/bounded-by-media-extent.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.resize/retimed-reverse.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.resize/retimed-reverse.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.resize/text-reanchored.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.resize/text-reanchored.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.setKeys/clear-last-track.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/clear-last-track.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.setKeys/clear.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/clear.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/invalid-is-noop.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/invalid-is-noop.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.setKeys/replace.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/replace.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/set.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/set.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/text-colour.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.setKeys/text-colour.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.trim-after/video-source-interval.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.trim-after/video-source-interval.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.trim-before/outside-clip-is-noop.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.trim-before/outside-clip-is-noop.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.trim-before/video-source-interval.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.trim-before/video-source-interval.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/clip.update/mirrors-timing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/clip.update/mirrors-timing.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/doc.setCaptions/disable.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/doc.setCaptions/disable.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/doc.setCaptions/from-absent.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/doc.setCaptions/from-absent.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/doc.setMaterials/from-absent.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/doc.setMaterials/from-absent.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/doc.setProjectReferences/from-absent.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/doc.setProjectReferences/from-absent.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/doc.setTrackFlags/lock-track.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/doc.setTrackFlags/lock-track.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/marker.remove/existing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.remove/existing.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.remove/middle-keeps-order.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.remove/middle-keeps-order.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/marker.update/empty-voiceover.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.update/empty-voiceover.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/marker.update/rename.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.update/rename.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.upsert/existing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.upsert/existing.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.upsert/new.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/marker.upsert/new.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/media.admit/known-url-keeps-existing.json#scope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/media.admit/known-url-keeps-existing.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001"
+	],
+	"fixtures/media.admit/new-url.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/media.admit/new-url.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001",
+		"00000000-0000-4000-8000-000000000002"
+	],
+	"fixtures/media.update/replace-assets.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/media.update/replace-assets.json#expectedScope": [
+		"00000000-0000-4000-8000-000000000001",
+		"00000000-0000-4000-8000-000000000002"
+	],
+	"fixtures/noop/identity.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/noop/identity.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.insert/at-index.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.insert/at-index.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.remove/existing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.remove/existing.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.update/body.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/post.update/body.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/scope.replace/wholesale.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/scope.replace/wholesale.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.insert/append.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.insert/append.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.remove/existing.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.remove/existing.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.update/adds-field.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.update/adds-field.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.update/caption.json#scope": ["00000000-0000-4000-8000-000000000001"],
+	"fixtures/slide.update/caption.json#expectedScope": ["00000000-0000-4000-8000-000000000001"],
+	"corpus/scopes/image-s-425edb1b829f.json": [],
+	"corpus/scopes/image-s-cade23c67f93.json": [],
+	"corpus/scopes/image-s-dcaf1e5c47a8.json": [],
+	"corpus/scopes/image-s-e0b564b4bea9.json": [],
+	"corpus/scopes/text-s-d48adc5555ed.json": [],
+	"corpus/scopes/video-s-0e71d5854634.json": [],
+	"corpus/scopes/video-s-0ee0cde8c6cd.json": [],
+	"corpus/scopes/video-s-26c8f68f1e6e.json": [],
+	"corpus/scopes/video-s-39010bc8efdd.json": [],
+	"corpus/scopes/video-s-4832bcb58fca.json": [],
+	"envelope-fixtures/device-url": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/image": [],
+	"envelope-fixtures/invalid-field": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/missing-manifest-entry": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/newer-format-version": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/newer-reader-version": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/text": [],
+	"envelope-fixtures/unknown-fields": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/unpreservable-field": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/unsupported-schema": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/video": ["00000000-0000-4000-8000-000000000001"],
+	"envelope-fixtures/wrong-format": ["00000000-0000-4000-8000-000000000001"]
+}
