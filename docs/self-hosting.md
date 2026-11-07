@@ -169,6 +169,12 @@ voiceover and image generation do not run again. Shadow jobs:
 A shadow job that starts runs to its end: a queued export waits for it. On a
 slow host this delay can be long, so measure it before you set `on`.
 
+A Rust render stops when it runs longer than 120 s plus its frame count at
+0.25 fps (2 h 2 min for a 60 s video), and the job fails with that limit. The
+production host draws a plain 1080x1920 frame at about 2 fps. Each progress
+report renews the job's lease, so the worker's stale-lease reclaim takes only
+a job whose worker stopped reporting.
+
 After a shadow ends, the worker compares the two outputs with the criteria in
 `apps/render-worker/comparison.json` and writes a `render_comparisons` row. A
 failed comparison keeps its sampled frames, difference images and

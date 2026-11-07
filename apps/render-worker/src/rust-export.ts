@@ -11,6 +11,7 @@ import { z } from "zod";
 import { aspectMap, storyboardSeconds } from "@maleo/video/composition";
 import type { Storyboard } from "@maleo/video/schema";
 import {
+	HostCancelled,
 	hostCoverage,
 	hostMediaUrls,
 	hostRender,
@@ -21,6 +22,17 @@ import {
 import { resolveRustInputs } from "./rust-inputs";
 
 export const FPS = 30;
+
+/** The slowest rate a Rust render may run at before it is stopped (task 3.5). The
+ * production host draws a plain 1080x1920 frame at about 2 fps; a factor of 8
+ * leaves room for heavy frames. */
+export const MIN_RENDER_FPS = 0.25;
+const TIMEOUT_BASE_SEC = 120;
+
+/** Wall-time limit of one Rust render: a fixed start-up allowance plus the frames at `MIN_RENDER_FPS`. */
+export function renderTimeoutSec(frames: number): number {
+	return TIMEOUT_BASE_SEC + Math.ceil(frames / MIN_RENDER_FPS);
+}
 
 export type Renderer = "remotion" | "rust";
 export interface RendererChoice {
@@ -138,13 +150,21 @@ export async function renderWithRust(input: {
 	onPhase: (detail: string) => void;
 	onProgress: (fraction: number, detail: string) => void;
 	run?: HostRun;
+	/** Overrides `renderTimeoutSec(frames)`. */
+	timeoutSec?: number;
 }): Promise<void> {
 	const output = storyboardOutput(input.compositionId, input.storyboard);
 	if (!output) throw new Error(`${input.compositionId} has no Rust export`);
 	const jobFile = path.join(input.workDir, `${input.jobId}.host.json`);
+	const limitSec = input.timeoutSec ?? renderTimeoutSec(output.frames);
+	const deadline = Date.now() + limitSec * 1000;
+	let timedOut = false;
 	const run: HostRun = {
 		...input.run,
-		cancelled: input.cancelled,
+		cancelled: () => {
+			if (Date.now() > deadline) timedOut = true;
+			return timedOut || input.cancelled();
+		},
 		onPhase: (phase) => input.onPhase(`rust: ${phase}`),
 		onFrame: (frame, frames) => input.onProgress(frame / frames, `rust: frame ${frame}/${frames}`),
 	};
@@ -156,6 +176,10 @@ export async function renderWithRust(input: {
 		cleanup = inputs.cleanup;
 		await writeHostJob(jobFile, hostJob(input.storyboard, output, inputs.media, input.outPath));
 		await hostRender(jobFile, run);
+	} catch (error) {
+		if (timedOut && error instanceof HostCancelled)
+			throw new Error(`render host exceeded ${limitSec} s for ${output.frames} frames`);
+		throw error;
 	} finally {
 		await cleanup();
 		await rm(jobFile, { force: true });

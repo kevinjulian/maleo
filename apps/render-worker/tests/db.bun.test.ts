@@ -191,6 +191,18 @@ describe("setPhase", () => {
 		expect(got.phase).toBe("rendering");
 		expect(got.phase_detail).toBe("frame 12/300");
 	});
+
+	it("renews a running job's lease, so a long render that reports is not reclaimed", () => {
+		const j = newJob();
+		db.run(`UPDATE render_jobs SET status='running', leased_at=?, attempts=1 WHERE id=?`, [
+			Date.now() - 999_999,
+			j.id,
+		]);
+		setPhase(j.id, "rendering", "rust: frame 9000/18000");
+		expect(getJob(j.id)!.leased_at).toBeGreaterThan(Date.now() - 5_000);
+		reclaimStale(60_000);
+		expect(getJob(j.id)!.status).toBe("running");
+	});
 });
 
 describe("image_status (per-scene pill plumbing)", () => {

@@ -51,7 +51,7 @@ const {
 } = await import("../src/db");
 const { tick } = await import("../src/worker");
 const { listComparisons } = await import("../src/comparisons-db");
-const { chooseRenderer } = await import("../src/rust-export");
+const { chooseRenderer, renderWithRust, renderTimeoutSec } = await import("../src/rust-export");
 
 mkdirSync(join(ROOT, "public", "test"), { recursive: true });
 execFileSync("ffmpeg", [
@@ -204,6 +204,32 @@ describe("Rust export in the render worker", () => {
 		} finally {
 			void api.stop(true);
 		}
+	});
+
+	test("a Rust render past its frame-count limit stops the host and fails with the limit", async () => {
+		process.env.FAKE_HOST_MODE = "slow";
+		expect(renderTimeoutSec(1800)).toBe(120 + 7200);
+		const started = Date.now();
+		const run = renderWithRust({
+			jobId: "timeout",
+			compositionId: "StoryboardReel",
+			storyboard: storyboard as never,
+			outPath: join(ROOT, "timeout.mp4"),
+			workDir: ROOT,
+			publicBase: BASE,
+			cancelled: () => false,
+			onPhase: () => {},
+			onProgress: () => {},
+			timeoutSec: 1,
+			run: { pollMs: 50 },
+		});
+		const failure = await run.then(
+			() => null,
+			(error: unknown) => (error instanceof Error ? error.message : String(error)),
+		);
+		expect(failure).toBe("render host exceeded 1 s for 30 frames");
+		expect(Date.now() - started).toBeLessThan(5_000);
+		expect(existsSync(join(ROOT, "timeout.mp4"))).toBe(false);
 	});
 
 	const real = existsSync(REAL) ? test : test.skip;

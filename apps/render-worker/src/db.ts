@@ -326,8 +326,15 @@ export function updateJob(id: string, patch: Partial<Job>): void {
 	db.run(`UPDATE render_jobs SET ${set} WHERE id = ?`, [...values, id]);
 }
 
+// Every phase or progress report renews a running job's lease, so `reclaimStale`
+// takes only a job whose worker stopped reporting, not a long render.
 export function setPhase(id: string, phase: JobPhase, detail?: string): void {
-	updateJob(id, { phase, phase_detail: detail ?? null });
+	db.run(
+		`UPDATE render_jobs SET phase = ?, phase_detail = ?,
+       leased_at = CASE WHEN status = 'running' THEN ? ELSE leased_at END
+     WHERE id = ?`,
+		[phase, detail ?? null, Date.now(), id],
+	);
 }
 
 // Re-queue a job for retry: only if it has attempts left and isn't terminal-ok.
