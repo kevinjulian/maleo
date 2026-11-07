@@ -37,7 +37,8 @@ export function adminRenderComparisonRoutes(): Hono {
 	app.get("/report", (c) => forward(c, "/report"));
 	app.get("/", (c) => {
 		const status = c.req.query("status");
-		return forward(c, status ? `/?status=${encodeURIComponent(status)}` : "/");
+		// No trailing slash: the worker routes `/comparisons`, not `/comparisons/`.
+		return forward(c, status ? `?status=${encodeURIComponent(status)}` : "");
 	});
 	app.get("/:id", (c) => forward(c, `/${encodeURIComponent(c.req.param("id"))}`));
 	app.post("/:id/explain", async (c) => {

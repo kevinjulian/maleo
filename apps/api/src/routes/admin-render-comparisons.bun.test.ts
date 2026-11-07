@@ -20,6 +20,8 @@ const worker = Bun.serve({
 		});
 		if (url.pathname === "/comparisons/report")
 			return Response.json({ state: "open", compared: 3 });
+		// The worker matches `/comparisons` exactly; `/comparisons/` is a 404 there.
+		if (url.pathname === "/comparisons") return Response.json({ items: [{ id: "c-1" }] });
 		if (url.pathname === "/comparisons/c-1/explain")
 			return Response.json({ id: "c-1", explained_by: "x" });
 		if (url.pathname === "/comparisons/c-2/explain")
@@ -71,6 +73,16 @@ describe("admin render comparisons (p2-export 4.3)", () => {
 			path: "/comparisons/report",
 			auth: "Bearer worker-token",
 		});
+	});
+
+	test("an administrator lists comparisons, filtered by status", async () => {
+		const owner = testApp(adminRoutes());
+		const all = await owner.request("/render-comparisons");
+		expect(all.status).toBe(200);
+		expect(await all.json()).toEqual({ items: [{ id: "c-1" }] });
+		const failed = await owner.request("/render-comparisons?status=failed");
+		expect(failed.status).toBe(200);
+		expect(seen.map((s) => s.path)).toEqual(["/comparisons", "/comparisons?status=failed"]);
 	});
 
 	test("an explanation records the administrator as the explainer and is audited", async () => {
