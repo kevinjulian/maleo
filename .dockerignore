@@ -76,3 +76,6 @@ spikes/
 crates/renderer/corpus/
 # Source-derived numeric fixtures and the native golden harness are test-only.
 crates/renderer/tests/
+# Except the golden SSIM scorer: the render host compiles the same file for the
+# production comparison (crates/render-host/src/compare.rs, p2-export E7).
+!crates/renderer/tests/golden/compare.rs
