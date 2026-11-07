@@ -199,17 +199,14 @@ for (const width of [1440, 320])
 				await page.getByRole("button", { name: "Hide panel", exact: true }).click();
 
 				if (!phone) {
-					// Export during the upload: the server render waits and names the file; the draft discloses the local copy.
+					// Export during the upload: both exports wait and name the file (p2-export).
 					await page.getByRole("button", { name: "Export Video" }).click();
 					const menu = page.getByRole("menu");
 					await expect(menu).toContainText(
 						"camera.mp4 is still uploading. Wait for it to finish before export.",
 					);
-					await expect(menu).toContainText(
-						"Fast render uses this browser's copy of 1 file still uploading",
-					);
 					await expect(menu.getByRole("menuitem", { name: /Server render/ })).toBeDisabled();
-					await expect(menu.getByRole("menuitem", { name: /Fast render/ })).toBeEnabled();
+					await expect(menu.getByRole("menuitem", { name: /Browser export/ })).toBeDisabled();
 					await page.screenshot({ path: testInfo.outputPath("export-menu.png") });
 					await page.keyboard.press("Escape");
 					if (await menu.isVisible())

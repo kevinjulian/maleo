@@ -85,6 +85,8 @@ MALEO_MEDIA_S3_REGION            optional; defaults to us-east-1
 MALEO_MEDIA_CORS_ORIGIN          the exact web origin, scheme and port; never *
 MALEO_GENERATION_CONCURRENCY_PER_KIND  optional; defaults to 3 here
 MALEO_BIND_ADDRESS               self-host only; defaults to 127.0.0.1
+MALEO_EXPORT_RENDERER            optional; export authority, remotion (default) or rust
+MALEO_EXPORT_SHADOW              optional; on runs shadow comparisons; defaults to off here
 ```
 
 `MALEO_API_PUBLIC_URL` and `MALEO_WEB_PUBLIC_URL` must name the domains the
@@ -141,6 +143,57 @@ For rollback, deploy previous image and Compose revision while retaining
 render volumes and shared object storage. Preserve any existing external render
 queue before replacing its configured address. A rollback can restore previous
 application behavior while leaving the original export outage unresolved.
+
+### Export renderer, shadow runs and the switch
+
+Two renderers can make a server export: Remotion and the Rust render host
+(`maleo-render`). `MALEO_EXPORT_RENDERER` sets the authoritative one. The
+worker reads it when a job starts. With `rust`, a storyboard job on the local
+backend renders through Rust when the host covers every frame. Every other job
+renders through Remotion, and the job's `renderer_note` gives the reason.
+
+The image carries the Rust host, Mesa software Vulkan (lavapipe), and an LGPL
+FFmpeg build with OpenH264. `MALEO_FFMPEG`, `MALEO_FFPROBE` and
+`MALEO_RENDER_HOST` locate them; the image sets all three. Do not replace the
+FFmpeg build with a GPL build: `THIRD_PARTY_NOTICES.md` records the licence
+terms.
+
+With `MALEO_EXPORT_SHADOW=on`, each finished export queues a shadow job on the
+other renderer. The shadow uses the prepared storyboard and the same media, so
+voiceover and image generation do not run again. Shadow jobs:
+
+- start only when no authoritative job is queued;
+- never appear in job lists, project status, the Video collection or charges;
+- never upload output.
+
+A shadow job that starts runs to its end: a queued export waits for it. On a
+slow host this delay can be long, so measure it before you set `on`.
+
+After a shadow ends, the worker compares the two outputs with the criteria in
+`apps/render-worker/comparison.json` and writes a `render_comparisons` row. A
+failed comparison keeps its sampled frames, difference images and
+`scores.json` in the worker's `out/comparisons/<shadow id>/` for 30 days. A
+shadow that fails, or that the Rust host does not cover, also writes a row.
+
+Instance administrators read and explain the comparisons through the API:
+
+```text
+GET  /api/admin/render-comparisons/report     the observation window
+GET  /api/admin/render-comparisons?status=failed
+GET  /api/admin/render-comparisons/:id        scores and the artifact directory
+POST /api/admin/render-comparisons/:id/explain
+     {"cause": "...", "resolution": "rust-fix" | "remotion-defect" | "tolerance-change",
+      "ref": "<commit or comparison.json version>", "deployedAt": "<ISO time>"}
+```
+
+A `rust-fix` explanation needs its commit (`ref`) and its deployment time
+(`deployedAt`); the window restarts from that deployment. The report states
+`switchAllowed` when the window spans at least 14 days and 50 compared jobs and
+has no unexplained divergence. The setting is not enforced in code. To switch,
+record the report, set `MALEO_EXPORT_RENDERER=rust` and redeploy. To roll back,
+set `remotion` and redeploy; jobs already finished keep their output. Keep
+`MALEO_EXPORT_SHADOW=on` after the switch to continue the comparison in the
+other direction.
 
 ## The AI text provider and the agent
 

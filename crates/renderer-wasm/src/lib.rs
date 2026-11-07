@@ -43,6 +43,8 @@
 //!   crossing this boundary. This does not create or activate an audio device.
 //! - `project_audio`, `audio_requests`: production mix projection and exact bounded
 //!   local source windows for a device-rate block, without GPU initialization.
+//! - `project_coverage(json, fps, frames)`: the coverage problems of every frame,
+//!   each once at its first time, for export eligibility (p2-export E1). No GPU.
 
 #[cfg(target_arch = "wasm32")]
 mod browser;
@@ -59,3 +61,8 @@ pub use media_pool::MediaPool;
 mod audio;
 #[cfg(target_arch = "wasm32")]
 pub use audio::{PcmBudget, audio_requests, mix_audio, project_audio};
+
+#[cfg(target_arch = "wasm32")]
+mod coverage;
+#[cfg(target_arch = "wasm32")]
+pub use coverage::project_coverage;

@@ -41,6 +41,7 @@ import { TimelineBottomBar } from "./timeline-bottom-bar.tsx";
 import { clipGroupOptions, resolveClipSubject } from "./clip-property-groups.tsx";
 import { IconButton } from "@design-system/components/icon-button.tsx";
 
+import type { ExportSource } from "@models/render/export-coverage.ts";
 import { useTimelineEditorState } from "./use-timeline-editor-state.ts";
 import { useTimelineEditorActions } from "./use-timeline-editor-actions.ts";
 
@@ -52,6 +53,8 @@ export interface TimelineEditorProps {
 	selectionStore: SelectionStore;
 	/** Hands the playhead up to the shell; see `usePreviewComposition`. */
 	onPlayheadReady?: (playhead: PlayheadHandle) => void;
+	/** Hands a reader of the export storyboard up to the shell (p2-export E1). */
+	onExportSource?: (read: () => ExportSource) => void;
 	config: Config;
 	setConfig: Dispatch<SetStateAction<Config>>;
 	/** The workspace's reference material as one value (see

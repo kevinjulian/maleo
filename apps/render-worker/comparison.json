@@ -1,0 +1,12 @@
+{
+	"version": 1,
+	"corpusFrame": 0.98,
+	"encodingAllowance": {
+		"value": 0.025,
+		"reason": "Task 4.2 calibration (2026-11-07, openspec/changes/p2-export/evidence/comparison-calibration.md): one OpenH264 re-encode of a Remotion export lost at most 0.0109 SSIM over 10 corpus cases. A comparison pair holds two independent H.264 encodes (Remotion x264 and host OpenH264), so the allowance is twice that loss plus a 0.003 margin."
+	},
+	"durationFrames": 1,
+	"loudness": { "windowMs": 100, "toleranceDb": 1.5, "floorDbfs": -50 },
+	"onsetFrames": 1,
+	"lowered": {}
+}

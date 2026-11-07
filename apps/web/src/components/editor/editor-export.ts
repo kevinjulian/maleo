@@ -1,103 +1,19 @@
-/* The two ways a project leaves the editor: the fast in-browser draft, and the
- * submit that saves the storyboard and hands it to the render worker (video) or
- * to the queue (image, text).
+/* The server submit: it saves the storyboard and hands it to the render worker
+ * (video) or to the queue (image, text). Browser export lives in
+ * `hooks/editor/use-browser-export.ts`.
  *
  * Split out of `create-content.tsx`.
  */
-import type { Dispatch, SetStateAction } from "react";
 import type { Config, ContentType } from "@maleo/shared";
-import { exportDraft } from "@models/render/export.ts";
-import { mediaFetchTarget } from "@api/media.ts";
-import { resolveMediaUrl } from "@models/core/pending-media-sources.ts";
-import { clipId } from "@models/timeline/timeline-clips.ts";
 import { submitProject } from "@api/projects.ts";
 import { submitVideoRender } from "@api/project-render.ts";
-import { errMsg } from "@models/core/cc-helpers.ts";
-import { DRAFT_DIMS } from "@models/timeline/timeline-editor-model.ts";
-import { buildDraftRequest, timelineTotalSec } from "@models/render/draft-request.ts";
-import type { RenderQueueStatus } from "@models/render/render-queue.ts";
+import { timelineTotalSec } from "@models/render/timeline-extent.ts";
 import type { CreativeSettings } from "@hooks/editor/use-creative-settings.ts";
 import type { ReferenceLibraryState } from "@hooks/editor/use-reference-library.ts";
 import { renderPresentation } from "./editor-settings.tsx";
 import type { ContentPersistence } from "@hooks/editor/use-content-persistence.ts";
 import type { EditorDocument } from "./use-editor-document.ts";
 import { captionOutputBlockers } from "@maleo/shared";
-
-export async function exportFastDraft(input: {
-	doc: EditorDocument;
-	aspect: string;
-	filename: string;
-	setRenderStatus: Dispatch<SetStateAction<RenderQueueStatus | null>>;
-	setRendering: Dispatch<SetStateAction<boolean>>;
-	setSaveError: Dispatch<SetStateAction<string | null>>;
-}): Promise<void> {
-	const { doc, setRenderStatus, setRendering, setSaveError } = input;
-	const { store } = doc;
-	// Clip-native (G1): a scene's effective start is its clip's start on the doc.
-	const sceneStart = (id: number): number =>
-		store.getDoc().clips.find((c) => c.id === clipId("scene", id))?.startSec ?? 0;
-	setRenderStatus({
-		id: "fast-draft",
-		status: "running",
-		phase: "starting",
-		progress: 0,
-		error: null,
-	});
-	setRendering(true);
-	try {
-		const draft = buildDraftRequest({
-			clips: store.getDoc().clips,
-			scenes: doc.scenes,
-			audioOverlays: doc.audioOverlays,
-			captions: doc.captions,
-			trackFlags: doc.trackFlags,
-			sceneStart,
-		});
-		const dims = DRAFT_DIMS[input.aspect] ?? DRAFT_DIMS["9:16"]!;
-		const blob = await exportDraft({
-			...draft,
-			// The draft may render a file still importing from the browser's copy (disclosed in the export menu).
-			resolveMedia: (url: string, stream?: boolean) =>
-				mediaFetchTarget(resolveMediaUrl(url), stream),
-			width: dims.w,
-			height: dims.h,
-			fps: 30,
-			onProgress: (fraction, label) =>
-				setRenderStatus({
-					id: "fast-draft",
-					status: "running",
-					phase: label,
-					progress: Math.max(0, Math.min(1, fraction)),
-					error: null,
-				}),
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = input.filename;
-		a.click();
-		URL.revokeObjectURL(url);
-		setRenderStatus({
-			id: "fast-draft",
-			status: "done",
-			phase: "done",
-			progress: 1,
-			error: null,
-		});
-	} catch (err) {
-		const msg = errMsg(err);
-		setSaveError(`Fast render failed: ${msg}`);
-		setRenderStatus({
-			id: "fast-draft",
-			status: "error",
-			phase: "fast_render",
-			progress: 0,
-			error: msg,
-		});
-	} finally {
-		setRendering(false);
-	}
-}
 
 export async function persistSubmission(input: {
 	projectId: string;

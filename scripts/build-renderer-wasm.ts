@@ -10,9 +10,10 @@
  *   cargo install wasm-bindgen-cli --version 0.2.129 --locked
  *
  * It also bundles the preview worker (apps/web/src/preview-worker/worker.ts,
- * OpenSpec p2-preview-runtime D5) to target/renderer-wasm/preview-worker.js.
- * `--worker` bundles only the worker (the Dockerfile builds the module in a
- * Rust stage without Bun).
+ * OpenSpec p2-preview-runtime D5) to target/renderer-wasm/preview-worker.js and
+ * the export worker (apps/web/src/export-worker/worker.ts, OpenSpec p2-export
+ * E2) to target/renderer-wasm/export-worker.js. `--worker` bundles only the
+ * workers (the Dockerfile builds the module in a Rust stage without Bun).
  *
  * The web serves target/renderer-wasm/ at /renderer/ (app/renderer-routes.ts). */
 import { execFileSync } from "node:child_process";
@@ -73,23 +74,32 @@ export function buildRendererWasm(): string {
 	return join(RENDERER_WASM_DIR, "maleo_renderer_wasm_bg.wasm");
 }
 
-/** Bundles the preview worker beside the module it loads. */
-export async function buildPreviewWorker(): Promise<string> {
+async function bundleWorker(entry: string, name: string): Promise<string> {
 	const result = await Bun.build({
-		entrypoints: [join(REPO_ROOT, "apps/web/src/preview-worker/worker.ts")],
+		entrypoints: [join(REPO_ROOT, entry)],
 		outdir: RENDERER_WASM_DIR,
-		naming: "preview-worker.js",
+		naming: name,
 		target: "browser",
 		format: "esm",
 		minify: true,
 	});
-	if (!result.success) throw new AggregateError(result.logs, "preview worker bundle failed");
-	return join(RENDERER_WASM_DIR, "preview-worker.js");
+	if (!result.success) throw new AggregateError(result.logs, `${name} bundle failed`);
+	return join(RENDERER_WASM_DIR, name);
+}
+
+/** Bundles the preview worker beside the module it loads. */
+export function buildPreviewWorker(): Promise<string> {
+	return bundleWorker("apps/web/src/preview-worker/worker.ts", "preview-worker.js");
+}
+
+/** Bundles the export worker beside the module it loads. */
+export function buildExportWorker(): Promise<string> {
+	return bundleWorker("apps/web/src/export-worker/worker.ts", "export-worker.js");
 }
 
 if (import.meta.main) {
-	const worker = await buildPreviewWorker();
-	console.log(`${worker}: ${statSync(worker).size} bytes`);
+	for (const worker of [await buildPreviewWorker(), await buildExportWorker()])
+		console.log(`${worker}: ${statSync(worker).size} bytes`);
 	if (process.argv.includes("--worker")) process.exit(0);
 	const module = buildRendererWasm();
 	const raw = statSync(module).size;

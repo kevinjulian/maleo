@@ -9,6 +9,7 @@ members = [
 	"crates/media",
 	"crates/preview",
 	"crates/renderer",
+	"crates/render-host",
 	"crates/renderer-wasm",
 ]
 exclude = ["vendor/vello_shaders"]
@@ -43,3 +44,18 @@ strip = true
 # SSIMs and draws as many frames; unoptimized it took 7.5 minutes.
 [profile.dev.package.maleo-renderer]
 opt-level = 3
+
+# The host's tests score full-size frames by SSIM; unoptimised, one case takes minutes.
+[profile.dev.package.maleo-render-host]
+opt-level = 3
+
+# The render host is a native server binary: built for speed, not size, with
+# `cargo build --profile render-host -p maleo-render-host`. The WASM builds keep
+# `release` (p2-export E4).
+[profile.render-host]
+inherits = "release"
+opt-level = 3
+lto = "thin"
+panic = "unwind"
+strip = true
+

@@ -12,6 +12,9 @@ Generated from `.env.example`. Bun auto-loads `.env` — no dotenv needed.
 | `MALEO_VIDEO_PORT`         | No       | HTTP port (default `8091`).                                                          | `8091`                  |
 | `MALEO_VIDEO_CORS_ORIGINS` | No       | Comma-separated allowlist. CORS off if empty.                                        | `http://localhost:8090` |
 | `MALEO_VIDEO_DB`           | No       | SQLite path for job queue.                                                           | `data/jobs.db`          |
+| `MALEO_EXPORT_RENDERER`    | No       | Export authority: `remotion` (default) or `rust` (p2-export E8).                     | `remotion`              |
+| `MALEO_EXPORT_SHADOW`      | No       | `off` turns shadow comparison runs off; any other value runs them.                   | `on`                    |
+| `MALEO_RENDER_HOST`        | No       | Rust render host binary (default `maleo-render` on `PATH`).                          | `maleo-render`          |
 
 ## TTS
 

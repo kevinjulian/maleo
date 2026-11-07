@@ -186,7 +186,7 @@ for (const width of [1440, 320, 844])
 						page.getByText("Camera: source processing is still pending", { exact: false }),
 					).toBeVisible();
 					await expect(page.getByRole("menuitem", { name: /Server render/ })).toBeDisabled();
-					await expect(page.getByRole("menuitem", { name: /Fast render/ })).toBeDisabled();
+					await expect(page.getByRole("menuitem", { name: /Browser export/ })).toBeDisabled();
 					await page.getByRole("button", { name: "Export Video", exact: true }).click();
 				}
 				await page.getByRole("button", { name: "Cancel reverse", exact: true }).click();

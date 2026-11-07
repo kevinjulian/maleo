@@ -10,10 +10,28 @@ import { PRESETS } from "@maleo/video/lib/presets";
 import { prepareStoryboard } from "@maleo/video/lib/prepare-storyboard";
 import { assertRenderStoryboard } from "@maleo/video/lib/validate-storyboard";
 import { classifyRenderError } from "@maleo/video/lib/error-codes";
-import { getJob, leaseNext, reclaimStale, setPhase, updateJob } from "./db";
+import {
+	getJob,
+	insertShadowJob,
+	leaseNext,
+	reclaimStale,
+	setPhase,
+	updateJob,
+	type Job,
+} from "./db";
 import { publishExportPoster } from "./export-poster";
 import { putMedia } from "@maleo/storage";
 import { materializeManagedInputs } from "./managed-inputs";
+import { pruneComparisonArtifacts, settleShadow } from "./shadow-settle";
+import type { Storyboard } from "@maleo/video/schema";
+import {
+	chooseRenderer,
+	otherRenderer,
+	renderWithRust,
+	shadowEnabled,
+	shadowReferencePath,
+} from "./rust-export";
+import { HostCancelled, HostRefused } from "./rust-host";
 import { VIDEO_ENTRY, VIDEO_ROOT } from "@maleo/video/paths";
 
 let cachedServeUrl: string | null = null;
@@ -137,6 +155,138 @@ function assertNotCancelled(jobId: string): void {
 	if (isCancelled(jobId)) throw new CancelledError();
 }
 
+type RenderProps = Parameters<typeof renderMediaOnLambda>[0]["inputProps"];
+
+async function renderRust(
+	jobId: string,
+	compositionId: string,
+	storyboard: Storyboard,
+	outPath: string,
+	outDir: string,
+): Promise<void> {
+	setPhase(jobId, "rendering", "rust: starting");
+	try {
+		await renderWithRust({
+			jobId,
+			compositionId,
+			storyboard,
+			outPath,
+			workDir: outDir,
+			publicBase: process.env.MALEO_VIDEO_PUBLIC_BASE ?? "",
+			cancelled: () => isCancelled(jobId),
+			onPhase: (detail) => setPhase(jobId, "rendering", detail),
+			onProgress: (progress, detail) => {
+				updateJob(jobId, { progress });
+				setPhase(jobId, "rendering", detail);
+			},
+		});
+	} catch (error) {
+		if (error instanceof HostCancelled) throw new CancelledError();
+		throw error;
+	}
+}
+
+async function renderRemotionLocal(
+	jobId: string,
+	preset: (typeof PRESETS)[string],
+	props: RenderProps,
+	outPath: string,
+): Promise<void> {
+	setPhase(jobId, "bundling");
+	const serveUrl = await getServeUrl();
+	const composition = await selectComposition({
+		serveUrl,
+		id: preset.compositionId,
+		inputProps: props,
+	});
+	assertNotCancelled(jobId);
+	setPhase(jobId, "rendering");
+	await renderMedia({
+		composition,
+		serveUrl,
+		// Bound frame workers; auto-detection can produce NaN in Bun containers.
+		concurrency: 1,
+		codec: preset.codec,
+		outputLocation: outPath,
+		inputProps: props,
+		videoBitrate: preset.videoBitrate,
+		audioBitrate: preset.audioBitrate,
+		pixelFormat: preset.pixelFormat,
+		onProgress: ({ progress }) => {
+			updateJob(jobId, { progress });
+			setPhase(jobId, "rendering", `${Math.round(progress * 100)}%`);
+		},
+	});
+}
+
+/** Renders a shadow job on its own renderer to `out/shadow/` (p2-export E6). The
+ * output is never published and the authoritative job is never written. A Rust
+ * shadow the host does not cover ends as INELIGIBLE with the reason. */
+async function runShadow(job: Job): Promise<void> {
+	const preset = PRESETS[job.preset];
+	if (!preset) throw new Error(`unknown preset: ${job.preset}`);
+	if (!job.workspace) throw new Error("render job has no owning workspace");
+	const outDir = path.resolve("out");
+	const shadowDir = path.join(outDir, "shadow");
+	await fs.mkdir(shadowDir, { recursive: true });
+	const reference = shadowReferencePath(outDir, job.id);
+	const outPath = path.join(shadowDir, `${job.id}.mp4`);
+	let kept = false;
+	try {
+		setPhase(job.id, "validating");
+		const isStoryboard = job.preset.startsWith("storyboard-");
+		const parsed = isStoryboard
+			? storyboardSchema.parse(JSON.parse(job.product_json))
+			: productSchema.parse(JSON.parse(job.product_json));
+		const storyboard = "scenes" in parsed ? parsed : null;
+		if (job.renderer === "rust") {
+			const choice = await chooseRenderer({
+				jobId: job.id,
+				compositionId: preset.compositionId,
+				storyboard,
+				backend: "local",
+				workDir: outDir,
+				want: "rust",
+			});
+			if (choice.renderer !== "rust" || !storyboard) {
+				updateJob(job.id, {
+					status: "error",
+					phase: "failed",
+					renderer_note: choice.note,
+					error: choice.note,
+					error_code: "INELIGIBLE",
+					finished_at: Date.now(),
+				});
+				return;
+			}
+		}
+		const managed = await materializeManagedInputs(parsed, job.workspace);
+		try {
+			const props = managed.value;
+			if (job.renderer === "rust" && "scenes" in props)
+				await renderRust(job.id, preset.compositionId, props, outPath, outDir);
+			else await renderRemotionLocal(job.id, preset, props, outPath);
+		} finally {
+			await managed.cleanup();
+		}
+		updateJob(job.id, {
+			status: "done",
+			phase: "done",
+			phase_detail: null,
+			output_path: outPath,
+			progress: 1,
+			finished_at: Date.now(),
+		});
+		// Both files stay for the comparison; `settleShadow` removes them.
+		kept = true;
+	} finally {
+		if (!kept) {
+			await fs.rm(reference, { force: true });
+			await fs.rm(outPath, { force: true });
+		}
+	}
+}
+
 async function runJob(
 	jobId: string,
 	productJsonStr: string,
@@ -239,7 +389,18 @@ async function runJob(
 		// lambda config degrades to the local path and says so on the job.
 		let lambdaFellBack = false;
 		const lambda = backend === "lambda" ? lambdaConfig() : null;
-		if (backend === "lambda" && lambda) {
+		// Authority and eligibility decide the renderer when the job starts (p2-export E6).
+		const choice = await chooseRenderer({
+			jobId,
+			compositionId: preset.compositionId,
+			storyboard: "scenes" in props ? props : null,
+			backend: backend === "lambda" && lambda ? "lambda" : "local",
+			workDir: outDir,
+		});
+		updateJob(jobId, { renderer: choice.renderer, renderer_note: choice.note });
+		if (choice.renderer === "rust" && "scenes" in props) {
+			await renderRust(jobId, preset.compositionId, props, outPath, outDir);
+		} else if (backend === "lambda" && lambda) {
 			await renderOnLambda(jobId, preset, props, outPath, lambda);
 		} else {
 			if (backend === "lambda") {
@@ -249,32 +410,7 @@ async function runJob(
 				);
 				updateJob(jobId, { backend: "local" });
 			}
-			setPhase(jobId, "bundling");
-			const serveUrl = await getServeUrl();
-			const composition = await selectComposition({
-				serveUrl,
-				id: preset.compositionId,
-				inputProps: props,
-			});
-
-			assertNotCancelled(jobId);
-			setPhase(jobId, "rendering");
-			await renderMedia({
-				composition,
-				serveUrl,
-				// Bound frame workers; auto-detection can produce NaN in Bun containers.
-				concurrency: 1,
-				codec: preset.codec,
-				outputLocation: outPath,
-				inputProps: props,
-				videoBitrate: preset.videoBitrate,
-				audioBitrate: preset.audioBitrate,
-				pixelFormat: preset.pixelFormat,
-				onProgress: ({ progress }) => {
-					updateJob(jobId, { progress });
-					setPhase(jobId, "rendering", `${Math.round(progress * 100)}%`);
-				},
-			});
+			await renderRemotionLocal(jobId, preset, props, outPath);
 		}
 
 		setPhase(jobId, "finalizing");
@@ -321,6 +457,20 @@ async function runJob(
 			finished_at: Date.now(),
 		});
 		// Delivery already succeeded. A cleanup failure must not requeue the render.
+		if (shadowEnabled()) {
+			// The prepared input with its stable managed URLs: the shadow does not prepare again.
+			const ownerNow = getJob(jobId);
+			if (ownerNow) {
+				const shadow = insertShadowJob(
+					ownerNow,
+					otherRenderer(choice.renderer),
+					JSON.stringify(managed.restore(props)),
+				);
+				const reference = shadowReferencePath(outDir, shadow.id);
+				await fs.mkdir(path.dirname(reference), { recursive: true });
+				await fs.rename(outPath, reference);
+			}
+		}
 		await fs
 			.rm(outPath, { force: true })
 			.catch((error) => console.warn(`[worker] cleanup failed for ${jobId}: ${error}`));
@@ -343,7 +493,8 @@ export async function tick(workerId = WORKER_ID): Promise<boolean> {
 		console.log(
 			`[worker:${workerId}] start ${job.id} (${job.preset}, ${job.backend}) attempt ${job.attempts}`,
 		);
-		await runJob(job.id, job.product_json, job.preset, job.backend);
+		if (job.shadow_of) await runShadow(job);
+		else await runJob(job.id, job.product_json, job.preset, job.backend);
 		console.log(`[worker:${workerId}] done ${job.id}`);
 	} catch (err) {
 		if (err instanceof CancelledError) {
@@ -352,6 +503,17 @@ export async function tick(workerId = WORKER_ID): Promise<boolean> {
 		}
 		const msg = err instanceof Error ? err.message : String(err);
 		const classified = classifyRenderError(msg);
+		// A coverage refusal is a property of the storyboard; another attempt refuses again.
+		if (err instanceof HostRefused) {
+			updateJob(job.id, {
+				status: "error",
+				phase: "failed",
+				error: msg.slice(0, 500),
+				error_code: classified.code,
+				finished_at: Date.now(),
+			});
+			return true;
+		}
 		const fresh = getJob(job.id);
 		const attempts = fresh?.attempts ?? job.attempts;
 		const max = fresh?.max_attempts ?? job.max_attempts;
@@ -382,6 +544,12 @@ export async function tick(workerId = WORKER_ID): Promise<boolean> {
 				finished_at: Date.now(),
 			});
 		}
+	} finally {
+		// Every shadow ends in one comparison row: passed, failed or ineligible (E7).
+		if (job.shadow_of)
+			await settleShadow(job.id).catch((error) =>
+				console.error(`[worker:${workerId}] comparison of ${job.id} failed`, error),
+			);
 	}
 	return true;
 }
@@ -420,6 +588,9 @@ export function startWorker(intervalMs = 2000): void {
 			} catch (err) {
 				console.error("[worker] reclaim error", err);
 			}
+			void pruneComparisonArtifacts().catch((err) =>
+				console.error("[worker] comparison artifact prune error", err),
+			);
 		},
 		Math.max(30_000, Math.floor(staleMs / 4)),
 	);

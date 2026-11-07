@@ -11,7 +11,7 @@ import {
 	countJobs,
 	jobOwners,
 	findRecentByHash,
-	getJob,
+	getVisibleJob,
 	insertJob,
 	listJobs,
 	pruneJobs,
@@ -19,6 +19,7 @@ import {
 	updateJob,
 } from "./db";
 import { startWorker, warmBundle } from "./worker";
+import { comparisonRoutes } from "./comparison-routes";
 import { z } from "zod";
 import { assertMediaStorageConfigured, verifyMediaStorageReady } from "@maleo/storage";
 
@@ -116,6 +117,7 @@ app.get("/public/*", async (c) => {
 });
 
 app.use("*", bearerAuth);
+app.route("/comparisons", comparisonRoutes());
 
 app.get("/presets", (c) =>
 	c.json({
@@ -188,7 +190,7 @@ app.post("/render", async (c) => {
 });
 
 app.get("/render/:id", (c) => {
-	const j = getJob(c.req.param("id"));
+	const j = getVisibleJob(c.req.param("id"));
 	if (!j) return c.json({ error: "not_found" }, 404);
 	return c.json(j);
 });
@@ -196,7 +198,8 @@ app.get("/render/:id", (c) => {
 // Server-side cancel: marks a queued/running job cancelled (the worker observes
 // it between phases and aborts). UI cancel now reflects a real state change.
 app.post("/render/:id/cancel", (c) => {
-	const j = cancelJob(c.req.param("id"));
+	const id = c.req.param("id");
+	const j = getVisibleJob(id) ? cancelJob(id) : null;
 	if (!j) return c.json({ error: "not_found" }, 404);
 	return c.json(j);
 });
@@ -209,17 +212,18 @@ app.post("/render/:id/retry", (c) => {
 	const refreshImages =
 		c.req.query("refresh_images") === "1" || c.req.query("refresh_images") === "true";
 	const id = c.req.param("id");
+	if (!getVisibleJob(id)) return c.json({ error: "not_found" }, 404);
 	const j = requeueJob(id, { force });
 	if (!j) return c.json({ error: "not_retryable" }, 409);
 	if (refreshImages) {
 		updateJob(id, { retry_images: 1 });
-		return c.json(getJob(id));
+		return c.json(getVisibleJob(id));
 	}
 	return c.json(j);
 });
 
 app.get("/render/:id/file", (c) => {
-	const j = getJob(c.req.param("id"));
+	const j = getVisibleJob(c.req.param("id"));
 	if (!j) return c.json({ error: "not_found" }, 404);
 	if ((j.status !== "done" && j.status !== "done_with_fallback") || !j.output_path) {
 		return c.json({ error: "not_ready", status: j.status }, 409);

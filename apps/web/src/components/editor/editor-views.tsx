@@ -46,11 +46,18 @@ interface EditorViewsProps {
 	chat: ContentChat;
 	selectionStore: TimelineProps["selectionStore"];
 	onPlayheadReady: TimelineProps["onPlayheadReady"];
+	onExportSource: TimelineProps["onExportSource"];
 	templates: TimelineProps["templates"];
 	onSelectTimelineTemplate: TimelineProps["onSelectTimelineTemplate"];
 	onOpenLibrary: TimelineProps["onOpenLibrary"];
 	onProcessingChange: TimelineProps["onProcessingChange"];
-	render: Pick<RenderFlow, "renderJobId" | "renderStatus" | "renderInfoOpen" | "setRenderInfoOpen">;
+	render: Pick<
+		RenderFlow,
+		"renderJobId" | "renderStatus" | "renderInfoOpen" | "setRenderInfoOpen"
+	> & {
+		/** Stops a running browser export; the status modal offers it. */
+		cancelBrowserExport: () => void;
+	};
 	initialScriptDensity?: ScriptDensity;
 	onCreateAnother?: () => void;
 }
@@ -68,6 +75,7 @@ export function EditorViews({
 	chat,
 	selectionStore,
 	onPlayheadReady,
+	onExportSource,
 	templates,
 	onSelectTimelineTemplate,
 	onOpenLibrary,
@@ -79,7 +87,8 @@ export function EditorViews({
 	const { refs, setRefs, pool, setPool, products, ensureMediaAsset } = library;
 	const { store, writers, scenes, slides, setSlides, posts, setPosts, projectReferences } = doc;
 	const { setScenes, setProjectReferences } = writers;
-	const { renderJobId, renderStatus, renderInfoOpen, setRenderInfoOpen } = render;
+	const { renderJobId, renderStatus, renderInfoOpen, setRenderInfoOpen, cancelBrowserExport } =
+		render;
 	const [railOpen, setRailOpen] = useShellChromeField(chrome, "railOpen");
 	const [chatOpen, setChatOpen] = useShellChromeField(chrome, "chatOpen");
 	const [editorMode] = useShellChromeField(chrome, "editorMode");
@@ -203,6 +212,7 @@ export function EditorViews({
 					onProcessingChange={onProcessingChange}
 					selectionStore={selectionStore}
 					onPlayheadReady={onPlayheadReady}
+					onExportSource={onExportSource}
 					config={config}
 					setConfig={setConfig}
 					library={library}
@@ -310,11 +320,16 @@ export function EditorViews({
 				<Modal
 					dismissOnBack
 					title="Render status"
-					sub="Live status from the render worker"
+					sub="Live status of the current export"
 					onClose={() => setRenderInfoOpen(false)}
 					width={440}
 				>
-					<RenderStatusBody status={renderStatus} jobId={renderJobId} chrome={chrome} />
+					<RenderStatusBody
+						status={renderStatus}
+						jobId={renderJobId}
+						chrome={chrome}
+						onCancelBrowserExport={cancelBrowserExport}
+					/>
 				</Modal>
 			)}
 		</>

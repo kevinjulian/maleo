@@ -185,6 +185,8 @@ services:
       MALEO_VIDEO_TOKEN: ${MALEO_VIDEO_TOKEN:?}
       MALEO_VIDEO_DB: /app/apps/render-worker/data/jobs.db
       MALEO_VIDEO_CONCURRENCY: 1
+      MALEO_EXPORT_RENDERER: ${MALEO_EXPORT_RENDERER:-remotion}
+      MALEO_EXPORT_SHADOW: ${MALEO_EXPORT_SHADOW:-off}
       MALEO_VIDEO_PUBLIC_BASE: http://127.0.0.1:8091/public
       MALEO_API_URL: http://api:8090
       MALEO_SERVICE_TOKEN: ${MALEO_SERVICE_TOKEN:?}

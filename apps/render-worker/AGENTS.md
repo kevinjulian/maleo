@@ -14,7 +14,21 @@ rendered files through `@maleo/storage`. The API reaches it through
 - `src/db.ts` — `render_jobs` schema and queue operations.
 - `src/auth.ts` — bearer-token guard.
 - `src/export-poster.ts` — bounded first-frame extraction and managed publication.
-- `src/managed-inputs.ts` — fetching API-managed media for a render.
+- `src/managed-inputs.ts` — fetching API-managed media for a render, checked
+  against the registry SHA-256 (`x-maleo-sha256`) while it streams.
+- `src/rust-export.ts` — renderer choice (`MALEO_EXPORT_RENDERER`, coverage) and
+  the Rust export path; `src/rust-host.ts` runs `maleo-render`
+  (`crates/render-host`) and maps its JSON lines and exit codes to the job;
+  `src/rust-inputs.ts` maps every media URL the host lists to a local file.
+  `tests/rust-export.isolated.ts` runs in its own process (see its header).
+- Shadow runs and the comparison (p2-export E6–E8): `src/db.ts` hides shadow
+  rows (`shadow_of`) from every operator query and leases them after
+  authoritative jobs; `src/worker.ts` queues and runs them;
+  `src/shadow-settle.ts` turns an ended shadow into a `render_comparisons` row
+  (`src/comparisons-db.ts`); `src/comparison.ts` measures the pair with the
+  criteria in `comparison.json`; `src/comparison-window.ts` computes the
+  observation window; `src/comparison-routes.ts` serves `/comparisons`.
+  `scripts/calibrate-comparison.ts` measures the encoding allowance.
 - `scripts/deploy-lambda.ts`, `scripts/render-lambda.ts` — Remotion Lambda setup
   and one-off cloud renders.
 
@@ -30,6 +44,11 @@ Compositions, schema, presets and storyboard preparation belong to
   `cwd/public`, and the bundler and `/public/*` read the same directory, so all
   three must keep resolving against one cwd.
 - Root `.env` only (`--env-file ../../.env`). No app-local `.env`.
+- A shadow job never writes its authoritative job and never uploads output. A
+  change to a `comparison.json` threshold bumps `version` and records its
+  reason.
+- `MALEO_EXPORT_RENDERER` (`remotion` default, `rust`) and `MALEO_EXPORT_SHADOW`
+  (`off` turns shadow runs off) are read when a job starts.
 
 ## Running
 

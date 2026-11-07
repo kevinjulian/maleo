@@ -538,8 +538,8 @@ Preview and production render project authored cues through
 are half-open, authored line breaks stay fixed, and cue style overrides merge
 over global appearance. Hidden tracks and disabled cues produce no output.
 Enabled cues that need refresh block export with a refresh-or-disable recovery.
-Fast draft uses the same cue text and intervals with plain canvas text; its
-menu discloses omitted caption styling and animation. SRT exports authored
+Browser export draws captions through the Rust renderer, the same as preview
+and server export. SRT exports authored
 intervals and line breaks without regrouping or requiring a voiceover track.
 Production render accepts imported-video timelines with no authored scenes;
 empty timelines still fail validation. Caption recognition clamps browser codec
@@ -608,8 +608,8 @@ Never run the prior TS executor and Rust as concurrent writers.
 
 `crates/renderer` draws video frames from the render storyboard with parley
 and vello on wgpu, and is held at parity with Remotion by a golden corpus
-(`crates/renderer/AGENTS.md`). Remotion stays the only preview and export
-renderer.
+(`crates/renderer/AGENTS.md`). Remotion stays the preview renderer and the
+server export renderer. Browser export uses the Rust renderer.
 
 ```bash
 cargo test -p maleo-renderer                         # unit tests and the golden parity gate
@@ -646,6 +646,35 @@ color correction, crop/flips, rectangle/ellipse masks and feather, supported
 blends, reveals, placement-specific transitions, timeline effects and scene
 decorations. Coverage still reports video media, visual templates and unbundled
 fonts. This does not switch normal preview or export away from Remotion.
+
+**Browser export.** The export menu's **Browser export** encodes the project in
+this tab through the Rust renderer (OpenSpec `p2-export`). The contract:
+
+- Eligibility: `coverage::project` must be empty for every output frame. The
+  menu loads the renderer module when it opens and shows the first unsupported
+  element and its time. A normal editor load never requests the module.
+- Preflight, in order: WebGPU adapter and H.264/AAC encoders, an estimated file
+  of at most 512 MiB, coverage, manifest blockers (`pending`, then `failed`),
+  then each used file's complete local bytes against the manifest size and
+  SHA-256. Each refusal names its cause. A browser limit, a missing download or
+  a hash mismatch reopens the menu with **Server render**. A file still
+  uploading or a missing source blocks both exports.
+- Capture: the storyboard is saved, then captured. The output is that
+  storyboard, and later edits stay in the document only.
+- Rendering: `/renderer/export-worker.js` runs its own renderer session at the
+  output size (`FORMAT_DIMS`, 30 fps). For each frame it seeks, supplies every
+  requested video frame from the preview's local files, draws, and encodes. A
+  frame with a coverage problem or a lost GPU device fails the export; it is
+  never encoded. Audio is the production Rust mix at 48 kHz stereo, encoded as
+  AAC. The worker measures the encoder's priming and writes it as the sound
+  track's edit list (`models/render/mp4-audio-priming.ts`).
+- Output: an H.264/AAC MP4 at 8 Mbit/s per 1080p (scaled by pixel count),
+  saved to this device. Cancel in the status dialog stops the worker and saves
+  nothing. Nothing is sent to the render worker.
+
+Proof: `apps/web/visual/browser-export*.spec.ts` (WebGPU Chromium) and
+`openspec/changes/p2-export/evidence/browser-export.md`. After editing the
+worker, rebuild with `bun scripts/build-renderer-wasm.ts --worker`.
 
 Option evidence lives in `corpus/manifest.json`; golden cases retain full-frame
 and region SSIM plus the two-pixel edge limit. Approved low-contrast cases can

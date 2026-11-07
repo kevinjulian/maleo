@@ -29,6 +29,9 @@
 	"output_storage": null,
 	"manifest_storage": null,
 	"preset_source": null,
+	"renderer": "rust",
+	"renderer_note": null,
+	"shadow_of": null,
 	"created_at": 1,
 	"started_at": null,
 	"finished_at": null

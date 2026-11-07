@@ -1,0 +1,29 @@
+[package]
+name = "maleo-render-host"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "Headless render host: draws a prepared render storyboard to frames for server export (OpenSpec p2-export E4)"
+
+[[bin]]
+name = "maleo-render"
+path = "src/main.rs"
+
+[dependencies]
+maleo-renderer = { path = "../renderer" }
+maleo-media = { path = "../media" }
+# SIGTERM from the render worker becomes a flag the frame loop checks (E4).
+signal-hook = { version = "=0.3.18", default-features = false }
+# The renderer's pins: one wgpu and image version in the workspace.
+wgpu = { version = "=30.0.1", default-features = false, features = [
+	"std",
+	"wgsl",
+	"metal",
+	"vulkan",
+] }
+image = { version = "=0.25.10", default-features = false, features = ["png", "jpeg"] }
+pollster = "=0.4.0"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = { version = "1.0.151", features = ["preserve_order", "float_roundtrip"] }
+

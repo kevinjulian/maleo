@@ -157,6 +157,13 @@ the prior reference mute state. Normal preview and export stay on Remotion.
   `target/renderer-wasm/`; the web serves both at `/renderer/`
   (`apps/web/src/app/renderer-routes.ts`) and starts the worker only in
   compare mode (`?renderer=compare`, `hooks/timeline/use-rust-compare.ts`).
+- Browser export: the same build bundles `apps/web/src/export-worker/worker.ts`
+  to `target/renderer-wasm/export-worker.js`. Each export loads its own module
+  instance and session at output size and steps frames while paused. It
+  reuses the preview worker's visual and audio media adapters and encodes with
+  MediaBunny. `project_coverage` (GPU-free, `coverage::project`) decides
+  eligibility. The main-thread side is
+  `apps/web/src/services/preview-media/browser-export.ts`.
 
 ## Preview session
 

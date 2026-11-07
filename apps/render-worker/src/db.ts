@@ -1,6 +1,7 @@
 import { Database } from "bun:sqlite";
 import path from "node:path";
 import fs from "node:fs";
+import crypto from "node:crypto";
 
 const DB_PATH = process.env.MALEO_VIDEO_DB ?? path.resolve("data/jobs.db");
 fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
@@ -44,6 +45,9 @@ const SCHEMA = `
     manifest_storage TEXT,
     thumbnail_storage TEXT,
     preset_source TEXT,
+    renderer TEXT NOT NULL DEFAULT 'remotion',
+    renderer_note TEXT,
+    shadow_of TEXT,
     created_at INTEGER NOT NULL,
     started_at INTEGER,
     finished_at INTEGER
@@ -54,6 +58,8 @@ const SCHEMA = `
 
 db.exec(SCHEMA);
 reconcileColumns(db);
+// Rows from before the renderer column were all Remotion renders (p2-export 3.4).
+db.exec("UPDATE render_jobs SET renderer = 'remotion' WHERE renderer IS NULL");
 
 // CREATE TABLE IF NOT EXISTS never adds columns to a pre-existing table, so an
 // older jobs.db is missing every column added above. Diff against the canonical
@@ -143,6 +149,12 @@ export type Job = {
 	manifest_storage: string | null;
 	thumbnail_storage: string | null;
 	preset_source: string | null;
+	/** The renderer that produced (or is producing) the output (p2-export E6). */
+	renderer: "remotion" | "rust";
+	/** Why a job did not take the authoritative renderer, e.g. its coverage reason. */
+	renderer_note: string | null;
+	/** Set on a shadow comparison render: the authoritative job it shadows (task 4.1). */
+	shadow_of: string | null;
 	created_at: number;
 	started_at: number | null;
 	finished_at: number | null;
@@ -186,6 +198,26 @@ export function getJob(id: string): Job | null {
 	return db.query<Job, [string]>(`SELECT * FROM render_jobs WHERE id = ?`).get(id) ?? null;
 }
 
+/** A job an operator can see: shadow comparison renders read as missing. */
+export function getVisibleJob(id: string): Job | null {
+	const job = getJob(id);
+	return job && job.shadow_of == null ? job : null;
+}
+
+/** Queues a shadow render of a finished authoritative job on the other renderer
+ * (p2-export E6). `productJson` is the prepared input, so preparation does not
+ * run again. One attempt: a failed shadow is a comparison result, not a retry. */
+export function insertShadowJob(of: Job, renderer: Job["renderer"], productJson: string): Job {
+	const id = crypto.randomUUID();
+	db.run(
+		`INSERT INTO render_jobs
+       (id, product_json, preset, backend, workspace, project_id, renderer, shadow_of, max_attempts, created_at)
+     VALUES (?, ?, ?, 'local', ?, ?, ?, ?, 1, ?)`,
+		[id, productJson, of.preset, of.workspace, of.project_id, renderer, of.id, Date.now()],
+	);
+	return getJob(id)!;
+}
+
 export interface JobFilters {
 	workspace?: string;
 	projectIds?: string[];
@@ -194,7 +226,8 @@ export interface JobFilters {
 }
 
 function jobWhere(filters: JobFilters) {
-	const clauses: string[] = [];
+	// Shadow comparison renders are never operator-facing (p2-export E6).
+	const clauses: string[] = ["shadow_of IS NULL"];
 	const values: string[] = [];
 	const projects = JSON.stringify(filters.projectIds ?? []);
 	const legacy = JSON.stringify(filters.legacyJobIds ?? []);
@@ -214,7 +247,7 @@ function jobWhere(filters: JobFilters) {
 		clauses.push("status IN (SELECT value FROM json_each(?))");
 		values.push(JSON.stringify(filters.statuses));
 	}
-	return { sql: clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "", values };
+	return { sql: ` WHERE ${clauses.join(" AND ")}`, values };
 }
 
 export function listJobs(limit = 50, offset = 0, filters: JobFilters = {}): Job[] {
@@ -253,14 +286,16 @@ export function findRecentByHash(inputHash: string, preset: string, windowMs: nu
 	);
 }
 
-// Atomically lease the oldest queued job to a worker. Uses a guarded UPDATE so
+// Atomically lease the oldest queued job to a worker. A shadow job leases only
+// when no authoritative job is queued (p2-export E6). Uses a guarded UPDATE so
 // two concurrent workers never grab the same row (the WHERE status='queued'
 // fails for the loser). Returns the leased job or null.
 export function leaseNext(workerId: string): Job | null {
 	const tx = db.transaction((): Job | null => {
 		const candidate = db
 			.query<{ id: string }, []>(
-				`SELECT id FROM render_jobs WHERE status = 'queued' ORDER BY created_at ASC LIMIT 1`,
+				`SELECT id FROM render_jobs WHERE status = 'queued'
+         ORDER BY (shadow_of IS NOT NULL) ASC, created_at ASC LIMIT 1`,
 			)
 			.get();
 		if (!candidate) return null;
@@ -386,7 +421,7 @@ export function jobOwners(filters: JobFilters) {
 		.all(...where.values);
 	const legacy = db
 		.query<{ id: string }, string[]>(
-			`SELECT id FROM render_jobs${where.sql}${where.sql ? " AND" : " WHERE"} project_id IS NULL`,
+			`SELECT id FROM render_jobs${where.sql} AND project_id IS NULL`,
 		)
 		.all(...where.values);
 	return {

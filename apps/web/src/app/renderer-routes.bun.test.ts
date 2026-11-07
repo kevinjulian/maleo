@@ -22,6 +22,14 @@ describe("renderer routes", () => {
 		expect(new Uint8Array(await wasm.arrayBuffer())).toEqual(new Uint8Array([0, 97, 115, 109]));
 	});
 
+	test("serve the export worker as JavaScript", async () => {
+		const dir = mkdtempSync(join(tmpdir(), "maleo-renderer-"));
+		writeFileSync(join(dir, "export-worker.js"), "postMessage(2);");
+		const worker = await rendererRoutes(dir)["/renderer/export-worker.js"]!();
+		expect(worker.status).toBe(200);
+		expect(worker.headers.get("content-type")).toBe("text/javascript; charset=utf-8");
+	});
+
 	test("serve the preview worker as JavaScript", async () => {
 		const dir = mkdtempSync(join(tmpdir(), "maleo-renderer-"));
 		writeFileSync(join(dir, "preview-worker.js"), "postMessage(1);");
@@ -36,7 +44,7 @@ describe("renderer routes", () => {
 		expect((await routes["/renderer/maleo_renderer_wasm.js"]!()).status).toBe(404);
 	});
 
-	test("no module but compare mode and its worker names the renderer files", () => {
+	test("no module but compare mode, export and their workers names the renderer files", () => {
 		const src = join(import.meta.dir, "..");
 		const files = (dir: string): string[] =>
 			readdirSync(dir).flatMap((entry) => {
@@ -50,8 +58,11 @@ describe("renderer routes", () => {
 			.sort();
 		expect(naming).toEqual([
 			"app/renderer-routes.ts",
+			"export-worker/worker.ts",
 			"hooks/timeline/use-rust-compare.ts",
+			"models/render/export-coverage.ts",
 			"preview-worker/worker.ts",
+			"services/preview-media/browser-export.ts",
 		]);
 	});
 });

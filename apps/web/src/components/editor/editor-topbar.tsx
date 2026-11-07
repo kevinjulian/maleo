@@ -21,6 +21,7 @@ import { Button } from "@design-system/components/button.tsx";
 import { TabsList, TabsRoot, TabsTab } from "@design-system/components/tabs.tsx";
 import { oneOf } from "@maleo/shared";
 import { ExportMenu } from "./export-menu.tsx";
+import type { ExportSource } from "@models/render/export-coverage.ts";
 import { useShellChrome, type ShellChromeStore } from "@stores/shell-chrome-store.ts";
 import type { ContentType } from "@maleo/shared";
 import type { RenderPreflight } from "@models/core/cc-helpers.ts";
@@ -44,6 +45,7 @@ export interface EditorTopbarProps {
 	onLocalRender: () => void;
 	onConfirmRender: () => void;
 	onOpenRenderStatus: () => void;
+	readExportSource: () => ExportSource | null;
 	/** Image and text submit from here; video submits through the export menu. */
 	onSubmit: () => void;
 }
@@ -190,6 +192,7 @@ export function EditorTopbar(props: EditorTopbarProps): JSX.Element {
 						onLocalRender={props.onLocalRender}
 						onConfirmRender={props.onConfirmRender}
 						onOpenStatus={props.onOpenRenderStatus}
+						readExportSource={props.readExportSource}
 					/>
 				)}
 				{showRail && (

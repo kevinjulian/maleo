@@ -17,6 +17,10 @@ entry here. See `CONTRIBUTING.md`.
 
 ### Added
 
+- **Browser export through the Rust renderer.** The export menu's **Browser export** encodes the project in your browser with the same Rust renderer the golden parity gate holds to production output, so captions, transitions, effects, video, templates and shapes look as they do on the server. The MP4 is H.264 with the production audio mix as AAC, and it starts on time in every player. Before encoding, the editor checks WebGPU and encoder support, that the renderer covers every frame, and that each file it reads matches the stored file. If a check fails, the editor says which one, and **Server render** is one click away when the server can still export the project. Cancel stops the export and saves nothing, and edits made during an export stay in the project but not in the file. Needs a browser with WebGPU. Contributors: the contract is in `docs/development.md` (The Rust renderer, Browser export).
+
+- **Server export through the Rust render host, with a production comparison.** `MALEO_EXPORT_RENDERER=rust` sends eligible storyboard exports through `maleo-render` (software Vulkan, LGPL FFmpeg with OpenH264); every other job stays on Remotion and records why. With `MALEO_EXPORT_SHADOW=on`, each finished export also runs a hidden shadow render on the other renderer, compares the two outputs (sampled-frame SSIM, format, loudness, clip starts) and records the result. Instance administrators read the observation-window report and explain divergences under `/api/admin/render-comparisons`. See `docs/self-hosting.md`.
+
 - A portable project envelope: one versioned JSON form of a project (its editable scope, the other stored document fields, the media library and the asset manifest). The shared engine admits it or refuses it with a reason and a field path before any write. `GET /projects/:id/envelope` returns it to workspace members. See `docs/project-envelope.md`.
 
 - On a phone, the timeline playhead stays in the centre and the timeline moves under it. Playback scrolls the lanes, and a scroll of the lanes moves the playhead. A touch on the timeline pauses playback. Zoom keeps the playhead time in place. Both ends of the project can reach the centre line. The line does not move during a drag. Motion Studio on a phone does the same.
@@ -46,6 +50,8 @@ entry here. See `CONTRIBUTING.md`.
 - `spikes/` holds the P0 platform spikes (gpui with wgpu, Kotlin Multiplatform over the C ABI, Rust captions against Remotion). They sit outside the Cargo workspace, CI and lint. ADRs 0007 to 0010 record the client store, sync, renderer and binding decisions drawn from them.
 
 ### Changed
+
+- **Fast render is removed.** The simplified canvas draft export left with its warnings. Projects that the Rust renderer does not fully cover, and browsers without WebGPU, use **Server render**. A file still uploading now blocks both exports, because browser export no longer renders from the browser's copy.
 
 - Rust compare preview audio starts faster. Each local audio source keeps one decoder worker and parses its file once, instead of starting a worker for every window. While the preview is paused and ready, the first audio block at the playhead is decoded in advance. The Rust audio output opens its device before Play, without sound, so the first Play starts in about 40–100 ms instead of 300–600 ms.
 

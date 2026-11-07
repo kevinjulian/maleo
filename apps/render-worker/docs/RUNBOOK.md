@@ -78,8 +78,8 @@ policy. Health checks alone do not detect a blocked worker slot.
 
 Worker jobs own execution status. Project render records are associations and
 can lag until discovery, history, or explicit reconciliation reads worker state.
-Never create a second job to recover browser progress. Browser Fast render runs
-only in its current tab and has no server recovery record.
+Never create a second job to recover browser progress. Browser export runs only
+in its current tab and has no server recovery record.
 
 Both local and Lambda completion extract one first-frame JPEG from the finished
 MP4. Extraction has a 15-second timeout and a 640px width limit. Failed extraction

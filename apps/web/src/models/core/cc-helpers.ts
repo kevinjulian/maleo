@@ -4,7 +4,6 @@ import type { RenderQueueStatus } from "@models/render/render-queue.ts";
 import { clipsPastSource, type Clip } from "@maleo/shared";
 import { pendingMediaKeys, pendingSourceKey } from "./pending-media-sources.ts";
 import {
-	hasClipCompositing,
 	clipControlBlockers,
 	mediaCompatibilityReason,
 	reverseMediaBlockers,
@@ -103,9 +102,6 @@ export interface RenderPreflightInput {
 
 export interface RenderPreflight {
 	blockers: string[];
-	/** What refuses only the production render: files still uploading, which the
-	 *  in-browser draft can render from its local copy. */
-	serverBlockers: string[];
 	warnings: string[];
 	summary: string;
 }
@@ -122,47 +118,6 @@ export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflig
 	for (const label of input.processingSources ?? [])
 		blockers.push(`${label}: source processing is still pending. Wait or cancel before export.`);
 	const warnings: string[] = [];
-	if (
-		[
-			...input.videoOverlays,
-			...input.scenes,
-			...input.scenes.flatMap((s) => s.visualClips ?? []),
-		].some((v) => hasClipCompositing(v.layout))
-	)
-		warnings.push(
-			"Simplified draft omits masks, blending, and color adjustment. Use production export for composited clips.",
-		);
-	if (
-		input.audioOverlays.some((a) => "animation" in a && a.animation) ||
-		input.videoOverlays.some((v) => v.layout?.animation) ||
-		input.scenes.some((s) => s.layout?.animation || s.visualClips?.some((v) => v.layout?.animation))
-	)
-		warnings.push(
-			"Simplified draft omits clip transform and gain keyframes. Use production export for animated clips.",
-		);
-	if (
-		input.audioOverlays.some(
-			(a) => ("playbackRate" in a && (a.playbackRate ?? 1) !== 1) || ("reverse" in a && a.reverse),
-		) ||
-		input.videoOverlays.some(
-			(v) => v.layout?.preservePitch !== undefined && (v.layout.playbackRate ?? 1) !== 1,
-		) ||
-		input.scenes.some((s) =>
-			s.visualClips?.some(
-				(v) => v.layout?.preservePitch !== undefined && (v.layout.playbackRate ?? 1) !== 1,
-			),
-		)
-	)
-		warnings.push(
-			"Simplified draft omits source audio retiming and pitch preservation. Use production export for edited audio.",
-		);
-	if (
-		input.videoOverlays.some((v) => v.layout?.reverse) ||
-		input.scenes.some((s) => s.layout?.reverse || s.visualClips?.some((v) => v.layout?.reverse))
-	)
-		warnings.push(
-			"Simplified draft omits reverse playback. Use production export for reversed clips.",
-		);
 	if (!hasRenderableVideo) blockers.push("Add media, text, or generate a storyboard.");
 	if (input.rendering) blockers.push("Render already running.");
 	if (input.agentRunning) warnings.push("Generation still running; export may miss newer edits.");
@@ -196,16 +151,12 @@ export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflig
 			: mediaCompatibilityReason(asset.compatibility, "render");
 		if (reason) blockers.push(`${asset.label}: ${reason}. Replace source before export.`);
 	}
-	// The server render waits for every file still importing; the draft uses the local copy.
-	const serverBlockers = [...pendingMediaKeys(input.clips ?? [])].map((key) => {
+	// Both exports wait for every file still importing (p2-export, project-media-library).
+	for (const key of pendingMediaKeys(input.clips ?? [])) {
 		const asset = (input.mediaAssets ?? []).find((item) => pendingSourceKey(item.url) === key);
 		const name = asset?.metadata?.originalFilename ?? asset?.label;
-		return `${name ?? "A file"} is still uploading. Wait for it to finish before export.`;
-	});
-	if (serverBlockers.length)
-		warnings.unshift(
-			`Fast render uses this browser's copy of ${serverBlockers.length} file${serverBlockers.length === 1 ? "" : "s"} still uploading; the server render waits for ${serverBlockers.length === 1 ? "it" : "them"}.`,
-		);
+		blockers.push(`${name ?? "A file"} is still uploading. Wait for it to finish before export.`);
+	}
 	const voiceoverCount = input.audioOverlays.filter((item) => item.kind === "voiceover").length;
 	if (
 		input.scenes.length > 0 &&
@@ -219,7 +170,6 @@ export function buildRenderPreflight(input: RenderPreflightInput): RenderPreflig
 		);
 	return {
 		blockers,
-		serverBlockers,
 		warnings,
 		summary: blockers.length
 			? `${blockers.length} blocker${blockers.length === 1 ? "" : "s"}`

@@ -524,4 +524,14 @@ Then load touched page/flow and verify behavior manually.
   Its protocol is `models/timeline/preview-protocol.ts`; the main thread
   speaks it through `models/timeline/preview-client.ts`. After editing it,
   rebuild with `bun scripts/build-renderer-wasm.ts --worker`.
+- `export-worker/` — the browser export worker entry (`worker.ts`, OpenSpec
+  p2-export E2), outside the role layers like `preview-worker/`. It runs its
+  own renderer session at output size, reuses `preview-worker/visual-media.ts`
+  and the decoder router, and encodes with MediaBunny. Bundled to
+  `target/renderer-wasm/export-worker.js` and served at `/renderer/`. Its
+  protocol is `models/render/export-protocol.ts`; the main thread speaks it
+  through `services/preview-media/browser-export.ts`, which borrows complete
+  local sources and routes decoder grants. A frame with a coverage problem or
+  drawn on a lost device fails the export; it is never encoded. Rebuild with
+  `bun scripts/build-renderer-wasm.ts --worker`.
 - `scripts/check-layers.ts` (in `apps/web/`) — the layering check.

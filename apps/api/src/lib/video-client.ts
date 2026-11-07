@@ -92,6 +92,16 @@ function headers() {
 	};
 }
 
+/** A request to the render worker's comparison routes (p2-export E7); the caller reads the response. */
+export function comparisonRequest(path: string, init: RequestInit = {}): Promise<Response> {
+	const { base } = cfg();
+	return fetch(`${base}/comparisons${path}`, {
+		...init,
+		headers: headers(),
+		signal: AbortSignal.timeout(15_000),
+	});
+}
+
 /* A response that does not parse THROWS, at every call site in this file.
  *
  * The alternative — returning `[]` or `null` — is worse here than it looks,

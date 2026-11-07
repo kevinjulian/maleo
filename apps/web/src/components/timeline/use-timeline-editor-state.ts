@@ -45,6 +45,7 @@ import type { TimelineEditorProps } from "./timeline-editor.tsx";
 export function useTimelineEditorState({
 	selectionStore,
 	onPlayheadReady,
+	onExportSource,
 	config,
 	setConfig,
 	library,
@@ -187,6 +188,7 @@ export function useTimelineEditorState({
 		projectId,
 		pendingFiles,
 		onPlayheadReady,
+		onExportSource,
 		config,
 		refs,
 		getDoc: store.getDoc,

@@ -124,6 +124,32 @@ pub fn report(storyboard: &Storyboard, frame: i64, fps: f64, has_media: &dyn Fn(
         .collect()
 }
 
+/// One problem anywhere in the project, at the first frame it shows.
+#[derive(Debug, Clone, PartialEq, Serialize)]
+pub struct ProjectEntry {
+    pub kind: String,
+    pub path: String,
+    pub reason: String,
+    pub frame: i64,
+    pub time: f64,
+}
+
+/// The coverage report for every frame `0..duration_frames` (OpenSpec p2-export
+/// E1): each distinct element problem once, at its first frame. Media presence
+/// is not eligibility (export preflight owns availability), so every source
+/// counts as present. Empty means the whole project draws exactly.
+pub fn project(storyboard: &Storyboard, fps: f64, duration_frames: i64) -> Vec<ProjectEntry> {
+    let mut out: Vec<ProjectEntry> = Vec::new();
+    for frame in 0..duration_frames.max(0) {
+        for entry in report(storyboard, frame, fps, &|_| true) {
+            if !out.iter().any(|seen| seen.path == entry.path && seen.reason == entry.reason) {
+                out.push(ProjectEntry { kind: entry.kind, path: entry.path, reason: entry.reason, frame, time: frame as f64 / fps });
+            }
+        }
+    }
+    out
+}
+
 fn visual(kind: &str, image: &'static str, video: &'static str, path: String, mut problems: Vec<String>) -> Inspected {
     if kind == "image" {
         Inspected { kind: image, path, problems }
@@ -369,6 +395,32 @@ mod tests {
 
     fn report_at(json: &str, frame: i64) -> Vec<Entry> {
         report(&Storyboard::parse(json).expect("storyboard"), frame, FPS, &|_| true)
+    }
+
+    #[test]
+    fn project_coverage_is_empty_when_every_frame_is_covered() {
+        let storyboard = Storyboard::parse(r#"{"scenes":[{"image":"a.png","durationSec":2,"movement":"Slow Zoom In","transition":"cut"}]}"#).unwrap();
+        assert_eq!(project(&storyboard, FPS, (2.0 * FPS) as i64), []);
+    }
+
+    #[test]
+    fn project_coverage_finds_a_short_problem_between_whole_seconds_once() {
+        // Supported until 1.5 s, then an unsupported preset for 0.1 s: a once-per-second sample misses it.
+        let storyboard = Storyboard::parse(
+            r#"{"scenes":[{"image":"a.png","durationSec":3,"transition":"cut"}],"textOverlays":[{"content":"t","preset":"lower-third","startSec":1.5,"durationSec":0.1}]}"#,
+        )
+        .unwrap();
+        let entries = project(&storyboard, FPS, (3.0 * FPS) as i64);
+        assert_eq!(entries.len(), 1, "{entries:?}");
+        assert_eq!(entries[0].reason, "`lower-third` preset");
+        assert_eq!(entries[0].frame, (1.5 * FPS) as i64);
+        assert!((entries[0].time - 1.5).abs() < 1e-9);
+    }
+
+    #[test]
+    fn project_coverage_ignores_media_presence() {
+        let storyboard = Storyboard::parse(r#"{"scenes":[],"videoOverlays":[{"url":"absent.mp4","kind":"video","durationSec":1}]}"#).unwrap();
+        assert_eq!(project(&storyboard, FPS, FPS as i64), []);
     }
 
     #[test]

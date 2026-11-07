@@ -11,7 +11,7 @@
 		"lambda:deploy": "bun --env-file ../../.env scripts/deploy-lambda.ts",
 		"lambda:render": "bun --env-file ../../.env scripts/render-lambda.ts",
 		"typecheck": "tsc --noEmit",
-		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test"
+		"test:bun": "bun test --preload ../../scripts/test-db-guard.ts .bun.test && bun test --preload ../../scripts/test-db-guard.ts ./tests/rust-export.isolated.ts && bun test --preload ../../scripts/test-db-guard.ts ./tests/comparisons.isolated.ts"
 	},
 	"dependencies": {
 		"@maleo/storage": "workspace:*",

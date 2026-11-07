@@ -48,8 +48,52 @@ test("render fetches managed bytes with workspace scope and removes temporary co
 	expect(rendered).toStartWith("http://video.invalid/public/render-inputs/");
 	const local = join(dir, "public", new URL(rendered).pathname.replace(/^\/public\//, ""));
 	expect(new Uint8Array(await Bun.file(local).arrayBuffer())).toEqual(new Uint8Array([1, 2, 3]));
+	// A value derived from the live input (a prepared storyboard) gets the stable URLs back.
+	expect(result.restore({ prepared: [rendered, "keep"] })).toEqual({
+		prepared: [`/api/media/${id}`, "keep"],
+	});
 	await result.cleanup();
 	expect(await Bun.file(local).exists()).toBe(false);
+});
+
+test("managed bytes that differ from the registry SHA-256 fail before any render and leave no copy", async () => {
+	dir = await mkdtemp(join(tmpdir(), "maleo-video-media-test-"));
+	process.chdir(dir);
+	process.env.MALEO_API_URL = "http://api.invalid";
+	process.env.MALEO_SERVICE_TOKEN = "secret";
+	process.env.MALEO_VIDEO_PUBLIC_BASE = "http://video.invalid/public";
+	const id = "cccccccc-cccc-4ccc-8ccc-cccccccccccc";
+	await expect(
+		materializeManagedInputs(
+			{ image: `/api/media/${id}` },
+			"team",
+			async () =>
+				new Response(new Uint8Array([1, 2, 3]), {
+					headers: { "content-type": "image/png", "x-maleo-sha256": "0".repeat(64) },
+				}),
+		),
+	).rejects.toThrow(`managed render input ${id} failed its SHA-256 check`);
+	expect(await readdir(join(dir, "public", "render-inputs"))).toEqual([]);
+});
+
+test("managed bytes that match the registry SHA-256 are used", async () => {
+	dir = await mkdtemp(join(tmpdir(), "maleo-video-media-test-"));
+	process.chdir(dir);
+	process.env.MALEO_API_URL = "http://api.invalid";
+	process.env.MALEO_SERVICE_TOKEN = "secret";
+	process.env.MALEO_VIDEO_PUBLIC_BASE = "http://video.invalid/public";
+	const bytes = new Uint8Array([1, 2, 3]);
+	const sha = new Bun.CryptoHasher("sha256").update(bytes).digest("hex");
+	const result = await materializeManagedInputs(
+		{ image: "/api/media/dddddddd-dddd-4ddd-8ddd-dddddddddddd" },
+		"team",
+		async () =>
+			new Response(bytes, {
+				headers: { "content-type": "image/png", "x-maleo-sha256": sha.toUpperCase() },
+			}),
+	);
+	expect(result.value.image).toStartWith("http://video.invalid/public/render-inputs/");
+	await result.cleanup();
 });
 
 test("missing managed object fails render input prep", async () => {

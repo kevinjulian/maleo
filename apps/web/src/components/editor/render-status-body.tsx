@@ -10,19 +10,23 @@ export function RenderStatusBody({
 	status: job,
 	jobId,
 	chrome,
+	onCancelBrowserExport,
 }: {
 	status: RenderQueueStatus | null;
 	jobId: string | null;
 	chrome: ShellChromeStore;
+	onCancelBrowserExport?: () => void;
 }): JSX.Element {
 	const connection = useShellChrome(chrome, "exportConnection");
 	const error = useShellChrome(chrome, "exportError");
+	const origin = useShellChrome(chrome, "exportOrigin");
+	const rendering = useShellChrome(chrome, "rendering");
 	if (!job)
 		return (
 			<div role="status">
 				{connection === "checking"
 					? "Checking export status…"
-					: (error ?? "No server export yet. Browser drafts are available only in this session.")}
+					: (error ?? "No server export yet. Browser exports are available only in this session.")}
 				{error && (
 					<Button onClick={() => window.dispatchEvent(new Event("maleo:refresh-export"))}>
 						Reconnect
@@ -127,6 +131,11 @@ export function RenderStatusBody({
 						</>
 					)}
 				</div>
+			)}
+			{origin === "browser" && rendering && onCancelBrowserExport && (
+				<Button variant="secondary" onClick={onCancelBrowserExport}>
+					Cancel export
+				</Button>
 			)}
 			{status === "error" && job?.error && (
 				<div style={{ fontSize: 12, color: "var(--err)", lineHeight: 1.5 }}>{job.error}</div>

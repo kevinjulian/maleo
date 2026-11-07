@@ -121,7 +121,7 @@ Back and focus restoration; GenerationError carries full diagnostics there.
 Managed posters preserve full framing. Missing posters use explicit fallback.
 Project export flow discovers server-owned active/latest jobs on mount and focus.
 Connection failures retain progress and block duplicate server submission until
-reconnection. Browser Fast render remains session-local. Shell chrome stores
+reconnection. Browser export remains session-local. Shell chrome stores
 connection state without writing the storyboard or timeline.
 
 Modal exposes opt-in `dismissOnBack`, forwarded to the existing overlay

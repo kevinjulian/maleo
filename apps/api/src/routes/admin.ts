@@ -2,6 +2,7 @@ import { Hono, type Context } from "hono";
 import { agentTemplateCatalog } from "../modules/agents/core/template-catalog.ts";
 import { z } from "zod";
 import { instanceOwnerOnly } from "../middleware/instance-owner.ts";
+import { adminRenderComparisonRoutes } from "./admin-render-comparisons.ts";
 import { listAdminAudit, recordAdminAudit } from "@maleo/db/admin-audit";
 import { activeCaller } from "../lib/active-workspace.ts";
 import {
@@ -38,6 +39,7 @@ import {
 export function adminRoutes(): Hono {
 	const app = new Hono();
 	app.use("*", instanceOwnerOnly());
+	app.route("/render-comparisons", adminRenderComparisonRoutes());
 	app.get("/agent-templates", (c) => {
 		try {
 			return c.json(agentTemplateCatalog());

@@ -28,6 +28,8 @@ export function internalMediaRoutes(): Hono {
 				"content-type": row.content_type,
 				"content-length": String(blob.size),
 				"cache-control": "private, no-store",
+				// The registry's SHA-256: the render worker checks the bytes before a render uses them.
+				"x-maleo-sha256": row.hash,
 			},
 		});
 	});

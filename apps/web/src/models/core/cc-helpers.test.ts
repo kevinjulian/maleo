@@ -4,7 +4,7 @@ import { buildRenderPreflight } from "./cc-helpers.ts";
 import { clearPendingSources, trackPendingSource } from "./pending-media-sources.ts";
 
 describe("render export preflight", () => {
-	it("discloses compositing draft omissions and refuses unsupported saved values", () => {
+	it("adds no draft disclosures for composited clips and refuses unsupported saved values", () => {
 		const layout = {
 			xPct: 0,
 			yPct: 0,
@@ -22,9 +22,7 @@ describe("render export preflight", () => {
 			agentRunning: false,
 			rendering: false,
 		};
-		expect(buildRenderPreflight(input).warnings).toContain(
-			"Simplified draft omits masks, blending, and color adjustment. Use production export for composited clips.",
-		);
+		expect(buildRenderPreflight(input).warnings.join(" ")).not.toContain("draft");
 		expect(
 			buildRenderPreflight({
 				...input,
@@ -79,7 +77,7 @@ describe("render export preflight", () => {
 			}).blockers.join(" "),
 		).not.toContain("beach.mov");
 	});
-	it("a file still uploading refuses only the server render and the draft says it uses the local copy", () => {
+	it("a file still uploading refuses both browser and server export, naming the file", () => {
 		const id = mintMediaId();
 		trackPendingSource(id);
 		const doc = toTimelineDoc(
@@ -106,13 +104,10 @@ describe("render export preflight", () => {
 			mediaAssets: [asset],
 			clips: doc.clips,
 		});
-		expect(result.blockers).toEqual([]);
-		expect(result.serverBlockers).toEqual([
+		expect(result.blockers).toEqual([
 			"beach.mov is still uploading. Wait for it to finish before export.",
 		]);
-		expect(result.warnings[0]).toBe(
-			"Fast render uses this browser's copy of 1 file still uploading; the server render waits for it.",
-		);
+		expect(result.warnings.join(" ")).not.toContain("browser's copy");
 		clearPendingSources();
 	});
 	it("blocks pending and unresolved reverse processing without hiding other export checks", () => {
@@ -133,9 +128,6 @@ describe("render export preflight", () => {
 			processingSources: ["Camera"],
 		});
 		expect(result.blockers).toHaveLength(2);
-		expect(result.warnings).toContain(
-			"Simplified draft omits reverse playback. Use production export for reversed clips.",
-		);
 		expect(result.blockers.join(" ")).toContain("reverse source is unavailable");
 		expect(result.blockers.join(" ")).toContain("Camera: source processing is still pending");
 	});

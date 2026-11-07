@@ -186,6 +186,8 @@ export function createPreviewMediaSession(options: {
 		isOpen: () => !disposed,
 		definition: () => definition,
 		snapshot: () => readiness,
+		/** The URL of every source the current dependencies name. */
+		sourceUrls: (): string[] => sources.map((source) => source.url),
 		resolve(url: string): string | undefined {
 			const source = sources.find((item) => item.url === url);
 			if (!source || readiness.sources[source.id]?.state !== "ready") return undefined;

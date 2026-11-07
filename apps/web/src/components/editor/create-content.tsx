@@ -59,14 +59,16 @@ import {
 	titleFromContent,
 	titleSlug,
 } from "@models/content/project-title.ts";
-import { hasRenderableVisual } from "@models/render/draft-request.ts";
+import { hasRenderableVisual } from "@models/render/timeline-extent.ts";
 import { revealEntities } from "./reveal-entities.ts";
 import { EditorTopbar } from "./editor-topbar.tsx";
+import type { ExportSource } from "@models/render/export-coverage.ts";
 import type { LibraryType } from "@models/core/routing.ts";
 import { EditorNotices } from "./editor-notices.tsx";
 import { useEditorDocument } from "./use-editor-document.ts";
 import { EditorViews } from "./editor-views.tsx";
-import { exportFastDraft, persistSubmission } from "./editor-export.ts";
+import { persistSubmission } from "./editor-export.ts";
+import { useBrowserExport } from "@hooks/editor/use-browser-export.ts";
 
 interface CreateContentProps {
 	/* Required. It used to be optional because this component was also the create
@@ -409,6 +411,12 @@ export function CreateContent({
 	const registerPlayhead = useCallback((playhead: PlayheadHandle) => {
 		playheadRef.current = playhead;
 	}, []);
+	// The export storyboard reader, published by the preview (p2-export E1).
+	const exportSourceRef = useRef<(() => ExportSource) | null>(null);
+	const registerExportSource = useCallback((read: () => ExportSource) => {
+		exportSourceRef.current = read;
+	}, []);
+	const readExportSource = useCallback(() => exportSourceRef.current?.() ?? null, []);
 	const chat = useChatSession({
 		projectId,
 		contentType: type ?? "video",
@@ -492,17 +500,15 @@ export function CreateContent({
 		rendering,
 		setRendering,
 		renderStatus,
-		setRenderStatus,
 		renderInfoOpen,
 		setRenderInfoOpen,
-		setExportMenuOpen,
 		exportMenuRef,
 		onRenderClick,
 		confirmRender,
 	} = useRenderFlow({
 		chrome,
 		projectId,
-		getBlockers: () => [...renderPreflight.blockers, ...renderPreflight.serverBlockers],
+		getBlockers: () => renderPreflight.blockers,
 		isVideo: () => type === "video",
 		submit: () => submit(),
 		setSaveError,
@@ -520,6 +526,14 @@ export function CreateContent({
 		agentRunning: chat.running,
 		rendering,
 	});
+	const browserExport = useBrowserExport({
+		chrome,
+		projectId,
+		saveStoryboard: flushStoryboard,
+		readExportSource,
+		setSaveError,
+		filename: () => `${titleSlug(titleByType) || "video"}.mp4`,
+	});
 	const onLocalRender = async (): Promise<void> => {
 		if (
 			chrome.get().rendering ||
@@ -530,19 +544,7 @@ export function CreateContent({
 			setSaveError("Add media or generate a storyboard before exporting.");
 			return;
 		}
-		setExportMenuOpen(false);
-		setRenderJobId(null);
-		chrome.patch("exportOrigin", "browser");
-		chrome.patch("exportConnection", "idle");
-		chrome.patch("exportError", null);
-		await exportFastDraft({
-			doc,
-			aspect: settings.aspectRatio || config.format || "9:16",
-			filename: `${titleSlug(titleByType) || "video"}-fast.mp4`,
-			setRenderStatus,
-			setRendering,
-			setSaveError,
-		});
+		await browserExport.start();
 	};
 
 	// Reload during generation: re-attach to the project's still-running job (no
@@ -616,6 +618,7 @@ export function CreateContent({
 					}}
 					onConfirmRender={() => confirmRender()}
 					onOpenRenderStatus={() => setRenderInfoOpen(true)}
+					readExportSource={readExportSource}
 					onSubmit={() => submit()}
 				/>
 
@@ -641,6 +644,7 @@ export function CreateContent({
 					chat={chat}
 					selectionStore={selectionStore}
 					onPlayheadReady={registerPlayhead}
+					onExportSource={registerExportSource}
 					templates={timelineTemplates}
 					onSelectTimelineTemplate={selectTimelineTemplate}
 					onOpenLibrary={onOpenLibrary}
@@ -651,7 +655,13 @@ export function CreateContent({
 								: { ...prev, [key]: label },
 						)
 					}
-					render={{ renderJobId, renderStatus, renderInfoOpen, setRenderInfoOpen }}
+					render={{
+						renderJobId,
+						renderStatus,
+						renderInfoOpen,
+						setRenderInfoOpen,
+						cancelBrowserExport: browserExport.cancel,
+					}}
 					initialScriptDensity={initialScriptDensity}
 					onCreateAnother={onCreateAnother}
 				/>

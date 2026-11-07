@@ -252,6 +252,17 @@ fn option_problems(manifest: &Manifest, cases: &[Case]) -> Vec<String> {
     problems
 }
 
+/// p2-export E1: every frame up to a case's last compared frame is covered,
+/// not only the compared frames.
+#[test]
+fn every_case_has_empty_project_coverage() {
+    for case in cases() {
+        let last = case.spec.frames.iter().copied().max().unwrap_or(0);
+        let entries = coverage::project(&case.storyboard, FPS, last + 1);
+        assert!(entries.is_empty(), "{}: {:?}", case.name, entries);
+    }
+}
+
 #[test]
 fn geometry_companions_cannot_disable_boundary_checks() {
     let manifest = manifest();

@@ -125,8 +125,7 @@ export const FORMAT_DIMS: Record<string, { w: number; h: number }> = {
  * being checked are the same list. It was stated twice, as `aspectOptions` in
  * the timeline and `ASPECTS` in Project Settings, which is the defect the
  * parity check exists to catch, one level up: two lists that must agree,
- * maintained separately. `FORMAT_DIMS` and `DRAFT_DIMS` had already drifted
- * apart by a row before anyone noticed.
+ * maintained separately.
  *
  * Adding a row here is not enough to add a format. It must also have a
  * `FORMAT_DIMS` row, an `ASPECT_RATIOS` entry, and an `aspectMap` entry in
@@ -136,26 +135,6 @@ export const VIDEO_ASPECTS = [
 	{ id: "9:16", label: "Vertical", icon: "phone" },
 	{ id: "1:1", label: "Square", icon: "square" },
 ] as const;
-
-/* The create form's draft preview is the render size at half scale. It was a
- * second literal table in the create-content model, maintained
- * separately from this one and already disagreeing with it: it carries a `4:5`
- * row FORMAT_DIMS has no entry for. Deriving the shared rows leaves that one
- * discrepancy as the only thing stated twice, where it is visible.
- *
- * The `4:5` row is the IMAGE path's, and it is why this table is not a pure
- * halving of FORMAT_DIMS. Video never supported 4:5 — `aspectOf` has no branch
- * for it, FORMAT_DIMS has no row, and the renderer's `aspectMap` carries only
- * vertical/square/horizontal — so the two video pickers that offered it were
- * withdrawn rather than left to produce a 9:16 preview and a 9:16 export from a
- * control labelled Portrait. Implementing 4:5 for video means all three of
- * those, plus image-prep, and is its own change. */
-export const DRAFT_DIMS: Record<string, { w: number; h: number }> = {
-	...Object.fromEntries(
-		Object.entries(FORMAT_DIMS).map(([format, { w, h }]) => [format, { w: w / 2, h: h / 2 }]),
-	),
-	"4:5": { w: 540, h: 676 },
-};
 
 export interface TLClip {
 	id: string;

@@ -19,6 +19,8 @@ import { FORMAT_DIMS } from "@models/timeline/timeline-editor-model.ts";
 import type { GlobalSettings } from "@models/presets/creative-settings.ts";
 import { useRemotionPlayhead, type RemotionPlayhead } from "./use-remotion-playhead.ts";
 import type { PlayheadHandle } from "@models/timeline/playhead-handle.ts";
+import type { ExportSource } from "@models/render/export-coverage.ts";
+import { localFileLookup } from "@services/preview-media/export-local-files.ts";
 
 const PREVIEW_FPS = 30;
 const NO_ASSETS: readonly MediaAsset[] = [];
@@ -69,6 +71,9 @@ export function usePreviewComposition(args: {
 	 * exactly one. The editor shell reads it when a chat command starts, to
 	 * resolve what "this" refers to. */
 	onPlayheadReady?: (playhead: PlayheadHandle) => void;
+	/* Publishes a reader of the storyboard export would render, for the export
+	 * menu's coverage check (p2-export E1). Reading it costs no render. */
+	onExportSource?: (read: () => ExportSource) => void;
 }): PreviewComposition {
 	const {
 		mediaAssets,
@@ -164,6 +169,21 @@ export function usePreviewComposition(args: {
 	useEffect(() => {
 		onPlayheadReady?.(playhead);
 	}, [onPlayheadReady, playhead]);
+	const session = media.session;
+	const current = (): ExportSource => ({
+		storyboard: previewProps,
+		fps: PREVIEW_FPS,
+		frames: previewFrames,
+		width: previewDims.w,
+		height: previewDims.h,
+		...(session ? { localFile: localFileLookup(session) } : {}),
+	});
+	const exportSource = useRef<ExportSource>(current());
+	exportSource.current = current();
+	const { onExportSource } = args;
+	useEffect(() => {
+		onExportSource?.(() => exportSource.current);
+	}, [onExportSource]);
 
 	return {
 		previewMedia: media,
