@@ -170,7 +170,7 @@ fn main() -> ExitCode {
         Ok(renderer) => renderer,
         Err(message) => return fail("gpu", message),
     };
-    if let Err(error) = frames::load_images(&mut renderer, &job.media) {
+    if let Err(error) = frames::load_images(&mut renderer, &storyboard, job.fps, job.frames, &job.media) {
         return fail("media", error.to_string());
     }
     let partial = sibling(&job.out, ".partial");

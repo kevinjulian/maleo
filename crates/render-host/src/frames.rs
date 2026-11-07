@@ -61,20 +61,21 @@ impl VideoSupply for NoVideo {
     }
 }
 
-/// Decodes every still image in `media` (everything that is not a movie) into the renderer.
-pub fn load_images(renderer: &mut Renderer, media: &BTreeMap<String, PathBuf>) -> Result<(), RenderError> {
-    for (url, path) in media {
-        let movie = path.extension().and_then(|e| e.to_str()).is_some_and(|e| ["mp4", "mov", "webm", "mkv", "m4v"].contains(&e.to_ascii_lowercase().as_str()));
-        let audio = path
-            .extension()
-            .and_then(|e| e.to_str())
-            .is_some_and(|e| ["wav", "mp3", "m4a", "aac", "ogg", "opus", "flac"].contains(&e.to_ascii_lowercase().as_str()));
-        if movie || audio {
-            continue;
-        }
+/// Decodes every image the storyboard draws, from its local file in `media`.
+/// Which URLs are images comes from the renderer's own request walk over every
+/// frame, never from a file extension: a managed input's name carries its
+/// content type (`.x-wav`), not a format the image decoder knows.
+pub fn load_images(renderer: &mut Renderer, storyboard: &Storyboard, fps: f64, frames: i64, media: &BTreeMap<String, PathBuf>) -> Result<(), RenderError> {
+    let mut urls = std::collections::BTreeSet::new();
+    for frame in 0..frames.max(0) {
+        urls.extend(maleo_renderer::media_requests::image_requests(storyboard, frame, fps).into_iter().map(|request| request.url));
+    }
+    for url in urls {
+        // An image without a file stays unsupplied; its frames report missing media.
+        let Some(path) = media.get(&url) else { continue };
         let decoded = image::open(path).map_err(|e| RenderError::Failed { stage: "media", message: format!("{url}: {e}") })?.to_rgba8();
         let (width, height) = decoded.dimensions();
-        renderer.put_image(url, width, height, decoded.into_raw()).map_err(|e| RenderError::Failed { stage: "media", message: format!("{url}: {e}") })?;
+        renderer.put_image(&url, width, height, decoded.into_raw()).map_err(|e| RenderError::Failed { stage: "media", message: format!("{url}: {e}") })?;
     }
     Ok(())
 }

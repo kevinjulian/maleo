@@ -160,11 +160,11 @@ fn host_frames_meet_the_corpus_thresholds() {
                     .collect()
             })
             .unwrap_or_default();
-        frames::load_images(&mut renderer, &media).expect("images");
+        let last = *spec.frames.iter().max().unwrap();
+        frames::load_images(&mut renderer, &storyboard, FPS, last + 1, &media).expect("images");
         let lowered = manifest.lowered.get(name);
         let frame_min = lowered.and_then(|l| l.frame).unwrap_or(manifest.thresholds.frame);
         let region_min = lowered.and_then(|l| l.region).unwrap_or(manifest.thresholds.region);
-        let last = *spec.frames.iter().max().unwrap();
         // Timing as the golden gate draws it: the storyboard's own composition length.
         let duration = maleo_renderer::timeline::composition_frames(&storyboard, FPS);
         let output = Output { width: spec.width, height: spec.height, fps: FPS, frames: last + 1, duration };

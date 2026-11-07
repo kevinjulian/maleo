@@ -123,7 +123,11 @@ fn a_real_media_export_has_every_frame_and_audio_on_time() {
         "videoOverlays": [{"url": "media/av.mp4", "kind": "video", "startSec": 0.5, "durationSec": 2, "volume": 1}],
         "audioOverlays": [{"url": "media/impulses.wav", "kind": "sfx", "startSec": 2.2, "durationSec": 0.5, "volume": 1}],
     });
-    let media = serde_json::json!({"media/av.mp4": av, "media/impulses.wav": wav});
+    // A managed input is named from its content type (`audio/x-wav` -> `.x-wav`);
+    // the host must not take it for an image (production shadow 57947663, 2026-11-07).
+    let managed = dir.join("impulses.x-wav");
+    fs::copy(&wav, &managed).unwrap();
+    let media = serde_json::json!({"media/av.mp4": av, "media/impulses.wav": managed});
     let (job, out) = write_job(&dir, storyboard, media, 90, (320, 192));
     let run = host(&job).output().unwrap();
     assert_eq!(run.status.code(), Some(0), "{}\n{}", String::from_utf8_lossy(&run.stdout), String::from_utf8_lossy(&run.stderr));
