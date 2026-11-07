@@ -410,7 +410,7 @@ describe("shadow jobs (p2-export E6)", () => {
 				row.authority,
 				row.shadow_renderer,
 				row.config_version,
-			]).toEqual(["passed", owner.id, "remotion", "rust", 1]);
+			]).toEqual(["passed", owner.id, "remotion", "rust", 2]);
 			expect(row.artifacts).toBeNull();
 			// The comparison removes both MP4s.
 			expect(existsSync(ran.output_path!)).toBe(false);

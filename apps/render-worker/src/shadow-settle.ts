@@ -52,6 +52,12 @@ export async function settleShadow(shadowId: string, run?: HostRun): Promise<voi
 			storyboard: storyboardSchema.parse(JSON.parse(shadow.product_json)),
 			compositionId: preset.compositionId,
 			projectId: shadow.project_id,
+			remotion:
+				base.authority === "remotion"
+					? "reference"
+					: shadow.renderer === "remotion"
+						? "candidate"
+						: undefined,
 			dir: path.join(outDir, "comparisons", shadow.id),
 			config,
 			run,

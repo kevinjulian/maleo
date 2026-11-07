@@ -12,8 +12,10 @@ const HOST = resolve(import.meta.dir, "..", "..", "..", "target", "debug", "male
 const ROOT = mkdtempSync(join(tmpdir(), "maleo-comparison-"));
 const ready = existsSync(HOST) ? describe : describe.skip;
 
-/** 2 s, 30 fps; a 440 Hz burst from `burst` to `burst + 0.5` s; `box` draws a white square. */
-function movie(name: string, burst: number, box = false): string {
+/** 2 s, 30 fps; a 440 Hz burst from `burst` to `burst + 0.5` s; `box` draws a white square.
+ * `smooth` gives the burst a Hann envelope and a phase from its own start, so a shifted copy
+ * is the same signal and no AAC edge smear differs between two encodes. */
+function movie(name: string, burst: number, box = false, smooth = false): string {
 	const file = join(ROOT, name);
 	const video = box
 		? "testsrc2=s=216x384:r=30:d=2,drawbox=x=40:y=80:w=120:h=120:c=white:t=fill"
@@ -29,7 +31,9 @@ function movie(name: string, burst: number, box = false): string {
 		"-f",
 		"lavfi",
 		"-i",
-		`aevalsrc='if(between(t\\,${burst}\\,${burst + 0.5})\\,0.5*sin(2*PI*440*t)\\,0)':s=48000:d=2`,
+		smooth
+			? `aevalsrc='if(between(t\\,${burst}\\,${burst + 0.5})\\,0.5*sin(2*PI*440*(t-${burst}))*pow(sin(PI*(t-${burst})/0.5)\\,2)\\,0)':s=48000:d=2`
+			: `aevalsrc='if(between(t\\,${burst}\\,${burst + 0.5})\\,0.5*sin(2*PI*440*t)\\,0)':s=48000:d=2`,
 		"-c:v",
 		"libx264",
 		"-pix_fmt",
@@ -95,6 +99,29 @@ ready("compareOutputs", () => {
 			result.failures.some((f) => f.startsWith("audioOverlays[0] (media/burst.wav) starts")),
 		).toBe(true);
 		expect(result.frames.every((f) => f.ssim === 1)).toBe(true);
+	}, 60_000);
+
+	test("Remotion's recorded AAC delay is removed from its track before audio scoring", async () => {
+		// A Remotion reference starts its sound 2048 samples (42.67 ms) late (comparison.json v2).
+		const remotion = movie("remotion-late.mp4", 0.5 + 2048 / 48_000, false, true);
+		const onTime = movie("rust-on-time.mp4", 0.5, false, true);
+		const config = await loadComparisonConfig();
+		const run = (remotionSide?: "reference") =>
+			compareOutputs({
+				reference: remotion,
+				candidate: onTime,
+				storyboard,
+				compositionId: "StoryboardReel",
+				remotion: remotionSide,
+				dir: join(ROOT, "comparisons", `delay-${remotionSide ?? "none"}`),
+				config,
+				run: { command: [HOST] },
+			});
+		const corrected = await run("reference");
+		expect(corrected.failures.filter((f) => !f.startsWith("frame "))).toEqual([]);
+		expect(Math.abs(corrected.onsets[0]!.offset!)).toBeLessThan(0.002);
+		const raw = await run();
+		expect(raw.onsets[0]!.offset!).toBeCloseTo(-2048 / 48_000, 2);
 	}, 60_000);
 
 	test("a visual change fails and keeps the frames and the difference image", async () => {

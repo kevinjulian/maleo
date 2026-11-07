@@ -43,6 +43,11 @@ export const comparisonConfigSchema = z.object({
 		floorDbfs: z.number(),
 	}),
 	onsetFrames: z.number().positive(),
+	/** Samples (48 kHz) Remotion's AAC output starts late; removed from its track before audio scoring. */
+	remotionAudioDelay: z.object({
+		samples: z.number().int().nonnegative(),
+		reason: z.string().min(1),
+	}),
 	/** Lowered frame thresholds by project ID, each with its reason (corpus manifest shape). */
 	lowered: z.record(z.object({ frame: z.number(), reason: z.string().min(1) })),
 });
@@ -280,6 +285,8 @@ export async function compareOutputs(input: {
 	storyboard: Storyboard;
 	compositionId: string;
 	projectId?: string | null;
+	/** Which file Remotion made, so its `remotionAudioDelay` is removed; none when neither. */
+	remotion?: "reference" | "candidate";
 	/** The artifact directory; removed when the comparison passes. */
 	dir: string;
 	config: ComparisonConfig;
@@ -339,10 +346,15 @@ export async function compareOutputs(input: {
 				);
 	}
 
-	const [refAudio, candAudio] = await Promise.all([
+	const delay = config.remotionAudioDelay.samples;
+	const trim = (samples: Float32Array, side: "reference" | "candidate") =>
+		input.remotion === side ? samples.subarray(delay) : samples;
+	const [refDecoded, candDecoded] = await Promise.all([
 		decodeAudio(input.reference),
 		decodeAudio(input.candidate),
 	]);
+	const refAudio = trim(refDecoded, "reference");
+	const candAudio = trim(candDecoded, "candidate");
 	const loudness = compareLoudness(refAudio, candAudio, config.loudness);
 	if (loudness.failures.length > 0) {
 		const first = loudness.failures[0]!;

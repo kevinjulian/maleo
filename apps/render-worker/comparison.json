@@ -1,12 +1,20 @@
 {
-	"version": 1,
+	"version": 2,
 	"corpusFrame": 0.98,
 	"encodingAllowance": {
 		"value": 0.025,
 		"reason": "Task 4.2 calibration (2026-11-07, openspec/changes/p2-export/evidence/comparison-calibration.md): one OpenH264 re-encode of a Remotion export lost at most 0.0109 SSIM over 10 corpus cases. A comparison pair holds two independent H.264 encodes (Remotion x264 and host OpenH264), so the allowance is twice that loss plus a 0.003 margin."
 	},
 	"durationFrames": 1,
-	"loudness": { "windowMs": 100, "toleranceDb": 1.5, "floorDbfs": -50 },
+	"loudness": {
+		"windowMs": 100,
+		"toleranceDb": 1.5,
+		"floorDbfs": -50
+	},
 	"onsetFrames": 1,
-	"lowered": {}
+	"lowered": {},
+	"remotionAudioDelay": {
+		"samples": 2048,
+		"reason": "Version 2 (2026-11-07): Remotion 4.0.462 exports start their AAC track 2048 samples (42.67 ms) late. A local Remotion render of impulses at 0.5 and 1.5 s decodes them at 0.54265 and 1.54265 s; the Rust host decodes the same impulses at 0.5 and 1.5 s. The first production comparison (shadow 95bdb4c6) found every clip 42.3 to 42.7 ms earlier in Rust. The comparison removes the delay from the Remotion track before loudness and onset scoring."
+	}
 }
