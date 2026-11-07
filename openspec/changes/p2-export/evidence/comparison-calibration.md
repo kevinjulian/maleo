@@ -49,3 +49,7 @@ The largest loss of one extra encode is 0.0109 (`combined-project`). A productio
 - The cases are golden corpus storyboards, not production projects. No production media was available locally. The observation window (task 5.2) checks the allowance on production jobs. A change to the allowance bumps `version` and records its reason.
 - The Remotion renders ran on macOS, not in the production image, so fonts can differ from production. The calibration measures encoding loss only: both files in a pair come from the same Remotion render, so fonts do not change the result.
 - The corpus cases have short or no audio. The audio criteria passed on every case; the tests above prove their failures.
+
+## Version 2: Remotion's AAC delay (2026-11-07)
+
+The first production comparison found every clip 42.3 to 42.7 ms earlier in the Rust shadow. A local Remotion 4.0.462 render of impulses at 0.5 and 1.5 s decodes them at 0.54265 and 1.54265 s: Remotion leaves 2048 AAC priming samples in its track. The Rust host decodes the same impulses at 0.5, 1.5 and 2.2 s (`host_ffmpeg` export test). Version 2 adds `remotionAudioDelay` (2048 samples, with this reason); the comparison removes it from whichever file Remotion made before loudness and onset scoring. Test: a reference 2048 samples late passes when marked as Remotion's and shows the full offset when not. The next production comparison passed with 0 of 21 loudness windows outside, so the loudness failures came from the same shift.

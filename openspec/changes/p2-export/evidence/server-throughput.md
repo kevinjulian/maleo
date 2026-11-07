@@ -23,6 +23,13 @@ The worker queue holds one finished job: a 14.5 s storyboard (436 frames) in 117
 
 Tests: `tests/db.bun.test.ts` (a reporting job is not reclaimed), `tests/rust-export.isolated.ts` (a slow host is stopped at a 1 s limit and the job fails with the limit, within 5 s).
 
-## Open
+## Production content, paired with Remotion
 
-The plain-frame rate is the upper bound. The first shadow jobs of task 5.1 measure production content; this task stays open until those times are recorded here next to the Remotion times of the same jobs.
+Project `test` (`StoryboardWide`, 1920x1080, 437 frames, two voice clips, images, a shape overlay), 2026-11-07, worker on commit `f956087`. Times are lease to finish; Remotion's include storyboard preparation, Rust's include coverage and media mapping.
+
+| Authoritative (Remotion) | Time    | Shadow (Rust) | Time    | Rust rate |
+| ------------------------ | ------- | ------------- | ------- | --------- |
+| `2ea1b3db`               | 147.0 s | `95bdb4c6`    | 179.4 s | 2.44 fps  |
+| `8fdfef90`               | 123.8 s | `a796e712`    | 177.7 s | 2.46 fps  |
+
+The Rust host takes 1.2x to 1.4x the Remotion time on this host class. The limit for these 437 frames is 120 + 437 / 0.25 = 1868 s, 10x the measured time.
