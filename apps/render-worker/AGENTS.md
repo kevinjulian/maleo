@@ -65,7 +65,8 @@ Core Compose service `render-worker`, including Coolify resource `maleo-core`
 (`mcn9di6ofudxswb0qsdvusuz`). Root `Dockerfile` builds from repository root;
 Compose runs `bun src/index.ts` from `/app/apps/render-worker`. Watch paths:
 root `Dockerfile`, `.dockerignore`, `package.json`, `bun.lock`, `deploy/**`,
-`apps/render-worker/**`, and `packages/**` (full core watch list in deploy/AGENTS.md).
+`crates/**` (the Rust render host), `apps/render-worker/**`, and `packages/**`
+(full core watch list in deploy/AGENTS.md).
 Port 8091 stays internal. `GET /health` checks queue/output access; render control
 routes authenticate with bearer token. Health does not prove browser rendering.
 

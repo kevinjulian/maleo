@@ -16,9 +16,12 @@ steps.
 
 The compose file builds every image from the repository root (`context: ..`),
 so nothing else needs setting. With auto-deploy on, set the watch paths to the
-root `Dockerfile`, `.dockerignore`, `package.json`, `bun.lock`, `deploy/**`,
-`apps/web/**`, `apps/api/**`, `apps/media-worker/**`, `apps/render-worker/**`
-and `packages/**`.
+root `Dockerfile`, `.dockerignore`, `package.json`, `bun.lock`,
+`rust-toolchain.toml`, `Cargo.toml`, `Cargo.lock`, `crates/**`, `vendor/**`,
+`deploy/**`, `apps/web/**`, `apps/api/**`, `apps/media-worker/**`,
+`apps/render-worker/**` and `packages/**`. The image builds the Rust render
+host and the renderer WASM from `crates/`, so a Rust-only change must deploy
+too.
 
 ## 2. Set the variables
 
